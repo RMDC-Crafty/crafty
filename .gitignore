@@ -1,0 +1,12 @@
+#ignore virtual environment
+/venv/
+
+#ignore .idea from pycharm
+/.idea/
+
+#ignore pycache
+__pycache__/
+*.py[cod]
+
+#ignore logs folder
+*.log
