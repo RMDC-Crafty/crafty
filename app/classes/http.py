@@ -5,6 +5,8 @@ import logging
 import threading
 import tornado.web
 import tornado.ioloop
+import tornado.log
+import tornado.template
 
 from app.classes.console import Console
 from app.classes.helpers import helpers
@@ -20,10 +22,23 @@ class MessageHandler(tornado.web.RequestHandler):
     def get(self):
 
         self.render(
-            "index.html",
+            "public/index.html",
         )
 
 class webserver():
+
+    def log_function(self,handler):
+
+        info = {
+            'Status_Code': handler.get_status(),
+            'Method': handler.request.method,
+            'URL': handler.request.uri,
+            'Remote_IP': handler.request.remote_ip,
+            'Elapsed_Time': '%.2fms' % (handler.request.request_time() * 1000)
+        }
+        tornado.log.access_log.info(json.dumps(info, indent=4))
+
+
     def run_tornado(self):
 
         # our database wrapper
@@ -38,7 +53,23 @@ class webserver():
         Console.info("Starting Tornado HTTP Server on port {}".format(port_number))
         asyncio.set_event_loop(asyncio.new_event_loop())
 
-        app = tornado.web.Application([(r'/', MessageHandler)], template_path=web_root)
+        tornado.template.Loader('.')
+
+
+        handlers = [
+            (r'/', MessageHandler)
+        ]
+
+        app = tornado.web.Application(
+            handlers,
+            template_path=os.path.join(web_root, 'templates'),
+            static_path=os.path.join(web_root, 'static'),
+            debug=True,
+            cookie_secret='wqkbnksbicg92ujbnf',
+            xsrf_cookies=True,
+            autoreload=False,
+            log_function = self.log_function
+        )
         app.listen(port_number)
         tornado.ioloop.IOLoop.instance().start()
 
