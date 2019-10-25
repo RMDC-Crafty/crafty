@@ -16,13 +16,16 @@ console = Console()
 helper = helpers()
 
 
-class MessageHandler(tornado.web.RequestHandler):
-    web_root = os.path.join(os.path.curdir, 'app', 'web')
-
+class PublicHandler(tornado.web.RequestHandler):
     def get(self):
+        self.write('This is the public page: {}')
 
+
+class AdminHandler(tornado.web.RequestHandler):
+
+    def get(self, page):
         self.render(
-            "public/index.html",
+            "admin/dashboard.html",
         )
 
 class webserver():
@@ -55,9 +58,18 @@ class webserver():
 
         tornado.template.Loader('.')
 
+        ip = helper.get_public_ip()
+
+        if ip:
+            Console.info("Your public IP is: {}".format(ip))
+        else:
+            Console.warning("Unable to find your public IP\nThe service might be down, or your internet is down.")
 
         handlers = [
-            (r'/', MessageHandler)
+            (r'/', PublicHandler),
+            (r'/admin/(.*)', AdminHandler),
+            (r'/static(.*)', tornado.web.StaticFileHandler, {"path": '/'}),
+            (r'/images(.*)', tornado.web.StaticFileHandler, {"path": "/images"})
         ]
 
         app = tornado.web.Application(
@@ -68,7 +80,7 @@ class webserver():
             cookie_secret='wqkbnksbicg92ujbnf',
             xsrf_cookies=True,
             autoreload=False,
-            log_function = self.log_function
+            log_function=self.log_function
         )
         app.listen(port_number)
         tornado.ioloop.IOLoop.instance().start()

@@ -1,8 +1,10 @@
 import os
 import logging
+import requests
 
 from app.classes.console import Console
 from argon2 import PasswordHasher
+
 
 Console = Console()
 
@@ -62,4 +64,13 @@ class helpers:
 
     def verify_pass(self, password, currenthash):
         return self.passhasher.verify(currenthash, password)
+
+    def get_public_ip(self):
+        r = requests.get('http://ipinfo.io/ip')
+        if r.text:
+            logging.info('Your Public IP is: {}'.format(r.text))
+            return r.text
+        else:
+            logging.warning("Unable to find your public IP!")
+            return False
 

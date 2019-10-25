@@ -25,7 +25,10 @@ class MainPrompt(cmd.Cmd):
 
     def stop_all_children(self):
         if self.mc_server_obj.check_running:
-            self.mc_server_obj.stop_threaded_server()
+            try:
+                self.mc_server_obj.stop_threaded_server()
+            except:
+                pass
 
 
 
