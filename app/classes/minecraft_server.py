@@ -96,6 +96,10 @@ class Minecraft_Server():
             Console.warning("Minecraft Server already running...")
             return False
 
+        if os.name == "nt":
+            print("Flipping Slashes on Windows")
+            self.server_command = self.server_command.replace('\\', '/')
+
         try:
             logging.info("Launching Minecraft Server with command {}".format(self.server_command))
             self.process = subprocess.Popen(shlex.split(self.server_command),
