@@ -136,6 +136,9 @@ if __name__ == '__main__':
         Helper.ensure_dir_exists(os.path.join(os.path.curdir, 'logs'))
         open(log_file, 'a').close()
 
+    # make sure our web temp directory is there
+    Helper.ensure_dir_exists(os.path.join(os.path.curdir, "app", 'web', 'temp'))
+
     custom_loggers.setup_logging()
     logging.info("***** Crafty Launched *****")
 
