@@ -27,7 +27,6 @@ class MainPrompt(cmd.Cmd):
         if self.mc_server_obj.check_running:
             try:
                 self.mc_server_obj.stop_threaded_server()
-                Console.info('Stopping Minecraft Server')
                 logging.info("***** Crafty Stopped ***** \n")
             except:
                 pass
@@ -35,6 +34,7 @@ class MainPrompt(cmd.Cmd):
             logging.info("***** Crafty Stopped ***** \n")
 
     def do_stop(self, line):
+        Console.info('Stopping Minecraft Server')
         self.stop_all_children()
         sys.exit(0)
 

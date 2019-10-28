@@ -132,12 +132,12 @@ class Minecraft_Server():
         self.process.stdin.flush()
 
         # give the command time to finish
-        time.sleep(.25)
+        #time.sleep(.25)
 
     def stop_server(self):
         logging.info('Sending stop command to server')
 
-        self.send_command('Stop')
+        self.send_command('stop')
 
         for x in range(6):
 
