@@ -11,6 +11,9 @@ import threading
 import subprocess
 import logging.config
 
+import pexpect
+from pexpect.popen_spawn import PopenSpawn
+
 from app.classes.console import Console
 from app.classes.helpers import helpers
 from app.classes.db import db_wrapper
@@ -97,24 +100,25 @@ class Minecraft_Server():
             return False
 
         if os.name == "nt":
-            print("Flipping Slashes on Windows")
+            logging.info("Windows Detected - launching cmd")
             self.server_command = self.server_command.replace('\\', '/')
+            self.process = pexpect.popen_spawn.PopenSpawn('cmd \n', timeout=None, encoding=None)
+            self.process.send('cd {}'.format(self.server_path.replace('\\', '/')))
+            self.process.send(self.server_command)
+            self.PID = self.process.pid
 
-        try:
-            logging.info("Launching Minecraft Server with command {}".format(self.server_command))
-            self.process = subprocess.Popen(shlex.split(self.server_command),
-                                            stdin=subprocess.PIPE,
-                                            stdout=subprocess.PIPE,
-                                            cwd=self.server_path,
-                                            shell=False,
-                                            universal_newlines=True)
+        else:
+            logging.info("Linux Detected - launching Bash")
+            self.process = pexpect.popen_spawn.PopenSpawn('/bin/bash \n', timeout=None, encoding=None)
 
-        except Exception as err:
-            logging.critical("Unable to start server!")
-            Console.critical("Unable to start server!")
-            sys.exit(0)
+            logging.info("Changing Directories to {}".format(self.server_path))
+            self.process.send('cd {} \n'.format(self.server_path))
 
-        self.PID = self.process.pid
+            logging.info("Sending Server Command: {}".format(self.server_command))
+            self.process.send(self.server_command + '\n')
+
+            self.PID = self.process.pid
+
         ts = time.time()
         self.start_time = str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
         logging.info("Minecraft Server Running with PID: {}".format(self.PID))
@@ -124,19 +128,10 @@ class Minecraft_Server():
         self.write_html_server_status()
 
     def send_command(self, command):
-        logging.debug('Sending Command: {} to Server via stdin'.format(command))
-
-        # encode the command
-        command.encode()
+        logging.debug('Sending Command: {} to Server via pexpect'.format(command))
 
         # send it
-        self.process.stdin.write(command + '\n')
-
-        # flush the buffer to send the command
-        self.process.stdin.flush()
-
-        # give the command time to finish
-        #time.sleep(.25)
+        self.process.send(command + '\n')
 
     def stop_server(self):
         logging.info('Sending stop command to server')
@@ -191,15 +186,27 @@ class Minecraft_Server():
             return False
 
         else:
-            # poll to see if it's still running - None = Running | Negative Int means Stopped
-            poll = self.process.poll()
+            # loop through processes
+            for proc in psutil.process_iter():
+                try:
+                    # Check if process name contains the given name string.
+                    if 'java' in proc.name().lower():
 
-            if poll is None:
-                return True
-            else:
-                # reset process to None for next run
-                self.process = None
-                return False
+                        # join the command line together so we can search it for the server.jar
+                        cmdline = " ".join(proc.cmdline())
+
+                        server_jar = self.settings['server_jar']
+
+                        if server_jar is None:
+                            return False
+
+                        # if we found the server jar in the command line, and the process is java, we can assume it's an
+                        # orphaned server.jar running
+                        if server_jar in cmdline:
+                            return True
+                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                    pass
+            return False
 
     def killpid(self, pid):
         logging.info('Killing Process {} and all child processes'.format(pid))
