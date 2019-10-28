@@ -365,6 +365,8 @@ class Minecraft_Server():
     def get_world_info(self):
         world = self.get_world_name()
 
+        Helper.ensure_dir_exists(os.path.join(self.server_path, world))
+
         if world:
             level_path = os.path.join(self.server_path, world)
             nether_path = os.path.join(self.server_path, world + "_nether")
