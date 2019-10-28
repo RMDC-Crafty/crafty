@@ -131,6 +131,10 @@ def main():
 
 if __name__ == '__main__':
     """ Our Main Starter """
+    log_file = os.path.join(os.path.curdir, 'logs', 'crafty.log')
+    if not Helper.check_file_exists(log_file):
+        open(log_file, 'a').close()
+
     custom_loggers.setup_logging()
     logging.info("***** Crafty Launched *****")
 
