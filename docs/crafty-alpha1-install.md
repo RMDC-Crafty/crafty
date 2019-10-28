@@ -19,13 +19,13 @@
 
 ## Crafty Install Instructions
 
-virtualenv crafty
-cd crafty
-git clone https://gitlab.com/Ptarrant1/crafty-web.git
-source bin/activate
-cd crafty-web
-pip install -r requirements.txt
-python crafty.py
+    virtualenv crafty
+    cd crafty
+    git clone https://gitlab.com/Ptarrant1/crafty-web.git
+    source bin/activate
+    cd crafty-web
+    pip install -r requirements.txt
+    python crafty.py
 
 You should now be presented with the installer
 
