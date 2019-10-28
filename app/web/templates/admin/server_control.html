@@ -1,0 +1,85 @@
+{% extends ../base.html %}
+
+{% block title %}Crafty Controller - Server Control{% end %}
+
+{% block meta %} <meta http-equiv="Refresh" content="60">  {% end %}
+
+{% block content %}
+
+<section class="content-header">
+  <h1>
+    Server Control
+    <small>Start / Stop / Restart</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Server Control</li>
+  </ol>
+</section>
+
+
+<section class="content">
+
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">
+                      Server Actions
+
+                        {% if data['server_running'] %}
+                            <span class="text-green">
+                        Server Running &nbsp;
+                            <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                            </span>
+                        {% else %}
+                        <span class="text-red">
+                            Server Down &nbsp;
+                            <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                        </span>
+                        {% end %}
+                  </h3>
+                </div>
+                <div class="box-body">
+                    <a href="/admin/commands?command=server_start"
+                       onclick="delay()"
+                        class="btn btn-app {% if data['server_running'] %} disabled {% end %}">
+                        <i class="fa fa-play"></i> Start Server
+                    </a>
+                    <a  href="/admin/commands?command=server_stop"
+                        onclick="delay()"
+                        class="btn btn-app {% if not data['server_running'] %} disabled {% end %}">
+                        <i class="fa fa-stop"></i> Stop Server
+                    </a>
+                    <a class="btn btn-app disabled">
+                        <i class="fa fa-refresh"></i> Restart Server (Alpha 2)
+                    </a>
+                </div>
+              </div>
+        </div>
+    </div>
+
+
+</section>
+
+<!--
+{{ data }}
+-->
+
+
+
+
+{% end %}
+
+{% block js-script %}
+
+<script>
+    function delay(){
+            bootbox.alert({
+            message: "Please give the server 5-10 seconds to respond to your command",
+            backdrop: true
+        });
+    }
+</script>
+
+{% end %}

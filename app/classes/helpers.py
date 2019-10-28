@@ -1,4 +1,5 @@
 import os
+import re
 import logging
 import requests
 
@@ -13,6 +14,9 @@ class helpers:
     def __init__(self):
         self.dbpath = os.path.join(os.curdir, "app", 'config', 'crafty.sqlite')
         self.passhasher = PasswordHasher()
+        self.webroot = os.path.join(os.path.curdir, 'app', 'web')
+        self.web_temp = os.path.join(self.webroot, 'temp')
+        self.crafty_log_file = os.path.join(os.path.curdir, "logs", 'crafty.log')
 
     def ensure_dir_exists(self, path):
         """
@@ -68,9 +72,58 @@ class helpers:
     def get_public_ip(self):
         r = requests.get('http://ipinfo.io/ip')
         if r.text:
-            logging.info('Your Public IP is: {}'.format(r.text))
-            return r.text
+            logging.info('Your Public IP is: {}'.format(r.text.strip()))
+            return r.text.strip()
         else:
             logging.warning("Unable to find your public IP!")
             return False
 
+    def get_web_root_path(self):
+        return self.webroot
+
+    def get_web_temp_path(self):
+        return self.web_temp
+
+    def get_crafty_log_file(self):
+        return self.crafty_log_file
+
+    # returns a list of list of matching lines in the file searched
+    def search_file(self, file_to_search, word='info', line_numbers=True, limit=None):
+
+        # list of lines we are returning
+        return_lines = []
+
+        logging.debug("Searching for {} in {} ".format(word, file_to_search))
+
+        # make sure it exists
+        if self.check_file_exists(file_to_search):
+
+            # line number
+            line_num = 0
+
+            with open(file_to_search, 'rt') as f:
+
+                for line in f:
+                    line_num += 1
+
+                    # if we find something
+                    if re.search(word.lower(), line.lower()) is not None:
+                        logging.debug("Found Line that matched: {}".format(line))
+                        match_line = line.rstrip('\n')
+
+                        # add this match to the list of lines
+                        if line_numbers:
+                            return_lines.append([line_num, match_line])
+                        else:
+                            return_lines.append(match_line)
+
+                        # if we have a limit, let's use it
+                        if limit is not None:
+                            if limit <= len(return_lines):
+                                return return_lines
+
+        else:
+            # if we got here, we couldn't find it
+            logging.info('Unable to find string {} in {}'.format(word, file_to_search))
+
+        return return_lines

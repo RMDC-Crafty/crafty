@@ -1,5 +1,15 @@
+argon2-cffi==19.1.0
+certifi==2019.9.11
+cffi==1.13.1
+chardet==3.0.4
 colorama==0.4.1
+idna==2.8
 psutil==5.6.3
+pycparser==2.19
+requests==2.22.0
+schedule==0.6.0
+six==1.12.0
 termcolor==1.1.0
 tornado==6.0.3
+urllib3==1.25.6
 wcwidth==0.1.7

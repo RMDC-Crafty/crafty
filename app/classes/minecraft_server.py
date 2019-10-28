@@ -36,8 +36,7 @@ class Minecraft_Server():
         self.settings = None
 
         # do init setup
-        self.do_init_setup()
-
+        #self.do_init_setup()
 
     def do_init_setup(self):
         logging.debug("Minecraft Server Module Loaded")
@@ -58,6 +57,7 @@ class Minecraft_Server():
             Console.info("Auto Start is Enabled - Waiting {} seconds to start the server".format(delay))
             time.sleep(int(delay))
             # delay the startup as long as the
+            Console.info("Starting Minecraft Server")
             self.run_threaded_server()
         else:
             logging.info("Auto Start is Disabled")
@@ -96,8 +96,6 @@ class Minecraft_Server():
             Console.warning("Minecraft Server already running...")
             return False
 
-        Console.info("Starting Minecraft Server")
-
         try:
             logging.info("Launching Minecraft Server with command {}".format(self.server_command))
             self.process = subprocess.Popen(shlex.split(self.server_command),
@@ -116,7 +114,10 @@ class Minecraft_Server():
         ts = time.time()
         self.start_time = str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
         logging.info("Minecraft Server Running with PID: {}".format(self.PID))
-        Console.info("Minecraft Server Running with PID: {}".format(self.PID))
+
+
+        # write status file
+        self.write_html_server_status()
 
     def send_command(self, command):
         logging.debug('Sending Command: {} to Server via stdin'.format(command))
@@ -135,20 +136,19 @@ class Minecraft_Server():
 
     def stop_server(self):
         logging.info('Sending stop command to server')
-        Console.info('Stopping Minecraft Server')
+
         self.send_command('Stop')
 
         for x in range(6):
 
             if self.check_running():
                 logging.debug('Polling says Minecraft Server is running')
-                Console.info('Waiting 10 seconds for all threads to close. Stop command issued {} seconds ago'.format(x * 10))
+
                 time.sleep(10)
 
             # now the server is dead, we set process to none
             else:
                 logging.debug('Minecraft Server Stopped')
-                Console.info("Minecraft Server Stopped")
                 self.process = None
                 self.PID = None
                 self.start_time = None
@@ -262,3 +262,129 @@ class Minecraft_Server():
                 pass
 
         return False
+
+    def get_start_time(self):
+        if self.check_running():
+            return self.start_time
+        else:
+            return False
+
+    def write_html_server_status(self):
+
+        datime = datetime.datetime.fromtimestamp(psutil.boot_time())
+        errors = self.search_for_errors()
+
+        server_stats = {'cpu_usage': psutil.cpu_percent(interval=0.5) / psutil.cpu_count(),
+                        'cpu_cores': psutil.cpu_count(),
+                        'mem_percent': psutil.virtual_memory()[2],
+                        'disk_percent': psutil.disk_usage('/')[3],
+                        'boot_time': str(datime),
+                        'mc_start_time': self.get_start_time(),
+                        'errors': len(errors['errors']),
+                        'warnings': len(errors['warnings']),
+                        'world_data': self.get_world_info(),
+                        'server_running': self.check_running()
+                        }
+
+        json_file_path = os.path.join( Helper.get_web_temp_path(), 'server_data.json')
+
+        with open(json_file_path, 'w') as f:
+            json.dump(server_stats, f, sort_keys=True, indent=4)
+        f.close()
+
+    def get_world_name(self):
+        search_string = 'level-name*'
+        worldname = self.search_server_properties(search_string)
+        if worldname:
+            return worldname
+        else:
+            return False
+
+    # returns the first setting that = the regex supplied
+    def search_server_properties(self, regex='*'):
+
+        # whats the file we are looking for?
+        server_prop_file = os.path.join(self.server_path, 'server.properties')
+
+        # re of what we are looking for
+        # ignoring case - just in case someone used all caps
+        pattern = re.compile(regex, re.IGNORECASE)
+
+        # make sure it exists
+        if Helper.check_file_exists(server_prop_file):
+            with open(server_prop_file, 'rt') as f:
+                for line in f:
+                    # if we find something
+                    if pattern.search(line) is not None:
+                        match_line = line.rstrip('\n').split("=", 2)
+
+                        # if we have at least 2 items in the list (i.e. there was an = char
+                        if len(match_line) == 2:
+                            return match_line[1]
+
+            # if we got here, we couldn't find it
+            logging.warning('Unable to find string using regex {} in server.properties file'.format(regex))
+            return False
+
+        # if we got here, we can't find server.properties (bigger issues)
+        logging.warning('Unable to find server.properties file')
+        return False
+
+    # because this is a recursive function, we will return bytes, and set human readable later
+    def get_dir_size(self, path):
+        total = 0
+        for entry in os.scandir(path):
+            if entry.is_dir(follow_symlinks=False):
+                total += self.get_dir_size(entry.path)
+            else:
+                total += entry.stat(follow_symlinks=False).st_size
+        return total
+
+    def human_readable_sizes(self,num, suffix='B'):
+        for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
+            if abs(num) < 1024.0:
+                return "%3.1f %s%s" % (num, unit, suffix)
+            num /= 1024.0
+        return "%.1f %s%s" % (num, 'Yi', suffix)
+
+    def search_for_errors(self):
+        log_file = os.path.join(self.server_path, "logs", "latest.log")
+
+        logging.debug("Getting Errors from {}".format(log_file))
+
+        errors = Helper.search_file(log_file, "ERROR]")
+        warnings = Helper.search_file(log_file, "WARN]")
+
+        error_data = {
+            'errors': errors,
+            'warnings': warnings
+        }
+
+        return error_data
+
+    def get_world_info(self):
+        world = self.get_world_name()
+
+        if world:
+            level_path = os.path.join(self.server_path, world)
+            nether_path = os.path.join(self.server_path, world + "_nether")
+            end_path = os.path.join(self.server_path, world + "_the_end")
+
+            level_total_size = self.get_dir_size(level_path)
+            nether_total_size = self.get_dir_size(nether_path)
+            end_total_size = self.get_dir_size(end_path)
+
+            # doing a sep line to keep readable
+            level_total_size = self.human_readable_sizes(level_total_size)
+            nether_total_size = self.human_readable_sizes(nether_total_size)
+            end_total_size = self.human_readable_sizes(end_total_size)
+
+            return {
+                'world_name': world,
+                'world_size': level_total_size,
+                'nether_size': nether_total_size,
+                'end_size': end_total_size
+            }
+        else:
+            logging.warning("Unable to find world disk data")
+            return False

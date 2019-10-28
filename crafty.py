@@ -2,13 +2,13 @@ import os
 import sys
 import time
 import logging
-
+import schedule
+import threading
 
 from app.classes.logger import custom_loggers
 from app.classes.helpers import helpers
 from app.classes.console import Console
 from app.config.version import __version__
-from app.config.version import __version_suffix__
 from app.classes.craftycmd import MainPrompt
 from app.classes.db import db_wrapper
 from app.classes.install import installer
@@ -18,8 +18,6 @@ from app.classes.http import webserver
 
 Helper = helpers()
 console = Console()
-Webserver = webserver()
-
 
 def do_intro():
     intro = "/" * 75 + "\n"
@@ -72,6 +70,11 @@ def setup_admin():
         console.info("Please login to the web portal and change this ASAP")
 
 
+def start_scheduler():
+    while True:
+        schedule.run_pending()
+        time.sleep(10)
+
 def main():
 
     # if we don't have a sql_db, we create one, and run the installers
@@ -80,25 +83,47 @@ def main():
 
         do_intro()
 
+        mc_server = Minecraft_Server()
+
+        tornado = webserver(mc_server)
+
         # startup Tornado -
-        Webserver.start_web_server()
+        tornado.start_web_server()
         time.sleep(.5)
 
         # setup the new admin password (random)
         setup_admin()
 
     else:
+
+        mc_server = Minecraft_Server()
+
         # startup Tornado -
         do_intro()
-        Webserver.start_web_server()
+
+        tornado = webserver(mc_server)
+
+        tornado.start_web_server()
         time.sleep(.5)
 
+    time.sleep(.5)
+
+    mc_server.do_init_setup()
 
     time.sleep(.5)
 
-    mc_server = Minecraft_Server()
+    schedule.every(1).minute.do(mc_server.write_html_server_status)
 
-    time.sleep(.5)
+    logging.info("Starting Scheduler Daemon")
+    Console.info("Starting Scheduler Daemon")
+    scheduler = threading.Thread(name='Scheduler', target=start_scheduler, daemon=True)
+    scheduler.start()
+
+    time.sleep(5)
+    # write our server stats to a file
+    mc_server.write_html_server_status()
+    Console.info("Crafty Startup Procedure Complete")
+    Console.help("Type 'stop' or 'exit' to shutdown the system")
 
     Crafty = MainPrompt(mc_server)
     Crafty.cmdloop()
@@ -108,15 +133,6 @@ if __name__ == '__main__':
     """ Our Main Starter """
     custom_loggers.setup_logging()
     logging.info("***** Crafty Launched *****")
-
-    if __version_suffix__ == "alpha" or __version_suffix__ == "beta":
-        crafty_log_level = 'DEBUG'
-    else:
-        crafty_log_level = 'INFO'
-
-    logging.info("Setting Log Level: {}".format(crafty_log_level.upper()))
-    logger = logging.getLogger()
-    logger.setLevel(crafty_log_level.upper())
 
     main()
 

@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>{% block title %}Default{% end %}</title>
+  {% block meta %} {% end %}
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -105,33 +106,16 @@
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">MAIN NAVIGATION</li>
 
-        <li class="active">
-          <a href="/admin/dashboard">
-            <i class="fa fa-dashboard"></i> <span>Dashboard</span>
-
-          </a>
-        </li>
-
-
-        <li class="treeview">
-          <a href="#">
-            <i class="fa fa-cogs"></i> <span>Control Panel</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="../../index.html"><i class="fa fa-circle-o"></i> Server Status</a></li>
-            <li><a href="../../index.html"><i class="fa fa-circle-o"></i> Server Console</a></li>
-            <li><a href="../../index.html"><i class="fa fa-circle-o"></i> Backups</a></li>
-            <li><a href="../../index.html"><i class="fa fa-circle-o"></i> World Data</a></li>
-            <li><a href="../../index.html"><i class="fa fa-circle-o"></i> Server Config</a></li>
-          </ul>
-        </li>
-
-
-
-        <li><a href="https://adminlte.io/docs"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
+        <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
+        <li><a href="/admin/server_control"><i class="fa fa-power-off" aria-hidden="true"></i> Server Control</a></li>
+        <li><a href="../../index.html"><i class="fa fa-terminal" aria-hidden="true"></i> Server Console</a></li>
+        <li><a href="../../index.html"><i class="fa fa-download" aria-hidden="true"></i> Backups</a></li>
+        <li><a href="../../index.html"><i class="fa fa-clock-o" aria-hidden="true"></i> Scheduled Tasks</a></li>
+        <li><a href="../../index.html"><i class="fa fa-globe" aria-hidden="true"></i> World Data</a></li>
+        <li><a href="../../index.html"><i class="fa fa-cog" aria-hidden="true"></i> Web Config</a></li>
+        <li><a href="../../index.html"><i class="fa fa-cog" aria-hidden="true"></i> Server Config</a></li>
+        <li><a href="../../index.html"><i class="fa fa-cog" aria-hidden="true"></i> Crafty Config</a></li>
+        <li><a href="https://craftycontrol.com/docs" target="_blank"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
 
       </ul>
     </section>
@@ -168,7 +152,10 @@
 <script src="/static/vendors/fastclick/lib/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="/static/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
+
+<!-- bootbox -->
+<script src="/static/vendors/bootbox/bootbox.min.js"></script>
+
 
 <script>
   $(document).ready(function () {
