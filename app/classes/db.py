@@ -87,11 +87,13 @@ class db_wrapper:
         else:
             return False
 
-
     def run_sql_first_row(self, sql):
         results = self.run_sql(sql)
-        if len(results) >= 1:
-            return dict(results[0])
+        if results:
+            if len(results) >= 1:
+                return dict(results[0])
+            else:
+                return False
         else:
             return False
 
@@ -134,6 +136,11 @@ class db_wrapper:
         cur.execute(sql, settings)
         self.connection.commit()
         return cur.lastrowid
+
+    def get_user_data(self, username):
+        sql = "SELECT * FROM  `users` WHERE uname = '{}' ".format(username)
+        userdata = self.run_sql_first_row(sql)
+        return userdata
 
 
 

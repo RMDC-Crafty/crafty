@@ -67,7 +67,12 @@ class helpers:
         return self.passhasher.hash(password)
 
     def verify_pass(self, password, currenthash):
-        return self.passhasher.verify(currenthash, password)
+        try:
+            self.passhasher.verify(currenthash, password)
+            return True
+        except:
+            pass
+            return False
 
     def get_public_ip(self):
         r = requests.get('http://ipinfo.io/ip')

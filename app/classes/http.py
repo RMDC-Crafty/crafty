@@ -8,6 +8,7 @@ import tornado.web
 import tornado.ioloop
 import tornado.log
 import tornado.template
+import tornado.escape
 
 from app.classes.console import Console
 from app.classes.helpers import helpers
@@ -17,16 +18,96 @@ console = Console()
 helper = helpers()
 
 
-class PublicHandler(tornado.web.RequestHandler):
-    def get(self):
-        self.write('This is the public page: {}')
 
 
-class AdminHandler(tornado.web.RequestHandler):
+class BaseHandler(tornado.web.RequestHandler):
+    def get_current_user(self):
+        return self.get_secure_cookie("user")
+
+
+class My404Handler(BaseHandler):
+    # Override prepare() instead of get() to cover all possible HTTP methods.
+    def prepare(self):
+        self.set_status(404)
+        self.render("public/404.html")
+
+
+class PublicHandler(BaseHandler):
 
     def initialize(self, mcserver):
         self.mcserver = mcserver
 
+    def set_current_user(self, user):
+        if user:
+            self.set_secure_cookie("user", tornado.escape.json_encode(user))
+        else:
+            self.clear_cookie("user")
+
+    def get(self, page=None):
+
+        server_data = self.get_server_data()
+
+        template = "public/login.html"
+        context = server_data
+        context['login'] = None
+
+        self.render(
+            template,
+            data=context
+        )
+
+
+    def post(self):
+        db = db_wrapper(helper.get_db_path())
+
+        entered_user = self.get_argument('username')
+        entered_password = self.get_argument('password')
+
+        user_data = db.get_user_data(entered_user)
+        if user_data:
+            # if the login is good and the pass verified, we go to the dashboard
+            login_result = helper.verify_pass(entered_password, user_data['pass'])
+            if login_result:
+                self.set_current_user(entered_user)
+                self.redirect(self.get_argument("next", u"/admin/dashboard"))
+
+            else:
+                server_data = self.get_server_data()
+                template = "public/login.html"
+                context = server_data
+                context['login'] = False
+
+        else:
+            server_data = self.get_server_data()
+
+            template = "public/login.html"
+            context = server_data
+            context['login'] = False
+
+        self.render(
+            template,
+            data=context
+        )
+
+
+    def get_server_data(self):
+        server_file = os.path.join( helper.get_web_temp_path(), "server_data.json")
+
+        if helper.check_file_exists(server_file):
+            with open(server_file, 'r') as f:
+                server_data = json.load(f)
+            return server_data
+        else:
+            logging.warning("Unable to find server_data file for dashboard: {}".format(server_file))
+            return False
+
+
+class AdminHandler(BaseHandler):
+
+    def initialize(self, mcserver):
+        self.mcserver = mcserver
+
+    @tornado.web.authenticated
     def get(self, page):
 
         server_data = self.get_server_data()
@@ -79,13 +160,13 @@ class AdminHandler(tornado.web.RequestHandler):
             return False
 
 
-
-class AjaxHandler(tornado.web.RequestHandler):
+class AjaxHandler(BaseHandler):
 
     def get(self, page):
         self.render(
             "admin/dashboard.html",
         )
+
 
 class webserver():
 
@@ -128,9 +209,10 @@ class webserver():
             Console.warning("Unable to find your public IP\nThe service might be down, or your internet is down.")
 
         handlers = [
-            (r'/', PublicHandler),
+            (r'/', PublicHandler, dict(mcserver=self.mc_server)),
+            (r'/([a-zA-Z]+)', PublicHandler, dict(mcserver=self.mc_server)),
             (r'/admin/(.*)', AdminHandler, dict(mcserver=self.mc_server)),
-            (r'/ajax/(.*)', AjaxHandler),
+            (r'/ajax/(.*)', AjaxHandler, dict(mcserver=self.mc_server)),
             (r'/static(.*)', tornado.web.StaticFileHandler, {"path": '/'}),
             (r'/images(.*)', tornado.web.StaticFileHandler, {"path": "/images"})
         ]
@@ -139,11 +221,14 @@ class webserver():
             handlers,
             template_path=os.path.join(web_root, 'templates'),
             static_path=os.path.join(web_root, 'static'),
-            debug=True,
+            debug=False,
             cookie_secret='wqkbnksbicg92ujbnf',
             xsrf_cookies=True,
             autoreload=False,
-            log_function=self.log_function
+            log_function=self.log_function,
+            login_url="/",
+            default_handler_class=My404Handler
+
         )
         app.listen(port_number)
         tornado.ioloop.IOLoop.instance().start()

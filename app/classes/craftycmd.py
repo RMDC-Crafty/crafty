@@ -48,6 +48,7 @@ class MainPrompt(cmd.Cmd):
 
     def do_exit(self, line):
         """ Exits the main program """
+        Console.info('Stopping Minecraft Server')
         self.stop_all_children()
         sys.exit(0)
 
