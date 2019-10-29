@@ -10,13 +10,13 @@ from app.classes.helpers import helpers
 from app.classes.console import Console
 from app.config.version import __version__
 from app.classes.craftycmd import MainPrompt
-from app.classes.db import db_wrapper
+from app.classes.models import *
 from app.classes.install import installer
 
 from app.classes.minecraft_server import Minecraft_Server
 from app.classes.http import webserver
 
-Helper = helpers()
+helper = helpers()
 console = Console()
 
 def do_intro():
@@ -32,18 +32,17 @@ def do_intro():
 def check_for_sql_db():
     logging.info("Checking for existing DB")
 
-    dbpath = Helper.get_db_path()
+    dbpath = helper.get_db_path()
 
-    if Helper.check_file_exists(dbpath):
+    if helper.check_file_exists(dbpath):
         return True
     else:
         logging.info("Unable to find: {} - Launching Creation script".format(dbpath))
 
         # create the db
-        db = db_wrapper(dbpath)
         try:
-            db.create_new_db()
-            db = None
+            create_tables()
+
         except:
             logging.critical("Unable to create db - Exiting")
             console.critical("Unable to create db - Exiting")
@@ -53,16 +52,12 @@ def check_for_sql_db():
 
 
 def run_installer():
-
-    dbpath = Helper.get_db_path()
-    setup = installer(dbpath)
+    setup = installer()
     setup.do_install()
 
 
 def setup_admin():
-    dbpath = Helper.get_db_path()
-
-    setup = installer(dbpath)
+    setup = installer()
     admin_password = setup.create_admin()
     if admin_password is not None:
         console.info("Your Admin Username is: Admin")
@@ -132,12 +127,12 @@ def main():
 if __name__ == '__main__':
     """ Our Main Starter """
     log_file = os.path.join(os.path.curdir, 'logs', 'crafty.log')
-    if not Helper.check_file_exists(log_file):
-        Helper.ensure_dir_exists(os.path.join(os.path.curdir, 'logs'))
+    if not helper.check_file_exists(log_file):
+        helper.ensure_dir_exists(os.path.join(os.path.curdir, 'logs'))
         open(log_file, 'a').close()
 
     # make sure our web temp directory is there
-    Helper.ensure_dir_exists(os.path.join(os.path.curdir, "app", 'web', 'temp'))
+    helper.ensure_dir_exists(os.path.join(os.path.curdir, "app", 'web', 'temp'))
 
     custom_loggers.setup_logging()
     logging.info("***** Crafty Launched *****")

@@ -12,12 +12,10 @@ import tornado.escape
 
 from app.classes.console import Console
 from app.classes.helpers import helpers
-from app.classes.db import db_wrapper
+from app.classes.models import *
 
 console = Console()
 helper = helpers()
-
-
 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -58,15 +56,13 @@ class PublicHandler(BaseHandler):
 
 
     def post(self):
-        db = db_wrapper(helper.get_db_path())
-
         entered_user = self.get_argument('username')
         entered_password = self.get_argument('password')
 
-        user_data = db.get_user_data(entered_user)
+        user_data = Users.get(Users.username == entered_user)
         if user_data:
             # if the login is good and the pass verified, we go to the dashboard
-            login_result = helper.verify_pass(entered_password, user_data['pass'])
+            login_result = helper.verify_pass(entered_password, user_data.password)
             if login_result:
                 self.set_current_user(entered_user)
                 self.redirect(self.get_argument("next", u"/admin/dashboard"))
@@ -111,14 +107,16 @@ class AdminHandler(BaseHandler):
     def get(self, page):
 
         server_data = self.get_server_data()
+        context = {}
 
         if page == 'dashboard':
             template = "admin/dashboard.html"
             context = server_data
 
+        elif page == 'change_password':
+            template = "admin/change_pass.html"
 
         elif page == "server_control":
-
             template = "admin/server_control.html"
             logfile = helper.get_crafty_log_file()
             context = server_data
@@ -135,6 +133,13 @@ class AdminHandler(BaseHandler):
                 time.sleep(3)
                 self.mcserver.write_html_server_status()
 
+            elif command == "server_restart":
+                self.mcserver.stop_threaded_server()
+                time.sleep(3)
+                self.mcserver.run_threaded_server()
+                self.mcserver.write_html_server_status()
+
+
             self.redirect('/admin/dashboard')
 
         else:
@@ -147,6 +152,19 @@ class AdminHandler(BaseHandler):
             template,
             data=context
         )
+
+    @tornado.web.authenticated
+    def post(self, page):
+
+        entered_password = self.get_argument('password')
+        encoded_pass = helper.encode_pass(entered_password)
+
+        q = Users.update({Users.password: encoded_pass}).where(Users.username == "Admin")
+        q.execute()
+
+        self.clear_cookie("user")
+        self.redirect("/")
+
 
     def get_server_data(self):
         server_file = os.path.join( helper.get_web_temp_path(), "server_data.json")
@@ -187,12 +205,9 @@ class webserver():
 
     def run_tornado(self):
 
-        # our database wrapper
-        db = db_wrapper(helper.get_db_path())
+        websettings = Webserver.get()
 
-        sql = "SELECT port_number FROM webserver"
-        port = db.run_sql_first_row(sql)
-        port_number = port['port_number']
+        port_number = websettings.port_number
         web_root = helper.get_web_root_path()
 
         logging.info("Starting Tornado HTTP Server on port {}".format(port_number))
@@ -221,7 +236,7 @@ class webserver():
             handlers,
             template_path=os.path.join(web_root, 'templates'),
             static_path=os.path.join(web_root, 'static'),
-            debug=False,
+            debug=True,
             cookie_secret='wqkbnksbicg92ujbnf',
             xsrf_cookies=True,
             autoreload=False,

@@ -16,9 +16,9 @@ from pexpect.popen_spawn import PopenSpawn
 
 from app.classes.console import Console
 from app.classes.helpers import helpers
-from app.classes.db import db_wrapper
+from app.classes.models import *
 
-Helper = helpers()
+helper = helpers()
 
 
 
@@ -34,8 +34,6 @@ class Minecraft_Server():
         self.server_command = None
         self.server_path = None
         self.server_thread = None
-
-        self.db = db_wrapper(Helper.get_db_path())
         self.settings = None
 
         # do init setup
@@ -45,8 +43,7 @@ class Minecraft_Server():
         logging.debug("Minecraft Server Module Loaded")
         Console.info("Loading Minecraft Server Module")
 
-        self.settings = self.db.get_mc_settings()
-
+        self.settings = MC_settings.get()
         self.setup_server_run_command()
 
         # lets check for orphaned servers
@@ -54,8 +51,8 @@ class Minecraft_Server():
 
 
         # do we want to auto launch the minecraft server?
-        if self.settings['auto_start_server'] == 'y':
-            delay = int(self.settings['auto_start_delay'])
+        if self.settings.auto_start_server:
+            delay = int(self.settings.auto_start_delay)
             logging.info("Auto Start is Enabled - Waiting {} seconds to start the server".format(delay))
             Console.info("Auto Start is Enabled - Waiting {} seconds to start the server".format(delay))
             time.sleep(int(delay))
@@ -68,12 +65,11 @@ class Minecraft_Server():
 
     def setup_server_run_command(self):
         # configure the server
-
-        server_path = self.settings['server_path']
-        server_jar = self.settings['server_jar']
-        server_max_mem = self.settings['memory_max']
-        server_min_mem = self.settings['memory_min']
-        server_args = self.settings['additional_args']
+        server_path = self.settings.server_path
+        server_jar = self.settings.server_jar
+        server_max_mem = self.settings.memory_max
+        server_min_mem = self.settings.memory_min
+        server_args = self.settings.additional_args
 
         # set up execute path
         server_exec_path = os.path.join(server_path, server_jar)
@@ -195,7 +191,7 @@ class Minecraft_Server():
                         # join the command line together so we can search it for the server.jar
                         cmdline = " ".join(proc.cmdline())
 
-                        server_jar = self.settings['server_jar']
+                        server_jar = self.settings.server_jar
 
                         if server_jar is None:
                             return False
@@ -232,7 +228,7 @@ class Minecraft_Server():
                     # join the command line together so we can search it for the server.jar
                     cmdline = " ".join(proc.cmdline())
 
-                    server_jar = self.settings['server_jar']
+                    server_jar = self.settings.server_jar
 
                     if server_jar is None:
                         return False
@@ -297,7 +293,7 @@ class Minecraft_Server():
                         'server_running': self.check_running()
                         }
 
-        json_file_path = os.path.join( Helper.get_web_temp_path(), 'server_data.json')
+        json_file_path = os.path.join(helper.get_web_temp_path(), 'server_data.json')
 
         with open(json_file_path, 'w') as f:
             json.dump(server_stats, f, sort_keys=True, indent=4)
@@ -322,7 +318,7 @@ class Minecraft_Server():
         pattern = re.compile(regex, re.IGNORECASE)
 
         # make sure it exists
-        if Helper.check_file_exists(server_prop_file):
+        if helper.check_file_exists(server_prop_file):
             with open(server_prop_file, 'rt') as f:
                 for line in f:
                     # if we find something
@@ -363,8 +359,8 @@ class Minecraft_Server():
 
         logging.debug("Getting Errors from {}".format(log_file))
 
-        errors = Helper.search_file(log_file, "ERROR]")
-        warnings = Helper.search_file(log_file, "WARN]")
+        errors = helper.search_file(log_file, "ERROR]")
+        warnings = helper.search_file(log_file, "WARN]")
 
         error_data = {
             'errors': errors,
@@ -376,7 +372,7 @@ class Minecraft_Server():
     def get_world_info(self):
         world = self.get_world_name()
 
-        Helper.ensure_dir_exists(os.path.join(self.server_path, world))
+        helper.ensure_dir_exists(os.path.join(self.server_path, world))
 
         if world:
             level_path = os.path.join(self.server_path, world)

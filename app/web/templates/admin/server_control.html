@@ -51,8 +51,10 @@
                         class="btn btn-app {% if not data['server_running'] %} disabled {% end %}">
                         <i class="fa fa-stop"></i> Stop Server
                     </a>
-                    <a class="btn btn-app disabled">
-                        <i class="fa fa-refresh"></i> Restart Server (Alpha 2)
+                    <a  href="/admin/commands?command=server_restart"
+                        onclick="delay('15-20')"
+                        class="btn btn-app {% if not data['server_running'] %} disabled {% end %}">
+                        <i class="fa fa-refresh"></i> Restart Server
                     </a>
                 </div>
               </div>
@@ -74,9 +76,9 @@
 {% block js-script %}
 
 <script>
-    function delay(){
+    function delay(time='5-10'){
             bootbox.alert({
-            message: "Please give the server 5-10 seconds to respond to your command",
+            message: "Please give the server " + time + " seconds to respond to your command",
             backdrop: true
         });
     }

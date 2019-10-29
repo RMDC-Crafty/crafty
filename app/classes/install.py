@@ -3,15 +3,14 @@ import sys
 import string
 import random
 
-from app.classes.db import db_wrapper
+from app.classes.models import *
 from app.classes.helpers import helpers
 
 
 class installer():
 
-    def __init__(self, dbpath):
-        self.db = db_wrapper(dbpath)
-        self.Helper = helpers()
+    def __init__(self):
+        self.helper = helpers()
 
     def random_generator(self, size=6, chars=string.ascii_uppercase + string.digits):
         """
@@ -23,9 +22,13 @@ class installer():
 
     def create_admin(self):
         new_pass = self.random_generator()
-        safe_pass = self.Helper.encode_pass(new_pass)
-        user_data = ('Admin', safe_pass, 'Admin')
-        self.db.create_user(user_data)
+        safe_pass = self.helper.encode_pass(new_pass)
+        Users.create(
+            username="Admin",
+            password=safe_pass,
+            role="Admin"
+        )
+
         return new_pass
 
     def do_install(self):
@@ -113,20 +116,27 @@ class installer():
             self.get_mc_server_data()
         else:
             print("Saving Your Settings")
-            settings = (server_path, server_jar, memory_max, memory_min, additional_args, auto_start, auto_delay)
-            result = self.db.save_settings(settings)
-            if result:
-                print("Settings Saved\n")
-                self.setup_web_server()
-            else:
-                print('Unable to save settings!')
-                sys.exit(1)
+
+            MC_settings.create(
+                server_path=server_path,
+                server_jar=server_jar,
+                memory_max=memory_max,
+                memory_min=memory_min,
+                additional_args=additional_args,
+                auto_start_server=auto_start,
+                auto_start_delay=auto_delay)
+
+            print("Settings Saved\n")
+            self.setup_web_server()
 
     def setup_web_server(self):
         print("/" * 75 + "\n")
         print("Webserver Setup:")
         print("/" * 75 + "\n")
         resp = int(input("What port should the webserver run on? (8000 is default)") or 8000)
-        # save port and default server name
-        self.db.save_webserver_settings((resp, "A Crafty Server"))
+
+        Webserver.create(
+            port_number=resp,
+            server_name="A Crafty Server"
+        )
 
