@@ -1,0 +1,122 @@
+{% extends ../base.html %}
+
+{% block title %}Crafty Controller - Virtual Console{% end %}
+
+{% block content %}
+
+<section class="content-header">
+  <h1>
+    Server Logs
+    <small>I don't know, have you checked the logs?</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Logs</li>
+  </ol>
+</section>
+
+
+<section class="content">
+
+    <div class="row">
+        <div class="col-xs-12 col-md-6">
+            <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">
+                      Latest Logs
+                  </h3>
+                </div>
+                <div class="box-body">
+                    <textarea id="logs" rows="25" readonly class="form-control">{% for d in data['log_data'] %}{{ d }}{% end %}</textarea>
+                </div>
+              </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">
+                      Latest Errors
+                  </h3>
+                </div>
+                <div class="box-body">
+                    <table class="table table-responsive">
+                        <tr>
+                            <th>Line Number</th>
+                            <th>Error</th>
+                        </tr>
+                        {% if len(data['errors']['errors']) <= 0 %}
+                            <tr>
+                                <td colspan="2" class="text-center"> No Errors Found!</td>
+                            </tr>
+                        {% else %}
+                            {% for e in data['errors']['errors'] %}
+                            <tr>
+                                <td>{{ e[0] }}</td>
+                                <td>{{ e[1] }}</td>
+                            </tr>
+                            {% end %}
+                        {% end %}
+                    </table>
+                </div>
+              </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">
+                      Latest Warnings
+                  </h3>
+                </div>
+                <div class="box-body">
+                    <table class="table table-responsive">
+                        <tr>
+                            <th>Line Number</th>
+                            <th>Warning</th>
+                        </tr>
+                        {% if len(data['errors']['warnings']) <= 0 %}
+                            <tr>
+                                <td colspan="2" class="text-center"> No Warnings Found!</td>
+                            </tr>
+                        {% else %}
+                            {% for w in data['errors']['warnings'] %}
+                            <tr>
+                                <td>{{ w[0] }}</td>
+                                <td>{{ w[1] }}</td>
+                            </tr>
+                            {% end %}
+                        {% end %}
+                    </table>
+                </div>
+              </div>
+        </div>
+
+    </div>
+
+
+</section>
+
+<!--
+{{ data }}
+-->
+
+
+
+
+{% end %}
+
+{% block js-script %}
+
+<script>
+    $( document ).ready(function() {
+        console.log( "ready!" );
+        scroll()
+    });
+
+    function scroll(){
+        var logview = $('#logs');
+        if(logview.length)
+           logview.scrollTop(logview[0].scrollHeight - logview.height());
+    }
+</script>
+
+{% end %}

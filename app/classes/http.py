@@ -9,6 +9,7 @@ import tornado.ioloop
 import tornado.log
 import tornado.template
 import tornado.escape
+import json
 
 from app.classes.console import Console
 from app.classes.helpers import helpers
@@ -116,6 +117,9 @@ class AdminHandler(BaseHandler):
         elif page == 'change_password':
             template = "admin/change_pass.html"
 
+        elif page == 'virtual_console':
+            template = "admin/virt_console.html"
+
         elif page == "server_control":
             template = "admin/server_control.html"
             logfile = helper.get_crafty_log_file()
@@ -141,6 +145,16 @@ class AdminHandler(BaseHandler):
 
 
             self.redirect('/admin/dashboard')
+
+        elif page == 'get_logs':
+            server_log = os.path.join(self.mcserver.server_path, 'logs', 'latest.log')
+            data = helper.read_whole_file(server_log)
+
+            errors = self.mcserver.search_for_errors()
+            template = "admin/logs.html"
+            context = {'log_data': data, 'errors': errors}
+
+
 
         else:
             # 404
@@ -180,16 +194,40 @@ class AdminHandler(BaseHandler):
 
 class AjaxHandler(BaseHandler):
 
+    def initialize(self, mcserver):
+        self.mcserver = mcserver
+
+    @tornado.web.authenticated
     def get(self, page):
-        self.render(
-            "admin/dashboard.html",
-        )
+
+        if page == 'server_log':
+
+            server_log = os.path.join(self.mcserver.server_path, 'logs', 'latest.log')
+            data = helper.tail_file(server_log, 40)
+
+            for d in data:
+                self.write(d.encode("utf-8"))
+
+    def post(self, page):
+
+        if page == "send_command":
+            # posted_data = tornado.escape.json_decode(self.request.body)
+            command = self.get_body_argument('command', default=None, strip=True)
+            if command:
+                if self.mcserver.check_running:
+                    self.mcserver.send_command(command)
+
+
+
+
+
 
 
 class webserver():
 
     def __init__(self, mc_server):
         self.mc_server = mc_server
+
 
     def log_function(self, handler):
 

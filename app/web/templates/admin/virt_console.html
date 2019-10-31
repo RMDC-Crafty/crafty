@@ -1,0 +1,115 @@
+{% extends ../base.html %}
+
+{% block title %}Crafty Controller - Virtual Console{% end %}
+
+{% block content %}
+
+<section class="content-header">
+  <h1>
+    Virtual Console
+    <small>Sometimes you just need a terminal</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Virtual Console</li>
+  </ol>
+</section>
+
+
+<section class="content">
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">
+                      Virtual Console
+                  </h3>
+                </div>
+                <div class="box-body">
+                    <textarea id="virt_console" rows="25" readonly class="form-control"></textarea>
+                    <br />
+                    <div class="input-group">
+                       <input type="text" class="form-control" id="server_command" name="server_command" placeholder="Enter your server command">
+                       <span class="input-group-btn">
+                            <button id="submit" class="btn btn-default" type="button">Send Command</button>
+                       </span>
+                    </div>
+                </div>
+              </div>
+        </div>
+    </div>
+
+
+</section>
+
+<!--
+{{ data }}
+-->
+
+
+
+
+{% end %}
+
+{% block js-script %}
+
+<script>
+    function get_server_log(){
+        $.ajax({
+            type: 'GET',
+            url: '/ajax/server_log',
+            dataType: 'text',
+            success: function (data) {
+                console.log('Got Log From Server')
+                $('#virt_console').val(data);
+                scroll()
+             },
+        });
+    }
+
+    //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
+    $( document ).ready(function() {
+        console.log( "ready!" );
+        get_server_log()
+
+        setInterval(function(){
+            get_server_log() // this will run after every 5 seconds
+        }, 1500);
+    });
+
+    $("#submit").click(function(e) {
+        e.preventDefault();
+        var server_command = $("#server_command").val()
+        var token = getCookie("_xsrf")
+
+        data_to_send = { command :server_command,  }
+
+        console.log('sending command: ' + server_command)
+        $.ajax({
+          type: "POST",
+          headers: {'X-XSRFToken': token},
+          url: '/ajax/send_command',
+          data: data_to_send,
+          success: function(data){
+            console.log("got response:");
+            console.log(data);
+            $("#server_command").val('')
+          },
+        });
+    });
+
+    function scroll(){
+        var logview = $('#virt_console');
+        if(logview.length)
+           logview.scrollTop(logview[0].scrollHeight - logview.height());
+    }
+
+</script>
+
+{% end %}

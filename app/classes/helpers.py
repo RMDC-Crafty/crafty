@@ -92,6 +92,49 @@ class helpers:
     def get_crafty_log_file(self):
         return self.crafty_log_file
 
+    def read_whole_file(self, file_name):
+
+        if not self.check_file_exists(file_name):
+            logging.warning("Unable to find file: {}".format(file_name))
+            return False
+
+        with open(file_name, 'r') as f:
+            content = f.readlines()
+
+        return content
+
+
+
+
+    def tail_file(self, file_name, number_lines=20):
+        if not self.check_file_exists(file_name):
+            logging.warning("Unable to find file to tail: {}".format(file_name))
+            return False
+
+        # length of lines is X char here
+        avg_line_length = 90
+
+        # create our buffer number - number of lines * avg_line_length
+        line_buffer = number_lines * avg_line_length
+
+        # open our file
+        with open(file_name, 'r') as f:
+
+            # seek
+            f.seek(0, 2)
+
+            # get file size
+            fsize = f.tell()
+
+            # set pos @ last n chars (buffer from above = number of lines * avg_line_length)
+            f.seek(max (fsize-line_buffer, 0), 0)
+
+            # read file til the end
+            lines = f.readlines()
+
+        # now we are done getting the lines, let's return it
+        return lines
+
     # returns a list of list of matching lines in the file searched
     def search_file(self, file_to_search, word='info', line_numbers=True, limit=None):
 

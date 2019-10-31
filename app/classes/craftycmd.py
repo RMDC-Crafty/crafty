@@ -17,24 +17,28 @@ class MainPrompt(cmd.Cmd):
     # overrides the default Prompt
     prompt = "Crafty Controller > "
 
-    def do_version(self,line):
+    def print_crafty_end(self):
+        logging.info("***** Crafty Stopped ***** \n")
+
+    def do_version(self, line):
         Console.info(__version__)
 
     def help_version(self):
         Console.help("Shows the Crafty version")
 
     def stop_all_children(self):
+        Console.info("Stopping any server daemons")
+
         if self.mc_server_obj.check_running:
             try:
                 self.mc_server_obj.stop_threaded_server()
-                logging.info("***** Crafty Stopped ***** \n")
+                self.print_crafty_end()
             except:
-                pass
+                self.print_crafty_end()
         else:
-            logging.info("***** Crafty Stopped ***** \n")
+            self.print_crafty_end()
 
     def do_stop(self, line):
-        Console.info('Stopping Minecraft Server')
         self.stop_all_children()
         sys.exit(0)
 
@@ -48,7 +52,6 @@ class MainPrompt(cmd.Cmd):
 
     def do_exit(self, line):
         """ Exits the main program """
-        Console.info('Stopping Minecraft Server')
         self.stop_all_children()
         sys.exit(0)
 

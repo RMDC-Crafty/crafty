@@ -159,7 +159,7 @@
                           <td>
                             {{ data['errors'] }}&nbsp;
                             {% if data['errors'] >= 1 %}
-                              <a href="/admin/errors">
+                              <a href="/admin/get_logs">
                                  <span class="label label-danger">Errors - Click to View</span>
                                </a>
                             {% else %}
@@ -172,7 +172,7 @@
                           <td>
                             {{ data['warnings'] }}&nbsp;
                             {% if data['warnings'] >= 1 %}
-                               <a href="/admin/warnings">
+                               <a href="/admin/get_logs">
                                  <span class="label label-danger">Warnings - Click to View</span>
                                </a>
                             {% else %}
