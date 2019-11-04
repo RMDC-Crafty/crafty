@@ -71,7 +71,10 @@
 
         <div class="info-box-content">
           <span class="info-box-text">Players</span>
-          <span class="info-box-number">7</span>
+          <span class="info-box-number">
+              {{ data['online_stats']['online']}} /
+              {{ data['online_stats']['max']}}
+          </span>
         </div>
         <!-- /.info-box-content -->
       </div>
@@ -134,6 +137,14 @@
           <div class="row">
                 <div class="col-md-6">
                     <table class="table">
+                        <tr>
+                            <td><b>Server Version</b></td>
+                            <td>{{ data['server_version'] }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Server Description</b></td>
+                            <td>{{ data['server_description'] }}</td>
+                        </tr>
                         <tr>
                           <td><b>World Name</b></td>
                           <td>{{ data['world_data']['world_name'] }}</td>
@@ -243,6 +254,34 @@
             <!-- /.box-footer -->
           </div>
     </div>
+
+    <div class="col-md-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title"><i class="fa fa-users" aria-hidden="true"></i>
+                  Players List</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="table-responsive">
+                <ul>
+                    {% for player in data['online_stats']['players'] %}
+                        <li>{{ player }}</li>
+                    {% end %}
+
+                </ul>
+              </div>
+              <!-- /.table-responsive -->
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer clearfix">
+
+
+            </div>
+            <!-- /.box-footer -->
+          </div>
+    </div>
+
 </div>
 
 

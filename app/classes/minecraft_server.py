@@ -14,11 +14,13 @@ import logging.config
 import pexpect
 from pexpect.popen_spawn import PopenSpawn
 
+from app.classes.mc_ping import ping
 from app.classes.console import Console
 from app.classes.helpers import helpers
 from app.classes.models import *
 
 helper = helpers()
+
 
 
 
@@ -281,6 +283,12 @@ class Minecraft_Server():
         datime = datetime.datetime.fromtimestamp(psutil.boot_time())
         errors = self.search_for_errors()
 
+        try:
+            server_ping = self.ping_server()
+        except:
+            server_ping = False
+            pass
+
         server_stats = {'cpu_usage': psutil.cpu_percent(interval=0.5) / psutil.cpu_count(),
                         'cpu_cores': psutil.cpu_count(),
                         'mem_percent': psutil.virtual_memory()[2],
@@ -292,6 +300,29 @@ class Minecraft_Server():
                         'world_data': self.get_world_info(),
                         'server_running': self.check_running()
                         }
+        if server_ping:
+            server_stats.update({'server_description': server_ping.description})
+            server_stats.update({'server_version': server_ping.version})
+            online_stats = json.loads(server_ping.players)
+
+            if online_stats:
+                online_data = {
+                    'online': online_stats.get('online', 0),
+                    'max': online_stats.get('max', 0),
+                    'players': online_stats.get('players', [])
+                }
+                server_stats.update({'online_stats': online_data})
+
+        else:
+            server_stats.update({'server_description': 'Unable To Connect'})
+            server_stats.update({'server_version': 'Unknown'})
+
+            online_data = {
+                'online': 0,
+                'max': 0,
+                'players': []
+            }
+            server_stats.update({'online_stats': online_data})
 
         json_file_path = os.path.join(helper.get_web_temp_path(), 'server_data.json')
 
@@ -397,3 +428,8 @@ class Minecraft_Server():
         else:
             logging.warning("Unable to find world disk data")
             return False
+
+    def ping_server(self):
+        mc_ping = ping('127.0.0.1')
+        return mc_ping
+
