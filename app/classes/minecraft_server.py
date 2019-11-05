@@ -379,7 +379,7 @@ class Minecraft_Server():
                         {"full_world_path": os.path.join(self.server_path, world_name + "_the_end"),
                             "backup_filename": os.path.join(
                                 backup_sub_dir,
-                                world_name + "the_end_" +
+                                world_name + "_the_end_" +
                                 datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + ".zip")
                         },
                     ]

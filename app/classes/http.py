@@ -123,7 +123,7 @@ class AdminHandler(BaseHandler):
 
         elif page == "backups":
             template = "admin/backups.html"
-            backup_path = self.mcserver.settings.server_path
+            backup_path = os.path.join(self.mcserver.settings.server_path, 'crafty_backups')
             context = {'backup_path': backup_path, 'current_backups': self.mcserver.list_backups()}
 
         elif page == 'downloadbackup':
