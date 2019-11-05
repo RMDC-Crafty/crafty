@@ -3,13 +3,14 @@ import json
 import time
 import asyncio
 import logging
+import schedule
 import threading
 import tornado.web
 import tornado.ioloop
 import tornado.log
 import tornado.template
 import tornado.escape
-import json
+
 
 from app.classes.console import Console
 from app.classes.helpers import helpers
@@ -120,6 +121,28 @@ class AdminHandler(BaseHandler):
         elif page == 'virtual_console':
             template = "admin/virt_console.html"
 
+        elif page == "backups":
+            template = "admin/backups.html"
+            backup_path = self.mcserver.settings.server_path
+            context = {'backup_path': backup_path, 'current_backups': self.mcserver.list_backups()}
+
+        elif page == 'downloadbackup':
+            path = self.get_argument("file", None, True)
+
+            if path is not None:
+                file_name = os.path.basename(path)
+                self.set_header('Content-Type', 'application/octet-stream')
+                self.set_header('Content-Disposition', 'attachment; filename=' + file_name)
+
+                with open(path, 'rb') as f:
+                    while 1:
+                        data = f.read(16384)  # or some other nice-sized chunk
+                        if not data:
+                            break
+                        self.write(data)
+                self.finish()
+            self.redirect("/admin/backups")
+
         elif page == "server_control":
             template = "admin/server_control.html"
             logfile = helper.get_crafty_log_file()
@@ -127,24 +150,32 @@ class AdminHandler(BaseHandler):
 
         elif page == 'commands':
             command = self.get_argument("command", None, True)
+
             if command == "server_stop":
                 self.mcserver.stop_threaded_server()
                 time.sleep(3)
                 self.mcserver.write_html_server_status()
+                next_page = "/admin/dashboard"
 
             elif command == "server_start":
                 self.mcserver.run_threaded_server()
                 time.sleep(3)
                 self.mcserver.write_html_server_status()
+                next_page = "/admin/dashboard"
 
             elif command == "server_restart":
                 self.mcserver.stop_threaded_server()
                 time.sleep(3)
                 self.mcserver.run_threaded_server()
                 self.mcserver.write_html_server_status()
+                next_page = "/admin/dashboard"
 
+            elif command == "backup":
+                backup_thread = threading.Thread(name='backup', target=self.mcserver.backup_worlds, daemon=False)
+                backup_thread.start()
+                next_page = '/admin/backups'
 
-            self.redirect('/admin/dashboard')
+            self.redirect(next_page)
 
         elif page == 'get_logs':
             server_log = os.path.join(self.mcserver.server_path, 'logs', 'latest.log')

@@ -1,0 +1,106 @@
+{% extends ../base.html %}
+
+{% block title %}Crafty Controller - Backups{% end %}
+
+{% block content %}
+
+<section class="content-header">
+  <h1>
+    Server Backups
+    <small>Because the NSA won't send their copy</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Server Backup</li>
+  </ol>
+</section>
+
+
+<section class="content">
+
+    <div class="row">
+        <div class="col-xs-3">
+            <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">
+                      Backup
+                  </h3>
+                </div>
+                <div class="box-body">
+                    <a href="/admin/commands?command=backup"
+                       onclick="backup_started()"
+                        class="btn btn-app">
+                        <i class="fa fa-floppy-o"></i> Backup Server Now
+                    </a>
+                    <br />
+                    Your backups are stored in: <br /> {{ data['backup_path'] }}<br />
+
+                </div>
+              </div>
+        </div>
+
+        <div class="col-xs-9">
+            <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">
+                      Existing Backups
+                  </h3>
+                </div>
+                <div class="box-body">
+                    <table class="table table-responsive" id="backup_table">
+                        <thead>
+                        <tr>
+                            <th width="10%">Download</th>
+                            <th>Path</th>
+                            <th width="20%">Size</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for backup in data['current_backups'] %}
+                            <tr>
+                            <td>
+                                <a href="/admin/downloadbackup?file={{ backup['path'] }}" class="btn btn-primary">
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                    Download
+                                </a>
+                            </td>
+                            <td>{{ backup['path'] }}</td>
+                            <td>{{ backup['size'] }}</td>
+                            </tr>
+                        {% end %}
+                        </tbody>
+                    </table>
+                </div>
+              </div>
+        </div>
+    </div>
+</section>
+
+<!--
+{{ data }}
+-->
+
+
+
+
+{% end %}
+
+{% block js-script %}
+
+<script>
+    function backup_started(time='5-10'){
+            bootbox.alert({
+            message: "A backup task has been started.",
+            backdrop: true
+        });
+    }
+    $( document ).ready(function() {
+        console.log( "ready!" );
+        $('#backup_table').DataTable({
+            "order": [[ 1, "desc" ]]
+        });
+    });
+
+</script>
+
+{% end %}

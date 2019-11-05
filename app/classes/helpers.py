@@ -103,9 +103,6 @@ class helpers:
 
         return content
 
-
-
-
     def tail_file(self, file_name, number_lines=20):
         if not self.check_file_exists(file_name):
             logging.warning("Unable to find file to tail: {}".format(file_name))
@@ -175,3 +172,8 @@ class helpers:
             logging.info('Unable to find string {} in {}'.format(word, file_to_search))
 
         return return_lines
+
+    def zippath(self, path, zipfile_handle):
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                zipfile_handle.write(os.path.join(root, file))
