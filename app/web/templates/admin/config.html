@@ -1,0 +1,62 @@
+{% extends ../base.html %}
+
+{% block title %}Crafty Controller - Configuration{% end %}
+
+{% block content %}
+
+<section class="content-header">
+  <h1>
+    Server Config
+    <small>Configure Your Server</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Configuration</li>
+  </ol>
+</section>
+
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">
+                      Minecraft Server Config
+                  </h3>
+                </div>
+
+                <div class="box-body">
+                    {{ data }}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--
+{{ data }}
+-->
+
+
+
+
+{% end %}
+
+{% block js-script %}
+
+<script>
+    $( document ).ready(function() {
+        console.log( "ready!" );
+
+        //adding quick/dirty padding
+        $('input').css("margin-bottom",'10px')
+
+
+    });
+
+
+</script>
+
+{% end %}

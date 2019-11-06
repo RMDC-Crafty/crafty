@@ -10,7 +10,7 @@ import tornado.ioloop
 import tornado.log
 import tornado.template
 import tornado.escape
-
+from playhouse.shortcuts import model_to_dict, dict_to_model
 
 from app.classes.console import Console
 from app.classes.helpers import helpers
@@ -125,6 +125,12 @@ class AdminHandler(BaseHandler):
             template = "admin/backups.html"
             backup_path = os.path.join(self.mcserver.settings.server_path, 'crafty_backups')
             context = {'backup_path': backup_path, 'current_backups': self.mcserver.list_backups()}
+
+        elif page == 'config':
+            template = "admin/config.html"
+            db_data = MC_settings.get()
+            context = model_to_dict(db_data)
+
 
         elif page == 'downloadbackup':
             path = self.get_argument("file", None, True)

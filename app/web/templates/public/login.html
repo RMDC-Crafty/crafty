@@ -59,14 +59,35 @@
       </div>
         {% raw xsrf_form_html() %}
     </form>
-
+    <br />
+      <h3>Server Status</h3>
       <div class="row">
-          <div class="col-xs-12 text-center">
-              Server Status:
+          <div class="col-xs-12 text-left">
+
               {% if data['server_running'] %}
-                    <span class="text-green">
-                        Server Running &nbsp;
-                    </span>
+                    <table class="table">
+                      <tr>
+                          <td>Server Status:</td>
+                          <td>
+                            <span class="text-green">
+                                Server Running &nbsp;
+                            </span>
+                          </td>
+                      </tr>
+                      <tr>
+                          <td>Server Version:</td>
+                          <td>{{ data['server_version'] }}</td>
+                      </tr>
+                      <tr>
+                          <td>Server Description:</td>
+                          <td>{{ data['server_description'] }}</td>
+                      </tr>
+                      <tr>
+                          <td>Server World Name:</td>
+                          <td>{{ data['world_data']['world_name'] }}</td>
+                      </tr>
+                  </table>
+
                 {% else %}
                     <span class="text-red">
                         Server Down &nbsp;
