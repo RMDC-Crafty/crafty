@@ -19,18 +19,125 @@
 <section class="content">
     <div class="row">
         <div class="col-xs-6">
-            <div class="box">
-                <div class="box-header with-border">
-                  <h3 class="box-title">
-                      Minecraft Server Config
-                  </h3>
-                </div>
+            <form role="form" method="post">
+                {% raw xsrf_form_html() %}
+                <div class="box">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">
+                          Minecraft Server Config
+                      </h3>
+                    </div>
 
-                <div class="box-body">
-                    {{ data }}
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label>
+                                Server Path <br />
+                                <small>What folder is your server in? (example: C:\minecraft\server)</small>
+                            </label>
+                            <input type="text"
+                                   name="server_path" id="server_path"
+                                   class="form-control" placeholder="Server Path Here"
+                                   value="{{ data['server_path'] }}"
+                            />
+                        </div>
 
+                        <div class="form-group">
+                            <label>
+                                Server Jar <br />
+                                <small>What is your jar filename? (example: paper.jar)</small>
+                            </label>
+                            <input type="text"
+                                   name="server_jar" id="server_jar"
+                                   class="form-control" placeholder="Server Jar Here"
+                                   value="{{ data['server_jar'] }}"
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                Server Max Memory <br />
+                                <small>Maximum Memory To Use in MB? (example: 2048)</small>
+                            </label>
+                            <input type="number"
+                                   name="memory_max" id="memory_max"
+                                   class="form-control" placeholder="Server Max Memory"
+                                   value="{{ data['memory_max'] }}"
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                Server Min Memory <br />
+                                <small>Minimum Memory To Use in MB? (example: 1024)</small>
+                            </label>
+                            <input type="number"
+                                   name="memory_min" id="memory_min"
+                                   class="form-control" placeholder="Server Min Memory"
+                                   value="{{ data['memory_min'] }}"
+                            />
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                Server Extra Arguments <br />
+                                <small>Additional Args? (arguments to add at the end of server command)</small>
+                            </label>
+                            <input type="text"
+                                   name="additional_args" id="additional_args"
+                                   class="form-control" placeholder="Extra Arguments"
+                                   value="{{ data['additional_args'] }}"
+                            />
+                        </div>
+
+
+                        <!-- radio -->
+                        <div class="form-group">
+                            <b>Auto Start Server On Program Launch?</b>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio"
+                                           name="auto_start_server"
+                                           value="1"
+                                            {% if data['auto_start_server'] %} checked {% end %}
+                                            />
+                                    Yes - Start the Minecraft Server on program launch.
+                                </label>
+                            </div>
+
+                            <div class="radio">
+                                <label>
+                                    <input type="radio"
+                                           name="auto_start_server"
+                                           value="0"
+                                            {% if data['auto_start_server'] == False %} checked {% end %}
+                                            />
+                                    No - I will start the server myself.
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                Auto Start Delay In Seconds<br />
+                                <small>Has no effect if auto start is turned off (Example: 10)</small>
+                            </label>
+                            <input type="number"
+                                   name="auto_start_delay" id="auto_start_delay"
+                                   class="form-control" placeholder="Autostart Delay"
+                                   value="{{ data['auto_start_delay'] }}"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="box-footer">
+                        <a href="/admin/config" class="btn btn-danger">Cancel</a>
+                        <button type="submit" class="btn btn-success pull-right">
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                            Save
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </section>
@@ -47,12 +154,29 @@
 {% block js-script %}
 
 <script>
+    function show_saved(){
+        var dialog = bootbox.dialog({
+            message: "Settings Saved",
+            className: 'modal modal-success fade-in',
+            okButton: false
+        });
+    }
+
+
+    function hide_modal(){
+        bootbox.hideAll()
+    }
+
     $( document ).ready(function() {
         console.log( "ready!" );
 
         //adding quick/dirty padding
         $('input').css("margin-bottom",'10px')
 
+        {% if data['saved'] %}
+            show_saved()
+            setTimeout(hide_modal, 1500);
+        {% end %}
 
     });
 

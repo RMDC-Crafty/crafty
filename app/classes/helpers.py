@@ -2,6 +2,8 @@ import os
 import re
 import logging
 import requests
+import string
+import random
 
 from app.classes.console import Console
 from argon2 import PasswordHasher
@@ -17,6 +19,14 @@ class helpers:
         self.webroot = os.path.join(os.path.curdir, 'app', 'web')
         self.web_temp = os.path.join(self.webroot, 'temp')
         self.crafty_log_file = os.path.join(os.path.curdir, "logs", 'crafty.log')
+
+    def random_string_generator(self, size=6, chars=string.ascii_uppercase + string.digits):
+        """
+        Example Usage
+        random_generator() = G8sjO2
+        random_generator(3, abcdef) = adf
+        """
+        return ''.join(random.choice(chars) for x in range(size))
 
     def ensure_dir_exists(self, path):
         """

@@ -22,7 +22,7 @@ helper = helpers()
 
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
-        return self.get_secure_cookie("user")
+        return self.get_secure_cookie("user", max_age_days=1)
 
 
 class My404Handler(BaseHandler):
@@ -39,7 +39,7 @@ class PublicHandler(BaseHandler):
 
     def set_current_user(self, user):
         if user:
-            self.set_secure_cookie("user", tornado.escape.json_encode(user))
+            self.set_secure_cookie("user", tornado.escape.json_encode(user), expires_days=1)
         else:
             self.clear_cookie("user")
 
@@ -127,10 +127,14 @@ class AdminHandler(BaseHandler):
             context = {'backup_path': backup_path, 'current_backups': self.mcserver.list_backups()}
 
         elif page == 'config':
+            saved = self.get_argument('saved', None)
+
             template = "admin/config.html"
             db_data = MC_settings.get()
-            context = model_to_dict(db_data)
+            page_data = model_to_dict(db_data)
+            page_data['saved'] = saved
 
+            context = page_data
 
         elif page == 'downloadbackup':
             path = self.get_argument("file", None, True)
@@ -191,13 +195,10 @@ class AdminHandler(BaseHandler):
             template = "admin/logs.html"
             context = {'log_data': data, 'errors': errors}
 
-
-
         else:
             # 404
             template = "public/404.html"
             context = {}
-
 
         self.render(
             template,
@@ -207,15 +208,35 @@ class AdminHandler(BaseHandler):
     @tornado.web.authenticated
     def post(self, page):
 
-        entered_password = self.get_argument('password')
-        encoded_pass = helper.encode_pass(entered_password)
+        if page == 'change_password':
+            entered_password = self.get_argument('password')
+            encoded_pass = helper.encode_pass(entered_password)
 
-        q = Users.update({Users.password: encoded_pass}).where(Users.username == "Admin")
-        q.execute()
+            q = Users.update({Users.password: encoded_pass}).where(Users.username == "Admin")
+            q.execute()
 
-        self.clear_cookie("user")
-        self.redirect("/")
+            self.clear_cookie("user")
+            self.redirect("/")
 
+        elif page == 'config':
+
+
+
+            q = MC_settings.update({
+                MC_settings.server_path: self.get_argument('server_path'),
+                MC_settings.server_jar: self.get_argument('server_jar'),
+                MC_settings.memory_max: self.get_argument('memory_max'),
+                MC_settings.memory_min: self.get_argument('memory_min'),
+                MC_settings.additional_args: self.get_argument('additional_args'),
+                MC_settings.auto_start_server: int(self.get_argument('auto_start_server')),
+                MC_settings.auto_start_delay: self.get_argument('auto_start_delay'),
+            }).where(MC_settings.id == 1)
+
+            q.execute()
+            self.redirect("/admin/config?saved=True")
+
+
+            # q = MC_settings.update()
 
     def get_server_data(self):
         server_file = os.path.join( helper.get_web_temp_path(), "server_data.json")
@@ -255,16 +276,10 @@ class AjaxHandler(BaseHandler):
                     self.mcserver.send_command(command)
 
 
-
-
-
-
-
 class webserver():
 
     def __init__(self, mc_server):
         self.mc_server = mc_server
-
 
     def log_function(self, handler):
 
@@ -276,7 +291,6 @@ class webserver():
             'Elapsed_Time': '%.2fms' % (handler.request.request_time() * 1000)
         }
         tornado.log.access_log.info(json.dumps(info, indent=4))
-
 
     def run_tornado(self):
 
@@ -312,7 +326,7 @@ class webserver():
             template_path=os.path.join(web_root, 'templates'),
             static_path=os.path.join(web_root, 'static'),
             debug=True,
-            cookie_secret='wqkbnksbicg92ujbnf',
+            cookie_secret=helper.random_string_generator(20),
             xsrf_cookies=True,
             autoreload=False,
             log_function=self.log_function,
