@@ -147,7 +147,11 @@
                         </tr>
                         <tr>
                           <td><b>World Name</b></td>
-                          <td>{{ data['world_data']['world_name'] }}</td>
+                          <td>
+                              {% if data['world_data'] %}
+                                {{ data['world_data']['world_name'] }}
+                              {% end %}
+                          </td>
                         </tr>
                         <tr>
                           <td><b>{{ data['world_data']['world_name'] }} Disk Usage</b></td>
