@@ -511,8 +511,8 @@ class Minecraft_Server():
 
                     # if the directory name is "region"
                     if name == "region":
-                        #log it!
-                        logging.info("Path {} is called region. Getting directory size".format(os.path.join(root, name)))
+                        # log it!
+                        logging.debug("Path {} is called region. Getting directory size".format(os.path.join(root, name)))
 
                         # get this directory size, and add it to the total we have running.
                         total_size += self.get_dir_size(os.path.join(root, name))
