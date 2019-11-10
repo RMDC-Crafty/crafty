@@ -499,27 +499,28 @@ class Minecraft_Server():
     def get_world_info(self):
         world = self.get_world_name()
 
-        helper.ensure_dir_exists(os.path.join(self.server_path, world))
-
         if world:
-            level_path = os.path.join(self.server_path, world)
-            nether_path = os.path.join(self.server_path, world + "_nether")
-            end_path = os.path.join(self.server_path, world + "_the_end")
+            total_size = 0
 
-            level_total_size = self.get_dir_size(level_path)
-            nether_total_size = self.get_dir_size(nether_path)
-            end_total_size = self.get_dir_size(end_path)
+            # do a scan of the directories in the server path.
+            for root, dirs, files in os.walk(self.server_path, topdown=False):
 
-            # doing a sep line to keep readable
-            level_total_size = self.human_readable_sizes(level_total_size)
-            nether_total_size = self.human_readable_sizes(nether_total_size)
-            end_total_size = self.human_readable_sizes(end_total_size)
+                # for each directory we find
+                for name in dirs:
+
+                    # if the directory name is "region"
+                    if name == "region":
+                        #log it!
+                        logging.info("Path {} is called region. Getting directory size".format(os.path.join(root, name)))
+
+                        # get this directory size, and add it to the total we have running.
+                        total_size += self.get_dir_size(os.path.join(root, name))
+
+            level_total_size = self.human_readable_sizes(total_size)
 
             return {
                 'world_name': world,
-                'world_size': level_total_size,
-                'nether_size': nether_total_size,
-                'end_size': end_total_size
+                'world_size': level_total_size
             }
         else:
             logging.warning("Unable to find world disk data")
