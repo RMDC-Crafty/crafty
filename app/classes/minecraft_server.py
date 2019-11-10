@@ -77,7 +77,7 @@ class Minecraft_Server():
         # set up execute path
         server_exec_path = os.path.join(server_path, server_jar)
 
-        self.server_command = "java -Xms{}M -Xmx{}M -jar {} nogui {}".format(server_min_mem,
+        self.server_command = 'java -Xms{}M -Xmx{}M -jar "{}" nogui {}'.format(server_min_mem,
                                                                            server_max_mem,
                                                                            server_exec_path,
                                                                            server_args)

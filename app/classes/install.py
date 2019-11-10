@@ -87,6 +87,11 @@ class installer():
         auto_start = str(
             input("Do you want to automatically start the Minecraft server on program launch? y/n > ") or "y")
 
+        if auto_start == 'y':
+            auto_start = 1
+        else:
+            auto_start = 0
+
         print("\n")
 
         if auto_start == "y":
