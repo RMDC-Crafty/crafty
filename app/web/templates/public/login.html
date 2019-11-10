@@ -84,7 +84,11 @@
                       </tr>
                       <tr>
                           <td>Server World Name:</td>
-                          <td>{{ data['world_data']['world_name'] }}</td>
+                          <td>
+                              {% if data['world_data'] %}
+                                {{ data['world_data']['world_name'] }}
+                              {% end %}
+                          </td>
                       </tr>
                   </table>
 

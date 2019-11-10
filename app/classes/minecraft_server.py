@@ -102,8 +102,8 @@ class Minecraft_Server():
             logging.info("Windows Detected - launching cmd")
             self.server_command = self.server_command.replace('\\', '/')
             self.process = pexpect.popen_spawn.PopenSpawn('cmd \n', timeout=None, encoding=None)
-            self.process.send('cd {} \n'.format(self.server_path.replace('\\', '/')))
-            self.process.send('"' + self.server_command + '"' + "\n")
+            self.process.send('cd "{}" \n'.format(self.server_path.replace('\\', '/')))
+            self.process.send(self.server_command + "\n")
             self.PID = self.process.pid
 
         else:
