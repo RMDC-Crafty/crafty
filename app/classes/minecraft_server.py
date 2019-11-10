@@ -439,7 +439,7 @@ class Minecraft_Server():
     def search_server_properties(self, regex='*'):
 
         # whats the file we are looking for?
-        server_prop_file = os.path.join(self.server_path, 'server.properties')
+        server_prop_file = os.path.join(self.server_path.replace('"', ''), 'server.properties')
 
         # re of what we are looking for
         # ignoring case - just in case someone used all caps
