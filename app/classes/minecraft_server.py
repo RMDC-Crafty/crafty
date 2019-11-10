@@ -23,8 +23,6 @@ from app.classes.models import *
 helper = helpers()
 
 
-
-
 class Minecraft_Server():
 
     def __init__(self):
@@ -322,7 +320,7 @@ class Minecraft_Server():
 
         else:
             server_stats.update({'server_description': 'Unable To Connect'})
-            server_stats.update({'server_version': 'Unknown'})
+            server_stats.update({'server_version': 'Unable to Connect'})
 
             online_data = {
                 'online': 0,
@@ -530,7 +528,10 @@ class Minecraft_Server():
             }
         else:
             logging.warning("Unable to find world disk data")
-            return False
+            return {
+                'world_name': 'Unable to find world name',
+                'world_size': 'Unable to find world size'
+            }
 
     def ping_server(self):
         mc_ping = ping('127.0.0.1')
