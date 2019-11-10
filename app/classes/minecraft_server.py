@@ -74,8 +74,13 @@ class Minecraft_Server():
         server_min_mem = self.settings.memory_min
         server_args = self.settings.additional_args
 
-        # set up execute path
-        server_exec_path = os.path.join(server_path, server_jar)
+        # set up execute path if we have spaces, we put quotes around it for windows
+        if " " in server_path:
+            exec_path = '"{}"'.format(server_path)
+        else:
+            exec_path = server_path
+
+        server_exec_path = os.path.join(exec_path, server_jar)
 
         self.server_command = 'java -Xms{}M -Xmx{}M -jar {} nogui {}'.format(server_min_mem,
                                                                            server_max_mem,

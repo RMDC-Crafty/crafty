@@ -49,10 +49,6 @@ class installer():
         server_path = str(
             input("What folder is your server jar located in? (blank for default) > ") or "/var/opt/minecraft/server")
 
-        # if we have a space in the path, we put quotes around it
-        if " " in server_path:
-            server_path = '"{}"'.format(server_path)
-
         print("\n")
 
         print("Please enter the name of your server.jar file: paperclip.jar is default")
