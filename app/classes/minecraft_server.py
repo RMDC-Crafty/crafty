@@ -77,7 +77,7 @@ class Minecraft_Server():
         # set up execute path
         server_exec_path = os.path.join(server_path, server_jar)
 
-        self.server_command = 'java -Xms{}M -Xmx{}M -jar "{}" nogui {}'.format(server_min_mem,
+        self.server_command = 'java -Xms{}M -Xmx{}M -jar {} nogui {}'.format(server_min_mem,
                                                                            server_max_mem,
                                                                            server_exec_path,
                                                                            server_args)
@@ -102,7 +102,7 @@ class Minecraft_Server():
             logging.info("Windows Detected - launching cmd")
             self.server_command = self.server_command.replace('\\', '/')
             self.process = pexpect.popen_spawn.PopenSpawn('cmd \n', timeout=None, encoding=None)
-            self.process.send('cd "{}" \n'.format(self.server_path.replace('\\', '/')))
+            self.process.send('cd {} \n'.format(self.server_path.replace('\\', '/')))
             self.process.send(self.server_command + "\n")
             self.PID = self.process.pid
 
