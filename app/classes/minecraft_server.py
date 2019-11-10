@@ -120,6 +120,7 @@ class Minecraft_Server():
 
         ts = time.time()
         self.start_time = str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
+        logging.info("Launching Minecraft server with command: {}".format(self.server_command))
         logging.info("Minecraft Server Running with PID: {}".format(self.PID))
 
 
