@@ -10,6 +10,9 @@
     },
     "tornado_other": {
       "format": "%(asctime)s - [Tornado] - [Other] - %(levelname)s - %(message)s"
+    },
+    "schedule": {
+      "format": "%(asctime)s - [Schedules] - %(levelname)s - %(message)s"
     }
   },
 
@@ -49,6 +52,16 @@
       "maxBytes": 10485760,
       "backupCount": 20,
       "encoding": "utf8"
+    },
+
+    "schedule_file_handler": {
+      "class": "logging.handlers.RotatingFileHandler",
+      "level": "INFO",
+      "formatter": "schedule",
+      "filename": "logs/schedule.log",
+      "maxBytes": 10485760,
+      "backupCount": 20,
+      "encoding": "utf8"
     }
   },
 
@@ -71,6 +84,11 @@
     "tornado.general": {
       "level": "INFO",
       "handlers": ["tornado_app_general_file_handler"],
+      "propagate": false
+    },
+    "schedule": {
+      "level": "INFO",
+      "handlers": ["schedule_file_handler"],
       "propagate": false
     }
   }

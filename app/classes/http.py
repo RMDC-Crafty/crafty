@@ -126,6 +126,11 @@ class AdminHandler(BaseHandler):
             backup_path = os.path.join(self.mcserver.settings.server_path, 'crafty_backups')
             context = {'backup_path': backup_path, 'current_backups': self.mcserver.list_backups()}
 
+        elif page == "schedules":
+            template = "admin/schedules.html"
+
+
+
         elif page == 'config':
             saved = self.get_argument('saved', None)
 
@@ -220,8 +225,6 @@ class AdminHandler(BaseHandler):
 
         elif page == 'config':
 
-
-
             q = MC_settings.update({
                 MC_settings.server_path: self.get_argument('server_path'),
                 MC_settings.server_jar: self.get_argument('server_jar'),
@@ -235,8 +238,6 @@ class AdminHandler(BaseHandler):
             q.execute()
             self.redirect("/admin/config?saved=True")
 
-
-            # q = MC_settings.update()
 
     def get_server_data(self):
         server_file = os.path.join( helper.get_web_temp_path(), "server_data.json")

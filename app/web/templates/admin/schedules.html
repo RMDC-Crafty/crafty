@@ -1,0 +1,114 @@
+{% extends ../base.html %}
+
+{% block title %}Crafty Controller - Server Schedules{% end %}
+
+{% block content %}
+
+<section class="content-header">
+  <h1>
+    Scheduled Tasks
+    <small>
+       It's like a bot, only better
+    </small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Schedules</li>
+  </ol>
+</section>
+
+
+<section class="content">
+
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">
+                      Scheduled Actions
+                  </h3>
+                </div>
+                <div class="box-body">
+                    <form role="form" method="post">
+                        {% raw xsrf_form_html() %}
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label>Select Your Action</label>
+                                <select class="form-control" name="action" id="action">
+                                    <option value="backup">Backup Worlds</option>
+                                    <option value="start">Start Server</option>
+                                    <option value="stop">Stop Server</option>
+                                    <option value="restart">Restart Server</option>
+                                    <option value="command">Issue Command</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>How Often </label>
+                            <input type="number" class="form-control" placeholder="10" name="interval" id="interval">
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label>Interval Type</label>
+                                <select class="form-control" name="type" id="type">
+                                    <option value="m">Minutes</option>
+                                    <option value="h">Hours</option>
+                                    <option value="d">Days</option>
+                                    <option value="mon">Monday</option>
+                                    <option value="tue">Tuesday</option>
+                                    <option value="wed">Wednesday</option>
+                                    <option value="thur">Thursday</option>
+                                    <option value="fri">Friday</option>
+                                    <option value="sat">Satday</option>
+                                    <option value="sun">Sunday</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Time </label>
+                            <small id="time-help">Time is disabled for minute values</small>
+                            <input type="text" class="form-control" name="time" disabled="disabled"
+                                   id="time" class="time ui-timepicker-input" autocomplete="off">
+                        </div>
+
+                  </form>
+                </div>
+
+              </div>
+        </div>
+
+    </div>
+
+
+</section>
+
+<!--
+{{ data }}
+-->
+
+
+
+
+{% end %}
+
+{% block js-script %}
+<script>
+    $( document ).ready(function() {
+        console.log( "ready!" );
+
+        //adding quick/dirty padding
+        $('input').css("margin-bottom",'10px')
+
+        $('#time').timepicker();
+
+        $("#type").change(function(){
+            $("#time").prop('disabled', $(this).val() == 'm');
+        });
+
+    });
+</script>
+
+{% end %}

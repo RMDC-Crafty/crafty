@@ -65,10 +65,13 @@ def setup_admin():
         console.info("Please login to the web portal and change this ASAP")
 
 
+def read_schedules():
+    print('Schedules Here')
+
 def start_scheduler():
     while True:
         schedule.run_pending()
-        time.sleep(10)
+        time.sleep(5)
 
 def main():
 
