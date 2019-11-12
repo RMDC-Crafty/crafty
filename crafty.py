@@ -110,7 +110,7 @@ def main():
 
     time.sleep(.5)
 
-    schedule.every(1).minute.do(mc_server.write_html_server_status)
+    schedule.every(10).seconds.do(mc_server.write_html_server_status)
 
     logging.info("Starting Scheduler Daemon")
     Console.info("Starting Scheduler Daemon")

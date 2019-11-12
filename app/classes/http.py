@@ -61,26 +61,23 @@ class PublicHandler(BaseHandler):
         entered_user = self.get_argument('username')
         entered_password = self.get_argument('password')
 
-        user_data = Users.get(Users.username == entered_user)
-        if user_data:
-            # if the login is good and the pass verified, we go to the dashboard
-            login_result = helper.verify_pass(entered_password, user_data.password)
-            if login_result:
-                self.set_current_user(entered_user)
-                self.redirect(self.get_argument("next", u"/admin/dashboard"))
+        try:
+            user_data = Users.get(Users.username == entered_user)
 
-            else:
-                server_data = self.get_server_data()
-                template = "public/login.html"
-                context = server_data
-                context['login'] = False
+            if user_data:
+                # if the login is good and the pass verified, we go to the dashboard
+                login_result = helper.verify_pass(entered_password, user_data.password)
+                if login_result:
+                    self.set_current_user(entered_user)
+                    self.redirect(self.get_argument("next", u"/admin/dashboard"))
+        except:
+            pass
 
-        else:
-            server_data = self.get_server_data()
+        server_data = self.get_server_data()
 
-            template = "public/login.html"
-            context = server_data
-            context['login'] = False
+        template = "public/login.html"
+        context = server_data
+        context['login'] = False
 
         self.render(
             template,
