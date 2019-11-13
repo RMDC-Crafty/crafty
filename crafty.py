@@ -73,13 +73,10 @@ def setup_admin():
         console.info("Please login to the web portal and change this ASAP")
 
 
-def read_schedules():
-    print('Schedules Here')
-
 def start_scheduler():
     while True:
         schedule.run_pending()
-        time.sleep(5)
+        time.sleep(.5)
 
 def main():
 
@@ -118,10 +115,13 @@ def main():
 
     time.sleep(.5)
 
+    # fire off a write_html_status now, and schedule one for every 10 seconds
+    mc_server.write_html_server_status()
     schedule.every(10).seconds.do(mc_server.write_html_server_status)
 
     logging.info("Starting Scheduler Daemon")
     Console.info("Starting Scheduler Daemon")
+
     scheduler = threading.Thread(name='Scheduler', target=start_scheduler, daemon=True)
     scheduler.start()
 

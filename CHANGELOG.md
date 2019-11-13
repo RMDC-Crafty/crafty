@@ -12,17 +12,18 @@ Crafty via configuration options.
 - moved scheduled logs to own file
 - removed old Alpha 1 documentation - replaced with page that links to craftycontrol.com
 - fixed windows path issues / errors.
-- database should create new tables as needed upon upgrade, if the user copies the crafty.sqlite
+- database should create new tables as needed upon upgrade, still recommend starting a new one
 
 ### Bug Fixes
-* Fixed a bug where invalid Login name would cause error on page.
-    * Thanks IAbooseYou
+* Fixed a bug where invalid Login name would cause error on page. - Thanks IAbooseYou
 
-* Fixed a bug where if unable to find world information, page would bomb out
-    * Thanks ConnorTron, DragonKnight, PengwinPlays
+* Fixed a bug where if unable to find world information, page would bomb out - Thanks ConnorTron, DragonKnight, PengwinPlays
 
-* Fixed a bug where if logs weren't found, page would bomb out - both virtual console and logs page
-    * Thanks Kornster
+* Fixed a bug where if logs weren't found, page would bomb out - both virtual console and logs page - Thanks Kornster
+    
+* Fixed issue number 2 & 3 related to getting player numbers and server version - Thanks Kornster / ConnorTron
+   
+* Fixed issue number 4 dealing with log file encoding -  Thanks Jarly
 
 ## [v2.0.alpha]
 This version of Crafty is a complete rebuild of Crafty from the ground up.

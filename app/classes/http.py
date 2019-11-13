@@ -101,6 +101,7 @@ class AdminHandler(BaseHandler):
 
     def initialize(self, mcserver):
         self.mcserver = mcserver
+        self.console = console
 
 
     @tornado.web.authenticated
@@ -131,6 +132,26 @@ class AdminHandler(BaseHandler):
 
             template = "admin/schedules.html"
             context = {'db_data': db_data, 'saved': saved}
+
+        elif page == "reloadschedules":
+
+            logging.info("Reloading Scheduled Tasks")
+
+            db_data = Schedules.select()
+
+            # clear all user jobs
+            schedule.clear('user')
+
+            logging.info("Deleting all old tasks")
+
+            logging.info("There are {} scheduled jobs to parse:".format(len(db_data)))
+
+            # loop through the tasks in the db
+            for task in db_data:
+                helper.scheduler(task, self.mcserver)
+
+            template = "admin/schedules.html"
+            context = {'db_data': db_data, 'saved': None}
 
         elif page == 'config':
             saved = self.get_argument('saved', None)
@@ -180,10 +201,7 @@ class AdminHandler(BaseHandler):
                 next_page = "/admin/dashboard"
 
             elif command == "server_restart":
-                self.mcserver.stop_threaded_server()
-                time.sleep(3)
-                self.mcserver.run_threaded_server()
-                self.mcserver.write_html_server_status()
+                self.mcserver.restart_threaded_server()
                 next_page = "/admin/dashboard"
 
             elif command == "backup":
@@ -225,11 +243,12 @@ class AdminHandler(BaseHandler):
             self.redirect("/")
 
         elif page == 'schedules':
-            action = self.get_argument('action')
-            interval = self.get_argument('interval')
-            interval_type = self.get_argument('type')
-            sched_time = self.get_argument('time')
-            comment = self.get_argument('comment')
+            action = self.get_argument('action', '')
+            interval = self.get_argument('interval', '')
+            interval_type = self.get_argument('type', '')
+            sched_time = self.get_argument('time', '')
+            command = self.get_argument('command', '')
+            comment = self.get_argument('comment', '')
 
             result = (
                 Schedules.insert(
@@ -238,6 +257,7 @@ class AdminHandler(BaseHandler):
                     interval=interval,
                     interval_type=interval_type,
                     start_time=sched_time,
+                    command=command,
                     comment=comment
                 )
                 .on_conflict('replace')

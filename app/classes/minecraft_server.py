@@ -131,10 +131,21 @@ class Minecraft_Server():
         self.write_html_server_status()
 
     def send_command(self, command):
-        logging.debug('Sending Command: {} to Server via pexpect'.format(command))
 
-        # send it
-        self.process.send(command + '\n')
+        if self.check_running():
+            logging.debug('Sending Command: {} to Server via pexpect'.format(command))
+
+            # send it
+            self.process.send(command + '\n')
+        else:
+            logging.warning('Sending Command: {} to Server Failed - Server is not up'.format(command))
+
+    def restart_threaded_server(self):
+        if self.check_running():
+            self.stop_threaded_server()
+            time.sleep(3)
+            self.run_threaded_server()
+            self.write_html_server_status()
 
     def stop_server(self):
         logging.info('Sending stop command to server')

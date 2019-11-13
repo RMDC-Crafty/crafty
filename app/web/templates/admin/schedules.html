@@ -60,13 +60,13 @@
                                     <option value="m">Minutes</option>
                                     <option value="h">Hours</option>
                                     <option value="d">Days</option>
-                                    <option value="mon">Monday</option>
-                                    <option value="tue">Tuesday</option>
-                                    <option value="wed">Wednesday</option>
-                                    <option value="thur">Thursday</option>
-                                    <option value="fri">Friday</option>
-                                    <option value="sat">Satday</option>
-                                    <option value="sun">Sunday</option>
+                                    <option value="monday">Monday</option>
+                                    <option value="tuesday">Tuesday</option>
+                                    <option value="wednesday">Wednesday</option>
+                                    <option value="thursday">Thursday</option>
+                                    <option value="friday">Friday</option>
+                                    <option value="saturday">Saturday</option>
+                                    <option value="sunday">Sunday</option>
                                 </select>
                             </div>
                         </div>
@@ -77,6 +77,12 @@
                             <small>An empty value means "every". For instance: Backup every 1 hour</small><br />
                             <input type="text" class="form-control" name="time" disabled="disabled"
                                    id="time" class="time ui-timepicker-input" autocomplete="off">
+                        </div>
+
+                        <div class="form-group" id="command_input" hidden="true">
+                            <label>Command </label>
+                            <input type="text" class="form-control" placeholder="Enter the command you wish to schedule"
+                                   name="command" id="command" value="say Crafty is amazing!">
                         </div>
 
                         <div class="form-group">
@@ -116,19 +122,51 @@
                             <thead>
                                 <th>Enabled</th>
                                 <th>Action</th>
-                                <th>Interval</th>
-                                <th>Time</th>
                                 <th>Comment</th>
 
                             </thead>
                             <tbody>
                                 {% for task in data['db_data'] %}
                                     <tr>
-                                        <td>{{ task.enabled }}</td>
-                                        <td>{{ task.action }}</td>
-                                        <td> every {{ task.interval }} {{ task.interval_type }}</td>
-                                        <td>{{ task.start_time }}</td>
-                                        <td>{{ task.comment }}</td>
+                                        <td>
+                                            {% if task.enabled %}
+                                                <i class="fa fa-thumbs-up text-green" aria-hidden="true"></i>
+                                            {% else %}
+                                                <i class="fa fa-thumbs-down text-red" aria-hidden="true"></i>
+                                            {% end %}
+                                        </td>
+
+                                        <td>
+                                            {% if task.action == 'command' %}
+                                                Send Command
+                                            {% else %}
+                                                {{ task.action.title() }}
+                                            {% end %}
+
+                                            every {{ task.interval }}
+
+                                            {% if task.interval_type == 'd' %}
+                                                day(s)
+                                            {% elif task.interval_type == 'm' %}
+                                                minute(s)
+                                            {% elif task.interval_type == 'h' %}
+                                                hour(s)
+                                            {% else %}
+                                                {{ task.interval_type.title() }}
+                                            {% end %}
+
+                                            {% if task.start_time %}
+                                                at {{ task.start_time }}
+                                            {% end %}
+
+                                            {% if task.command %}
+                                                <br />Command: {{ task.command }}
+                                            {% end %}
+                                        </td>
+
+                                        <td>
+                                            {{ task.comment }}
+                                        </td>
                                     </tr>
                                 {% end %}
                             </tbody>
@@ -139,7 +177,13 @@
                     </div>
 
                     <div class="box-footer">
-                        &nbsp;
+                        <span class="text-red">*</span> Reload is used to apply your changed schedules
+
+                        <a href="/admin/reloadschedules" class="btn btn-success pull-right">
+                            <i class="fa fa-refresh" aria-hidden="true"></i>
+                            Reload Crafty Scheduler
+                        </a>
+
                     </div>
 
     </div>
@@ -173,11 +217,23 @@
     $( document ).ready(function() {
         console.log( "ready!" );
 
+        $("#tasks").DataTable();
+
         $('#time').timepicker();
 
         $("#type").change(function(){
             $("#time").prop('disabled', $(this).val() == 'm');
         });
+
+        $("#action").change(function() {
+            var val = $(this).val();
+            if(val === "command") {
+                $('#command_input').show();
+            }
+            else {
+                $('#command_input').hide()
+            }
+          });
 
         //adding quick/dirty padding
         $('input').css("margin-bottom",'10px')

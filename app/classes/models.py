@@ -50,7 +50,8 @@ class Schedules(BaseModel):
     action = CharField()
     interval = IntegerField()
     interval_type = CharField()
-    start_time = CharField()
+    start_time = CharField(null=True)
+    command = CharField(null=True)
     comment = CharField()
 
     class Meta:
