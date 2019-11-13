@@ -156,7 +156,7 @@ class helpers:
             # line number
             line_num = 0
 
-            with open(file_to_search, 'rt') as f:
+            with open(file_to_search, 'rt', encoding="utf8") as f:
 
                 for line in f:
                     line_num += 1
