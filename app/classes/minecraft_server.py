@@ -534,6 +534,7 @@ class Minecraft_Server():
             }
 
     def ping_server(self):
-        mc_ping = ping('127.0.0.1')
+        server_port = self.search_server_properties("server-port")
+        mc_ping = ping('127.0.0.1', server_port)
         return mc_ping
 

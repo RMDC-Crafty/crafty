@@ -21,16 +21,17 @@
 <section class="content">
 
     <div class="row">
-        <form role="form" method="post">
-            {% raw xsrf_form_html() %}
-
-            <div class="col-xs-6">
+        <div class="col-xs-6">
+            <form role="form" method="post">
+                {% raw xsrf_form_html() %}
                 <div class="box">
+
                     <div class="box-header with-border">
                       <h3 class="box-title">
-                          Scheduled Actions
+                          New Scheduled Action
                       </h3>
                     </div>
+
                     <div class="box-body">
 
                         <div class="form-group">
@@ -72,8 +73,8 @@
 
                         <div class="form-group">
                             <label>Time </label><br />
-                            <small id="time-help">Time is disabled for minute values</small><br />
-                            <small id="time-help">An empty value means "every". For instance: Backup every 1 hour</small><br />
+                            <small>Time is disabled for minute values</small><br />
+                            <small>An empty value means "every". For instance: Backup every 1 hour</small><br />
                             <input type="text" class="form-control" name="time" disabled="disabled"
                                    id="time" class="time ui-timepicker-input" autocomplete="off">
                         </div>
@@ -81,7 +82,7 @@
                         <div class="form-group">
                             <label>Comment </label>
                             <input type="text" class="form-control" placeholder="10"
-                                   name="interval" id="interval" value="1">
+                                   name="comment" id="comment" value="A scheduled task">
                         </div>
 
                     </div>
@@ -94,8 +95,52 @@
                             Save
                         </button>
                     </div>
+
                 </div>
-        </form>
+            </form>
+        </div>
+
+        <div class="col-xs-6">
+            <form role="form" method="post">
+                {% raw xsrf_form_html() %}
+                <div class="box">
+
+                    <div class="box-header with-border">
+                      <h3 class="box-title">
+                          Scheduled Actions
+                      </h3>
+                    </div>
+
+                    <div class="box-body">
+                        <table id="tasks" class="table table-responsive">
+                            <thead>
+                                <th>Enabled</th>
+                                <th>Action</th>
+                                <th>Interval</th>
+                                <th>Time</th>
+                                <th>Comment</th>
+
+                            </thead>
+                            <tbody>
+                                {% for task in data['db_data'] %}
+                                    <tr>
+                                        <td>{{ task.enabled }}</td>
+                                        <td>{{ task.action }}</td>
+                                        <td> every {{ task.interval }} {{ task.interval_type }}</td>
+                                        <td>{{ task.start_time }}</td>
+                                        <td>{{ task.comment }}</td>
+                                    </tr>
+                                {% end %}
+                            </tbody>
+                        </table>
+
+
+
+                    </div>
+
+                    <div class="box-footer">
+                        &nbsp;
+                    </div>
 
     </div>
 
@@ -113,11 +158,20 @@
 
 {% block js-script %}
 <script>
+    function show_saved(){
+        var dialog = bootbox.dialog({
+            message: "Settings Saved",
+            className: 'modal modal-success fade-in',
+            okButton: false
+        });
+    }
+
+    function hide_modal(){
+        bootbox.hideAll()
+    }
+
     $( document ).ready(function() {
         console.log( "ready!" );
-
-        //adding quick/dirty padding
-        $('input').css("margin-bottom",'10px')
 
         $('#time').timepicker();
 
@@ -125,7 +179,16 @@
             $("#time").prop('disabled', $(this).val() == 'm');
         });
 
+        //adding quick/dirty padding
+        $('input').css("margin-bottom",'10px')
+
+        {% if data['saved'] %}
+            show_saved()
+            setTimeout(hide_modal, 1500);
+        {% end %}
+
     });
+
 </script>
 
 {% end %}

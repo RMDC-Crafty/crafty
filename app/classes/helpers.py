@@ -106,7 +106,7 @@ class helpers:
 
         if not self.check_file_exists(file_name):
             logging.warning("Unable to find file: {}".format(file_name))
-            return False
+            return 'Unable to read logs in {}'.format(file_name)
 
         with open(file_name, 'r') as f:
             content = f.readlines()
@@ -116,7 +116,7 @@ class helpers:
     def tail_file(self, file_name, number_lines=20):
         if not self.check_file_exists(file_name):
             logging.warning("Unable to find file to tail: {}".format(file_name))
-            return False
+            return "Unable to find file to tail: {}".format(file_name)
 
         # length of lines is X char here
         avg_line_length = 90

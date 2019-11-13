@@ -35,6 +35,14 @@ def check_for_sql_db():
     dbpath = helper.get_db_path()
 
     if helper.check_file_exists(dbpath):
+
+        # here we update the database with new tables if needed
+        try:
+            create_tables()
+        except:
+            logging.critical("Unable to update db - Exiting")
+            console.critical("Unable to update db - Exiting")
+            sys.exit(1)
         return True
     else:
         logging.info("Unable to find: {} - Launching Creation script".format(dbpath))

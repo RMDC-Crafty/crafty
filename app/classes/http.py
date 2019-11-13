@@ -102,6 +102,7 @@ class AdminHandler(BaseHandler):
     def initialize(self, mcserver):
         self.mcserver = mcserver
 
+
     @tornado.web.authenticated
     def get(self, page):
 
@@ -124,9 +125,12 @@ class AdminHandler(BaseHandler):
             context = {'backup_path': backup_path, 'current_backups': self.mcserver.list_backups()}
 
         elif page == "schedules":
+            saved = self.get_argument('saved', None)
+
+            db_data = Schedules.select()
+
             template = "admin/schedules.html"
-
-
+            context = {'db_data': db_data, 'saved': saved}
 
         elif page == 'config':
             saved = self.get_argument('saved', None)
@@ -219,6 +223,28 @@ class AdminHandler(BaseHandler):
 
             self.clear_cookie("user")
             self.redirect("/")
+
+        elif page == 'schedules':
+            action = self.get_argument('action')
+            interval = self.get_argument('interval')
+            interval_type = self.get_argument('type')
+            sched_time = self.get_argument('time')
+            comment = self.get_argument('comment')
+
+            result = (
+                Schedules.insert(
+                    enabled=True,
+                    action=action,
+                    interval=interval,
+                    interval_type=interval_type,
+                    start_time=sched_time,
+                    comment=comment
+                )
+                .on_conflict('replace')
+                .execute()
+            )
+            self.redirect("/admin/schedules?saved=True")
+
 
         elif page == 'config':
 

@@ -20,6 +20,8 @@ class Users(BaseModel):
     password = CharField()
     role = CharField()
 
+    class Meta:
+        table_name = 'users'
 
 class MC_settings(BaseModel):
     server_path = CharField()
@@ -30,10 +32,16 @@ class MC_settings(BaseModel):
     auto_start_server = BooleanField()
     auto_start_delay = IntegerField()
 
+    class Meta:
+        table_name = 'mc_settings'
+
 
 class Webserver(BaseModel):
     port_number = IntegerField()
     server_name = CharField()
+
+    class Meta:
+        table_name = 'webserver'
 
 
 class Schedules(BaseModel):
@@ -43,9 +51,10 @@ class Schedules(BaseModel):
     interval = IntegerField()
     interval_type = CharField()
     start_time = CharField()
-    days = CharField()
     comment = CharField()
 
+    class Meta:
+        table_name = 'schedules'
 
 class History(BaseModel):
     id = IntegerField(unique=True, primary_key=True)
@@ -54,6 +63,8 @@ class History(BaseModel):
     memory = IntegerField()
     players = IntegerField()
 
+    class Meta:
+        table_name = 'history'
 
 def create_tables():
     with database:
