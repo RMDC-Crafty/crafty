@@ -13,6 +13,7 @@ Crafty via configuration options.
 - removed old Alpha 1 documentation - replaced with page that links to craftycontrol.com
 - fixed windows path issues / errors.
 - database should create new tables as needed upon upgrade, still recommend starting a new one
+- backups now backup the whole server directory - preserving full paths for easy restore option
 
 ### Bug Fixes
 * Fixed a bug where invalid Login name would cause error on page. - Thanks IAbooseYou

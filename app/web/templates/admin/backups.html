@@ -35,9 +35,6 @@
                     <br />
                     Your backups are stored in: <br /> {{ data['backup_path'] }}<br />
 
-                    <div id="folder_list">
-
-                    </div>
                 </div>
               </div>
         </div>
@@ -56,6 +53,7 @@
                             <th width="10%">Download</th>
                             <th>Path</th>
                             <th width="20%">Size</th>
+                            <th width="10%">Delete</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -69,6 +67,13 @@
                             </td>
                             <td>{{ backup['path'] }}</td>
                             <td>{{ backup['size'] }}</td>
+                            <td>
+                                <button data-file="{{ backup['path'] }}" class="btn btn-danger del_button">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                    Delete
+                                </button>
+
+                            </td>
                             </tr>
                         {% end %}
                         </tbody>
@@ -92,17 +97,69 @@
 {% block js-script %}
 
 <script>
+
+    //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
     function backup_started(time='5-10'){
             bootbox.alert({
             message: "A backup task has been started.",
             backdrop: true
         });
     }
+
+    function del_backup(filename){
+        var token = getCookie("_xsrf")
+
+        data_to_send = { file_name :filename,  }
+
+        console.log('Sending Command to delete file: ' + filename)
+        $.ajax({
+          type: "POST",
+          headers: {'X-XSRFToken': token},
+          url: '/ajax/del_file',
+          data: data_to_send,
+          success: function(data){
+            location.reload();
+          },
+        });
+    }
+
     $( document ).ready(function() {
         console.log( "ready!" );
+
         $('#backup_table').DataTable({
             "order": [[ 1, "desc" ]]
         });
+
+        $( ".del_button" ).click(function() {
+            var file_to_del = $(this).data("file");
+
+            console.log("file to delete is" + file_to_del);
+
+            bootbox.confirm({
+                title: "Destroy backup " + file_to_del + "?",
+                message: "Do you want to delete this file? This cannot be undone.",
+                buttons: {
+                    cancel: {
+                        label: '<i class="fa fa-times"></i> Cancel'
+                    },
+                    confirm: {
+                        label: '<i class="fa fa-check"></i> Confirm'
+                    }
+                },
+                callback: function (result) {
+                    console.log(result);
+                    if (result == true) {
+                        del_backup(file_to_del)
+                    }
+                }
+            });
+        });
+
     });
 
 </script>

@@ -225,6 +225,7 @@ class helpers:
     def del_file(self,file_to_del):
         if self.check_file_exists(file_to_del):
             os.remove(file_to_del)
+            logging.info("Deleted file: {}".format(file_to_del))
             return True
         return False
 

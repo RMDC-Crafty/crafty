@@ -207,6 +207,7 @@ class AdminHandler(BaseHandler):
             elif command == "backup":
                 backup_thread = threading.Thread(name='backup', target=self.mcserver.backup_worlds, daemon=False)
                 backup_thread.start()
+                time.sleep(5)
                 next_page = '/admin/backups'
 
             self.redirect(next_page)
@@ -318,6 +319,11 @@ class AjaxHandler(BaseHandler):
             if command:
                 if self.mcserver.check_running:
                     self.mcserver.send_command(command)
+
+        elif page == 'del_file':
+            file_to_del = self.get_body_argument('file_name', default=None, strip=True)
+            if file_to_del:
+                helper.del_file(file_to_del)
 
 
 class webserver():
