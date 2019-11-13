@@ -5,6 +5,7 @@ import requests
 import string
 import random
 import schedule
+import zipfile
 
 from app.classes.console import Console
 from argon2 import PasswordHasher
@@ -70,6 +71,9 @@ class helpers:
         else:
             logging.warning('Unable to find path: {}'.format(path))
             return False
+
+    def check_directory_exist(self, path):
+        return os.path.exists(path)
 
     def get_db_path(self):
         return self.dbpath
@@ -184,10 +188,17 @@ class helpers:
 
         return return_lines
 
-    def zippath(self, path, zipfile_handle):
-        for root, dirs, files in os.walk(path):
+    def zippath(self, path, backup_filename, exclude_dirs):
+        zip_handler = zipfile.ZipFile(backup_filename, 'w')
+
+        for root, dirs, files in os.walk(path, topdown=True):
+            dirs[:] = [d for d in dirs if d not in exclude_dirs]
+
             for file in files:
-                zipfile_handle.write(os.path.join(root, file))
+                logging.info("backing up: {}".format(os.path.join(root, file)))
+                zip_handler.write(os.path.join(root, file))
+
+        zip_handler.close()
 
     # Function to convert the date format 12h to 24 hr
     def convert_time_to_24(self, str1):
@@ -210,6 +221,12 @@ class helpers:
 
             # add 12 to hours and remove PM
             return str(int(str1[:2]) + 12) + str1[2:8]
+
+    def del_file(self,file_to_del):
+        if self.check_file_exists(file_to_del):
+            os.remove(file_to_del)
+            return True
+        return False
 
     def scheduler(self, task, mc_server_obj):
         logging.info("Parsing Tasks To Add")

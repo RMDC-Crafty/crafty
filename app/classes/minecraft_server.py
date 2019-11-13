@@ -5,7 +5,7 @@ import json
 import time
 import shlex
 import psutil
-import zipfile
+
 import datetime
 import threading
 import subprocess
@@ -352,67 +352,32 @@ class Minecraft_Server():
         backup_path = os.path.join(self.settings.server_path, "crafty_backups")
         helper.ensure_dir_exists(backup_path)
 
-        world_name = self.get_world_name()
-
         logging.info('Starting Backup Process')
 
-        if backup_path:
+        logging.info('Checking Backup Path Exists')
 
-            full_backup_file_path = None
+        if helper.check_directory_exist(backup_path):
 
             # if server is running
             if announce:
                 if self.check_running():
-                    self.send_command("say [Crafty Controller] Starting Backup of Worlds: {}".format(world_name))
+                    self.send_command("say [Crafty Controller] Starting Backup of Server")
 
             try:
-                logging.info('Checking Backup Path Exists')
-
-                # make sure we have a place to put backups
-                helper.ensure_dir_exists(backup_path)
-
                 # make sure we have a backup for this date
-                backup_sub_dir = os.path.join(backup_path,datetime.datetime.now().strftime('%Y-%m-%d_%H-%M'))
+                backup_filename = '{}.zip'.format(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+                backup_full_path = os.path.join(backup_path, backup_filename)
 
-                # make sure this backup sub directory exists
-                helper.ensure_dir_exists(backup_sub_dir)
+                logging.info("Backing up server directory to: {}".format(backup_filename))
 
-                # build our crazy dictionary of worlds, pathnames, and such
-                full_world_backup_paths_dict = [
-                        {"full_world_path": os.path.join(self.server_path, world_name),
-                            "backup_filename": os.path.join(
-                                backup_sub_dir,
-                                world_name + "_" +
-                                datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + ".zip")
-                        },
-                        {"full_world_path": os.path.join(self.server_path, world_name + "_nether"),
-                            "backup_filename": os.path.join(
-                                backup_sub_dir,
-                                world_name + "_nether_" +
-                                datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + ".zip")
-                        },
-                        {"full_world_path": os.path.join(self.server_path, world_name + "_the_end"),
-                            "backup_filename": os.path.join(
-                                backup_sub_dir,
-                                world_name + "_the_end_" +
-                                datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + ".zip")
-                        },
-                    ]
+                helper.zippath(self.server_path, backup_full_path, ['crafty_backups'])
 
-                for world in full_world_backup_paths_dict:
-                    logging.debug("Starting Backup Archive of {} - in dir {}".format(world['full_world_path'],
-                                                                                     world['backup_filename']))
-                    zip_handler = zipfile.ZipFile(world['backup_filename'], 'w')
-                    helper.zippath(world['full_world_path'], zip_handler)
-                    zip_handler.close()
-                    logging.debug('Created Backup Archive of {} - in dir {}'.format(world['full_world_path'],
-                                                                                     world['backup_filename']))
+                logging.info("Backup Completed")
 
-                    logging.info("Backup Completed")
+                if announce:
+                    if self.check_running():
+                        self.send_command("say [Crafty Controller] Backup Complete")
 
-                    if announce:
-                        if self.check_running():
-                            self.send_command("say [Crafty Controller] Backup Complete")
             except Exception as e:
                 logging.error('Unable to create backups- Error: {}'.format(e))
 
@@ -421,7 +386,7 @@ class Minecraft_Server():
                         self.send_command('say [Crafty Controller] Unable to create backups - check the logs')
 
         else:
-            logging.error("Unable to find backup path in settings file!")
+            logging.error("Unable to find or create backup path!")
             return False
 
     def list_backups(self):
