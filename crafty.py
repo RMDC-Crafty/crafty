@@ -119,6 +119,10 @@ def main():
     mc_server.write_html_server_status()
     schedule.every(10).seconds.do(mc_server.write_html_server_status)
 
+    # fire off a history write now, and schedule one for later.
+    mc_server.write_usage_history()
+    schedule.every(5).minutes.do(mc_server.write_usage_history)
+
     logging.info("Starting Scheduler Daemon")
     Console.info("Starting Scheduler Daemon")
 

@@ -60,8 +60,8 @@ class Schedules(BaseModel):
 class History(BaseModel):
     id = IntegerField(unique=True, primary_key=True)
     time = DateTimeField(default=datetime.datetime.now)
-    cpu = IntegerField()
-    memory = IntegerField()
+    cpu = FloatField()
+    memory = FloatField()
     players = IntegerField()
 
     class Meta:

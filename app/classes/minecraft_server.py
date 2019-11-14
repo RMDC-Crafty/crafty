@@ -23,6 +23,7 @@ from app.classes.models import *
 helper = helpers()
 
 
+
 class Minecraft_Server():
 
     def __init__(self):
@@ -293,6 +294,32 @@ class Minecraft_Server():
             return self.start_time
         else:
             return False
+
+    def write_usage_history(self):
+        server_stats = {
+            'cpu_usage': psutil.cpu_percent(interval=0.5) / psutil.cpu_count(),
+            'mem_percent': psutil.virtual_memory()[2]
+            }
+
+        try:
+            server_ping = self.ping_server()
+        except:
+            server_ping = False
+            pass
+
+        if server_ping:
+            online_stats = json.loads(server_ping.players)
+            online_data = {'online': online_stats.get('online', 0)}
+        else:
+            online_data = {'online': 0}
+
+        # write performance data to db
+        History.insert(
+            cpu=server_stats['cpu_usage'],
+            memory=server_stats['mem_percent'],
+            players=online_data['online']
+        ).execute()
+
 
     def write_html_server_status(self):
 

@@ -198,60 +198,6 @@
     <div class="col-md-6">
         <div class="box box-info">
             <div class="box-header with-border">
-              <h3 class="box-title"><i class="fa fa-clock-o" aria-hidden="true"></i>
-                  Scheduled Commands</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-              <div class="table-responsive">
-                <table class="table no-margin">
-                  <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Interval</th>
-                    <th>Enabled</th>
-                    </th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr>
-                    <td>Backup</td>
-                    <td>1 Hour</td>
-                    <td><span class="label label-success">Enabled</span></td>
-                    <td>Backs up the current world</td>
-                  </tr>
-                  <tr>
-                    <td>Announcement</td>
-                    <td>1 Hour</td>
-                    <td><span class="label label-success">Enabled</span></td>
-                    <td>/say Thanks for joining Crafty Server!</td>
-                  </tr>
-                  <tr>
-                    <td>Clear Lag</td>
-                    <td>10 Minutes</td>
-                    <td><span class="label label-success">Enabled</span></td>
-                    <td>/clearlag</td>
-                  </tr>
-                  </tbody>
-                </table>
-              </div>
-              <!-- /.table-responsive -->
-            </div>
-            <!-- /.box-body -->
-            <div class="box-footer clearfix">
-              <a href="javascript:void(0)" class="btn btn-sm btn-default btn-flat pull-right">
-                  <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                  Create New
-              </a>
-
-            </div>
-            <!-- /.box-footer -->
-          </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="box box-info">
-            <div class="box-header with-border">
               <h3 class="box-title"><i class="fa fa-users" aria-hidden="true"></i>
                   Players List</h3>
             </div>
@@ -268,11 +214,21 @@
               <!-- /.table-responsive -->
             </div>
             <!-- /.box-body -->
-            <div class="box-footer clearfix">
 
+          </div>
+    </div>
 
+        <div class="col-md-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title"><i class="fa fa-clock-o" aria-hidden="true"></i>
+                  Historical Data</h3>
             </div>
-            <!-- /.box-footer -->
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div id="cpu_history" style="height: 250px;"></div>
+            </div>
+
           </div>
     </div>
 
@@ -285,7 +241,45 @@
 {{ data }}
 -->
 
+{% end %}
+
+{% block js-script %}
+
+<script>
+    $( document ).ready(function() {
+        console.log( "ready!" );
+
+        $.ajax({
+            url: "/ajax/history",
+            method: "get",
+            dataType: "json",
+            success: function(data) {
+                console.log(data)
+                do_history(data)
+            }
+        });
+    });
+
+    function do_history(data){
+        new Morris.Line({
+          // ID of the element in which to draw the chart.
+          element: 'cpu_history',
+          // Chart data records -- each entry in this array corresponds to a point on
+          // the chart.
+          data: data,
+          // The name of the data record attribute that contains x-values.
+          xkey: 'time',
+          // A list of names of data record attributes that contain y-values.
+          ykeys: ['cpu','mem','players'],
+          // Labels for the ykeys -- will be displayed when you hover over the
+          // chart.
+          labels: ['CPU', 'MEM','Players'],
+          parseTime: false
+        });
+    }
 
 
+
+</script>
 
 {% end %}

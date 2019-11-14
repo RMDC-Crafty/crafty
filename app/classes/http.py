@@ -311,6 +311,21 @@ class AjaxHandler(BaseHandler):
             for d in data:
                 self.write(d.encode("utf-8"))
 
+        if page == 'history':
+            db_data = History.select()
+            return_data = []
+            for d in db_data:
+                row_data = {
+                    'time': d.time.strftime("%m/%d/%Y %H:%M:%S"),
+                    'cpu': d.cpu,
+                    'mem': d.memory,
+                    'players': d.players
+                }
+                return_data.append(row_data)
+
+            self.write(json.dumps(return_data))
+
+
     def post(self, page):
 
         if page == "send_command":
