@@ -82,7 +82,7 @@
                         <div class="form-group" id="command_input" hidden="true">
                             <label>Command </label>
                             <input type="text" class="form-control" placeholder="Enter the command you wish to schedule"
-                                   name="command" id="command" value="say Crafty is amazing!">
+                                   name="command" id="command" value="">
                         </div>
 
                         <div class="form-group">
@@ -120,9 +120,13 @@
                     <div class="box-body">
                         <table id="tasks" class="table table-responsive">
                             <thead>
-                                <th>Enabled</th>
+                                <th>
+                                    Enabled<br />
+                                    <small>Click thumb to toggle</small>
+                                </th>
                                 <th>Action</th>
                                 <th>Comment</th>
+                                <th>Delete</th>
 
                             </thead>
                             <tbody>
@@ -130,9 +134,13 @@
                                     <tr>
                                         <td>
                                             {% if task.enabled %}
-                                                <i class="fa fa-thumbs-up text-green" aria-hidden="true"></i>
+                                                <a href="/admin/schedule_disable?id={{ task.id }}">
+                                                    <i class="fa fa-thumbs-up fa-lg text-green" aria-hidden="true"></i>
+                                                </a>
                                             {% else %}
-                                                <i class="fa fa-thumbs-down text-red" aria-hidden="true"></i>
+                                                <a href="/admin/schedule_enable?id={{ task.id }}">
+                                                    <i class="fa fa-thumbs-down fa-lg  text-red" aria-hidden="true"></i>
+                                                </a>
                                             {% end %}
                                         </td>
 
@@ -166,6 +174,11 @@
 
                                         <td>
                                             {{ task.comment }}
+                                        </td>
+                                        <td>
+                                            <a data-id="{{ task.id }}" class="btn btn-sm btn-danger del_schedule">
+                                                <i class="fa fa-trash" aria-hidden="true"></i> Delete
+                                            </a>
                                         </td>
                                     </tr>
                                 {% end %}
@@ -202,6 +215,12 @@
 
 {% block js-script %}
 <script>
+     //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
     function show_saved(){
         var dialog = bootbox.dialog({
             message: "Settings Saved",
@@ -223,15 +242,18 @@
 
         $("#type").change(function(){
             $("#time").prop('disabled', $(this).val() == 'm');
+            $("#time").prop('disabled', $(this).val() == 'h');
         });
 
         $("#action").change(function() {
             var val = $(this).val();
             if(val === "command") {
                 $('#command_input').show();
+                $('#command').val(null);
             }
             else {
                 $('#command_input').hide()
+                $('#command').val(null);
             }
           });
 
@@ -243,7 +265,51 @@
             setTimeout(hide_modal, 1500);
         {% end %}
 
+        $( ".del_schedule" ).click(function() {
+            var id_to_del = $(this).data("id");
+
+            console.log("schedule to delete is" + id_to_del);
+
+            bootbox.confirm({
+                title: "Destroy Scheduled Task " + id_to_del + "?",
+                message: "Do you want to delete this task? This cannot be undone.",
+                buttons: {
+                    cancel: {
+                        label: '<i class="fa fa-times"></i> Cancel'
+                    },
+                    confirm: {
+                        label: '<i class="fa fa-check"></i> Confirm'
+                    }
+                },
+                callback: function (result) {
+                    console.log(result);
+                    if (result == true) {
+                        del_schedule(id_to_del)
+                    }
+                }
+            });
+        });
+
+
     });
+
+
+    function del_schedule(id){
+        var token = getCookie("_xsrf")
+
+        data_to_send = { id : id, }
+
+        console.log('Sending Command to delete schedule: ' + id)
+        $.ajax({
+          type: "POST",
+          headers: {'X-XSRFToken': token},
+          url: '/ajax/del_schedule',
+          data: data_to_send,
+          success: function(data){
+            window.location.href = "/admin/reloadschedules"
+          },
+        });
+    }
 
 </script>
 

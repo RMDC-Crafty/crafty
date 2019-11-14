@@ -153,6 +153,20 @@ class AdminHandler(BaseHandler):
             template = "admin/schedules.html"
             context = {'db_data': db_data, 'saved': None}
 
+        elif page == "schedule_disable":
+            schedule_id = self.get_argument('id', None)
+            q = Schedules.update(enabled=0).where(Schedules.id == schedule_id)
+            q.execute()
+
+            self.redirect("/admin/reloadschedules")
+
+        elif page == "schedule_enable":
+            schedule_id = self.get_argument('id', None)
+            q = Schedules.update(enabled=1).where(Schedules.id == schedule_id)
+            q.execute()
+
+            self.redirect("/admin/reloadschedules")
+
         elif page == 'config':
             saved = self.get_argument('saved', None)
 
@@ -264,6 +278,7 @@ class AdminHandler(BaseHandler):
                 .on_conflict('replace')
                 .execute()
             )
+            print(result)
             self.redirect("/admin/schedules?saved=True")
 
 
@@ -339,6 +354,16 @@ class AjaxHandler(BaseHandler):
             file_to_del = self.get_body_argument('file_name', default=None, strip=True)
             if file_to_del:
                 helper.del_file(file_to_del)
+
+        elif page == 'del_schedule':
+            id_to_del = self.get_body_argument('id', default=None, strip=True)
+
+            if id_to_del:
+                logging.info("Got command to del schedule {}".format(id_to_del))
+                q = Schedules.delete().where(Schedules.id == id_to_del)
+                q.execute()
+
+
 
 
 class webserver():

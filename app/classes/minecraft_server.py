@@ -138,7 +138,8 @@ class Minecraft_Server():
 
             # send it
             self.process.send(command + '\n')
-        else:
+
+        if command != "stop":
             logging.warning('Sending Command: {} to Server Failed - Server is not up'.format(command))
 
     def restart_threaded_server(self):

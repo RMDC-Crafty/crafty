@@ -6,6 +6,7 @@ import string
 import random
 import schedule
 import zipfile
+from datetime import datetime
 
 from app.classes.console import Console
 from argon2 import PasswordHasher
@@ -201,28 +202,13 @@ class helpers:
         zip_handler.close()
 
     # Function to convert the date format 12h to 24 hr
-    def convert_time_to_24(self, str1):
+    def convert_time_to_24(self, thetime):
+        in_time = datetime.strptime(thetime, "%I:%M%p")
+        out_time = datetime.strftime(in_time, "%H:%M")
+        return out_time
 
-        # Checking if last two elements of time
-        # is AM and first two elements are 12
-        if str1[-2:] == "AM" and str1[:2] == "12":
-            return "00" + str1[2:-2]
 
-            # remove the AM
-        elif str1[-2:] == "AM":
-            return str1[:-2]
-
-            # Checking if last two elements of time
-        # is PM and first two elements are 12
-        elif str1[-2:] == "PM" and str1[:2] == "12":
-            return str1[:-2]
-
-        else:
-
-            # add 12 to hours and remove PM
-            return str(int(str1[:2]) + 12) + str1[2:8]
-
-    def del_file(self,file_to_del):
+    def del_file(self, file_to_del):
         if self.check_file_exists(file_to_del):
             os.remove(file_to_del)
             logging.info("Deleted file: {}".format(file_to_del))
@@ -329,14 +315,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).tuesdays.at(time).do(
+                        schedule.every(task.interval).tuesday.at(time).do(
                             mc_server_obj.send_command, task.command).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).tuesdays.do(mc_server_obj.send_command, task.command).tag('user')
+                        schedule.every(task.interval).tuesday.do(mc_server_obj.send_command, task.command).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -345,14 +331,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).wednesdays.at(time).do(
+                        schedule.every(task.interval).wednesday.at(time).do(
                             mc_server_obj.send_command, task.command).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).wednesdays.do(mc_server_obj.send_command, task.command).tag('user')
+                        schedule.every(task.interval).wednesday.do(mc_server_obj.send_command, task.command).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -361,14 +347,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).thursdays.at(time).do(
+                        schedule.every(task.interval).thursday.at(time).do(
                             mc_server_obj.send_command, task.command).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).thursdays.do(mc_server_obj.send_command, task.command).tag('user')
+                        schedule.every(task.interval).thursday.do(mc_server_obj.send_command, task.command).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -377,14 +363,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).fridays.at(time).do(
+                        schedule.every(task.interval).friday.at(time).do(
                             mc_server_obj.send_command, task.command).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).fridays.do(mc_server_obj.send_command, task.command).tag('user')
+                        schedule.every(task.interval).friday.do(mc_server_obj.send_command, task.command).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -393,14 +379,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).saturdays.at(time).do(
+                        schedule.every(task.interval).saturday.at(time).do(
                             mc_server_obj.send_command, task.command).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).saturdays.do(mc_server_obj.send_command, task.command).tag('user')
+                        schedule.every(task.interval).saturday.do(mc_server_obj.send_command, task.command).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -409,14 +395,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).sundays.at(time).do(
+                        schedule.every(task.interval).sunday.at(time).do(
                             mc_server_obj.send_command, task.command).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).sundays.do(mc_server_obj.send_command, task.command).tag('user')
+                        schedule.every(task.interval).sunday.do(mc_server_obj.send_command, task.command).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -478,14 +464,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).mondays.at(time).do(
+                        schedule.every(task.interval).money.at(time).do(
                             mc_server_obj.restart_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).mondays.do(mc_server_obj.restart_threaded_server).tag('user')
+                        schedule.every(task.interval).monday.do(mc_server_obj.restart_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -494,14 +480,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).tuesdays.at(time).do(
+                        schedule.every(task.interval).tuesday.at(time).do(
                             mc_server_obj.restart_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).tuesdays.do(mc_server_obj.restart_threaded_server).tag('user')
+                        schedule.every(task.interval).tuesday.do(mc_server_obj.restart_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -510,14 +496,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).wednesdays.at(time).do(
+                        schedule.every(task.interval).wednesday.at(time).do(
                             mc_server_obj.restart_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).wednesdays.do(mc_server_obj.restart_threaded_server).tag('user')
+                        schedule.every(task.interval).wednesday.do(mc_server_obj.restart_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -526,14 +512,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).thursdays.at(time).do(
+                        schedule.every(task.interval).thursday.at(time).do(
                             mc_server_obj.restart_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).thursdays.do(mc_server_obj.restart_threaded_server).tag('user')
+                        schedule.every(task.interval).thursday.do(mc_server_obj.restart_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -542,14 +528,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).fridays.at(time).do(
+                        schedule.every(task.interval).friday.at(time).do(
                             mc_server_obj.restart_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).fridays.do(mc_server_obj.restart_threaded_server).tag('user')
+                        schedule.every(task.interval).friday.do(mc_server_obj.restart_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -558,14 +544,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).saturdays.at(time).do(
+                        schedule.every(task.interval).saturday.at(time).do(
                             mc_server_obj.restart_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).saturdays.do(mc_server_obj.restart_threaded_server).tag('user')
+                        schedule.every(task.interval).saturday.do(mc_server_obj.restart_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -574,14 +560,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).sundays.at(time).do(
+                        schedule.every(task.interval).sunday.at(time).do(
                             mc_server_obj.restart_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).sundays.do(mc_server_obj.restart_threaded_server).tag('user')
+                        schedule.every(task.interval).sunday.do(mc_server_obj.restart_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -643,14 +629,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).mondays.at(time).do(
+                        schedule.every(task.interval).money.at(time).do(
                             mc_server_obj.stop_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).mondays.do(mc_server_obj.stop_threaded_server).tag('user')
+                        schedule.every(task.interval).money.do(mc_server_obj.stop_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -659,14 +645,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).tuesdays.at(time).do(
+                        schedule.every(task.interval).tuesday.at(time).do(
                             mc_server_obj.stop_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).tuesdays.do(mc_server_obj.stop_threaded_server).tag('user')
+                        schedule.every(task.interval).tuesday.do(mc_server_obj.stop_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -675,14 +661,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).wednesdays.at(time).do(
+                        schedule.every(task.interval).wednesday.at(time).do(
                             mc_server_obj.stop_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).wednesdays.do(mc_server_obj.stop_threaded_server).tag('user')
+                        schedule.every(task.interval).wednesday.do(mc_server_obj.stop_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -691,14 +677,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).thursdays.at(time).do(
+                        schedule.every(task.interval).thursday.at(time).do(
                             mc_server_obj.stop_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).thursdays.do(mc_server_obj.stop_threaded_server).tag('user')
+                        schedule.every(task.interval).thursday.do(mc_server_obj.stop_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -707,14 +693,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).fridays.at(time).do(
+                        schedule.every(task.interval).friday.at(time).do(
                             mc_server_obj.stop_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).fridays.do(mc_server_obj.stop_threaded_server).tag('user')
+                        schedule.every(task.interval).friday.do(mc_server_obj.stop_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -723,14 +709,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).saturdays.at(time).do(
+                        schedule.every(task.interval).saturday.at(time).do(
                             mc_server_obj.stop_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).saturdays.do(mc_server_obj.stop_threaded_server).tag('user')
+                        schedule.every(task.interval).saturday.do(mc_server_obj.stop_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -739,14 +725,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).sundays.at(time).do(
+                        schedule.every(task.interval).sunday.at(time).do(
                             mc_server_obj.stop_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).sundays.do(mc_server_obj.stop_threaded_server).tag('user')
+                        schedule.every(task.interval).sunday.do(mc_server_obj.stop_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -761,13 +747,13 @@ class helpers:
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
                         schedule.every(task.interval).minutes.at(time).do(
-                            mc_server_obj.start_threaded_server).tag('user')
+                            mc_server_obj.run_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).minutes.do(mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).minutes.do(mc_server_obj.run_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -777,13 +763,13 @@ class helpers:
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
                         schedule.every(task.interval).hours.at(time).do(
-                            mc_server_obj.start_threaded_server).tag('user')
+                            mc_server_obj.run_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).hours.do(mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).hours.do(mc_server_obj.run_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -793,13 +779,13 @@ class helpers:
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
                         schedule.every(task.interval).days.at(time).do(
-                            mc_server_obj.start_threaded_server).tag('user')
+                            mc_server_obj.run_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).days.do(mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).days.do(mc_server_obj.run_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -808,14 +794,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).mondays.at(time).do(
-                            mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).money.at(time).do(
+                            mc_server_obj.run_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).mondays.do(mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).money.do(mc_server_obj.run_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -824,14 +810,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).tuesdays.at(time).do(
-                            mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).tuesday.at(time).do(
+                            mc_server_obj.run_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).tuesdays.do(mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).tuesday.do(mc_server_obj.run_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -840,14 +826,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).wednesdays.at(time).do(
-                            mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).wednesday.at(time).do(
+                            mc_server_obj.run_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).wednesdays.do(mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).wednesday.do(mc_server_obj.run_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -856,14 +842,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).thursdays.at(time).do(
-                            mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).thursday.at(time).do(
+                            mc_server_obj.run_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).thursdays.do(mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).thursday.do(mc_server_obj.run_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -872,14 +858,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).fridays.at(time).do(
-                            mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).friday.at(time).do(
+                            mc_server_obj.run_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).fridays.do(mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).friday.do(mc_server_obj.run_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -888,14 +874,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).saturdays.at(time).do(
-                            mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).saturday.at(time).do(
+                            mc_server_obj.run_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).saturdays.do(mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).saturday.do(mc_server_obj.run_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -904,14 +890,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).sundays.at(time).do(
-                            mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).sunday.at(time).do(
+                            mc_server_obj.run_threaded_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).sundays.do(mc_server_obj.start_threaded_server).tag('user')
+                        schedule.every(task.interval).sunday.do(mc_server_obj.run_threaded_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -973,14 +959,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).mondays.at(time).do(
+                        schedule.every(task.interval).money.at(time).do(
                             mc_server_obj.backup_worlds).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).mondays.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).money.do(mc_server_obj.backup_worlds).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -989,14 +975,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).tuesdays.at(time).do(
+                        schedule.every(task.interval).tuesday.at(time).do(
                             mc_server_obj.backup_worlds).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).tuesdays.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).tuesday.do(mc_server_obj.backup_worlds).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -1005,14 +991,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).wednesdays.at(time).do(
+                        schedule.every(task.interval).wednesday.at(time).do(
                             mc_server_obj.backup_worlds).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).wednesdays.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).wednesday.do(mc_server_obj.backup_worlds).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -1021,14 +1007,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).thursdays.at(time).do(
+                        schedule.every(task.interval).thursday.at(time).do(
                             mc_server_obj.backup_worlds).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).thursdays.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).thursday.do(mc_server_obj.backup_worlds).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -1037,14 +1023,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).fridays.at(time).do(
+                        schedule.every(task.interval).friday.at(time).do(
                             mc_server_obj.backup_worlds).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).fridays.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).friday.do(mc_server_obj.backup_worlds).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -1053,14 +1039,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).saturdays.at(time).do(
+                        schedule.every(task.interval).saturday.at(time).do(
                             mc_server_obj.backup_worlds).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).saturdays.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).saturday.do(mc_server_obj.backup_worlds).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -1069,14 +1055,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).sundays.at(time).do(
+                        schedule.every(task.interval).sunday.at(time).do(
                             mc_server_obj.backup_worlds).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).sundays.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).sunday.do(mc_server_obj.backup_worlds).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
