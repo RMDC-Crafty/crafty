@@ -23,7 +23,7 @@ Logins are secure and use the most advanced web security models available.
 
 ## Supported OS?
 - Linux - specifically Ubuntu 18.04 / 19.04 and others if they run python
-- Windows (7,8,10)
+- Windows (7,8,10) via a compiled Executable, no need for python installation
 
 
 ## Installation

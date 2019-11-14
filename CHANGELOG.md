@@ -7,6 +7,7 @@ Crafty via configuration options.
 
 ### Additions
 - Addition of schedules
+- Historical Data graph on dashboard.
 
 ### Changes
 - moved scheduled logs to own file
