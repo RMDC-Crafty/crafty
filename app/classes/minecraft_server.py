@@ -320,6 +320,11 @@ class Minecraft_Server():
             players=online_data['online']
         ).execute()
 
+        last_week = datetime.datetime.now() - datetime.timedelta(days=7)
+
+        # delete items older than 1 week
+        History.delete().where(History.time > last_week)
+
 
     def write_html_server_status(self):
 
