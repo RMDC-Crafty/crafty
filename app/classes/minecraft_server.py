@@ -133,7 +133,12 @@ class Minecraft_Server():
 
     def send_command(self, command):
 
+        if not self.check_running() and command != 'start':
+            logging.warning("Server not running, unable to send command: {}".format(command))
+            return False
+
         logging.debug('Sending Command: {} to Server via pexpect'.format(command))
+
         # send it
         self.process.send(command + '\n')
 
