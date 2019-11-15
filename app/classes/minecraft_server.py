@@ -550,6 +550,7 @@ class Minecraft_Server():
         if not server_port:
             server_port = 25565
 
-        mc_ping = ping('127.0.0.1', server_port)
+        mc_ping = ping('127.0.0.1', int(server_port))
+
         return mc_ping
 
