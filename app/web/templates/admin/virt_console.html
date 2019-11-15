@@ -83,8 +83,35 @@
         }, 1500);
     });
 
+    $('#server_command').on('keypress', function (e) {
+         if(e.which === 13){
+
+            //Disable textbox to prevent multiple submit
+            $(this).attr("disabled", "disabled");
+
+            send_command_to_server()
+
+            //Enable the textbox again if needed.
+            $(this).removeAttr("disabled");
+
+            $(this).focus();
+         }
+   });
+
     $("#submit").click(function(e) {
         e.preventDefault();
+        send_command_to_server();
+
+    });
+
+    function scroll(){
+        var logview = $('#virt_console');
+        if(logview.length)
+           logview.scrollTop(logview[0].scrollHeight - logview.height());
+    }
+
+
+    function send_command_to_server(){
         var server_command = $("#server_command").val()
         var token = getCookie("_xsrf")
 
@@ -102,14 +129,7 @@
             $("#server_command").val('')
           },
         });
-    });
-
-    function scroll(){
-        var logview = $('#virt_console');
-        if(logview.length)
-           logview.scrollTop(logview[0].scrollHeight - logview.height());
     }
-
 </script>
 
 {% end %}
