@@ -45,6 +45,8 @@ class PublicHandler(BaseHandler):
 
     def get(self, page=None):
 
+        self.clear_cookie("user")
+
         server_data = self.get_server_data()
 
         template = "public/login.html"
