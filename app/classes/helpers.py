@@ -300,14 +300,14 @@ class helpers:
                     # if on a specific time
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
-                        schedule.every(task.interval).mondays.at(time).do(
+                        schedule.every(task.interval).monday.at(time).do(
                             mc_server_obj.send_command, task.command).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).mondays.do(mc_server_obj.send_command, task.command).tag('user')
+                        schedule.every(task.interval).monday.do(mc_server_obj.send_command, task.command).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
