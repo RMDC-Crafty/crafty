@@ -551,6 +551,6 @@ class Minecraft_Server():
             server_port = 25565
 
         mc_ping = ping('127.0.0.1', int(server_port))
-
+        # mc_ping = ping('site78.ddns.net', int(server_port))
         return mc_ping
 

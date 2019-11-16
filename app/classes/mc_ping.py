@@ -12,7 +12,10 @@ class Server:
     def __init__(self, data):
         self.description = data.get('description')
         if isinstance(self.description, dict):
-            self.description = self.description['text']
+            if "translate" in self.description:
+                self.description = self.description['translate']
+            else:
+                self.description = self.description['text']
 
         self.icon = base64.b64decode(data.get('favicon', '')[22:])
         self.players = Players(data['players']).report()
@@ -102,6 +105,7 @@ def ping(ip, port=25565):
 
             data += chunk
 
+        # print(data)
         return Server(json.loads(data))
     finally:
         sock.close()
