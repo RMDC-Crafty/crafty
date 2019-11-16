@@ -22,14 +22,49 @@
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-header with-border">
-                  <h3 class="box-title">
-                      Latest Logs
-                  </h3>
+                    <h3 class="box-title">
+                        Logs
+                    </h3>
                 </div>
-                <div class="box-body">
-                    <textarea id="logs" rows="25" readonly class="form-control">{% for d in data['log_data'] %}{{ d }}{% end %}</textarea>
+
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#tab_1" data-toggle="tab">Latest.log</a></li>
+                            <li><a href="#tab_2" data-toggle="tab">Crafty.log</a></li>
+                            <li><a href="#tab_3" data-toggle="tab">Schedule.log</a></li>
+                            <li><a href="#tab_4" data-toggle="tab">Access.log</a></li>
+                            <li><a href="#tab_5" id="search_tab" data-toggle="tab">Search Results</a></li>
+                            <li><a> Click Box Below To Scroll To Bottom</a></li>
+                            <li class="pull-right"><a id="search_box" href="#" class="text-muted"><i class="fa fa-search" aria-hidden="true"></i>  Search </a></li>
+                        </ul>
+                        <div class="tab-content">
+                          <div class="tab-pane active" id="tab_1">
+                            <textarea id="logs" rows="25" readonly class="form-control">{% for d in data['log_data'] %}{{ d }}{% end %}</textarea>
+                          </div>
+                          <!-- /.tab-pane -->
+                          <div class="tab-pane" id="tab_2">
+                            <textarea id="crafty_logs" rows="25" readonly class="form-control">{% for d in data['crafty_log'] %}{{ d }}{% end %}</textarea>
+                          </div>
+                            <!-- /.tab-pane -->
+                            <div class="tab-pane" id="tab_3">
+                            <textarea id="schedule_logs" rows="25" readonly class="form-control">{% for d in data['scheduler'] %}{{ d }}{% end %}</textarea>
+                          </div>
+                          <!-- /.tab-pane -->
+                          <!-- /.tab-pane -->
+                            <div class="tab-pane" id="tab_4">
+                            <textarea id="access_logs" rows="25" readonly class="form-control">{% for d in data['access'] %}{{ d }}{% end %}</textarea>
+                          </div>
+                          <!-- /.tab-pane -->
+                            <div class="tab-pane" id="tab_5">
+                            <textarea id="search_results" rows="25" readonly class="form-control"></textarea>
+                          </div>
+                          <!-- /.tab-pane -->
+                        </div>
+                        <!-- /.tab-content -->
+                      </div>
+
                 </div>
-              </div>
+
         </div>
         <div class="col-xs-12 col-md-6">
             <div class="box">
@@ -115,15 +150,68 @@
 {% block js-script %}
 
 <script>
+     //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
     $( document ).ready(function() {
         console.log( "ready!" );
-        scroll()
+        scroll('logs')
+        $('#search_tab').hide()
 
         $('#warning_logs_table').DataTable();
+
+        $('#tab_2').click(function(){
+          scroll('crafty_logs')
+        });
+
+        $('#tab_3').click(function(){
+          scroll('schedule_logs')
+        });
+
+        $('#tab_4').click(function(){
+          scroll('access_logs')
+        });
+
+        $('#search_box').click(function(){
+            bootbox.prompt({
+                title: "Enter Your Search String",
+                centerVertical: true,
+                callback: function(result){
+                    if (result){
+                    get_search_results(result)
+                    }
+                }
+            });
+        });
+
+
     });
 
-    function scroll(){
-        var logview = $('#logs');
+    function get_search_results(search_string){
+        var token = getCookie("_xsrf")
+
+        data_to_send = { search : search_string, }
+
+        console.log('Sending search: ' + search_string)
+        $.ajax({
+          type: "POST",
+          headers: {'X-XSRFToken': token},
+          url: '/ajax/search_logs',
+          data: data_to_send,
+            success: function(data){
+                console.log("got data: " + data)
+                $('#search_tab').show();
+                $('#search_tab').trigger('click');
+                $('#search_results').html(data)
+            },
+        });
+    }
+
+    function scroll(element){
+        var logview = $('#'+element);
         if(logview.length)
            logview.scrollTop(logview[0].scrollHeight - logview.height());
     }

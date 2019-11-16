@@ -230,11 +230,23 @@ class AdminHandler(BaseHandler):
 
         elif page == 'get_logs':
             server_log = os.path.join(self.mcserver.server_path, 'logs', 'latest.log')
-            data = helper.read_whole_file(server_log)
+            # data = helper.read_whole_file(server_log)
+            data = helper.tail_file(server_log, 500)
+            data.insert(0, "Lines trimmed to ~500 lines for speed sake \n ")
+
+            crafty_data = helper.tail_file(helper.crafty_log_file, 100)
+            crafty_data.insert(0, "Lines trimmed to ~100 lines for speed sake \n ")
+
+            scheduler_data = helper.tail_file(os.path.join(helper.logs_dir, 'schedule.log'), 100)
+            scheduler_data.insert(0, "Lines trimmed to ~100 lines for speed sake \n ")
+
+            access_data = helper.tail_file(os.path.join(helper.logs_dir, 'tornado-access.log'), 100)
+            access_data.insert(0, "Lines trimmed to ~100 lines for speed sake \n ")
 
             errors = self.mcserver.search_for_errors()
             template = "admin/logs.html"
-            context = {'log_data': data, 'errors': errors}
+            context = {'log_data': data, 'errors': errors, 'crafty_log': crafty_data,
+                       'scheduler': scheduler_data, 'access': access_data}
 
         else:
             # 404
@@ -365,8 +377,20 @@ class AjaxHandler(BaseHandler):
                 q = Schedules.delete().where(Schedules.id == id_to_del)
                 q.execute()
 
+        elif page == 'search_logs':
+            search_string = self.get_body_argument('search', default=None, strip=True)
+            logfile = os.path.join(self.mcserver.server_path, 'logs', 'latest.log')
+            data = helper.search_file(logfile, search_string)
+            if data:
+                temp_data = ""
+                for d in data:
+                    line = "Line Number: {} {}".format(d[0], d[1])
+                    temp_data = "{}\n{}".format(temp_data, line)
+                return_data = temp_data
 
-
+            else:
+                return_data = "Unable to find your string: {}".format(search_string)
+            self.write(return_data)
 
 class webserver():
 

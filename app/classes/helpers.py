@@ -22,6 +22,7 @@ class helpers:
         self.webroot = os.path.join(os.path.curdir, 'app', 'web')
         self.web_temp = os.path.join(self.webroot, 'temp')
         self.crafty_log_file = os.path.join(os.path.curdir, "logs", 'crafty.log')
+        self.logs_dir = os.path.join(os.path.curdir, 'logs')
 
     def random_string_generator(self, size=6, chars=string.ascii_uppercase + string.digits):
         """
