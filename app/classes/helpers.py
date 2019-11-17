@@ -11,18 +11,20 @@ from datetime import datetime
 from app.classes.console import Console
 from argon2 import PasswordHasher
 
-
 Console = Console()
 
 class helpers:
 
     def __init__(self):
-        self.dbpath = os.path.join(os.curdir, "app", 'config', 'crafty.sqlite')
-        self.passhasher = PasswordHasher()
-        self.webroot = os.path.join(os.path.curdir, 'app', 'web')
-        self.web_temp = os.path.join(self.webroot, 'temp')
-        self.crafty_log_file = os.path.join(os.path.curdir, "logs", 'crafty.log')
+        self.crafty_root = os.path.curdir
         self.logs_dir = os.path.join(os.path.curdir, 'logs')
+        self.crafty_log_file = os.path.join(self.logs_dir, 'crafty.log')
+        self.dbpath = os.path.join(self.crafty_root, "app", 'config', 'crafty.sqlite')
+
+        self.webroot = os.path.join(self.crafty_root, 'app', 'web')
+        self.web_temp = os.path.join(self.webroot, 'temp')
+
+        self.passhasher = PasswordHasher()
 
     def random_string_generator(self, size=6, chars=string.ascii_uppercase + string.digits):
         """
@@ -208,7 +210,6 @@ class helpers:
         in_time = datetime.strptime(thetime, "%I:%M%p")
         out_time = datetime.strftime(in_time, "%H:%M")
         return out_time
-
 
     def del_file(self, file_to_del):
         if self.check_file_exists(file_to_del):

@@ -83,6 +83,7 @@ def main():
     # if we don't have a sql_db, we create one, and run the installers
     if not check_for_sql_db():
         run_installer()
+        default_settings()
 
         do_intro()
 
@@ -121,7 +122,7 @@ def main():
 
     # fire off a history write now, and schedule one for later.
     mc_server.write_usage_history()
-    schedule.every(5).minutes.do(mc_server.write_usage_history)
+    mc_server.reload_history_settings()
 
     logging.info("Starting Scheduler Daemon")
     Console.info("Starting Scheduler Daemon")

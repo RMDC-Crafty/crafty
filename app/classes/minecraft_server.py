@@ -3,12 +3,11 @@ import re
 import sys
 import json
 import time
-import shlex
-import psutil
 
+import psutil
+import schedule
 import datetime
 import threading
-import subprocess
 import logging.config
 
 
@@ -321,11 +320,14 @@ class Minecraft_Server():
             players=online_data['online']
         ).execute()
 
-        last_week = datetime.datetime.now() - datetime.timedelta(days=7)
+        query = Crafty_settings.select(Crafty_settings.history_max_age)
+        max_days = query[0].history_max_age
+
+        # auto-clean on max days
+        last_week = datetime.datetime.now() - datetime.timedelta(days=max_days)
 
         # delete items older than 1 week
         History.delete().where(History.time > last_week)
-
 
     def write_html_server_status(self):
 
@@ -553,4 +555,13 @@ class Minecraft_Server():
         mc_ping = ping('127.0.0.1', int(server_port))
         # mc_ping = ping('site78.ddns.net', int(server_port))
         return mc_ping
+
+    def reload_history_settings(self):
+        # clear all history jobs
+        schedule.clear('history')
+
+        query = Crafty_settings.select(Crafty_settings.history_interval)
+        history_interval = query[0].history_interval
+        schedule.every(history_interval).minutes.do(self.write_usage_history).tag('history')
+
 

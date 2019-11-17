@@ -173,9 +173,13 @@ class AdminHandler(BaseHandler):
             saved = self.get_argument('saved', None)
 
             template = "admin/config.html"
-            db_data = MC_settings.get()
-            page_data = model_to_dict(db_data)
+            mc_data = MC_settings.get()
+            crafty_data = Crafty_settings.get()
+
+            page_data = {}
             page_data['saved'] = saved
+            page_data['mc_settings'] = model_to_dict(mc_data)
+            page_data['crafty_settings'] = model_to_dict(crafty_data)
 
             context = page_data
 
@@ -292,23 +296,39 @@ class AdminHandler(BaseHandler):
                 .on_conflict('replace')
                 .execute()
             )
-            print(result)
             self.redirect("/admin/schedules?saved=True")
 
 
         elif page == 'config':
 
-            q = MC_settings.update({
-                MC_settings.server_path: self.get_argument('server_path'),
-                MC_settings.server_jar: self.get_argument('server_jar'),
-                MC_settings.memory_max: self.get_argument('memory_max'),
-                MC_settings.memory_min: self.get_argument('memory_min'),
-                MC_settings.additional_args: self.get_argument('additional_args'),
-                MC_settings.auto_start_server: int(self.get_argument('auto_start_server')),
-                MC_settings.auto_start_delay: self.get_argument('auto_start_delay'),
-            }).where(MC_settings.id == 1)
+            config_type = self.get_argument('config_type')
 
-            q.execute()
+            if config_type == 'mc_settings':
+
+                q = MC_settings.update({
+                    MC_settings.server_path: self.get_argument('server_path'),
+                    MC_settings.server_jar: self.get_argument('server_jar'),
+                    MC_settings.memory_max: self.get_argument('memory_max'),
+                    MC_settings.memory_min: self.get_argument('memory_min'),
+                    MC_settings.additional_args: self.get_argument('additional_args'),
+                    MC_settings.pre_args: self.get_argument('pre_args'),
+                    MC_settings.auto_start_server: int(self.get_argument('auto_start_server')),
+                    MC_settings.auto_start_delay: self.get_argument('auto_start_delay'),
+                }).where(MC_settings.id == 1)
+
+                q.execute()
+
+            elif config_type == 'crafty_settings':
+                q = Crafty_settings.update({
+                    Crafty_settings.history_interval: self.get_argument('historical_interval'),
+                    Crafty_settings.history_max_age: self.get_argument('history_max_age'),
+                }).where(Crafty_settings.id == 1)
+
+                q.execute()
+
+                # reload the history settings
+                self.mcserver.reload_history_settings()
+
             self.redirect("/admin/config?saved=True")
 
 

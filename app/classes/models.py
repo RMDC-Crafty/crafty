@@ -29,11 +29,19 @@ class MC_settings(BaseModel):
     memory_max = CharField()
     memory_min = CharField()
     additional_args = CharField()
+    pre_args = CharField(default='')
     auto_start_server = BooleanField()
     auto_start_delay = IntegerField()
 
     class Meta:
         table_name = 'mc_settings'
+
+class Crafty_settings(BaseModel):
+    history_interval = IntegerField()
+    history_max_age = IntegerField()
+
+    class Meta:
+        table_name = 'crafty_settings'
 
 
 class Webserver(BaseModel):
@@ -69,4 +77,15 @@ class History(BaseModel):
 
 def create_tables():
     with database:
-        database.create_tables([Users, MC_settings, Webserver, Schedules, History])
+        database.create_tables([Users, MC_settings, Webserver, Schedules, History, Crafty_settings])
+
+def default_settings():
+
+    # default crafty_settings
+    q = Crafty_settings.insert({
+        Crafty_settings.history_interval: 60,
+        Crafty_settings.history_max_age: 2,
+    })
+
+    result = q.execute()
+    print(result)
