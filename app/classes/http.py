@@ -10,6 +10,7 @@ import tornado.ioloop
 import tornado.log
 import tornado.template
 import tornado.escape
+import tornado.locale
 from playhouse.shortcuts import model_to_dict, dict_to_model
 
 from app.classes.console import Console
@@ -21,6 +22,9 @@ helper = helpers()
 
 
 class BaseHandler(tornado.web.RequestHandler):
+    # tornado.locale.set_default_locale('es_ES')
+    tornado.locale.set_default_locale('de_DE')
+
     def get_current_user(self):
         return self.get_secure_cookie("user", max_age_days=1)
 
@@ -44,6 +48,8 @@ class PublicHandler(BaseHandler):
             self.clear_cookie("user")
 
     def get(self, page=None):
+
+
 
         self.clear_cookie("user")
 
@@ -471,6 +477,7 @@ class webserver():
 
         )
         app.listen(port_number)
+        tornado.locale.load_translations(os.path.join(web_root, 'translations'))
         tornado.ioloop.IOLoop.instance().start()
 
     def start_web_server(self):

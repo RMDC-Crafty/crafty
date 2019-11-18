@@ -9,6 +9,9 @@ Crafty via configuration options.
 - Addition of schedules
 - Historical Data graph on dashboard.
 - Logs page now has a tabbed interface with multiple logs and a search option.
+- Added Pre arguments to be configured
+- config page changed to have a tabbed interface
+- Historial Data is configurable in conf page
 
 ### Changes
 - moved scheduled logs to own file
