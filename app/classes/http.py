@@ -442,7 +442,6 @@ class webserver():
         # let's verify we have an SSL cert
         helper.create_self_signed_cert()
 
-
         websettings = Webserver.get()
 
         port_number = websettings.port_number
