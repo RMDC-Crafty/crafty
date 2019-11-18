@@ -11,6 +11,8 @@ import tornado.log
 import tornado.template
 import tornado.escape
 import tornado.locale
+import tornado.httpserver
+
 from playhouse.shortcuts import model_to_dict, dict_to_model
 
 from app.classes.console import Console
@@ -418,6 +420,7 @@ class AjaxHandler(BaseHandler):
                 return_data = "Unable to find your string: {}".format(search_string)
             self.write(return_data)
 
+
 class webserver():
 
     def __init__(self, mc_server):
@@ -436,13 +439,17 @@ class webserver():
 
     def run_tornado(self):
 
+        # let's verify we have an SSL cert
+        helper.create_self_signed_cert()
+
+
         websettings = Webserver.get()
 
         port_number = websettings.port_number
         web_root = helper.get_web_root_path()
 
-        logging.info("Starting Tornado HTTP Server on port {}".format(port_number))
-        Console.info("Starting Tornado HTTP Server on port {}".format(port_number))
+        logging.info("Starting Tornado HTTPS Server on port {}".format(port_number))
+        Console.info("Starting Tornado HTTPS Server on port {}".format(port_number))
         asyncio.set_event_loop(asyncio.new_event_loop())
 
         tornado.template.Loader('.')
@@ -463,6 +470,11 @@ class webserver():
             (r'/images(.*)', tornado.web.StaticFileHandler, {"path": "/images"})
         ]
 
+        cert_objects = {
+            'certfile': os.path.join(web_root, 'certs', 'crafty.crt'),
+            'keyfile': os.path.join(web_root, 'certs', 'crafty.key')
+        }
+
         app = tornado.web.Application(
             handlers,
             template_path=os.path.join(web_root, 'templates'),
@@ -474,9 +486,10 @@ class webserver():
             log_function=self.log_function,
             login_url="/",
             default_handler_class=My404Handler
-
         )
-        app.listen(port_number)
+
+        http_server = tornado.httpserver.HTTPServer(app, ssl_options=cert_objects)
+        http_server.listen(port_number)
         tornado.locale.load_translations(os.path.join(web_root, 'translations'))
         tornado.ioloop.IOLoop.instance().start()
 

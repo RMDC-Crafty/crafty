@@ -8,8 +8,15 @@ import schedule
 import zipfile
 from datetime import datetime
 
+from OpenSSL import crypto, SSL
+from socket import gethostname
+import time
+from pprint import pprint
+
 from app.classes.console import Console
 from argon2 import PasswordHasher
+
+
 
 Console = Console()
 
@@ -217,6 +224,62 @@ class helpers:
             logging.info("Deleted file: {}".format(file_to_del))
             return True
         return False
+
+    def create_self_signed_cert(self, cert_dir=None):
+
+        if cert_dir is None:
+            cert_dir = os.path.join(self.webroot, 'certs')
+
+        # create a directory if needed
+        self.ensure_dir_exists(cert_dir)
+
+        cert_file = os.path.join(cert_dir, 'crafty.crt')
+        key_file = os.path.join(cert_dir, 'crafty.key')
+
+        logging.info("SSL Cert File is set to: {}".format(cert_file))
+        logging.info("SSL Key File is set to: {}".format(key_file))
+
+        # don't create new files if we already have them.
+        if self.check_file_exists(cert_file) and self.check_file_exists(key_file):
+            logging.info('Cert and Key files already exists, not creating them.')
+            return True
+
+        Console.info("Generating a self signed SSL")
+        logging.info("Generating a self signed SSL")
+
+        # create a key pair
+        logging.info("Generating a key pair. This might take a moment.")
+        Console.info("Generating a key pair. This might take a moment.")
+        k = crypto.PKey()
+        k.generate_key(crypto.TYPE_RSA, 4096)
+
+
+        # create a self-signed cert
+        cert = crypto.X509()
+        cert.get_subject().C = "US"
+        cert.get_subject().ST = "Georgia"
+        cert.get_subject().L = "Atlanta"
+        cert.get_subject().O = "Crafty Controller"
+        cert.get_subject().OU = "Server Ops"
+        cert.get_subject().CN = gethostname()
+        cert.set_serial_number(1000)
+        cert.gmtime_adj_notBefore(0)
+        cert.gmtime_adj_notAfter(10 * 365 * 24 * 60 * 60)
+        cert.set_issuer(cert.get_subject())
+        cert.set_pubkey(k)
+        cert.sign(k, 'sha256')
+
+        f = open(cert_file, "w")
+        f.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert).decode())
+        f.close()
+
+        f = open(key_file, "w")
+        f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, k).decode())
+        f.close()
+
+
+
+
 
     def scheduler(self, task, mc_server_obj):
         logging.info("Parsing Tasks To Add")
