@@ -12,6 +12,7 @@ Crafty via configuration options.
 - Added Pre arguments to be configured
 - config page changed to have a tabbed interface
 - Historial Data is configurable in conf page
+- HTTPS only interface with Self Signed Certs
 
 ### Changes
 - moved scheduled logs to own file

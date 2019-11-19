@@ -16,9 +16,8 @@ from pprint import pprint
 from app.classes.console import Console
 from argon2 import PasswordHasher
 
-
-
 Console = Console()
+
 
 class helpers:
 
