@@ -1,5 +1,8 @@
-from peewee import *
+import os
+import json
 import datetime
+from peewee import *
+from playhouse.shortcuts import model_to_dict, dict_to_model
 from app.classes.helpers import helpers
 
 helper = helpers()
@@ -14,6 +17,12 @@ class BaseModel(Model):
     class Meta:
         database = database
 
+class Backups(BaseModel):
+    directories = CharField()
+    storage_location = CharField()
+
+    class Meta:
+        table_name = 'backups'
 
 class Users(BaseModel):
     username = CharField(unique=True)
@@ -77,9 +86,23 @@ class History(BaseModel):
 
 def create_tables():
     with database:
-        database.create_tables([Users, MC_settings, Webserver, Schedules, History, Crafty_settings])
+        database.create_tables([Users, MC_settings, Webserver, Schedules, History, Crafty_settings, Backups])
 
 def default_settings():
+
+    # get minecraft settings for the server root
+    mc_data = MC_settings.get()
+    data = model_to_dict(mc_data)
+    directories = data['server_path']
+    backup_directory = json.dumps()
+
+    #default backup settings
+    q = Backups.insert(({
+        Backups.directories: backup_directory,
+        Backups.storage_location: os.path.join(helper.crafty_root, 'backups')
+    }))
+
+    result = q.execute()
 
     # default crafty_settings
     q = Crafty_settings.insert({
@@ -88,4 +111,3 @@ def default_settings():
     })
 
     result = q.execute()
-    print(result)

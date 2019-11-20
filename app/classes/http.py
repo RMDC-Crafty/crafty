@@ -133,7 +133,12 @@ class AdminHandler(BaseHandler):
         elif page == "backups":
             template = "admin/backups.html"
             backup_path = os.path.join(self.mcserver.settings.server_path, 'crafty_backups')
-            context = {'backup_path': backup_path, 'current_backups': self.mcserver.list_backups()}
+
+            backup_list = Backups.get()
+            backup_data = model_to_dict(backup_list)
+            backup_dirs = json.loads(backup_data['directories'])
+
+            context = {'backup_paths': backup_dirs, 'backup_path': backup_path, 'current_backups': self.mcserver.list_backups()}
 
         elif page == "schedules":
             saved = self.get_argument('saved', None)
@@ -183,11 +188,19 @@ class AdminHandler(BaseHandler):
             template = "admin/config.html"
             mc_data = MC_settings.get()
             crafty_data = Crafty_settings.get()
+            backup_data = Backups.get()
 
             page_data = {}
             page_data['saved'] = saved
             page_data['mc_settings'] = model_to_dict(mc_data)
             page_data['crafty_settings'] = model_to_dict(crafty_data)
+            backup_data = model_to_dict(backup_data)
+            page_data['backup_data'] = json.loads(backup_data['directories'])
+
+            # get a listing of directories in the server path.
+            page_data['directories'] = helper.scan_dirs_in_path(self.mcserver.server_path)
+
+            page_data['server_root'] = self.mcserver.server_path
 
             context = page_data
 
@@ -233,7 +246,7 @@ class AdminHandler(BaseHandler):
                 next_page = "/admin/dashboard"
 
             elif command == "backup":
-                backup_thread = threading.Thread(name='backup', target=self.mcserver.backup_worlds, daemon=False)
+                backup_thread = threading.Thread(name='backup', target=self.mcserver.backup_server, daemon=False)
                 backup_thread.start()
                 time.sleep(5)
                 next_page = '/admin/backups'
@@ -306,7 +319,6 @@ class AdminHandler(BaseHandler):
             )
             self.redirect("/admin/schedules?saved=True")
 
-
         elif page == 'config':
 
             config_type = self.get_argument('config_type')
@@ -336,6 +348,12 @@ class AdminHandler(BaseHandler):
 
                 # reload the history settings
                 self.mcserver.reload_history_settings()
+
+            elif config_type == 'backup_settings':
+                checked = self.get_arguments('backup')
+                logging.info("Backup directories set to: {}".format(checked))
+                json_dirs = json.dumps(checked)
+                Backups.update({Backups.directories: json_dirs}).where(Backups.id == 1).execute()
 
             self.redirect("/admin/config?saved=True")
 

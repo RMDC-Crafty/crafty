@@ -28,63 +28,133 @@
 
             </ul>
             <div class="tab-content">
-              <div class="tab-pane active" id="tab_1">
-                    <form role="form" method="post">
-                        {% raw xsrf_form_html() %}
-                        <input type="hidden" name="config_type" value="crafty_settings"/>
+                  <div class="tab-pane active" id="tab_1">
+                        <form role="form" method="post">
+                            {% raw xsrf_form_html() %}
+                            <input type="hidden" name="config_type" value="crafty_settings"/>
 
-                        <div class="box">
-                            <div class="box-header with-border">
-                              <h3 class="box-title">
-                                  Crafty Config
-                              </h3>
-                            </div>
-
-                            <div class="box-body">
-                                <div class="form-group">
-                                    <label>
-                                        Historical Data Capture Interval <br />
-                                        <small>How many minutes between historical data capture</small>
-                                    </label>
-                                    <input type="number"
-                                           name="historical_interval" id="historical_interval"
-                                           class="form-control" placeholder="90"
-                                           value="{{ data['crafty_settings']['history_interval'] }}"
-                                    />
+                            <div class="box">
+                                <div class="box-header with-border">
+                                  <h3 class="box-title">
+                                      Crafty Config
+                                  </h3>
                                 </div>
 
-                                <div class="form-group">
-                                    <label>
-                                        Historical Data Length <br />
-                                        <small>How many days should we keep historical data</small>
-                                    </label>
-                                    <input type="number"
-                                           name="history_max_age" id="history_max_age"
-                                           class="form-control" placeholder="2"
-                                           value="{{ data['crafty_settings']['history_max_age'] }}"
-                                    />
+                                <div class="box-body">
+                                    <div class="form-group">
+                                        <label>
+                                            Historical Data Capture Interval <br />
+                                            <small>How many minutes between historical data capture</small>
+                                        </label>
+                                        <input type="number"
+                                               name="historical_interval" id="historical_interval"
+                                               class="form-control" placeholder="90"
+                                               value="{{ data['crafty_settings']['history_interval'] }}"
+                                        />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>
+                                            Historical Data Length <br />
+                                            <small>How many days should we keep historical data</small>
+                                        </label>
+                                        <input type="number"
+                                               name="history_max_age" id="history_max_age"
+                                               class="form-control" placeholder="2"
+                                               value="{{ data['crafty_settings']['history_max_age'] }}"
+                                        />
+                                    </div>
+
+
                                 </div>
 
-
+                                <div class="box-footer">
+                                    <a href="/admin/config" class="btn btn-danger">Cancel</a>
+                                    <button type="submit" class="btn btn-success pull-right">
+                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                        Save
+                                    </button>
+                                </div>
                             </div>
-
-                            <div class="box-footer">
-                                <a href="/admin/config" class="btn btn-danger">Cancel</a>
-                                <button type="submit" class="btn btn-success pull-right">
-                                    <i class="fa fa-floppy-o" aria-hidden="true"></i>
-                                    Save
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                        </form>
 
 
-              </div>
-              <!-- /.tab-pane -->
-              <div class="tab-pane" id="tab_2">
+                  </div>
+                  <!-- /.tab-pane -->
+                  <div class="tab-pane" id="tab_2">
+                        Select the files to backup<br />
+                        * Selecting a folder will backups all files in the directory, but not all directories in the folder<br />
+                        <hr />
 
-              </div>
-              <!-- /.tab-pane -->
+                        <form method="post">
+                            {% raw xsrf_form_html() %}
+                            <input type="hidden" name="config_type" value="backup_settings"/>
+
+                            <label>
+                                Backup the whole server:<br />
+                                {% if data['backup_data'][0] == data['server_root'] %}
+                                    <input type="checkbox" id="whole_server" name="backup" value="{{ data['server_root'] }}" checked="true"/> Backup Everything
+                                {% else %}
+                                    <input type="checkbox" id="whole_server" name="backup" value="{{ data['server_root'] }}"/> Backup Everything
+                                {% end %}
+
+                                <span id="everything_hint"> - Uncheck to select individual folders to backup</span>
+                            </label>
+
+                            <hr />
+                            Individual Folder Backup <br />
+
+                            <label>
+                            <input type="checkbox" id="select_all" disabled="true"/> SELECT ALL
+                            </label>
+
+                            <br />
+
+                            {% for item in data['directories'] %}
+
+                                {% if item['type'] == 'dir' %}
+                                    <label>
+                                        <input type="checkbox"
+                                               class="checkBoxClass"
+                                               name="backup"
+                                               value="{{item['name']}}"
+                                               disabled="true"
+                                               {% if item['name'] in data['backup_data']%}
+                                                   checked="true"
+                                                    disabled="false"
+                                               {% else %}
+                                                    disabled="true"
+                                                {% end%}
+                                        />
+                                        <i class="fa fa-folder" aria-hidden="true"></i>
+                                        {{ item['name'] }}
+                                    </label>
+                                    <br />
+                                {% else %}
+                                    <label>
+                                        <input type="checkbox"
+                                               class="checkBoxClass"
+                                               name="backup"
+                                               value="{{item['name']}}"
+
+                                                {% if item['name'] in data['backup_data']%}
+                                                    checked="true"
+                                                    disabled="false"
+                                                {% else %}
+                                                    disabled="true"
+                                                {% end%}
+                                        />
+                                        <i class="fa fa-file" aria-hidden="true"></i>
+                                        {{ item['name'] }}
+                                    </label>
+                                    <br />
+                                {% end %}
+                            {% end %}
+
+                            <button type="submit">Set Folders</button>
+                        </form>
+                  </div>
+                  <!-- /.tab-pane -->
               <div class="tab-pane" id="tab_3">
                     <form role="form" method="post">
                         {% raw xsrf_form_html() %}
@@ -288,15 +358,67 @@
     $( document ).ready(function() {
         console.log( "ready!" );
 
+        checkbox_update();
+        enable_disable_all();
+
         //adding quick/dirty padding
         $('input').css("margin-bottom",'10px')
 
         {% if data['saved'] %}
             show_saved()
-            setTimeout(hide_modal, 1500);
+            setTimeout(hide_modal, 1000);
         {% end %}
 
+        $("#whole_server").click(function () {
+            enable_disable_all();
+            checkbox_update();
+        });
+
+        $("#select_all").click(function () {
+            $(".checkBoxClass").prop('checked', $(this).prop('checked'));
+            checkbox_update();
+        });
+
+        $(".checkBoxClass").click(function () {
+            if ( $(this).prop('checked') === false ){
+                $("#select_all").prop('checked', false);
+                checkbox_update();
+            }
+        });
+
+        $('.checkBoxClass').change(function(){
+            checkbox_update();
+        });
+
     });
+
+    function checkbox_update(){
+        $( ".checkBoxClass" ).each(function( index ) {
+            if (this.checked) {
+                $(this).parent().addClass('text-green')
+                $(this).parent().removeClass('text-red')
+            }
+            else{
+                $(this).parent().addClass('text-red')
+                $(this).parent().removeClass('text-green')
+            }
+        });
+    }
+
+    function enable_disable_all(){
+        if ( $("#whole_server").prop('checked') === true ){
+                $(".checkBoxClass").prop('checked', false);
+                $(".checkBoxClass").prop('disabled', true);
+                $("#select_all").prop('checked', false);
+                $("#select_all").prop('disabled', true);
+                $("#everything_hint").show();
+            }
+        else{
+            $(".checkBoxClass").prop('disabled', false);
+            $("#select_all").prop('disabled', false);
+            $("#everything_hint").hide();
+        }
+    }
 
 
 </script>

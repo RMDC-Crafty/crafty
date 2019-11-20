@@ -199,15 +199,27 @@ class helpers:
 
         return return_lines
 
-    def zippath(self, path, backup_filename, exclude_dirs):
+    def zippath(self, paths, backup_filename, exclude_dirs):
         zip_handler = zipfile.ZipFile(backup_filename, 'w')
 
-        for root, dirs, files in os.walk(path, topdown=True):
-            dirs[:] = [d for d in dirs if d not in exclude_dirs]
+        # split the directories into a list (even if just one)
+        # lst_paths = paths.split()
 
-            for file in files:
-                logging.info("backing up: {}".format(os.path.join(root, file)))
-                zip_handler.write(os.path.join(root, file))
+        for p in paths:
+            # make sure to remove any brackets
+            # backup_path = p.strip('[').strip(']').strip(',').strip('"')
+
+            for root, dirs, files in os.walk(p, topdown=True):
+                dirs[:] = [d for d in dirs if d not in exclude_dirs]
+
+                for file in files:
+                    try:
+                        logging.info("backing up: {}".format(os.path.join(root, file)))
+                        zip_handler.write(os.path.join(root, file))
+
+                    except Exception as e:
+                        logging.warning("Error backing up: {}! - Error was: {}".format(os.path.join(root, file), e))
+
 
         zip_handler.close()
 
@@ -276,6 +288,28 @@ class helpers:
         f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, k).decode())
         f.close()
 
+    def scan_dirs_in_path(self, root_path):
+        structure = []
+        exclude = set(root_path)
+        """
+        for root, dirs, files in os.walk(root_path, topdown=True):
+
+            if root_path in dirs:
+                dirs.remove(root_path)
+            for d in dirs:
+                file_count = len(files)
+                structure.append({'type': 'dir', 'filecount': file_count, 'name': os.path.join(root, d)})
+        return structure
+        """
+
+        files = os.listdir(root_path)
+        for f in files:
+            if os.path.isdir(os.path.join(root_path, f)):
+                structure.append({'type': 'dir', 'name': os.path.join(root_path, f)})
+            else:
+                structure.append({'type': 'file', 'name': os.path.join(root_path, f)})
+
+        return sorted(structure, key=lambda i: i['name'])
 
 
 
@@ -977,13 +1011,13 @@ class helpers:
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
                         schedule.every(task.interval).minutes.at(time).do(
-                            mc_server_obj.backup_worlds).tag('user')
+                            mc_server_obj.backup_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).minutes.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).minutes.do(mc_server_obj.backup_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -993,13 +1027,13 @@ class helpers:
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
                         schedule.every(task.interval).hours.at(time).do(
-                            mc_server_obj.backup_worlds).tag('user')
+                            mc_server_obj.backup_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).hours.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).hours.do(mc_server_obj.backup_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -1009,13 +1043,13 @@ class helpers:
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
                         schedule.every(task.interval).days.at(time).do(
-                            mc_server_obj.backup_worlds).tag('user')
+                            mc_server_obj.backup_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).days.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).days.do(mc_server_obj.backup_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -1025,13 +1059,13 @@ class helpers:
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
                         schedule.every(task.interval).money.at(time).do(
-                            mc_server_obj.backup_worlds).tag('user')
+                            mc_server_obj.backup_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).money.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).money.do(mc_server_obj.backup_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -1041,13 +1075,13 @@ class helpers:
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
                         schedule.every(task.interval).tuesday.at(time).do(
-                            mc_server_obj.backup_worlds).tag('user')
+                            mc_server_obj.backup_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).tuesday.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).tuesday.do(mc_server_obj.backup_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -1057,13 +1091,13 @@ class helpers:
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
                         schedule.every(task.interval).wednesday.at(time).do(
-                            mc_server_obj.backup_worlds).tag('user')
+                            mc_server_obj.backup_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).wednesday.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).wednesday.do(mc_server_obj.backup_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -1073,13 +1107,13 @@ class helpers:
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
                         schedule.every(task.interval).thursday.at(time).do(
-                            mc_server_obj.backup_worlds).tag('user')
+                            mc_server_obj.backup_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).thursday.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).thursday.do(mc_server_obj.backup_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -1089,13 +1123,13 @@ class helpers:
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
                         schedule.every(task.interval).friday.at(time).do(
-                            mc_server_obj.backup_worlds).tag('user')
+                            mc_server_obj.backup_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).friday.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).friday.do(mc_server_obj.backup_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -1105,13 +1139,13 @@ class helpers:
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
                         schedule.every(task.interval).saturday.at(time).do(
-                            mc_server_obj.backup_worlds).tag('user')
+                            mc_server_obj.backup_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).saturday.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).saturday.do(mc_server_obj.backup_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -1121,13 +1155,13 @@ class helpers:
                     if task.start_time:
                         time = self.convert_time_to_24(task.start_time)
                         schedule.every(task.interval).sunday.at(time).do(
-                            mc_server_obj.backup_worlds).tag('user')
+                            mc_server_obj.backup_server).tag('user')
 
                         logging.info('Added scheduled {} every {} {} at {} '.format(
                             task.action, task.interval, task.interval_type, task.start_time))
                     # if no "at" time
                     else:
-                        schedule.every(task.interval).sunday.do(mc_server_obj.backup_worlds).tag('user')
+                        schedule.every(task.interval).sunday.do(mc_server_obj.backup_server).tag('user')
                         logging.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 

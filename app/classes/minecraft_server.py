@@ -381,7 +381,7 @@ class Minecraft_Server():
             json.dump(server_stats, f, sort_keys=True, indent=4)
         f.close()
 
-    def backup_worlds(self, announce=True):
+    def backup_server(self, announce=True):
 
         # backup path is crafty_backups in server root
         backup_path = os.path.join(self.settings.server_path, "crafty_backups")
@@ -405,7 +405,11 @@ class Minecraft_Server():
 
                 logging.info("Backing up server directory to: {}".format(backup_filename))
 
-                helper.zippath(self.server_path, backup_full_path, ['crafty_backups'])
+                backup_list = Backups.get()
+                backup_data = model_to_dict(backup_list)
+                backup_dirs = json.loads(backup_data['directories'])
+
+                helper.zippath(backup_dirs, backup_full_path, ['crafty_backups'])
 
                 logging.info("Backup Completed")
 

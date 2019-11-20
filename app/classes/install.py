@@ -43,7 +43,7 @@ class installer():
         self.get_mc_server_data()
 
     def get_mc_server_data(self):
-        print("Please enter the full path to your server: /var/opt/server is default ")
+        print("Please enter the full path to your server: /var/opt/minecraft/server is default ")
         print('Example: /var/opt/minecraft/server')
         print('Example: C:\\minecraft_server')
         server_path = str(
