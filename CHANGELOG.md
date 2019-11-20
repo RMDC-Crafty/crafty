@@ -11,7 +11,7 @@ Crafty via configuration options.
 - Logs page now has a tabbed interface with multiple logs and a search option.
 - Added Pre arguments to be configured
 - config page changed to have a tabbed interface
-- Historial Data is configurable in conf page
+- Historical Data is configurable in conf page
 - HTTPS only interface with Self Signed Certs
 
 ### Changes
@@ -19,7 +19,7 @@ Crafty via configuration options.
 - removed old Alpha 1 documentation - replaced with page that links to craftycontrol.com
 - fixed windows path issues / errors.
 - database should create new tables as needed upon upgrade, still recommend starting a new one
-- backups now backup the whole server directory - preserving full paths for easy restore option
+- backups now backup whatever you want - all configurable in the interface - preserving full paths for easy restore option
 
 ### Bug Fixes
 * Fixed a bug where invalid Login name would cause error on page. - Thanks IAbooseYou
@@ -31,6 +31,10 @@ Crafty via configuration options.
 * Fixed issue number 2 & 3 related to getting player numbers and server version - Thanks Kornster / ConnorTron
    
 * Fixed issue number 4 dealing with log file encoding -  Thanks Jarly
+
+* Fixed issue #10 signout now works - Thanks ConnorTron
+
+* Fixed issue number 9 for scheduling - Thanks Penguin
 
 ## [v2.0.alpha]
 This version of Crafty is a complete rebuild of Crafty from the ground up.
