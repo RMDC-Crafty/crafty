@@ -22,13 +22,13 @@
           <!-- Custom Tabs -->
           <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
-              <li class="active"><a href="#tab_1" data-toggle="tab">Crafty Config</a></li>
-              <li><a href="#tab_2" data-toggle="tab">Backups</a></li>
-              <li><a href="#tab_3" data-toggle="tab">MC Server</a></li>
+              <li class="active"><a href="#crafty" data-toggle="tab">Crafty Config</a></li>
+              <li><a href="#backup" data-toggle="tab">Backups</a></li>
+              <li><a href="#mcserver" data-toggle="tab">MC Server</a></li>
 
             </ul>
             <div class="tab-content">
-                  <div class="tab-pane active" id="tab_1">
+                  <div class="tab-pane active" id="crafty">
                         <form role="form" method="post">
                             {% raw xsrf_form_html() %}
                             <input type="hidden" name="config_type" value="crafty_settings"/>
@@ -81,15 +81,22 @@
 
                   </div>
                   <!-- /.tab-pane -->
-                  <div class="tab-pane" id="tab_2">
-                        Select the files to backup<br />
-                        * Selecting a folder will backups all files in the directory, but not all directories in the folder<br />
+                  <div class="tab-pane" id="backup">
+                        <h3>Max Number Of Backups</h3>
+
+                        <select class="form-control">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="30">30</option>
+                            <option value="Unlimited">Unlimited</option>
+                        </select> <br />
                         <hr />
 
                         <form method="post">
                             {% raw xsrf_form_html() %}
                             <input type="hidden" name="config_type" value="backup_settings"/>
-
+                            <h3>Backup These Files</h3>
                             <label>
                                 Backup the whole server:<br />
                                 {% if data['backup_data'][0] == data['server_root'] %}
@@ -151,11 +158,13 @@
                                 {% end %}
                             {% end %}
 
-                            <button type="submit">Set Folders</button>
+                            <button type="submit" class="btn btn-success pull-right">Set Folders</button>
+                            <br class="clear"/>
+                            <br class="clear"/>
                         </form>
                   </div>
                   <!-- /.tab-pane -->
-              <div class="tab-pane" id="tab_3">
+              <div class="tab-pane" id="mcserver">
                     <form role="form" method="post">
                         {% raw xsrf_form_html() %}
                         <input type="hidden" name="config_type" value="mc_settings"/>

@@ -93,8 +93,8 @@ def default_settings():
     # get minecraft settings for the server root
     mc_data = MC_settings.get()
     data = model_to_dict(mc_data)
-    directories = data['server_path']
-    backup_directory = json.dumps()
+    directories = [data['server_path'],]
+    backup_directory = json.dumps(directories)
 
     #default backup settings
     q = Backups.insert(({

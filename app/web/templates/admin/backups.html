@@ -35,12 +35,14 @@
                     <hr />
                     Your backups are stored in: <br /> {{ data['backup_path'] }}<br />
                     <hr>
+
                     You are backing up these paths:<br />
                     <ul>
                         {% for p in data['backup_paths'] %}
                         <li>{{ p }}</li>
                         {% end %}
                     </ul>
+                    <a href="/admin/config">Change Backup Config</a>
 
                 </div>
               </div>
