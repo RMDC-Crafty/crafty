@@ -383,8 +383,11 @@ class Minecraft_Server():
 
     def backup_server(self, announce=True):
 
-        # backup path is crafty_backups in server root
-        backup_path = os.path.join(self.settings.server_path, "crafty_backups")
+        # backup path is saved in the db
+        backup_list = Backups.get()
+        backup_data = model_to_dict(backup_list)
+
+        backup_path = backup_data['storage_location']
         helper.ensure_dir_exists(backup_path)
 
         logging.info('Starting Backup Process')
@@ -424,13 +427,21 @@ class Minecraft_Server():
                     if self.check_running():
                         self.send_command('say [Crafty Controller] Unable to create backups - check the logs')
 
+            # remove any extra backups
+            max_backups = backup_data['max_backups']
+            logging.info('Checking for backups older than {} days'.format(max_backups))
+            helper.del_files_older_than_x_days(max_backups, backup_path)
+
+
+
         else:
             logging.error("Unable to find or create backup path!")
             return False
 
     def list_backups(self):
-
-        backup_path = os.path.join(self.settings.server_path, "crafty_backups")
+        backup_list = Backups.get()
+        backup_data = model_to_dict(backup_list)
+        backup_path = backup_data['storage_location']
         helper.ensure_dir_exists(backup_path)
 
         results = []

@@ -132,10 +132,11 @@ class AdminHandler(BaseHandler):
 
         elif page == "backups":
             template = "admin/backups.html"
-            backup_path = os.path.join(self.mcserver.settings.server_path, 'crafty_backups')
+
 
             backup_list = Backups.get()
             backup_data = model_to_dict(backup_list)
+            backup_path = backup_data['storage_location']
             backup_dirs = json.loads(backup_data['directories'])
 
             context = {'backup_paths': backup_dirs, 'backup_path': backup_path, 'current_backups': self.mcserver.list_backups()}
@@ -196,6 +197,7 @@ class AdminHandler(BaseHandler):
             page_data['crafty_settings'] = model_to_dict(crafty_data)
             backup_data = model_to_dict(backup_data)
             page_data['backup_data'] = json.loads(backup_data['directories'])
+            page_data['backup_config'] = backup_data
 
             # get a listing of directories in the server path.
             page_data['directories'] = helper.scan_dirs_in_path(self.mcserver.server_path)
@@ -351,9 +353,19 @@ class AdminHandler(BaseHandler):
 
             elif config_type == 'backup_settings':
                 checked = self.get_arguments('backup')
+                max_backups = self.get_argument('max_backups')
+                backup_storage = self.get_argument('storage_location')
+
                 logging.info("Backup directories set to: {}".format(checked))
                 json_dirs = json.dumps(checked)
-                Backups.update({Backups.directories: json_dirs}).where(Backups.id == 1).execute()
+                Backups.update(
+                    {
+                        Backups.directories: json_dirs,
+                        Backups.max_backups: max_backups,
+                        Backups.storage_location: backup_storage
+
+                     }
+                ).where(Backups.id == 1).execute()
 
             self.redirect("/admin/config?saved=True")
 

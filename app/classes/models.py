@@ -20,6 +20,7 @@ class BaseModel(Model):
 class Backups(BaseModel):
     directories = CharField()
     storage_location = CharField()
+    max_backups = IntegerField()
 
     class Meta:
         table_name = 'backups'
@@ -99,7 +100,8 @@ def default_settings():
     #default backup settings
     q = Backups.insert(({
         Backups.directories: backup_directory,
-        Backups.storage_location: os.path.join(helper.crafty_root, 'backups')
+        Backups.storage_location: os.path.abspath(os.path.join(helper.crafty_root, 'backups')),
+        Backups.max_backups: 7
     }))
 
     result = q.execute()

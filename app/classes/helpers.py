@@ -291,16 +291,6 @@ class helpers:
     def scan_dirs_in_path(self, root_path):
         structure = []
         exclude = set(root_path)
-        """
-        for root, dirs, files in os.walk(root_path, topdown=True):
-
-            if root_path in dirs:
-                dirs.remove(root_path)
-            for d in dirs:
-                file_count = len(files)
-                structure.append({'type': 'dir', 'filecount': file_count, 'name': os.path.join(root, d)})
-        return structure
-        """
 
         files = os.listdir(root_path)
         for f in files:
@@ -310,6 +300,19 @@ class helpers:
                 structure.append({'type': 'file', 'name': os.path.join(root_path, f)})
 
         return sorted(structure, key=lambda i: i['name'])
+
+    def del_files_older_than_x_days(self, max_days, path):
+
+        now = time.time()
+
+        files = os.listdir(path)
+        for f in files:
+            file_path = os.path.join(path, f)
+            if os.stat(file_path).st_mtime < now - max_days * 86400:
+                if os.path.isfile(file_path):
+                    logging.info("Deleting {} because it's older than {} days".format(file_path,max_days))
+                    os.remove(file_path)
+
 
 
 

@@ -82,21 +82,47 @@
                   </div>
                   <!-- /.tab-pane -->
                   <div class="tab-pane" id="backup">
-                        <h3>Max Number Of Backups</h3>
-
-                        <select class="form-control">
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                            <option value="30">30</option>
-                            <option value="Unlimited">Unlimited</option>
-                        </select> <br />
-                        <hr />
-
-                        <form method="post">
+                        <h3>Backup Config</h3>
+                      <form method="post">
                             {% raw xsrf_form_html() %}
+                            <div class="row">
+                                <div class="form-group">
+                                      <label for="inputEmail3" class="col-xs-3 control-label">Max Age Of Backups In Days</label>
+
+                                      <div class="col-xs-2">
+                                            <select class="form-control" name="max_backups">
+                                                <option value="7" {% if data['backup_config']['max_backups'] == 7 %} selected {% end %}>7</option>
+                                                <option value="14" {% if data['backup_config']['max_backups'] == 14 %} selected {% end %}>14</option>
+                                                <option value="30" {% if data['backup_config']['max_backups'] == 30 %} selected {% end %}>30</option>
+                                                <option value="60" {% if data['backup_config']['max_backups'] == 60 %} selected {% end %}>60</option>
+                                                <option value="90" {% if data['backup_config']['max_backups'] == 90 %} selected {% end %}>90</option>
+                                                <option value="182" {% if data['backup_config']['max_backups'] == 182 %} selected {% end %}>182</option>
+                                                <option value="365" {% if data['backup_config']['max_backups'] == 365 %} selected {% end %}>365</option>
+                                            </select>
+                                      </div>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                  <div class="form-group">
+                                      <label for="storage_location" class="col-xs-3 control-label">Where to Save Backups</label>
+
+                                      <div class="col-sm-9">
+                                            <input type="text"
+                                                   class="form-control"
+                                                   id="storage_location"
+                                                   placeholder="Backup Location"
+                                                   name="storage_location"
+                                                   value="{{ data['backup_config']['storage_location'] }}"
+                                            >
+                                      </div>
+                                    </div>
+                            </div>
+
+                            <hr />
+
                             <input type="hidden" name="config_type" value="backup_settings"/>
-                            <h3>Backup These Files</h3>
+                            <h4>Backup These Files</h4>
                             <label>
                                 Backup the whole server:<br />
                                 {% if data['backup_data'][0] == data['server_root'] %}
@@ -158,7 +184,10 @@
                                 {% end %}
                             {% end %}
 
-                            <button type="submit" class="btn btn-success pull-right">Set Folders</button>
+                            <button type="submit" class="btn btn-success pull-right">
+                                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                Save Backups Settings
+                            </button>
                             <br class="clear"/>
                             <br class="clear"/>
                         </form>
