@@ -82,18 +82,12 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% if len(data['errors']['errors']) <= 0 %}
-                            <tr>
-                                <td colspan="2" class="text-center"> No Errors Found!</td>
-                            </tr>
-                        {% else %}
                             {% for e in data['errors']['errors'] %}
                             <tr>
                                 <td>{{ e[0] }}</td>
                                 <td>{{ e[1] }}</td>
                             </tr>
                             {% end %}
-                        {% end %}
                         </tbody>
                     </table>
                 </div>
@@ -115,18 +109,12 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% if len(data['errors']['warnings']) <= 0 %}
-                            <tr>
-                                <td colspan="2" class="text-center"> No Warnings Found!</td>
-                            </tr>
-                        {% else %}
                             {% for w in data['errors']['warnings'] %}
                             <tr>
                                 <td>{{ w[0] }}</td>
                                 <td>{{ w[1] }}</td>
                             </tr>
                             {% end %}
-                        {% end %}
                         </tbody>
                     </table>
                 </div>
