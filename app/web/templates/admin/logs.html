@@ -161,7 +161,13 @@
         scroll('logs')
         $('#search_tab').hide()
 
-        $('#warning_logs_table').DataTable();
+        $('#warning_logs_table').DataTable({
+            "order": [[ 0, "desc" ]]
+        });
+
+        $('#error_logs_table').DataTable({
+            "order": [[ 0, "desc" ]]
+        });
 
         $('#tab_2').click(function(){
           scroll('crafty_logs')

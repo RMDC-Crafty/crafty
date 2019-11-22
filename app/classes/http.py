@@ -185,6 +185,7 @@ class AdminHandler(BaseHandler):
 
         elif page == 'config':
             saved = self.get_argument('saved', None)
+            invalid = self.get_argument('invalid', None)
 
             template = "admin/config.html"
             mc_data = MC_settings.get()
@@ -193,6 +194,7 @@ class AdminHandler(BaseHandler):
 
             page_data = {}
             page_data['saved'] = saved
+            page_data['invalid'] = invalid
             page_data['mc_settings'] = model_to_dict(mc_data)
             page_data['crafty_settings'] = model_to_dict(crafty_data)
             backup_data = model_to_dict(backup_data)
@@ -230,6 +232,7 @@ class AdminHandler(BaseHandler):
 
         elif page == 'commands':
             command = self.get_argument("command", None, True)
+            self.mcserver.reload_settings()
 
             if command == "server_stop":
                 self.mcserver.stop_threaded_server()
@@ -339,6 +342,7 @@ class AdminHandler(BaseHandler):
                 }).where(MC_settings.id == 1)
 
                 q.execute()
+                self.mcserver.reload_settings()
 
             elif config_type == 'crafty_settings':
                 q = Crafty_settings.update({
@@ -352,20 +356,26 @@ class AdminHandler(BaseHandler):
                 self.mcserver.reload_history_settings()
 
             elif config_type == 'backup_settings':
-                checked = self.get_arguments('backup')
-                max_backups = self.get_argument('max_backups')
-                backup_storage = self.get_argument('storage_location')
+                checked = self.get_arguments('backup', False)
+                max_backups = self.get_argument('max_backups', None)
+                backup_storage = self.get_argument('storage_location', None)
 
-                logging.info("Backup directories set to: {}".format(checked))
-                json_dirs = json.dumps(checked)
-                Backups.update(
-                    {
-                        Backups.directories: json_dirs,
-                        Backups.max_backups: max_backups,
-                        Backups.storage_location: backup_storage
+                if len(checked) == 0 or len(max_backups) == 0 or len(backup_storage) == 0:
+                    logging.info('Backup settings Invalid: Checked: {}, max_backups: {}, backup_storage: {}'
+                                 .format(checked, max_backups, backup_storage))
+                    self.redirect("/admin/config?invalid=True")
 
-                     }
-                ).where(Backups.id == 1).execute()
+                else:
+                    logging.info("Backup directories set to: {}".format(checked))
+                    json_dirs = json.dumps(list(checked))
+                    Backups.update(
+                        {
+                            Backups.directories: json_dirs,
+                            Backups.max_backups: max_backups,
+                            Backups.storage_location: backup_storage
+
+                         }
+                    ).where(Backups.id == 1).execute()
 
             self.redirect("/admin/config?saved=True")
 

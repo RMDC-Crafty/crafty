@@ -1,7 +1,26 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [v2.0.beta]
+## [v2.0.beta3]
+This version of Crafty focuses on Waterfall/Bungee Support, Permissions/Roles
+and cleanup/refactoring to get ready for possible RC status.
+
+### Additions
+Waterfall/Bungee Support - Crafty no longer fails if there isn't a server.properties.
+Waterfall/Bungee Support - Crafty will send "end" for waterfall/bungee instead of stop
+
+
+### Changes
+Added datatables to Errors Log on logging page.
+Fixed potential bug where Backup save path could be blank
+Fixed potential bug where backup folders could be blank (nothing checked)
+Fixed bug where waterfall servers desc are not showing
+
+
+### Bug Fixes
+
+
+## [v2.0.beta2]
 This version of Crafty focuses on Schedules, and more customization of 
 Crafty via configuration options.  
 

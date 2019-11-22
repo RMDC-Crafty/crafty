@@ -11,9 +11,27 @@ import sys
 class Server:
     def __init__(self, data):
         self.description = data.get('description')
+        # print(self.description)
         if isinstance(self.description, dict):
+
+            #cat server
             if "translate" in self.description:
                 self.description = self.description['translate']
+
+            #waterfall / bungee
+            elif 'extra' in self.description:
+                lines = []
+
+                description = self.description
+                if 'extra' in description.keys():
+                    for e in description['extra']:
+                        if "text" in e.keys():
+                            lines.append(e['text'])
+
+                total_text = " ".join(lines)
+                self.description = total_text
+
+            #normal MC
             else:
                 self.description = self.description['text']
 

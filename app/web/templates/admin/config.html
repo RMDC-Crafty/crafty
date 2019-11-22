@@ -87,7 +87,7 @@
                             {% raw xsrf_form_html() %}
                             <div class="row">
                                 <div class="form-group">
-                                      <label for="inputEmail3" class="col-xs-3 control-label">Max Age Of Backups In Days</label>
+                                      <label for="max_backups" class="col-xs-3 control-label">Max Age Of Backups In Days</label>
 
                                       <div class="col-xs-2">
                                             <select class="form-control" name="max_backups">
@@ -389,6 +389,14 @@
         });
     }
 
+    function show_invalid(){
+        var dialog = bootbox.dialog({
+            message: "Invalid Settings Detected",
+            className: 'modal modal-danger fade-in',
+            okButton: false
+        });
+    }
+
     function hide_modal(){
         bootbox.hideAll()
     }
@@ -406,6 +414,12 @@
             show_saved()
             setTimeout(hide_modal, 1000);
         {% end %}
+
+        {% if data['invalid'] %}
+            show_invalid()
+            setTimeout(hide_modal, 1000);
+        {% end %}
+
 
         $("#whole_server").click(function () {
             enable_disable_all();

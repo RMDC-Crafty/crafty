@@ -6,6 +6,7 @@ import string
 import random
 import schedule
 import zipfile
+import yaml
 from datetime import datetime
 
 from OpenSSL import crypto, SSL
@@ -79,7 +80,6 @@ class helpers:
             logging.debug('Found path: {}'.format(path))
             return True
         else:
-            logging.warning('Unable to find path: {}'.format(path))
             return False
 
     def check_directory_exist(self, path):
@@ -314,6 +314,12 @@ class helpers:
                     logging.info("Deleting {} because it's older than {} days".format(file_path,max_days))
                     os.remove(file_path)
 
+    def load_yml_file(self, path):
+        if self.check_file_exists(path):
+            with open(r'{}'.format(path)) as file:
+                data = yaml.full_load(file)
+            return data
+        return False
 
 
 

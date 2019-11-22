@@ -37,15 +37,17 @@ class Minecraft_Server():
         self.server_thread = None
         self.settings = None
 
-        # do init setup
-        #self.do_init_setup()
+    def reload_settings(self):
+        logging.info("Reloading MC Settings from the DB")
+
+        self.settings = MC_settings.get()
+        self.setup_server_run_command()
 
     def do_init_setup(self):
         logging.debug("Minecraft Server Module Loaded")
         Console.info("Loading Minecraft Server Module")
 
-        self.settings = MC_settings.get()
-        self.setup_server_run_command()
+        self.reload_settings()
 
         # lets check for orphaned servers
         self.check_orphaned_server()
@@ -149,9 +151,13 @@ class Minecraft_Server():
             self.write_html_server_status()
 
     def stop_server(self):
-        logging.info('Sending stop command to server')
 
-        self.send_command('stop')
+        if self.detect_bungee_waterfall():
+            logging.info('Waterfall/Bungee Detected: Sending end command to server')
+            self.send_command("end")
+        else:
+            logging.info('Sending stop command to server')
+            self.send_command('stop')
 
         for x in range(6):
 
@@ -300,7 +306,6 @@ class Minecraft_Server():
             'cpu_usage': psutil.cpu_percent(interval=0.5) / psutil.cpu_count(),
             'mem_percent': psutil.virtual_memory()[2]
             }
-
         try:
             server_ping = self.ping_server()
         except:
@@ -333,7 +338,6 @@ class Minecraft_Server():
 
         datime = datetime.datetime.fromtimestamp(psutil.boot_time())
         errors = self.search_for_errors()
-
         try:
             server_ping = self.ping_server()
         except:
@@ -462,6 +466,13 @@ class Minecraft_Server():
         if worldname:
             return worldname
         else:
+            return "Not Found"
+
+    def detect_bungee_waterfall(self):
+        bungee_waterfall_file = os.path.join(self.server_path.replace('"', ''), 'config.yml')
+        if helper.check_file_exists(bungee_waterfall_file):
+            return True
+        else:
             return False
 
     # returns the first setting that = the regex supplied
@@ -469,6 +480,7 @@ class Minecraft_Server():
 
         # whats the file we are looking for?
         server_prop_file = os.path.join(self.server_path.replace('"', ''), 'server.properties')
+        bungee_waterfall_file = os.path.join(self.server_path.replace('"', ''), 'config.yml')
 
         # re of what we are looking for
         # ignoring case - just in case someone used all caps
@@ -489,6 +501,8 @@ class Minecraft_Server():
             # if we got here, we couldn't find it
             logging.warning('Unable to find string using regex {} in server.properties file'.format(regex))
             return False
+        elif helper.check_file_exists(bungee_waterfall_file):
+            return "Bungee/Waterfall Detected"
 
         # if we got here, we can't find server.properties (bigger issues)
         logging.warning('Unable to find server.properties file')
@@ -561,14 +575,27 @@ class Minecraft_Server():
 
     def ping_server(self):
 
-        server_port = self.search_server_properties("server-port")
+        if self.detect_bungee_waterfall():
+            config_file = os.path.join(self.server_path, 'config.yml')
+            config_data = helper.load_yml_file(config_file)
+            try:
+                host_setting = str(config_data['listeners'][0]['host']).split(":")
+                if len(host_setting) == 2:
+                    server_port = host_setting[1]
+
+            except Exception as e:
+                logging.warning("Unable to find listener query port in config.yml - error was: {}".format(e))
+                logging.warning("Using default port for query to server")
+                server_port = False
+                pass
+        else:
+            server_port = self.search_server_properties("server-port")
 
         # bomb out to default port number
         if not server_port:
             server_port = 25565
 
         mc_ping = ping('127.0.0.1', int(server_port))
-        # mc_ping = ping('site78.ddns.net', int(server_port))
         return mc_ping
 
     def reload_history_settings(self):
