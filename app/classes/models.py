@@ -29,9 +29,23 @@ class Users(BaseModel):
     username = CharField(unique=True)
     password = CharField()
     role = CharField()
+    enabled = BooleanField(default=True)
 
     class Meta:
         table_name = 'users'
+
+class Roles(BaseModel):
+    name = CharField(unique=True)
+    svr_control = BooleanField()
+    svr_console = BooleanField()
+    logs = BooleanField()
+    backups = BooleanField()
+    schedules = BooleanField()
+    config = BooleanField()
+
+    class Meta:
+        table_name = "roles"
+
 
 class MC_settings(BaseModel):
     server_path = CharField()
@@ -87,22 +101,22 @@ class History(BaseModel):
 
 def create_tables():
     with database:
-        database.create_tables([Users, MC_settings, Webserver, Schedules, History, Crafty_settings, Backups])
+        database.create_tables([Users, MC_settings, Webserver, Schedules, History, Crafty_settings, Backups, Roles])
 
 def default_settings():
 
     # get minecraft settings for the server root
     mc_data = MC_settings.get()
     data = model_to_dict(mc_data)
-    directories = [data['server_path'],]
+    directories = [data['server_path'], ]
     backup_directory = json.dumps(directories)
 
-    #default backup settings
-    q = Backups.insert(({
+    # default backup settings
+    q = Backups.insert({
         Backups.directories: backup_directory,
         Backups.storage_location: os.path.abspath(os.path.join(helper.crafty_root, 'backups')),
         Backups.max_backups: 7
-    }))
+    })
 
     result = q.execute()
 
@@ -113,3 +127,62 @@ def default_settings():
     })
 
     result = q.execute()
+
+    # default roles
+    perms_insert = [
+        {
+            Roles.name: 'Admin',
+            Roles.svr_control: 1,
+            Roles.svr_console: 1,
+            Roles.logs: 1,
+            Roles.backups: 1,
+            Roles.schedules: 1,
+            Roles.config: 1
+        },
+        {
+            Roles.name: 'Staff',
+            Roles.svr_control: 0,
+            Roles.svr_console: 0,
+            Roles.logs: 1,
+            Roles.backups: 1,
+            Roles.schedules: 1,
+            Roles.config: 0
+        },
+        {
+            Roles.name: 'Backup',
+            Roles.svr_control: 0,
+            Roles.svr_console: 0,
+            Roles.logs: 1,
+            Roles.backups: 1,
+            Roles.schedules: 0,
+            Roles.config: 0
+        },
+        {
+            Roles.name: 'Mod',
+            Roles.svr_control: 0,
+            Roles.svr_console: 0,
+            Roles.logs: 1,
+            Roles.backups: 0,
+            Roles.schedules: 0,
+            Roles.config: 0
+        }
+    ]
+
+    Roles.insert_many(perms_insert).execute()
+
+def get_perms_for_user(user):
+    user_data = {}
+    user = model_to_dict(Users.get(Users.username == user))
+    if user:
+        data = model_to_dict(Roles.get(Roles.name == user['role']))
+        if data:
+            user_data['username'] = user['username']
+            user_data['role_name'] = data['name']
+            user_data['svr_control'] = data['svr_control']
+            user_data['svr_console'] = data['svr_console']
+            user_data['logs'] = data['logs']
+            user_data['backups'] = data['backups']
+            user_data['schedules'] = data['schedules']
+            user_data['config'] = data['config']
+
+    return user_data

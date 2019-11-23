@@ -25,7 +25,7 @@ helper = helpers()
 
 class BaseHandler(tornado.web.RequestHandler):
     # tornado.locale.set_default_locale('es_ES')
-    tornado.locale.set_default_locale('de_DE')
+    # tornado.locale.set_default_locale('de_DE')
 
     def get_current_user(self):
         return self.get_secure_cookie("user", max_age_days=1)
@@ -50,8 +50,6 @@ class PublicHandler(BaseHandler):
             self.clear_cookie("user")
 
     def get(self, page=None):
-
-
 
         self.clear_cookie("user")
 
@@ -117,39 +115,74 @@ class AdminHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, page):
 
+        name = tornado.escape.json_decode(self.current_user)
+        user_data = get_perms_for_user(name)
+
         server_data = self.get_server_data()
         context = {}
 
-        if page == 'dashboard':
+        if page == 'unauthorized':
+            template = "admin/denied.html"
+
+        elif page == 'dashboard':
             template = "admin/dashboard.html"
-            context = server_data
+            context['server_data'] = server_data
+            context['user_data'] = user_data
 
         elif page == 'change_password':
             template = "admin/change_pass.html"
+            context['user_data'] = user_data
 
         elif page == 'virtual_console':
+            if not user_data['svr_console']:
+                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Virtual Console"))
+                self.redirect('/admin/unauthorized')
+
             template = "admin/virt_console.html"
+            context['user_data'] = user_data
 
         elif page == "backups":
+            if not user_data['backups']:
+                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Backups"))
+                self.redirect('/admin/unauthorized')
+
             template = "admin/backups.html"
-
-
             backup_list = Backups.get()
             backup_data = model_to_dict(backup_list)
             backup_path = backup_data['storage_location']
             backup_dirs = json.loads(backup_data['directories'])
 
-            context = {'backup_paths': backup_dirs, 'backup_path': backup_path, 'current_backups': self.mcserver.list_backups()}
+            context = {
+                'backup_paths': backup_dirs,
+                'backup_path': backup_path,
+                'current_backups': self.mcserver.list_backups(),
+                'user_data': user_data
+            }
 
         elif page == "schedules":
+            if not user_data['schedules']:
+                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Server Schedules"))
+                self.redirect('/admin/unauthorized')
+
             saved = self.get_argument('saved', None)
 
             db_data = Schedules.select()
 
             template = "admin/schedules.html"
-            context = {'db_data': db_data, 'saved': saved}
+            context = {
+                'db_data': db_data,
+                'saved': saved,
+                'user_data': user_data
+            }
 
         elif page == "reloadschedules":
+            if not user_data['schedules']:
+                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Reload Schedules"))
+                self.redirect('/admin/unauthorized')
 
             logging.info("Reloading Scheduled Tasks")
 
@@ -167,9 +200,18 @@ class AdminHandler(BaseHandler):
                 helper.scheduler(task, self.mcserver)
 
             template = "admin/schedules.html"
-            context = {'db_data': db_data, 'saved': None}
+            context = {
+                'db_data': db_data,
+                'saved': None,
+                'user_data': user_data
+            }
 
         elif page == "schedule_disable":
+            if not user_data['schedules']:
+                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Disable Schedules"))
+                self.redirect('/admin/unauthorized')
+
             schedule_id = self.get_argument('id', None)
             q = Schedules.update(enabled=0).where(Schedules.id == schedule_id)
             q.execute()
@@ -177,6 +219,11 @@ class AdminHandler(BaseHandler):
             self.redirect("/admin/reloadschedules")
 
         elif page == "schedule_enable":
+            if not user_data['schedules']:
+                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Schedules Enable"))
+                self.redirect('/admin/unauthorized')
+
             schedule_id = self.get_argument('id', None)
             q = Schedules.update(enabled=1).where(Schedules.id == schedule_id)
             q.execute()
@@ -184,6 +231,11 @@ class AdminHandler(BaseHandler):
             self.redirect("/admin/reloadschedules")
 
         elif page == 'config':
+            if not user_data['config']:
+                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Server Config"))
+                self.redirect('/admin/unauthorized')
+
             saved = self.get_argument('saved', None)
             invalid = self.get_argument('invalid', None)
 
@@ -205,10 +257,16 @@ class AdminHandler(BaseHandler):
             page_data['directories'] = helper.scan_dirs_in_path(self.mcserver.server_path)
 
             page_data['server_root'] = self.mcserver.server_path
+            page_data['user_data'] = user_data
 
             context = page_data
 
         elif page == 'downloadbackup':
+            if not user_data['backups']:
+                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Backup Download"))
+                self.redirect('/admin/unauthorized')
+
             path = self.get_argument("file", None, True)
 
             if path is not None:
@@ -226,11 +284,22 @@ class AdminHandler(BaseHandler):
             self.redirect("/admin/backups")
 
         elif page == "server_control":
+            if not user_data['svr_control']:
+                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Server Control"))
+                self.redirect('/admin/unauthorized')
+
             template = "admin/server_control.html"
             logfile = helper.get_crafty_log_file()
-            context = server_data
+            context['server_data'] = server_data
+            context['user_data'] = user_data
 
         elif page == 'commands':
+            if not user_data['svr_console']:
+                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Virtual Commands"))
+                self.redirect('/admin/unauthorized')
+
             command = self.get_argument("command", None, True)
             self.mcserver.reload_settings()
 
@@ -259,6 +328,11 @@ class AdminHandler(BaseHandler):
             self.redirect(next_page)
 
         elif page == 'get_logs':
+            if not user_data['logs']:
+                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Server Logs"))
+                self.redirect('/admin/unauthorized')
+
             server_log = os.path.join(self.mcserver.server_path, 'logs', 'latest.log')
             # data = helper.read_whole_file(server_log)
             data = helper.tail_file(server_log, 500)
@@ -275,8 +349,13 @@ class AdminHandler(BaseHandler):
 
             errors = self.mcserver.search_for_errors()
             template = "admin/logs.html"
-            context = {'log_data': data, 'errors': errors, 'crafty_log': crafty_data,
-                       'scheduler': scheduler_data, 'access': access_data}
+            context = {'log_data': data,
+                       'errors': errors,
+                       'crafty_log': crafty_data,
+                       'scheduler': scheduler_data,
+                       'access': access_data,
+                       'user_data': user_data
+                       }
 
         else:
             # 404
@@ -291,11 +370,14 @@ class AdminHandler(BaseHandler):
     @tornado.web.authenticated
     def post(self, page):
 
+        name = tornado.escape.json_decode(self.current_user)
+        user_data = get_perms_for_user(name)
+
         if page == 'change_password':
             entered_password = self.get_argument('password')
             encoded_pass = helper.encode_pass(entered_password)
 
-            q = Users.update({Users.password: encoded_pass}).where(Users.username == "Admin")
+            q = Users.update({Users.password: encoded_pass}).where(Users.username == user_data['username'])
             q.execute()
 
             self.clear_cookie("user")

@@ -26,7 +26,7 @@
 
         <div class="info-box-content">
           <span class="info-box-text">Host CPU Usage</span>
-          <span class="info-box-number"> {{ data['cpu_usage'] }} <small>%</small></span>
+          <span class="info-box-number"> {{ data['server_data']['cpu_usage'] }} <small>%</small></span>
         </div>
         <!-- /.info-box-content -->
       </div>
@@ -39,7 +39,7 @@
 
         <div class="info-box-content">
           <span class="info-box-text">Host RAM Usage</span>
-          <span class="info-box-number"> {{ data['mem_percent'] }}<small>%</small></span>
+          <span class="info-box-number"> {{ data['server_data']['mem_percent'] }}<small>%</small></span>
         </div>
         <!-- /.info-box-content -->
       </div>
@@ -57,7 +57,7 @@
         <div class="info-box-content">
           <span class="info-box-text">Host Disk Usage</span>
           <span class="info-box-number">
-             {{ data['disk_percent'] }}<small>%</small>
+             {{ data['server_data']['disk_percent'] }}<small>%</small>
           </span>
         </div>
         <!-- /.info-box-content -->
@@ -72,8 +72,8 @@
         <div class="info-box-content">
           <span class="info-box-text">Players</span>
           <span class="info-box-number">
-              {{ data['online_stats']['online']}} /
-              {{ data['online_stats']['max']}}
+              {{ data['server_data']['online_stats']['online']}} /
+              {{ data['server_data']['online_stats']['max']}}
           </span>
         </div>
         <!-- /.info-box-content -->
@@ -91,7 +91,7 @@
             <i class="fa fa-info-circle" aria-hidden="true"></i>
 
             <h3 class="box-title">Server Status:
-                {% if data['server_running'] %}
+                {% if data['server_data']['server_running'] %}
                     <span class="text-green">
                         Server Running &nbsp;
                         <i class="fa fa-thumbs-up" aria-hidden="true"></i>
@@ -112,11 +112,11 @@
                     <table class="table">
                         <tr>
                           <td><b>Last Boot</b></td>
-                          <td>{{ data['boot_time'] }}</td>
+                          <td>{{ data['server_data']['boot_time'] }}</td>
                         </tr>
                         <tr>
                           <td><b>Server Startup Time</b></td>
-                          <td>{{ data['mc_start_time'] }}</td>
+                          <td>{{ data['server_data']['mc_start_time'] }}</td>
                         </tr>
                     </table>
                 </div>
@@ -124,11 +124,11 @@
                     <table class="table">
                         <tr>
                           <td><b>CPU Usage</b></td>
-                          <td>{{ data['cpu_usage'] }}</td>
+                          <td>{{ data['server_data']['cpu_usage'] }}</td>
                         </tr>
                         <tr>
                           <td><b>CPU Cores</b></td>
-                          <td>{{ data['cpu_cores'] }}</td>
+                          <td>{{ data['server_data']['cpu_cores'] }}</td>
                         </tr>
                     </table>
                 </div>
@@ -139,21 +139,21 @@
                     <table class="table">
                         <tr>
                             <td><b>Server Version</b></td>
-                            <td>{{ data['server_version'] }}</td>
+                            <td>{{ data['server_data']['server_version'] }}</td>
                         </tr>
                         <tr>
                             <td><b>Server Description</b></td>
-                            <td>{{ data['server_description'] }}</td>
+                            <td>{{ data['server_data']['server_description'] }}</td>
                         </tr>
                         <tr>
                           <td><b>World Name</b></td>
                           <td>
-                            {{ data['world_data']['world_name'] }}
+                            {{ data['server_data']['world_data']['world_name'] }}
                           </td>
                         </tr>
                         <tr>
                           <td><b>World Disk Usage</b></td>
-                          <td>{{ data['world_data']['world_size'] }}</td>
+                          <td>{{ data['server_data']['world_data']['world_size'] }}</td>
                         </tr>
                     </table>
                 </div>
@@ -162,8 +162,8 @@
                         <tr>
                           <td width="50%"><b>Errors Found</b></td>
                           <td>
-                            {{ data['errors'] }}&nbsp;
-                            {% if data['errors'] >= 1 %}
+                            {{ data['server_data']['errors'] }}&nbsp;
+                            {% if data['server_data']['errors'] >= 1 %}
                               <a href="/admin/get_logs">
                                  <span class="label label-danger">Errors - Click to View</span>
                                </a>
@@ -175,8 +175,8 @@
                       <tr>
                           <td><b>Warnings Found</b></td>
                           <td>
-                            {{ data['warnings'] }}&nbsp;
-                            {% if data['warnings'] >= 1 %}
+                            {{ data['server_data']['warnings'] }}&nbsp;
+                            {% if data['server_data']['warnings'] >= 1 %}
                                <a href="/admin/get_logs">
                                  <span class="label label-danger">Warnings - Click to View</span>
                                </a>
@@ -205,7 +205,7 @@
             <div class="box-body">
               <div class="table-responsive">
                 <ul>
-                    {% for player in data['online_stats']['players'] %}
+                    {% for player in data['server_data']['online_stats']['players'] %}
                         <li>{{ player }}</li>
                     {% end %}
 
@@ -238,7 +238,7 @@
 
 </section>
 <!--
-{{ data }}
+{{ data['server_data'] }}
 -->
 
 {% end %}

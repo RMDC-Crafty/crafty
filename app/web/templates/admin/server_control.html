@@ -24,8 +24,7 @@
                 <div class="box-header with-border">
                   <h3 class="box-title">
                       Server Actions
-
-                        {% if data['server_running'] %}
+                        {% if data['server_data']['server_running'] %}
                             <span class="text-green">
                         Server Running &nbsp;
                             <i class="fa fa-thumbs-up" aria-hidden="true"></i>
@@ -41,17 +40,17 @@
                 <div class="box-body">
                     <a href="/admin/commands?command=server_start"
                        onclick="delay()"
-                        class="btn btn-app {% if data['server_running'] %} disabled {% end %}">
+                        class="btn btn-app {% if data['server_data']['server_running'] %} disabled {% end %}">
                         <i class="fa fa-play"></i> Start Server
                     </a>
                     <a  href="/admin/commands?command=server_stop"
                         onclick="delay()"
-                        class="btn btn-app {% if not data['server_running'] %} disabled {% end %}">
+                        class="btn btn-app {% if not data['server_data']['server_running'] %} disabled {% end %}">
                         <i class="fa fa-stop"></i> Stop Server
                     </a>
                     <a  href="/admin/commands?command=server_restart"
                         onclick="delay('15-20')"
-                        class="btn btn-app {% if not data['server_running'] %} disabled {% end %}">
+                        class="btn btn-app {% if not data['server_data']['server_running'] %} disabled {% end %}">
                         <i class="fa fa-refresh"></i> Restart Server
                     </a>
                 </div>

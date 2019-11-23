@@ -69,18 +69,89 @@
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-user-circle" aria-hidden="true"></i>
-              <span class="hidden-xs">Admin</span>
+              <span class="hidden-xs">{{ data['user_data']['username'] }}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
                 <p>
-                  User
+                  Role: {{ data['user_data']['role_name'] }}
                 </p>
               </li>
               <!-- Menu Body -->
               <li class="user-body">
-                &nbsp;
+                &nbsp;<b>Permissions</b><br />
+                <div class="row">
+
+                  <div class="col-xs-1">
+                    {% if data['user_data']['svr_control'] %}
+                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+                      {% else %}
+                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+                      {% end %}
+                  </div>
+                  <div class="col-xs-10">
+                    Server Control
+                  </div>
+
+                  <div class="col-xs-1">
+                    {% if data['user_data']['svr_console'] %}
+                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+                      {% else %}
+                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+                      {% end %}
+                  </div>
+                  <div class="col-xs-10">
+                    Server Console
+                  </div>
+
+                  <div class="col-xs-1">
+                    {% if data['user_data']['logs'] %}
+                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+                      {% else %}
+                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+                      {% end %}
+                  </div>
+                  <div class="col-xs-10">
+                    Server Logs
+                  </div>
+
+                  <div class="col-xs-1">
+                    {% if data['user_data']['backups'] %}
+                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+                      {% else %}
+                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+                      {% end %}
+                  </div>
+                  <div class="col-xs-10">
+                    Server Backups
+                  </div>
+
+                  <div class="col-xs-1">
+                    {% if data['user_data']['schedules'] %}
+                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+                      {% else %}
+                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+                      {% end %}
+                  </div>
+                  <div class="col-xs-10">
+                    Server Schedule
+                  </div>
+
+                  <div class="col-xs-1">
+                    {% if data['user_data']['config'] %}
+                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+                      {% else %}
+                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+                      {% end %}
+                  </div>
+                  <div class="col-xs-10">
+                    Server Config
+                  </div>
+
+                </div>
+
+
                 <!-- /.row -->
               </li>
               <!-- Menu Footer-->
@@ -113,12 +184,30 @@
         <li class="header">MAIN NAVIGATION</li>
 
         <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
-        <li><a href="/admin/server_control"><i class="fa fa-power-off" aria-hidden="true"></i> Server Control</a></li>
-        <li><a href="/admin/virtual_console"><i class="fa fa-terminal" aria-hidden="true"></i> Server Console</a></li>
-        <li><a href="/admin/get_logs"><i class="fa fa-list" aria-hidden="true"></i> Logs </a></li>
-        <li><a href="/admin/backups"><i class="fa fa-floppy-o" aria-hidden="true"></i> Backups</a></li>
-        <li><a href="/admin/schedules"><i class="fa fa-clock-o" aria-hidden="true"></i> Scheduled Tasks</a></li>
-        <li><a href="/admin/config"><i class="fa fa-cog" aria-hidden="true"></i> Config</a></li>
+        {% if data['user_data']['svr_control'] %}
+          <li><a href="/admin/server_control"><i class="fa fa-power-off" aria-hidden="true"></i> Server Control</a></li>
+        {% end %}
+
+        {% if data['user_data']['svr_control'] %}
+          <li><a href="/admin/virtual_console"><i class="fa fa-terminal" aria-hidden="true"></i> Server Console</a></li>
+        {% end %}
+
+        {% if data['user_data']['logs'] %}
+          <li><a href="/admin/get_logs"><i class="fa fa-list" aria-hidden="true"></i> Logs </a></li>
+        {% end %}
+
+        {% if data['user_data']['backups'] %}
+          <li><a href="/admin/backups"><i class="fa fa-floppy-o" aria-hidden="true"></i> Backups</a></li>
+        {% end %}
+
+        {% if data['user_data']['schedules'] %}
+          <li><a href="/admin/schedules"><i class="fa fa-clock-o" aria-hidden="true"></i> Scheduled Tasks</a></li>
+        {% end %}
+
+        {% if data['user_data']['config'] %}
+          <li><a href="/admin/config"><i class="fa fa-cog" aria-hidden="true"></i> Config</a></li>
+        {% end %}
+
         <li><a href="/admin/change_password"><i class="fa fa-key" aria-hidden="true"></i> Change Password</a></li>
         <li><a href="https://craftycontrol.com/docs" target="_blank"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
 
