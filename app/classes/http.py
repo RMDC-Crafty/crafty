@@ -243,12 +243,17 @@ class AdminHandler(BaseHandler):
             mc_data = MC_settings.get()
             crafty_data = Crafty_settings.get()
             backup_data = Backups.get()
+            users = Users.select()
 
             page_data = {}
             page_data['saved'] = saved
             page_data['invalid'] = invalid
             page_data['mc_settings'] = model_to_dict(mc_data)
             page_data['crafty_settings'] = model_to_dict(crafty_data)
+
+            page_data['users'] = users
+            page_data['users_count'] = len(users)
+
             backup_data = model_to_dict(backup_data)
             page_data['backup_data'] = json.loads(backup_data['directories'])
             page_data['backup_config'] = backup_data
@@ -490,7 +495,7 @@ class AjaxHandler(BaseHandler):
             for d in data:
                 self.write(d.encode("utf-8"))
 
-        if page == 'history':
+        elif page == 'history':
             db_data = History.select()
             return_data = []
             for d in db_data:
@@ -506,6 +511,9 @@ class AjaxHandler(BaseHandler):
 
 
     def post(self, page):
+
+        name = tornado.escape.json_decode(self.current_user)
+        user_data = get_perms_for_user(name)
 
         if page == "send_command":
             # posted_data = tornado.escape.json_decode(self.request.body)
@@ -541,6 +549,37 @@ class AjaxHandler(BaseHandler):
             else:
                 return_data = "Unable to find your string: {}".format(search_string)
             self.write(return_data)
+
+        elif page == 'add_user':
+            if not user_data['config']:
+                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Add User"))
+                self.redirect('/admin/unauthorized')
+
+            new_username = self.get_argument("username", None, True)
+
+            if new_username:
+                new_pass = helper.random_string_generator()
+                result = Users.insert({
+                    Users.username: new_username,
+                    Users.role : 'Mod',
+                    Users.password: new_pass
+                }).execute()
+
+                self.write(new_pass)
+
+        elif page == 'del_user':
+            if not user_data['config']:
+                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Delete User"))
+                self.redirect('/admin/unauthorized')
+
+            username = self.get_argument("username", None, True)
+
+            if username:
+                Users.delete().where(Users.username == username).execute()
+
+
 
 
 class webserver():

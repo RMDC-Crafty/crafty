@@ -25,63 +25,66 @@
               <li class="active"><a href="#crafty" data-toggle="tab">Crafty Config</a></li>
               <li><a href="#backup" data-toggle="tab">Backups</a></li>
               <li><a href="#mcserver" data-toggle="tab">MC Server</a></li>
+              <li><a href="#users" data-toggle="tab">Users</a></li>
 
             </ul>
             <div class="tab-content">
-                  <div class="tab-pane active" id="crafty">
-                        <form role="form" method="post">
-                            {% raw xsrf_form_html() %}
-                            <input type="hidden" name="config_type" value="crafty_settings"/>
 
-                            <div class="box">
-                                <div class="box-header with-border">
-                                  <h3 class="box-title">
-                                      Crafty Config
-                                  </h3>
-                                </div>
+                <div class="tab-pane active" id="crafty">
+                    <form role="form" method="post">
+                        {% raw xsrf_form_html() %}
+                        <input type="hidden" name="config_type" value="crafty_settings"/>
 
-                                <div class="box-body">
-                                    <div class="form-group">
-                                        <label>
-                                            Historical Data Capture Interval <br />
-                                            <small>How many minutes between historical data capture</small>
-                                        </label>
-                                        <input type="number"
-                                               name="historical_interval" id="historical_interval"
-                                               class="form-control" placeholder="90"
-                                               value="{{ data['crafty_settings']['history_interval'] }}"
-                                        />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>
-                                            Historical Data Length <br />
-                                            <small>How many days should we keep historical data</small>
-                                        </label>
-                                        <input type="number"
-                                               name="history_max_age" id="history_max_age"
-                                               class="form-control" placeholder="2"
-                                               value="{{ data['crafty_settings']['history_max_age'] }}"
-                                        />
-                                    </div>
-
-
-                                </div>
-
-                                <div class="box-footer">
-                                    <a href="/admin/config" class="btn btn-danger">Cancel</a>
-                                    <button type="submit" class="btn btn-success pull-right">
-                                        <i class="fa fa-floppy-o" aria-hidden="true"></i>
-                                        Save
-                                    </button>
-                                </div>
+                        <div class="box">
+                            <div class="box-header with-border">
+                              <h3 class="box-title">
+                                  Crafty Config
+                              </h3>
                             </div>
-                        </form>
+
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label>
+                                        Historical Data Capture Interval <br />
+                                        <small>How many minutes between historical data capture</small>
+                                    </label>
+                                    <input type="number"
+                                           name="historical_interval" id="historical_interval"
+                                           class="form-control" placeholder="90"
+                                           value="{{ data['crafty_settings']['history_interval'] }}"
+                                    />
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        Historical Data Length <br />
+                                        <small>How many days should we keep historical data</small>
+                                    </label>
+                                    <input type="number"
+                                           name="history_max_age" id="history_max_age"
+                                           class="form-control" placeholder="2"
+                                           value="{{ data['crafty_settings']['history_max_age'] }}"
+                                    />
+                                </div>
 
 
-                  </div>
-                  <!-- /.tab-pane -->
-                  <div class="tab-pane" id="backup">
+                            </div>
+
+                            <div class="box-footer">
+                                <a href="/admin/config" class="btn btn-danger">Cancel</a>
+                                <button type="submit" class="btn btn-success pull-right">
+                                    <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+
+              </div>
+              <!-- /.tab-pane -->
+
+                <div class="tab-pane" id="backup">
                         <h3>Backup Config</h3>
                       <form method="post">
                             {% raw xsrf_form_html() %}
@@ -191,9 +194,9 @@
                             <br class="clear"/>
                             <br class="clear"/>
                         </form>
-                  </div>
+              </div>
                   <!-- /.tab-pane -->
-              <div class="tab-pane" id="mcserver">
+                <div class="tab-pane" id="mcserver">
                     <form role="form" method="post">
                         {% raw xsrf_form_html() %}
                         <input type="hidden" name="config_type" value="mc_settings"/>
@@ -329,6 +332,73 @@
                     </form>
               </div>
               <!-- /.tab-pane -->
+
+                <div class="tab-pane" id="users">
+
+                        <input type="hidden" name="config_type" value="users"/>
+
+                        <div class="box">
+                            <div class="box-header with-border">
+                              <h3 class="box-title">
+                                  Users <br />
+                                  <small>Note the Admin can not be deleted or changed</small>
+                              </h3>
+                            </div>
+
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <table class="table table-responsive">
+                                        <thead>
+                                        <tr>
+                                            <th>Username</th>
+                                            <th>Role</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for user in data['users'] %}
+                                            <tr>
+                                                <td>{{ user.username }}</td>
+                                                <td>{{ user.role }}</td>
+                                                <td>
+
+                                                    <a class="btn btn-sm btn-primary"
+                                                       {% if user.username == "Admin" %} disabled {% end %}
+                                                    >
+                                                        Change Role
+                                                    </a>
+
+                                                    <a class="btn btn-sm btn-warning">Set Password</a>
+                                                    <a class="btn btn-sm btn-danger"
+                                                       {% if user.username == "Admin" %} disabled {% end %}
+                                                        onclick="del_user('{{ user.username }}')"
+                                                    >
+
+                                                        Delete
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% end %}
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </div>
+
+                            <div class="box-footer">
+
+                                <a class="btn btn-success pull-right" onclick="add_user()">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                    Add User
+                                </a>
+                            </div>
+                        </div>
+
+
+              </div>
+              <!-- /.tab-pane -->
+
             </div>
             <!-- /.tab-content -->
           </div>
@@ -345,18 +415,34 @@
             <!-- /.box-header -->
             <div class="box-body">
                 The server will be launched using this string:<br />
+                <b>
                 java -Xms{{ data['mc_settings']['memory_min'] }}M
                 -Xmx{{ data['mc_settings']['memory_max'] }}M
                 {{ data['mc_settings']['pre_args'] }}
                 -jar {{ data['mc_settings']['server_path'] }}/{{ data['mc_settings']['server_jar'] }} nogui
                 {{ data['mc_settings']['additional_args'] }}
+                </b>
 
-                <hr>
+                <hr />
                 {% if data['mc_settings']['auto_start_server'] %}
                     The server is set to autostart
                 {% else %}
                     The server is <b>NOT</b> set to autostart
                 {% end %}
+
+                <hr />
+
+                Historical Data will be captured every <b>{{ data['crafty_settings']['history_interval'] }}</b> minutes
+                and kept for <b>{{ data['crafty_settings']['history_max_age'] }}</b> days
+
+                <hr />
+
+                Your backups are saved in <b>{{ data['backup_config']['storage_location'] }}</b>
+                and kept for <b>{{ data['backup_config']['max_backups'] }}</b> days
+
+                <hr />
+
+                You have <b>{{ data['users_count'] }}</b> users defined
 
             </div>
             <!-- /.box-body -->
@@ -399,6 +485,85 @@
 
     function hide_modal(){
         bootbox.hideAll()
+    }
+
+    //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
+    function del_user(username){
+
+        var token = getCookie("_xsrf")
+
+        bootbox.confirm({
+            message: "Are you sure you wish to delete user: " + username + "?",
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function(result){
+                if (result){
+                    console.log('deleting user ' + username);
+
+                    data_to_send = { username : username };
+
+                    $.ajax({
+                      type: "POST",
+                      headers: {'X-XSRFToken': token},
+                      url: '/ajax/del_user',
+                      data: data_to_send,
+                      success: function(data){
+                        console.log("got response:");
+                        console.log(data);
+                        location.reload();
+                      },
+                    });
+                }
+
+            }
+        });
+    }
+
+    function add_user() {
+
+        var token = getCookie("_xsrf")
+
+        bootbox.prompt({
+            title: "Enter the New Users Username",
+            callback: function(result){
+                if (result){
+                    console.log('adding user ' + result);
+
+                    data_to_send = { username : result };
+
+                    $.ajax({
+                      type: "POST",
+                      headers: {'X-XSRFToken': token},
+                      url: '/ajax/add_user',
+                      data: data_to_send,
+                      success: function(data){
+                        console.log("got response:");
+                        console.log(data);
+                        bootbox.alert({
+                            message: "The users new password is: " + data,
+                            callback: function () {
+                                location.reload();
+                            }
+                        })
+                      },
+                    });
+                }
+
+            }
+        });
     }
 
     $( document ).ready(function() {
