@@ -73,6 +73,7 @@ class Minecraft_Server():
         server_max_mem = self.settings.memory_max
         server_min_mem = self.settings.memory_min
         server_args = self.settings.additional_args
+        server_pre_args = self.settings.pre_args
 
         # set up execute path if we have spaces, we put quotes around it for windows
         if " " in server_path:
@@ -82,10 +83,11 @@ class Minecraft_Server():
 
         server_exec_path = os.path.join(exec_path, server_jar)
 
-        self.server_command = 'java -Xms{}M -Xmx{}M -jar {} nogui {}'.format(server_min_mem,
-                                                                           server_max_mem,
-                                                                           server_exec_path,
-                                                                           server_args)
+        self.server_command = 'java -Xms{}M -Xmx{}M {} -jar {} nogui {}'.format(server_min_mem,
+                                                                            server_max_mem,
+                                                                            server_pre_args,
+                                                                            server_exec_path,
+                                                                            server_args)
         self.server_path = server_path
 
     def run_threaded_server(self):
