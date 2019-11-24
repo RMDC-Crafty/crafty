@@ -363,14 +363,19 @@
                                                 <td>
 
                                                     <a class="btn btn-sm btn-primary"
-                                                       {% if user.username == "Admin" %} disabled {% end %}
+                                                       onclick="change_role('{{user.username}}')"
+                                                       {% if user.username =="Admin" %} disabled="true" {% end %}
                                                     >
                                                         Change Role
                                                     </a>
 
-                                                    <a class="btn btn-sm btn-warning">Set Password</a>
+                                                    <a class="btn btn-sm btn-warning"
+                                                       onclick="change_user_password('{{user.username}}')"
+                                                    >
+                                                        Set Password
+                                                    </a>
                                                     <a class="btn btn-sm btn-danger"
-                                                       {% if user.username == "Admin" %} disabled {% end %}
+                                                       {% if user.username =="Admin" %} disabled {% end %}
                                                         onclick="del_user('{{ user.username }}')"
                                                     >
 
@@ -497,6 +502,8 @@
 
         var token = getCookie("_xsrf")
 
+        if (username == "Admin") return False;
+
         bootbox.confirm({
             message: "Are you sure you wish to delete user: " + username + "?",
             buttons: {
@@ -562,6 +569,88 @@
                     });
                 }
 
+            }
+        });
+    }
+
+    function change_user_password(user) {
+
+        var token = getCookie("_xsrf")
+
+        bootbox.prompt({
+            title: "Enter the New Password for " + user,
+            callback: function(result){
+                if (result){
+                    console.log('changing users password to' + result);
+
+                    data_to_send = { username : user, password: result };
+
+                    $.ajax({
+                      type: "POST",
+                      headers: {'X-XSRFToken': token},
+                      url: '/ajax/change_password',
+                      data: data_to_send,
+                      success: function(data){
+                        console.log("got response:");
+                        console.log(data);
+                        bootbox.alert({
+                            message: "The users new password is: " + data,
+                            callback: function () {
+                                location.reload();
+                            }
+                        })
+                      },
+                    });
+                }
+
+            }
+        });
+    }
+
+    function change_role(user){
+        var token = getCookie("_xsrf")
+
+        if (user == "Admin") return False;
+
+        bootbox.prompt({
+            title: "Select the new role for " + user,
+            inputType: 'select',
+            inputOptions: [
+            {
+                text: 'Admin',
+                value: 'Admin',
+            },
+            {
+                text: 'Staff',
+                value: 'Staff',
+            },
+            {
+                text: 'Backup',
+                value: 'Backup',
+            },
+            {
+                text: 'Mod',
+                value: 'Mod',
+            }
+            ],
+            callback: function (result) {
+                if (result){
+                    console.log('changing ' + user + " to role " + result );
+
+                    data_to_send = { username : user, role: result };
+
+                    $.ajax({
+                      type: "POST",
+                      headers: {'X-XSRFToken': token},
+                      url: '/ajax/edit_role',
+                      data: data_to_send,
+                      success: function(data){
+                        console.log("got response:");
+                        console.log(data);
+                        location.reload();
+                      },
+                    });
+                }
             }
         });
     }

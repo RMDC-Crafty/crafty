@@ -562,11 +562,46 @@ class AjaxHandler(BaseHandler):
                 new_pass = helper.random_string_generator()
                 result = Users.insert({
                     Users.username: new_username,
-                    Users.role : 'Mod',
-                    Users.password: new_pass
+                    Users.role: 'Mod',
+                    Users.password: helper.encode_pass(new_pass)
                 }).execute()
 
                 self.write(new_pass)
+
+        elif page == "edit_role":
+            if not user_data['config']:
+                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Delete User"))
+                self.redirect('/admin/unauthorized')
+
+            username = self.get_argument("username", None, True)
+            role = self.get_argument("role", None, True)
+
+            if username == 'Admin':
+                self.write("Not Allowed")
+            else:
+                if username and role:
+                    Users.update({
+                        Users.role: role
+                    }).where(Users.username == username).execute()
+
+                    self.write('updated')
+
+        elif page == "change_password":
+            if not user_data['config']:
+                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Delete User"))
+                self.redirect('/admin/unauthorized')
+
+            username = self.get_argument("username", None, True)
+            newpassword = self.get_argument("password", None, True)
+
+            if username and newpassword:
+                Users.update({
+                    Users.password: helper.encode_pass(newpassword)
+                }).where(Users.username == username).execute()
+
+            self.write(newpassword)
 
         elif page == 'del_user':
             if not user_data['config']:
@@ -576,8 +611,12 @@ class AjaxHandler(BaseHandler):
 
             username = self.get_argument("username", None, True)
 
-            if username:
-                Users.delete().where(Users.username == username).execute()
+            if username == 'Admin':
+                self.write("Not Allowed")
+            else:
+                if username:
+                    Users.delete().where(Users.username == username).execute()
+                    self.write("{} deleted".format(username))
 
 
 
