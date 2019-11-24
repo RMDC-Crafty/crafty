@@ -6,20 +6,20 @@ This version of Crafty focuses on Waterfall/Bungee Support, Permissions/Roles
 and cleanup/refactoring to get ready for possible RC status.
 
 ### Additions
-Waterfall/Bungee Support - Crafty no longer fails if there isn't a server.properties.
-Waterfall/Bungee Support - Crafty will send "end" for waterfall/bungee instead of stop
-New Table added to DB to store server roles. Create 4 new roles as default - Admin, Staff, Mod, Backup
-Added roles and Permissions page to the users tab on the config page.
+- Waterfall/Bungee Support - Crafty no longer fails if there isn't a server.properties.
+- Waterfall/Bungee Support - Crafty will send "end" for waterfall/bungee instead of stop
+- New Table added to DB to store server roles. Create 4 new roles as default - Admin, Staff, Mod, Backup
+- Added roles and Permissions page to the users tab on the config page.
 
 ### Changes
-Added datatables to Errors Log on logging page.
-Fixed potential bug where Backup save path could be blank
-Fixed potential bug where backup folders could be blank (nothing checked)
-Fixed bug where waterfall servers desc are not showing
+- Added datatables to Errors Log on logging page.
+- Fixed potential bug where Backup save path could be blank
+- Fixed potential bug where backup folders could be blank (nothing checked)
+- Fixed bug where waterfall servers desc are not showing
 
 
 ### Bug Fixes
-#19 - Datatables error on logs page with no errors/warnings
+- #19 - Datatables error on logs page with no errors/warnings
 
 
 ## [v2.0.beta2]
