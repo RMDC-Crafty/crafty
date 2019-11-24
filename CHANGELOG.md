@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [v2.0.beta3]
+## [v2.0.RC1]
 This version of Crafty focuses on Waterfall/Bungee Support, Permissions/Roles
 and cleanup/refactoring to get ready for possible RC status.
 
@@ -9,7 +9,7 @@ and cleanup/refactoring to get ready for possible RC status.
 Waterfall/Bungee Support - Crafty no longer fails if there isn't a server.properties.
 Waterfall/Bungee Support - Crafty will send "end" for waterfall/bungee instead of stop
 New Table added to DB to store server roles. Create 4 new roles as default - Admin, Staff, Mod, Backup
-
+Added roles and Permissions page to the users tab on the config page.
 
 ### Changes
 Added datatables to Errors Log on logging page.

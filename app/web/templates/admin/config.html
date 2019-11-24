@@ -347,7 +347,7 @@
 
                             <div class="box-body">
                                 <div class="form-group">
-                                    <table class="table table-responsive">
+                                    <table class="table table-responsive" id="users_table">
                                         <thead>
                                         <tr>
                                             <th>Username</th>
@@ -657,6 +657,11 @@
 
     $( document ).ready(function() {
         console.log( "ready!" );
+
+
+        $('#users_table').DataTable({
+            "order": [[ 0, "asc" ]]
+        });
 
         checkbox_update();
         enable_disable_all();
