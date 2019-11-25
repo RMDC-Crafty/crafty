@@ -123,13 +123,20 @@ class Minecraft_Server():
             logging.info("Sending Server Command: {}".format(self.server_command))
             self.process.send(self.server_command + '\n')
 
-            self.PID = self.process.pid
+        # let's loop through the child processes of the cmd window and find the last one which is java.
+        try:
+            parent = psutil.Process(self.PID)
+        except psutil.NoSuchProcess:
+            return
+        children = parent.children(recursive=True)
+        for p in children:
+            if 'java' in p.name().lower():
+                self.PID = p.pid
 
         ts = time.time()
         self.start_time = str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
         logging.info("Launching Minecraft server with command: {}".format(self.server_command))
         logging.info("Minecraft Server Running with PID: {}".format(self.PID))
-
 
         # write status file
         self.write_html_server_status()
@@ -205,10 +212,21 @@ class Minecraft_Server():
 
     def check_running(self):
         # if process is None, we never tried to start
-        if self.process is None:
+        if self.PID is None:
             return False
 
         else:
+            # check to see if the PID still exists
+            if psutil.pid_exists(int(self.PID)):
+                return True
+            else:
+                logging.critical("The server seems to have vanished, did it crash?")
+                self.process = None
+                self.PID = None
+                return False
+
+
+            '''
             # loop through processes
             for proc in psutil.process_iter():
                 try:
@@ -223,13 +241,19 @@ class Minecraft_Server():
                         if server_jar is None:
                             return False
 
-                        # if we found the server jar in the command line, and the process is java, we can assume it's an
-                        # orphaned server.jar running
+                        # if we found the server jar, and the process is java, we can assume it's our server
                         if server_jar in cmdline:
                             return True
                 except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                     pass
+
+            # the server crashed, or isn't found - so let's reset things.
+            logging.critical("The server seems to have vanished, did it crash?")
+            self.process = None
+            self.PID = None
+
             return False
+            '''
 
     def killpid(self, pid):
         logging.info('Killing Process {} and all child processes'.format(pid))
@@ -337,6 +361,8 @@ class Minecraft_Server():
         History.delete().where(History.time > last_week)
 
     def write_html_server_status(self):
+
+        self.check_running()
 
         datime = datetime.datetime.fromtimestamp(psutil.boot_time())
         errors = self.search_for_errors()
@@ -577,6 +603,9 @@ class Minecraft_Server():
 
     def ping_server(self):
 
+        server_port = 25565
+        ip = "127.0.0.1"
+
         if self.detect_bungee_waterfall():
             config_file = os.path.join(self.server_path, 'config.yml')
             config_data = helper.load_yml_file(config_file)
@@ -593,11 +622,8 @@ class Minecraft_Server():
         else:
             server_port = self.search_server_properties("server-port")
 
-        # bomb out to default port number
-        if not server_port:
-            server_port = 25565
-
-        mc_ping = ping('127.0.0.1', int(server_port))
+        logging.debug('Pinging {} on server port: {}'.format(ip, server_port))
+        mc_ping = ping(ip, int(server_port))
         return mc_ping
 
     def reload_history_settings(self):

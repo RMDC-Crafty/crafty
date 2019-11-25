@@ -131,8 +131,6 @@ def main():
     scheduler.start()
 
     time.sleep(5)
-    # write our server stats to a file
-    mc_server.write_html_server_status()
     Console.info("Crafty Startup Procedure Complete")
     Console.help("Type 'stop' or 'exit' to shutdown the system")
 

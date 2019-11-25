@@ -468,7 +468,7 @@ class AdminHandler(BaseHandler):
 
 
     def get_server_data(self):
-        server_file = os.path.join( helper.get_web_temp_path(), "server_data.json")
+        server_file = os.path.join(helper.get_web_temp_path(), "server_data.json")
 
         if helper.check_file_exists(server_file):
             with open(server_file, 'r') as f:
@@ -649,6 +649,7 @@ class webserver():
 
         logging.info("Starting Tornado HTTPS Server on port {}".format(port_number))
         Console.info("Starting Tornado HTTPS Server on port {}".format(port_number))
+        Console.info("https://serverip:{} is up and ready for connection:".format(port_number))
         asyncio.set_event_loop(asyncio.new_event_loop())
 
         tornado.template.Loader('.')
@@ -657,6 +658,7 @@ class webserver():
 
         if ip:
             Console.info("Your public IP is: {}".format(ip))
+
         else:
             Console.warning("Unable to find your public IP\nThe service might be down, or your internet is down.")
 

@@ -3,6 +3,7 @@ import socket
 import base64
 import json
 import sys
+import logging.config
 
 # credit to https://gist.github.com/Lonami - https://gist.github.com/Lonami/b09fc1abb471fd0b8b5483d54f737ea0
 # slightly modified for Crafty
@@ -122,8 +123,7 @@ def ping(ip, port=25565):
                 raise ValueError('connection aborted')
 
             data += chunk
-
-        # print(data)
+        logging.debug("Server reports this data on ping: {}".format(data))
         return Server(json.loads(data))
     finally:
         sock.close()
