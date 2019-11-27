@@ -619,8 +619,6 @@ class AjaxHandler(BaseHandler):
                     self.write("{} deleted".format(username))
 
 
-
-
 class webserver():
 
     def __init__(self, mc_server):
