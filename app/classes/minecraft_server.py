@@ -355,10 +355,10 @@ class Minecraft_Server():
         max_days = query[0].history_max_age
 
         # auto-clean on max days
-        last_week = datetime.datetime.now() - datetime.timedelta(days=max_days)
+        max_age = datetime.datetime.now() - datetime.timedelta(days=max_days)
 
         # delete items older than 1 week
-        History.delete().where(History.time > last_week)
+        History.delete().where(History.time > max_age).execute()
 
     def write_html_server_status(self):
 
