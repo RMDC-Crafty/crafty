@@ -158,7 +158,7 @@ def default_settings():
             Roles.config: 0
         },
         {
-            Roles.name: 'exit',
+            Roles.name: 'Mod',
             Roles.svr_control: 0,
             Roles.svr_console: 0,
             Roles.logs: 1,
