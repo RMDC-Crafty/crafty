@@ -333,12 +333,14 @@ class Minecraft_Server():
             return False
 
     def write_usage_history(self):
+
         server_stats = {
             'cpu_usage': psutil.cpu_percent(interval=0.5) / psutil.cpu_count(),
             'mem_percent': psutil.virtual_memory()[2]
             }
         try:
             server_ping = self.ping_server()
+
         except:
             server_ping = False
             pass
@@ -350,11 +352,13 @@ class Minecraft_Server():
             online_data = {'online': 0}
 
         # write performance data to db
-        History.insert(
+        insert_result = History.insert(
             cpu=server_stats['cpu_usage'],
             memory=server_stats['mem_percent'],
             players=online_data['online']
         ).execute()
+
+        logging("Inserted History Record Number {}".format(insert_result))
 
         query = Crafty_settings.select(Crafty_settings.history_max_age)
         max_days = query[0].history_max_age
@@ -363,7 +367,7 @@ class Minecraft_Server():
         max_age = datetime.datetime.now() - datetime.timedelta(days=max_days)
 
         # delete items older than 1 week
-        History.delete().where(History.time > max_age).execute()
+        History.delete().where(History.time < max_age).execute()
 
     def write_html_server_status(self):
 
@@ -620,11 +624,16 @@ class Minecraft_Server():
         return mc_ping
 
     def reload_history_settings(self):
+        logging.info("Clearing History Usage Scheduled Jobs")
+
         # clear all history jobs
         schedule.clear('history')
 
         query = Crafty_settings.select(Crafty_settings.history_interval)
         history_interval = query[0].history_interval
+
+        logging.info("Creating New History Usage Scheduled Task for every {} minutes".format(history_interval))
+
         schedule.every(history_interval).minutes.do(self.write_usage_history).tag('history')
 
 
