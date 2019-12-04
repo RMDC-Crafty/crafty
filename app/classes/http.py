@@ -425,7 +425,8 @@ class AdminHandler(BaseHandler):
                     MC_settings.additional_args: self.get_argument('additional_args'),
                     MC_settings.pre_args: self.get_argument('pre_args'),
                     MC_settings.auto_start_server: int(self.get_argument('auto_start_server')),
-                    MC_settings.auto_start_delay: self.get_argument('auto_start_delay'),
+                    MC_settings.server_port: self.get_argument('server_port'),
+                    MC_settings.server_ip: self.get_argument('server_ip'),
                 }).where(MC_settings.id == 1)
 
                 q.execute()

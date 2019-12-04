@@ -281,6 +281,7 @@
                                     />
                                 </div>
 
+                                <hr />
 
                                 <!-- radio -->
                                 <div class="form-group">
@@ -319,6 +320,33 @@
                                            value="{{ data['mc_settings']['auto_start_delay'] }}"
                                     />
                                 </div>
+
+                                <hr />
+
+                                <div class="form-group">
+                                    <label>
+                                        Server Port<br />
+                                        <small>Default is 25565</small>
+                                    </label>
+                                    <input type="number"
+                                           name="server_port" id="server_port"
+                                           class="form-control" placeholder="25565"
+                                           value="{{ data['mc_settings']['server_port'] }}"
+                                    />
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        Server IP<br />
+                                        <small>Default is 127.0.0.1</small>
+                                    </label>
+                                    <input type="text"
+                                           name="server_ip" id="server_ip"
+                                           class="form-control" placeholder="127.0.0.1"
+                                           value="{{ data['mc_settings']['server_ip'] }}"
+                                    />
+                                </div>
+
                             </div>
 
                             <div class="box-footer">

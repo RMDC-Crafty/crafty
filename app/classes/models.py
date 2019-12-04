@@ -56,6 +56,8 @@ class MC_settings(BaseModel):
     pre_args = CharField(default='')
     auto_start_server = BooleanField()
     auto_start_delay = IntegerField()
+    server_port = IntegerField(default=25565)
+    server_ip = CharField(default='127.0.0.1')
 
     class Meta:
         table_name = 'mc_settings'

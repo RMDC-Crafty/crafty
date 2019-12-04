@@ -39,9 +39,10 @@ def check_for_sql_db():
         # here we update the database with new tables if needed
         try:
             create_tables()
-        except:
-            logging.critical("Unable to update db - Exiting")
-            console.critical("Unable to update db - Exiting")
+
+        except Exception as e:
+            logging.critical("Unable to create db - Exiting - {}".format(e))
+            console.critical("Unable to create db - Exiting - {}".format(e))
             sys.exit(1)
         return True
     else:
@@ -51,9 +52,9 @@ def check_for_sql_db():
         try:
             create_tables()
 
-        except:
-            logging.critical("Unable to create db - Exiting")
-            console.critical("Unable to create db - Exiting")
+        except Exception as e:
+            logging.critical("Unable to create db - Exiting - {}".format(e))
+            console.critical("Unable to create db - Exiting - {}".format(e))
             sys.exit(1)
 
         return False

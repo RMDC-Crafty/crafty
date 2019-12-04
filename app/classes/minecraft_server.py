@@ -133,6 +133,11 @@ class Minecraft_Server():
             if 'java' in p.name().lower():
                 self.PID = p.pid
 
+        # if we don't have a process set from above, we default back to the parent process (bash / cmd)
+        if self.PID is None:
+            self.PID = parent.pid
+
+
         ts = time.time()
         self.start_time = str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
         logging.info("Launching Minecraft server with command: {}".format(self.server_command))
@@ -143,7 +148,7 @@ class Minecraft_Server():
 
     def send_command(self, command):
 
-        if not self.check_running() and command != 'start':
+        if not self.check_running() and command.lower() != 'start':
             logging.warning("Server not running, unable to send command: {}".format(command))
             return False
 
@@ -606,21 +611,9 @@ class Minecraft_Server():
         server_port = 25565
         ip = "127.0.0.1"
 
-        if self.detect_bungee_waterfall():
-            config_file = os.path.join(self.server_path, 'config.yml')
-            config_data = helper.load_yml_file(config_file)
-            try:
-                host_setting = str(config_data['listeners'][0]['host']).split(":")
-                if len(host_setting) == 2:
-                    server_port = host_setting[1]
-
-            except Exception as e:
-                logging.warning("Unable to find listener query port in config.yml - error was: {}".format(e))
-                logging.warning("Using default port for query to server")
-                server_port = False
-                pass
-        else:
-            server_port = self.search_server_properties("server-port")
+        settings = MC_settings.get_by_id(1)
+        server_port = settings.server_port
+        ip = settings.server_ip
 
         logging.debug('Pinging {} on server port: {}'.format(ip, server_port))
         mc_ping = ping(ip, int(server_port))
