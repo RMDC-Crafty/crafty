@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [v2.0.RC2]
+This version of Crafty patched 2 bugs.
+
+### Additions
+Added ability to change port/ip of server connection as part of bug fix.
+
+### Changes
+None
+
+### Bug Fixes
+patched bug where usage history was always empty.
+
 ## [v2.0.RC1]
 This version of Crafty focuses on Waterfall/Bungee Support, Permissions/Roles
 and cleanup/refactoring to get ready for possible RC status.
@@ -22,7 +34,7 @@ and cleanup/refactoring to get ready for possible RC status.
 - #19 - Datatables error on logs page with no errors/warnings
 
 
-## [v2.0.beta2]
+## [v2.0.beta]
 This version of Crafty focuses on Schedules, and more customization of 
 Crafty via configuration options.  
 
