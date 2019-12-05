@@ -358,7 +358,7 @@ class Minecraft_Server():
             players=online_data['online']
         ).execute()
 
-        logging("Inserted History Record Number {}".format(insert_result))
+        logging.info("Inserted History Record Number {}".format(insert_result))
 
         query = Crafty_settings.select(Crafty_settings.history_max_age)
         max_days = query[0].history_max_age
