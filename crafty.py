@@ -114,6 +114,8 @@ def main():
     Console.info("Crafty Startup Procedure Complete")
     Console.help("Type 'stop' or 'exit' to shutdown the system")
 
+    mc_server.is_server_pingable()
+
     Crafty = MainPrompt(mc_server)
     Crafty.cmdloop()
 

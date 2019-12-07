@@ -96,7 +96,11 @@ def ping(ip, port=25565):
                 return i
 
     sock = socket.socket()
-    sock.connect((ip, port))
+    try:
+        sock.connect((ip, port))
+    except Exception as e:
+        return False
+
     try:
         host = ip.encode('utf-8')
         data = b''  # wiki.vg/Server_List_Ping

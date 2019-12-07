@@ -60,8 +60,16 @@ class remote_commands():
                     logging.error("Error reported: {}".format(e))
                     pass
 
-                logging.info("Servers Stopped")
-                time.sleep(2)
+                while True:
+                    server_up = self.mc_server_obj.is_server_pingable()
+                    if server_up:
+                        logging.info("Server still pingable, waiting")
+                        time.sleep(.5)
+                    else:
+                        logging.info("Servers Stopped")
+
+                        break
+
                 self.mc_server_obj.run_threaded_server()
             else:
                 logging.info("Server not running - Starting Server")

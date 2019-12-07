@@ -594,6 +594,12 @@ class Minecraft_Server():
                 'world_size': 'Unable to find world size'
             }
 
+    def is_server_pingable(self):
+        if self.ping_server():
+            return True
+        else:
+            return False
+
     def ping_server(self):
 
         server_port = 25565
