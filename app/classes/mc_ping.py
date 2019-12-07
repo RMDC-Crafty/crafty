@@ -99,6 +99,7 @@ def ping(ip, port=25565):
     try:
         sock.connect((ip, port))
     except Exception as e:
+        pass
         return False
 
     try:
@@ -114,9 +115,9 @@ def ping(ip, port=25565):
         length = read_var_int()  # full packet length
         if length < 10:
             if length < 0:
-                raise ValueError('negative length read')
+                return False
             else:
-                raise ValueError('invalid response %s' % sock.read(length))
+                return False
 
         sock.recv(1)  # packet type, 0 for pings
         length = read_var_int()  # string length
@@ -124,7 +125,7 @@ def ping(ip, port=25565):
         while len(data) != length:
             chunk = sock.recv(length - len(data))
             if not chunk:
-                raise ValueError('connection aborted')
+                return False
 
             data += chunk
         logging.debug("Server reports this data on ping: {}".format(data))
