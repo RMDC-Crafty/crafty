@@ -10,7 +10,9 @@ This version of Crafty will focus on new features and quality of life improvemen
 - Added machines hostname to tornado start message - this allows crafty to show correct URL to self.
 - Added several commandline functions to console in reference to issue #30
 - Added remote commands - this will be used for remote restarts of the webserver as well as other functions.
-
+- Added ability to change web port and reload web server via the console. (Issue #26)
+- Added web server port to crafty settings on the config page
+ 
 ### Changes
 - Stop command only stops the MC server, it doesn't exit crafty (use exit command for that)
 - overhauled the installer to make it more streamlined and fault tolerant. 

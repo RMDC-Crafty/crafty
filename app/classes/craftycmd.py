@@ -144,4 +144,21 @@ class MainPrompt(cmd.Cmd):
         # print(server_stats)
 
 
+    def do_reload_webserver(self, line):
+        Remote.insert({
+            Remote.command: 'restart_web_server'
+        }).execute()
+        console.info("Reloading Tornado Webserver, Please wait 5 seconds to reconnect")
+
+    def help_reload_webserver(self):
+        console.help("Reloads the Tornado Webserver, takes 5 seconds to reload")
+
+    def do_change_web_port(self, line):
+        Webserver.update({
+            Webserver.port_number: int(line)
+        }).execute()
+        console.info("Tornado Webserver Port set to port: {}".format(line))
+
+    def help_change_web_port(self):
+        console.help("Sets the Tornado Webserver Port. Issue 'reload webserver' to apply the change.")
 

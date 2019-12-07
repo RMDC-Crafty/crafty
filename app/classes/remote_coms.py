@@ -41,5 +41,5 @@ class remote_commands():
     def handle_command(self, command):
         if command == 'restart_web_server':
             self.tornado_obj.stop_web_server()
-            time.sleep(20)
+            time.sleep(1)
             self.tornado_obj.start_web_server(True)

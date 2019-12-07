@@ -243,6 +243,7 @@ class AdminHandler(BaseHandler):
             mc_data = MC_settings.get()
             crafty_data = Crafty_settings.get()
             backup_data = Backups.get()
+            web_data = Webserver.get()
             users = Users.select()
 
             page_data = {}
@@ -250,6 +251,7 @@ class AdminHandler(BaseHandler):
             page_data['invalid'] = invalid
             page_data['mc_settings'] = model_to_dict(mc_data)
             page_data['crafty_settings'] = model_to_dict(crafty_data)
+            page_data['web_settings'] = model_to_dict(web_data)
 
             page_data['users'] = users
             page_data['users_count'] = len(users)
@@ -437,6 +439,12 @@ class AdminHandler(BaseHandler):
                     Crafty_settings.history_interval: self.get_argument('historical_interval'),
                     Crafty_settings.history_max_age: self.get_argument('history_max_age'),
                 }).where(Crafty_settings.id == 1)
+
+                q.execute()
+
+                q = Webserver.update({
+                    Webserver.port_number: self.get_argument('port_number')
+                })
 
                 q.execute()
 
@@ -697,7 +705,6 @@ class webserver():
         self.http_server = tornado.httpserver.HTTPServer(app, ssl_options=cert_objects)
         self.http_server.listen(port_number)
         tornado.locale.load_translations(os.path.join(web_root, 'translations'))
-        # tornado.ioloop.IOLoop.instance().start()
         self.ioloop = tornado.ioloop.IOLoop.instance()
         self.ioloop.start()
 
