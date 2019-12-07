@@ -11,7 +11,7 @@ This version of Crafty will focus on new features and quality of life improvemen
 - Added several commandline functions to console in reference to issue #30
 
 ### Changes
-- None
+- Stop command only stops the MC server, it doesn't exit crafty (use exit command for that)
 
 ### Bug Fixes
 - Fixed undocumented bug in installer where auto-start delay wasn't asked.

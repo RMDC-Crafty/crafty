@@ -45,8 +45,19 @@ class MainPrompt(cmd.Cmd):
             self.print_crafty_end()
 
     def do_stop(self, line):
-        self.stop_all_children()
-        sys.exit(0)
+        running = self.mc_server_obj.check_running()
+
+        if running:
+            try:
+                console.info("Stopping MC Server")
+                self.mc_server_obj.stop_threaded_server()
+            except:
+                pass
+
+            console.info("Servers Stopped")
+        else:
+            console.info("Server not running")
+
 
     def help_stop(self):
         console.help("Stops the server if running, Exits the program")
@@ -69,8 +80,8 @@ class MainPrompt(cmd.Cmd):
         if running_check:
             console.warning("Server already running")
         else:
+            console.info("Starting Minecraft Server in background")
             self.mc_server_obj.run_threaded_server()
-
 
     def help_start(self):
         console.help("Starts the Minecraft server if not running")
@@ -124,9 +135,9 @@ class MainPrompt(cmd.Cmd):
         console.info("CPU Usage:\t {}".format(server_stats['cpu_usage']))
         console.info("CPU Cores:\t {}".format(server_stats['cpu_cores']))
         console.info("Mem Percent:\t {}".format(server_stats['mem_percent']))
-        console.info("Mem Usage \t {} / {}".format(server_stats['mem_usage'], server_stats['mem_total']))
+        console.info("Mem Usage: \t {} / {}".format(server_stats['mem_usage'], server_stats['mem_total']))
         console.info("Disk Percent:\t {}".format(server_stats['disk_percent']))
-        console.info("Disk Usage \t {} / {}".format(server_stats['disk_usage'], server_stats['disk_total']))
+        console.info("Disk Usage: \t {} / {}".format(server_stats['disk_usage'], server_stats['disk_total']))
 
         console.info("-" * 75)
 
@@ -134,8 +145,8 @@ class MainPrompt(cmd.Cmd):
             console.info("Online Stats:\t {} of {} players online".format(
                 server_stats['online_stats']['online'],
                 server_stats['online_stats']['max']))
-            console.info("Server Version \t {}".format(server_stats['server_version']))
-            console.info("Server MOTD \t {}".format(server_stats['server_description']))
+            console.info("Server Version: \t {}".format(server_stats['server_version']))
+            console.info("Server MOTD: \t {}".format(server_stats['server_description']))
 
         # print(server_stats)
 
