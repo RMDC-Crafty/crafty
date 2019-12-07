@@ -14,6 +14,11 @@ class remote_commands():
         self.keep_processing = True
         self.mc_server_obj = mc_server_obj
         self.tornado_obj = tornado_obj
+        self.clear_all_commands()
+
+    def clear_all_commands(self):
+        logging.info("Clearing all Remote Commands")
+        Remote.delete().where(Remote.command != '').execute()
 
     def stop_watching(self):
         self.keep_processing = False
@@ -32,7 +37,7 @@ class remote_commands():
                     command = Remote.get_by_id(1).command
                     logging.info("Remote Command:{} found - Executing".format(command))
                     self.handle_command(command)
-                    Remote.delete_by_id(1)
+                    self.clear_all_commands()
             # if we are to stop processing, we break out of this loop
             else:
                 break
@@ -43,3 +48,43 @@ class remote_commands():
             self.tornado_obj.stop_web_server()
             time.sleep(1)
             self.tornado_obj.start_web_server(True)
+
+        if command == 'restart_mc_server':
+            running = self.mc_server_obj.check_running()
+
+            if running:
+                try:
+                    logging.info("Stopping MC Server")
+                    self.mc_server_obj.stop_threaded_server()
+                except Exception as e:
+                    logging.error("Error reported: {}".format(e))
+                    pass
+
+                logging.info("Servers Stopped")
+                time.sleep(2)
+                self.mc_server_obj.run_threaded_server()
+            else:
+                logging.info("Server not running - Starting Server")
+                self.mc_server_obj.run_threaded_server()
+
+        if command == 'start_mc_server':
+            running = self.mc_server_obj.check_running()
+
+            if not running:
+                logging.info("Starting MC Server")
+                self.mc_server_obj.run_threaded_server()
+                time.sleep(2)
+                self.mc_server_obj.write_html_server_status()
+            else:
+                logging.info("Server Already Running - Skipping start of MC Server")
+
+        if command == 'stop_mc_server':
+            running = self.mc_server_obj.check_running()
+
+            if running:
+                logging.info("Stopping MC Server")
+                self.mc_server_obj.stop_threaded_server()
+                time.sleep(2)
+                self.mc_server_obj.write_html_server_status()
+            else:
+                logging.info("Server Not Running - Skipping stop of MC Server")

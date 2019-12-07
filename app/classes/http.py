@@ -311,14 +311,15 @@ class AdminHandler(BaseHandler):
             self.mcserver.reload_settings()
 
             if command == "server_stop":
-                self.mcserver.stop_threaded_server()
-                time.sleep(3)
-                self.mcserver.write_html_server_status()
+                Remote.insert({
+                    Remote.command: 'stop_mc_server'
+                }).execute()
                 next_page = "/admin/dashboard"
 
             elif command == "server_start":
-                self.mcserver.run_threaded_server()
-                time.sleep(3)
+                Remote.insert({
+                    Remote.command: 'start_mc_server'
+                }).execute()
                 self.mcserver.write_html_server_status()
                 next_page = "/admin/dashboard"
 

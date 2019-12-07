@@ -158,11 +158,9 @@ class Minecraft_Server():
         self.process.send(command + '\n')
 
     def restart_threaded_server(self):
-        if self.check_running():
-            self.stop_threaded_server()
-            time.sleep(3)
-            self.run_threaded_server()
-            self.write_html_server_status()
+        Remote.insert({
+            Remote.command: 'restart_mc_server'
+        }).execute()
 
     def stop_server(self):
 
@@ -172,6 +170,7 @@ class Minecraft_Server():
         else:
             logging.info('Sending stop command to server')
             self.send_command('stop')
+            self.PID = None
 
         for x in range(6):
 
@@ -242,7 +241,7 @@ class Minecraft_Server():
                     pass
 
             # the server crashed, or isn't found - so let's reset things.
-            logging.critical("The server seems to have vanished, did it crash?")
+            logging.warning("The server seems to have vanished, did it crash?")
             self.process = None
             self.PID = None
 

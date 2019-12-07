@@ -44,7 +44,9 @@ class MainPrompt(cmd.Cmd):
         if running:
             try:
                 console.info("Stopping MC Server")
-                self.mc_server_obj.stop_threaded_server()
+                Remote.insert({
+                    Remote.command: 'stop_mc_server'
+                }).execute()
             except:
                 pass
 
@@ -74,22 +76,18 @@ class MainPrompt(cmd.Cmd):
             console.warning("Server already running")
         else:
             console.info("Starting Minecraft Server in background")
-            self.mc_server_obj.run_threaded_server()
+            Remote.insert({
+                Remote.command: 'start_mc_server'
+            }).execute()
 
     def help_start(self):
         console.help("Starts the Minecraft server if not running")
 
     def do_restart(self, line):
-
-        if self.mc_server_obj.check_running:
-            try:
-                self.mc_server_obj.stop_threaded_server()
-                time.sleep(5)
-                self.mc_server_obj.run_threaded_server()
-            except:
-                pass
-        else:
-            self.mc_server_obj.run_threaded_server()
+        Remote.insert({
+            Remote.command: 'restart_mc_server'
+        }).execute()
+        console.info("Restarting Minecraft Server in background")
 
     def help_restart(self):
         console.help("Stops then Starts the server if not running. Will also start the server if not already running")

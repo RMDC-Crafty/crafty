@@ -7,22 +7,31 @@ This version of Crafty will focus on new features and quality of life improvemen
 
 ### Additions
 - Added real disk/memory usage under percentage (#32 - Thanks DiscoverOV)
+
 - Added machines hostname to tornado start message - this allows crafty to show correct URL to self.
-- Added several commandline functions to console in reference to issue #30
+
+- Added several commandline functions to console (#30 - Thanks Aratani)
+
 - Added remote commands - this will be used for remote restarts of the webserver as well as other functions.
+
 - Added ability to change web port and reload web server via the console. (Issue #26)
+
 - Added web server port to crafty settings on the config page
- 
+
+- switched all the start/stop/restart commands to use the new remote commands mechanism for faster webpage response. 
+this fixes several webserver "hanging" bugs - (#36 - Thanks DiscoverOV)
+
 ### Changes
 - Stop command only stops the MC server, it doesn't exit crafty (use exit command for that)
-- overhauled the installer to make it more streamlined and fault tolerant. 
-Database is only written once you say to save the settings. 
-This allows you to break out of the installer without corrupting the database.
+
+- overhauled the installer to make it more streamlined and fault tolerant.  Database is only 
+written once you say to save the settings. This allows you to break out of the installer 
+without corrupting the database.
 
 ### Bug Fixes
 - Fixed undocumented bug in installer where auto-start delay wasn't asked.
 - #27 - Installer now verifies the path/jar is correct.
-
+- fixed undocumented bug where log would say the server crashed when it was stopped gracefully
 ## [v2.0.RC2]
 This version of Crafty patched 2 bugs.
 
