@@ -384,7 +384,11 @@ class Minecraft_Server():
         server_stats = {'cpu_usage': psutil.cpu_percent(interval=0.5) / psutil.cpu_count(),
                         'cpu_cores': psutil.cpu_count(),
                         'mem_percent': psutil.virtual_memory()[2],
+                        'mem_usage': helper.human_readable_file_size(psutil.virtual_memory()[3]),
+                        'mem_total': helper.human_readable_file_size(psutil.virtual_memory()[0]),
                         'disk_percent': psutil.disk_usage('/')[3],
+                        'disk_usage': helper.human_readable_file_size(psutil.disk_usage('/')[1]),
+                        'disk_total': helper.human_readable_file_size(psutil.disk_usage('/')[0]),
                         'boot_time': str(datime),
                         'mc_start_time': self.get_start_time(),
                         'errors': len(errors['errors']),
@@ -492,7 +496,7 @@ class Minecraft_Server():
                 fp = os.path.join(dirpath, f)
                 # skip if it is symbolic link
                 if not os.path.islink(fp):
-                    size = self.human_readable_sizes(os.path.getsize(fp))
+                    size = helper.human_readable_file_size(fp)
                     results.append({'path': fp, 'size': size})
 
         return results
@@ -555,13 +559,6 @@ class Minecraft_Server():
                 total += entry.stat(follow_symlinks=False).st_size
         return total
 
-    def human_readable_sizes(self,num, suffix='B'):
-        for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
-            if abs(num) < 1024.0:
-                return "%3.1f %s%s" % (num, unit, suffix)
-            num /= 1024.0
-        return "%.1f %s%s" % (num, 'Yi', suffix)
-
     def search_for_errors(self):
         log_file = os.path.join(self.server_path, "logs", "latest.log")
 
@@ -597,7 +594,7 @@ class Minecraft_Server():
                         # get this directory size, and add it to the total we have running.
                         total_size += self.get_dir_size(os.path.join(root, name))
 
-            level_total_size = self.human_readable_sizes(total_size)
+            level_total_size = helper.human_readable_file_size(total_size)
 
             return {
                 'world_name': world,

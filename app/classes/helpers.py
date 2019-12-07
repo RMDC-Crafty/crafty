@@ -265,7 +265,6 @@ class helpers:
         k = crypto.PKey()
         k.generate_key(crypto.TYPE_RSA, 4096)
 
-
         # create a self-signed cert
         cert = crypto.X509()
         cert.get_subject().C = "US"
@@ -321,6 +320,12 @@ class helpers:
             return data
         return False
 
+    def human_readable_file_size(self, num, suffix='B'):
+        for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
+            if abs(num) < 1024.0:
+                return "%3.1f%s%s" % (num, unit, suffix)
+            num /= 1024.0
+        return "%.1f%s%s" % (num, 'Y', suffix)
 
 
 
