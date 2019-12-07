@@ -9,9 +9,13 @@ This version of Crafty will focus on new features and quality of life improvemen
 - Added real disk/memory usage under percentage (#32 - Thanks DiscoverOV)
 - Added machines hostname to tornado start message - this allows crafty to show correct URL to self.
 - Added several commandline functions to console in reference to issue #30
+- Added remote commands - this will be used for remote restarts of the webserver as well as other functions.
 
 ### Changes
 - Stop command only stops the MC server, it doesn't exit crafty (use exit command for that)
+- overhauled the installer to make it more streamlined and fault tolerant. 
+Database is only written once you say to save the settings. 
+This allows you to break out of the installer without corrupting the database.
 
 ### Bug Fixes
 - Fixed undocumented bug in installer where auto-start delay wasn't asked.

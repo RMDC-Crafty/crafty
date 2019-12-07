@@ -2,6 +2,7 @@ import os
 import sys
 import string
 import random
+import logging
 
 from app.classes.models import *
 from app.classes.helpers import helpers
@@ -132,6 +133,15 @@ class installer():
             self.get_mc_server_data()
         else:
             print("Saving Your Settings")
+
+            # here we update the database with new tables if needed
+            try:
+                create_tables()
+
+            except Exception as e:
+                logging.critical("Unable to create db - Exiting - {}".format(e))
+                console.critical("Unable to create db - Exiting - {}".format(e))
+                sys.exit(1)
 
             MC_settings.create(
                 server_path=server_path,

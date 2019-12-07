@@ -21,16 +21,10 @@ class MainPrompt(cmd.Cmd):
         self.mc_server_obj = mc_server_obj
 
     # overrides the default Prompt
-    prompt = "Crafty Controller > "
+    prompt = "Crafty Controller {} > ".format(__version__)
 
     def print_crafty_end(self):
         logging.info("***** Crafty Stopped ***** \n")
-
-    def do_version(self, line):
-        Console.info(__version__)
-
-    def help_version(self):
-        Console.help("Shows the Crafty version")
 
     def stop_all_children(self):
         Console.info("Stopping any server daemons")
@@ -57,7 +51,6 @@ class MainPrompt(cmd.Cmd):
             console.info("Servers Stopped")
         else:
             console.info("Server not running")
-
 
     def help_stop(self):
         console.help("Stops the server if running, Exits the program")

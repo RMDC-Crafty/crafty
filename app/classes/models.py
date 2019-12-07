@@ -17,6 +17,7 @@ class BaseModel(Model):
     class Meta:
         database = database
 
+
 class Backups(BaseModel):
     directories = CharField()
     storage_location = CharField()
@@ -24,6 +25,7 @@ class Backups(BaseModel):
 
     class Meta:
         table_name = 'backups'
+
 
 class Users(BaseModel):
     username = CharField(unique=True)
@@ -33,6 +35,7 @@ class Users(BaseModel):
 
     class Meta:
         table_name = 'users'
+
 
 class Roles(BaseModel):
     name = CharField(unique=True)
@@ -45,6 +48,13 @@ class Roles(BaseModel):
 
     class Meta:
         table_name = "roles"
+
+
+class Remote(BaseModel):
+    command = CharField()
+
+    class Meta:
+        table_name = "remote"
 
 
 class MC_settings(BaseModel):
@@ -61,6 +71,7 @@ class MC_settings(BaseModel):
 
     class Meta:
         table_name = 'mc_settings'
+
 
 class Crafty_settings(BaseModel):
     history_interval = IntegerField()
@@ -103,7 +114,16 @@ class History(BaseModel):
 
 def create_tables():
     with database:
-        database.create_tables([Users, MC_settings, Webserver, Schedules, History, Crafty_settings, Backups, Roles])
+        database.create_tables([Users,
+                                MC_settings,
+                                Webserver,
+                                Schedules,
+                                History,
+                                Crafty_settings,
+                                Backups,
+                                Roles,
+                                Remote]
+                               )
 
 def default_settings():
 
@@ -171,6 +191,13 @@ def default_settings():
     ]
 
     Roles.insert_many(perms_insert).execute()
+
+# this is our upgrade migration function - any new tables after 2.0 need to have
+# default settings created here if they don't already exits
+def do_database_migrations():
+    create_tables()
+
+
 
 def get_perms_for_user(user):
     user_data = {}

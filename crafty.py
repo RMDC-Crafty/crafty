@@ -12,6 +12,7 @@ from app.config.version import __version__
 from app.classes.craftycmd import MainPrompt
 from app.classes.models import *
 from app.classes.install import installer
+from app.classes.remote_coms import remote_commands
 
 from app.classes.minecraft_server import Minecraft_Server
 from app.classes.http import webserver
@@ -29,35 +30,18 @@ def do_intro():
     print(intro)
 
 
-def check_for_sql_db():
+def is_fresh_install():
     logging.info("Checking for existing DB")
 
     dbpath = helper.get_db_path()
 
-    if helper.check_file_exists(dbpath):
+    fresh_install = False
 
-        # here we update the database with new tables if needed
-        try:
-            create_tables()
+    if not helper.check_file_exists(dbpath):
+        fresh_install = True
+        logging.info("Unable to find: {} - This is a fresh install".format(dbpath))
 
-        except Exception as e:
-            logging.critical("Unable to create db - Exiting - {}".format(e))
-            console.critical("Unable to create db - Exiting - {}".format(e))
-            sys.exit(1)
-        return True
-    else:
-        logging.info("Unable to find: {} - Launching Creation script".format(dbpath))
-
-        # create the db
-        try:
-            create_tables()
-
-        except Exception as e:
-            logging.critical("Unable to create db - Exiting - {}".format(e))
-            console.critical("Unable to create db - Exiting - {}".format(e))
-            sys.exit(1)
-
-        return False
+    return fresh_install
 
 
 def run_installer():
@@ -81,41 +65,31 @@ def start_scheduler():
 
 def main():
 
-    # if we don't have a sql_db, we create one, and run the installers
-    if not check_for_sql_db():
+    # is this a fresh install? (is the database there?)
+    fresh_install = is_fresh_install()
+
+    if fresh_install:
         run_installer()
         default_settings()
 
-        do_intro()
 
-        mc_server = Minecraft_Server()
+    do_intro()
 
-        tornado = webserver(mc_server)
+    # make sure the database tables that are needed are there, and have correct default values
+    do_database_migrations()
 
-        # startup Tornado -
-        tornado.start_web_server()
-        time.sleep(.5)
+    mc_server = Minecraft_Server()
+    tornado = webserver(mc_server)
 
-        # setup the new admin password (random)
+    # startup Tornado -
+    tornado.start_web_server()
+    time.sleep(.5)
+
+    # setup the new admin password (random)
+    if fresh_install:
         setup_admin()
 
-    else:
-
-        mc_server = Minecraft_Server()
-
-        # startup Tornado -
-        do_intro()
-
-        tornado = webserver(mc_server)
-
-        tornado.start_web_server()
-        time.sleep(.5)
-
-    time.sleep(.5)
-
     mc_server.do_init_setup()
-
-    time.sleep(.5)
 
     # fire off a write_html_status now, and schedule one for every 10 seconds
     mc_server.write_html_server_status()
@@ -131,7 +105,12 @@ def main():
     scheduler = threading.Thread(name='Scheduler', target=start_scheduler, daemon=True)
     scheduler.start()
 
-    time.sleep(5)
+    # start the remote commands watcher thread
+    remote_coms = remote_commands(mc_server, tornado)
+    remote_coms_thread = threading.Thread(target=remote_coms.start_watcher, daemon=True, name="Remote_Coms")
+    remote_coms_thread.start()
+
+    time.sleep(3)
     Console.info("Crafty Startup Procedure Complete")
     Console.help("Type 'stop' or 'exit' to shutdown the system")
 

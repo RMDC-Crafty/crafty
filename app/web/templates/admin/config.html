@@ -326,7 +326,7 @@
                                 <div class="form-group">
                                     <label>
                                         Server Port<br />
-                                        <small>Default is 25565</small>
+                                        <small>Default is 25565 - this is the port crafty will use to get server stats. This should match your server.properties file</small>
                                     </label>
                                     <input type="number"
                                            name="server_port" id="server_port"
@@ -338,7 +338,7 @@
                                 <div class="form-group">
                                     <label>
                                         Server IP<br />
-                                        <small>Default is 127.0.0.1</small>
+                                        <small>Default is 127.0.0.1 - this is the ip crafty will use to get server stats. This should match your server.properties file</small>
                                     </label>
                                     <input type="text"
                                            name="server_ip" id="server_ip"
@@ -458,10 +458,14 @@
 
                 <hr />
                 {% if data['mc_settings']['auto_start_server'] %}
-                    The server is set to autostart
+                    The server is set to autostart after  <b>{{ data['mc_settings']['auto_start_delay'] }}</b> seconds
                 {% else %}
                     The server is <b>NOT</b> set to autostart
                 {% end %}
+
+                <hr />
+
+                Crafty will try to connect to <b>{{ data['mc_settings']['server_ip'] }}</b>  on port <b>{{ data['mc_settings']['server_port'] }}</b> to get server status
 
                 <hr />
 

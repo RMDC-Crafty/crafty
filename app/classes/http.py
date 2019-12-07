@@ -624,6 +624,8 @@ class webserver():
 
     def __init__(self, mc_server):
         self.mc_server = mc_server
+        self.ioloop = None
+        self.HTTPServer = None
 
     def log_function(self, handler):
 
@@ -636,7 +638,7 @@ class webserver():
         }
         tornado.log.access_log.info(json.dumps(info, indent=4))
 
-    def run_tornado(self):
+    def run_tornado(self, silent=False):
 
         # let's verify we have an SSL cert
         helper.create_self_signed_cert()
@@ -647,19 +649,23 @@ class webserver():
         web_root = helper.get_web_root_path()
 
         logging.info("Starting Tornado HTTPS Server on port {}".format(port_number))
-        Console.info("Starting Tornado HTTPS Server on port {}".format(port_number))
-        Console.info("https://{}:{} is up and ready for connection:".format(helper.get_local_ip(), port_number))
+
+        if not silent:
+            Console.info("Starting Tornado HTTPS Server on port {}".format(port_number))
+            Console.info("https://{}:{} is up and ready for connection:".format(helper.get_local_ip(), port_number))
+
         asyncio.set_event_loop(asyncio.new_event_loop())
 
         tornado.template.Loader('.')
 
         ip = helper.get_public_ip()
 
-        if ip:
-            Console.info("Your public IP is: {}".format(ip))
+        if not silent:
+            if ip:
+                Console.info("Your public IP is: {}".format(ip))
 
-        else:
-            Console.warning("Unable to find your public IP\nThe service might be down, or your internet is down.")
+            else:
+                Console.warning("Unable to find your public IP\nThe service might be down, or your internet is down.")
 
         handlers = [
             (r'/', PublicHandler, dict(mcserver=self.mc_server)),
@@ -688,13 +694,22 @@ class webserver():
             default_handler_class=My404Handler
         )
 
-        http_server = tornado.httpserver.HTTPServer(app, ssl_options=cert_objects)
-        http_server.listen(port_number)
+        self.http_server = tornado.httpserver.HTTPServer(app, ssl_options=cert_objects)
+        self.http_server.listen(port_number)
         tornado.locale.load_translations(os.path.join(web_root, 'translations'))
-        tornado.ioloop.IOLoop.instance().start()
+        # tornado.ioloop.IOLoop.instance().start()
+        self.ioloop = tornado.ioloop.IOLoop.instance()
+        self.ioloop.start()
 
-    def start_web_server(self):
-        thread = threading.Thread(target=self.run_tornado, daemon=True)
+    def start_web_server(self, silent=False):
+        thread = threading.Thread(target=self.run_tornado, args=(silent,) , daemon=True, name='tornado_thread')
         thread.start()
+
+    def stop_web_server(self):
+        logging.info("Shutting Down Tornado Web Server")
+        ioloop = self.ioloop
+        ioloop.stop()
+        self.http_server.stop()
+        logging.info("Tornado Server Stopped")
 
 
