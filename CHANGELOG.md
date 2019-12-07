@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+
+## [v2.1.Alpha]
+This version of Crafty will focus on new features and quality of life improvements.
+
+### Additions
+Added real disk/memory usage under percentage (#32 - Thanks DiscoverOV)
+
+### Changes
+None
+
+### Bug Fixes
+Fixed undocumented bug in installer where auto-start delay wasn't asked.
+#27 - Installer now verifies the path/jar is correct.
+
 ## [v2.0.RC2]
 This version of Crafty patched 2 bugs.
 
