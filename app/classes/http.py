@@ -648,7 +648,7 @@ class webserver():
 
         logging.info("Starting Tornado HTTPS Server on port {}".format(port_number))
         Console.info("Starting Tornado HTTPS Server on port {}".format(port_number))
-        Console.info("https://serverip:{} is up and ready for connection:".format(port_number))
+        Console.info("https://{}:{} is up and ready for connection:".format(helper.get_local_ip(), port_number))
         asyncio.set_event_loop(asyncio.new_event_loop())
 
         tornado.template.Loader('.')

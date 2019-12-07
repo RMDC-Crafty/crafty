@@ -221,17 +221,6 @@ class Minecraft_Server():
             return False
 
         else:
-            # check to see if the PID still exists
-            if psutil.pid_exists(int(self.PID)):
-                return True
-            else:
-                logging.critical("The server seems to have vanished, did it crash?")
-                self.process = None
-                self.PID = None
-                return False
-
-
-            '''
             # loop through processes
             for proc in psutil.process_iter():
                 try:
@@ -258,7 +247,6 @@ class Minecraft_Server():
             self.PID = None
 
             return False
-            '''
 
     def killpid(self, pid):
         logging.info('Killing Process {} and all child processes'.format(pid))

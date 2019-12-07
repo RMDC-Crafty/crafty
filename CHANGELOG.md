@@ -6,26 +6,28 @@ All notable changes to this project will be documented in this file.
 This version of Crafty will focus on new features and quality of life improvements.
 
 ### Additions
-Added real disk/memory usage under percentage (#32 - Thanks DiscoverOV)
+- Added real disk/memory usage under percentage (#32 - Thanks DiscoverOV)
+- Added machines hostname to tornado start message - this allows crafty to show correct URL to self.
+- Added several commandline functions to console in reference to issue #30
 
 ### Changes
-None
+- None
 
 ### Bug Fixes
-Fixed undocumented bug in installer where auto-start delay wasn't asked.
-#27 - Installer now verifies the path/jar is correct.
+- Fixed undocumented bug in installer where auto-start delay wasn't asked.
+- #27 - Installer now verifies the path/jar is correct.
 
 ## [v2.0.RC2]
 This version of Crafty patched 2 bugs.
 
 ### Additions
-Added ability to change port/ip of server connection as part of bug fix.
+- Added ability to change port/ip of server connection as part of bug fix.
 
 ### Changes
-None
+- None
 
 ### Bug Fixes
-patched bug where usage history was always empty.
+- patched bug where usage history was always empty.
 
 ## [v2.0.RC1]
 This version of Crafty focuses on Waterfall/Bungee Support, Permissions/Roles

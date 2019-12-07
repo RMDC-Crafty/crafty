@@ -3,6 +3,7 @@ import re
 import logging
 import requests
 import string
+import socket
 import random
 import schedule
 import zipfile
@@ -32,6 +33,17 @@ class helpers:
         self.web_temp = os.path.join(self.webroot, 'temp')
 
         self.passhasher = PasswordHasher()
+
+    def get_local_ip(self):
+        try:
+            host = socket.gethostname()
+            ip = socket.gethostbyaddr(host)
+
+        except:
+            pass
+            ip = "Server IP"
+
+        return ip[0]
 
     def random_string_generator(self, size=6, chars=string.ascii_uppercase + string.digits):
         """
