@@ -17,7 +17,7 @@
 
 
 <section class="content">
-
+    <input type="hidden" value="" id="last_command"/>
     <div class="row">
         <div class="col-xs-12">
             <div class="box">
@@ -92,19 +92,18 @@
         }, 1500);
     });
 
-    $('#server_command').on('keypress', function (e) {
-         if(e.which === 13){
+    $('#server_command').on('keydown', function (e) {
+            if (e.which == 13){
+                $(this).attr("disabled", "disabled"); //Disable textbox to prevent multiple submit
+                send_command_to_server()
+                $(this).removeAttr("disabled"); //Enable the textbox again if needed.
+                $(this).focus();
+            }
+            else if (e.which == 38){
+                last_command = $('#last_command').val()
+                $("#server_command").val(last_command)
+            }
 
-            //Disable textbox to prevent multiple submit
-            $(this).attr("disabled", "disabled");
-
-            send_command_to_server()
-
-            //Enable the textbox again if needed.
-            $(this).removeAttr("disabled");
-
-            $(this).focus();
-         }
    });
 
     $("#submit").click(function(e) {
@@ -122,6 +121,9 @@
 
     function send_command_to_server(){
         var server_command = $("#server_command").val()
+        console.log(server_command)
+        $("#last_command").val(server_command)
+
         var token = getCookie("_xsrf")
 
         data_to_send = { command :server_command,  }
