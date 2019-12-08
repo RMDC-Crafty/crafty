@@ -25,6 +25,12 @@
                   <h3 class="box-title">
                       Virtual Console
                   </h3>
+                    <div class="pull-right">
+                        <label>
+                            <input type="checkbox" name="stop_scroll" id="stop_scroll" />
+                            Stop Auto-Scrolling
+                        </label>
+                    </div>
                 </div>
                 <div class="box-body">
                     <textarea id="virt_console" rows="25" readonly class="form-control"></textarea>
@@ -63,7 +69,10 @@
             success: function (data) {
                 console.log('Got Log From Server')
                 $('#virt_console').val(data);
-                scroll()
+
+                    if( !$("#stop_scroll").is(':checked')){
+                        scroll()
+                    }
              },
         });
     }

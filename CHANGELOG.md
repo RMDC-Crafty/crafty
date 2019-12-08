@@ -21,6 +21,7 @@ This version of Crafty will focus on new features and quality of life improvemen
 - switched all the start/stop/restart commands to use the new remote commands mechanism for faster webpage response. 
 this fixes several webserver "hanging" bugs - (#36 - Thanks DiscoverOV)
 
+- Added ability to turn off auto-scroll on virtual console (#33 - Thanks Pita Bread) 
 ### Changes
 - Stop command only stops the MC server, it doesn't exit crafty (use exit command for that)
 
