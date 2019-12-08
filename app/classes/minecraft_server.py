@@ -483,7 +483,7 @@ class Minecraft_Server():
                 fp = os.path.join(dirpath, f)
                 # skip if it is symbolic link
                 if not os.path.islink(fp):
-                    size = helper.human_readable_file_size(fp)
+                    size = helper.human_readable_file_size(os.path.getsize(fp))
                     results.append({'path': fp, 'size': size})
 
         return results

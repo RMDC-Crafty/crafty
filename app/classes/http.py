@@ -314,18 +314,18 @@ class AdminHandler(BaseHandler):
                 Remote.insert({
                     Remote.command: 'stop_mc_server'
                 }).execute()
-                next_page = "/admin/dashboard"
+                next_page = "/admin/virtual_console"
 
             elif command == "server_start":
                 Remote.insert({
                     Remote.command: 'start_mc_server'
                 }).execute()
                 self.mcserver.write_html_server_status()
-                next_page = "/admin/dashboard"
+                next_page = "/admin/virtual_console"
 
             elif command == "server_restart":
                 self.mcserver.restart_threaded_server()
-                next_page = "/admin/dashboard"
+                next_page = "/admin/virtual_console"
 
             elif command == "backup":
                 backup_thread = threading.Thread(name='backup', target=self.mcserver.backup_server, daemon=False)

@@ -8,7 +8,13 @@ import random
 import schedule
 import zipfile
 import yaml
+import json
+import base64
 from datetime import datetime
+
+import smtplib, ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 from OpenSSL import crypto, SSL
 from socket import gethostname
@@ -33,6 +39,9 @@ class helpers:
         self.web_temp = os.path.join(self.webroot, 'temp')
 
         self.passhasher = PasswordHasher()
+
+        self.can_email = False
+
 
     def get_local_ip(self):
         try:

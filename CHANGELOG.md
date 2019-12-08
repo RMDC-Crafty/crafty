@@ -28,6 +28,8 @@ this fixes several webserver "hanging" bugs - (#36 - Thanks DiscoverOV)
 written once you say to save the settings. This allows you to break out of the installer 
 without corrupting the database.
 
+- start / stop / restart commands from web page redirect to virtual console instead of dashboard.
+
 ### Bug Fixes
 - Fixed undocumented bug in installer where auto-start delay wasn't asked.
 - #27 - Installer now verifies the path/jar is correct.
