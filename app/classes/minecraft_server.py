@@ -105,13 +105,14 @@ class Minecraft_Server():
             Console.warning("Minecraft Server already running...")
             return False
 
+        logging.info("Launching Minecraft server with command: {}".format(self.server_command))
+
         if os.name == "nt":
             logging.info("Windows Detected - launching cmd")
             self.server_command = self.server_command.replace('\\', '/')
-            self.process = pexpect.popen_spawn.PopenSpawn('cmd \n', timeout=None, encoding=None)
-            self.process.send('cd {} \n'.format(self.server_path.replace('\\', '/')))
-            self.process.send(self.server_command + "\n")
-            self.PID = self.process.pid
+            self.process = pexpect.popen_spawn.PopenSpawn('cmd \r\n', timeout=None, encoding=None)
+            self.process.send('cd {} \r\n'.format(self.server_path.replace('\\', '/')))
+            self.process.send(self.server_command + "\r\n")
 
         else:
             logging.info("Linux Detected - launching Bash")
@@ -123,24 +124,11 @@ class Minecraft_Server():
             logging.info("Sending Server Command: {}".format(self.server_command))
             self.process.send(self.server_command + '\n')
 
-        # let's loop through the child processes of the cmd window and find the last one which is java.
-        try:
-            parent = psutil.Process(self.PID)
-        except psutil.NoSuchProcess:
-            return
-        children = parent.children(recursive=True)
-        for p in children:
-            if 'java' in p.name().lower():
-                self.PID = p.pid
-
-        # if we don't have a process set from above, we default back to the parent process (bash / cmd)
-        if self.PID is None:
-            self.PID = parent.pid
-
+        self.PID = helper.find_progam_with_server_jar(self.settings.server_jar)
 
         ts = time.time()
         self.start_time = str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
-        logging.info("Launching Minecraft server with command: {}".format(self.server_command))
+
         logging.info("Minecraft Server Running with PID: {}".format(self.PID))
 
         # write status file

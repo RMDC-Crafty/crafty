@@ -8,6 +8,7 @@ import random
 import schedule
 import zipfile
 import yaml
+import psutil
 import json
 import base64
 from datetime import datetime
@@ -41,6 +42,21 @@ class helpers:
         self.passhasher = PasswordHasher()
 
         self.can_email = False
+
+    def find_progam_with_server_jar(self, jar_file):
+        # loop through each process and see if we can find "java" and a command line that has the jar file in it
+        for p in psutil.process_iter():
+            try:
+                if 'java' in p.name():
+                    # for each process
+                    for c in p.cmdline():
+                        if jar_file in c:
+                            return p.pid
+            except (psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+            except psutil.NoSuchProcess:
+                continue
+        return False
 
 
     def get_local_ip(self):
