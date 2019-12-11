@@ -44,6 +44,8 @@ class helpers:
         self.can_email = False
 
     def find_progam_with_server_jar(self, jar_file):
+        # let's give it time to start
+        time.sleep(3)
         # loop through each process and see if we can find "java" and a command line that has the jar file in it
         for p in psutil.process_iter():
             try:
