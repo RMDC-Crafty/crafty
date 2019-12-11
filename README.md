@@ -30,7 +30,7 @@ Logins are secure and use the most advanced web security models available.
 Install documentation is on the main website [Here](https://www.craftycontrol.com)
 
 ## Documentation
-Documentation is on the main website [Here](https://www.craftycontrol.com/docs)
+Check out our shiny new documentation [right on GitLab](https://gitlab.com/Ptarrant1/crafty-web/wikis/home).
 
 ## Meta
 Phillip Tarrant - [Project Homepage](https://craftycontrol.com/)
