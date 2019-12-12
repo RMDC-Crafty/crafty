@@ -27,7 +27,7 @@ Logins are secure and use the most advanced web security models available.
 
 
 ## Installation
-Install documentation is on the main website [Here](https://www.craftycontrol.com)
+Install documentation is available here on GitLab via the [wiki](https://gitlab.com/Ptarrant1/crafty-web/wikis/Install-Guides).
 
 ## Documentation
 Check out our shiny new documentation [right on GitLab](https://gitlab.com/Ptarrant1/crafty-web/wikis/home).
