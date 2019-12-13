@@ -144,6 +144,43 @@ class MainPrompt(cmd.Cmd):
 
         # print(server_stats)
 
+    def do_set_passwd(self, line):
+
+        try:
+            user = Users.get(Users.username == line).username
+        except Exception as e:
+            Console.error("User: {} Not Found".format(line))
+            return False
+        new_pass = input("NEW password for: {} > ".format(user))
+
+        Users.update({
+            Users.password: helper.encode_pass(new_pass)
+        }).where(Users.username == user).execute()
+
+        console.info("Password for {} is now set to {}".format(user, new_pass))
+
+    def help_set_password(self):
+        console.help("Sets a users password. Example set_password Admin. Use list_users to see defined users")
+
+    def help_disable_autostart(self):
+        console.help("Disables Minecraft Server Autostarting on Crafty Launch")
+
+    def do_disable_autostart(self, line):
+        MC_settings.update({
+            MC_settings.auto_start_server: False
+        }).execute()
+        logging.info("Disabled Minecraft Autostart via the console")
+        Console.info("Disabled Minecraft Autostart")
+
+    def help_enable_autostart(self):
+        console.help("Enables Minecraft Server Autostarting on Crafty Launch")
+
+    def do_enable_autostart(self,line):
+        MC_settings.update({
+            MC_settings.auto_start_server: False
+        }).execute()
+        logging.info("Enabled Minecraft Autostart via the console")
+        Console.info("Enabled Minecraft Autostart")
 
     def do_reload_webserver(self, line):
         Remote.insert({
@@ -163,3 +200,12 @@ class MainPrompt(cmd.Cmd):
     def help_change_web_port(self):
         console.help("Sets the Tornado Webserver Port. Issue 'reload webserver' to apply the change.")
 
+    def do_list_users(self, line):
+        console.info("Users defined:")
+        all_users = Users.select().execute()
+
+        for user in all_users:
+            console.info("User: {} - Role:{}".format(user.username, user.role))
+
+    def help_list_users(self):
+        console.help("Lists all users in the Crafty Controller")

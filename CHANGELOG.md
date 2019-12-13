@@ -29,6 +29,12 @@ this fixes several webserver "hanging" bugs - (#36 - Thanks DiscoverOV)
 
 - Added ability to reload web server from config page.
 
+- Disable / Enable autostart via the console
+
+- ability to list all users in crafty from console
+
+- ability to list set any users password from console
+
 ### Changes
 - Stop command only stops the MC server, it doesn't exit crafty (use exit command for that)
 
@@ -39,6 +45,8 @@ without corrupting the database.
 - Installer is now web based.
 
 - start / stop / restart commands from web page redirect to virtual console instead of dashboard.
+
+- fixed undocumented bug in getting public ip, now fails gracefully
 
 ### Bug Fixes
 - Fixed undocumented bug in installer where auto-start delay wasn't asked.

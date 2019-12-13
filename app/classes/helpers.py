@@ -175,7 +175,13 @@ class helpers:
             return False
 
     def get_public_ip(self):
-        r = requests.get('http://ipinfo.io/ip')
+        try:
+            r = requests.get('http://ipinfo.io/ip', timeout=2)
+        except Exception as e:
+            logging.error("Error found while trying to get public IP: {}".format(e))
+            Console.error("Error found while trying to get public IP: {}".format(e))
+            return False
+
         if r.text:
             logging.info('Your Public IP is: {}'.format(r.text.strip()))
             return r.text.strip()
