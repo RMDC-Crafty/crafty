@@ -24,4 +24,4 @@
 <!-- Also write here if your feature is platform-dependent. -->
 
 
-/label ~enhancement
+/label ~"Feature Request"
