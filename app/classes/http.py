@@ -110,7 +110,12 @@ class PublicHandler(BaseHandler):
             return server_data
         else:
             logging.warning("Unable to find server_data file for dashboard: {}".format(server_file))
-            return False
+            fake_data = {
+                "server_description": "Unable To Connect",
+                "server_running": False,
+                "server_version": "Unable to Connect",
+            }
+            return fake_data
 
 
 class AdminHandler(BaseHandler):
