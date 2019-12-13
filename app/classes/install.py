@@ -2,10 +2,13 @@ import os
 import sys
 import string
 import random
+import logging
 
 from app.classes.models import *
 from app.classes.helpers import helpers
+from app.classes.console import Console
 
+console = Console()
 
 class installer():
 
@@ -94,16 +97,18 @@ class installer():
 
         print("\n")
 
-        if auto_start == "y":
+        if auto_start == 1:
             print("Autostart Delay: In seconds: 10 is default")
             print("Example: 10 - the program will wait 10 seconds before launching the Minecraft server")
             print("Answers: 60 - the program will wait 60 seconds before launching the Minecraft server")
+
             auto_delay = int(
                 input("How many seconds we should wait to auto launch the server?") or "10")
 
             print("\n")
+
         else:
-            auto_delay = 0
+            auto_delay = 10
 
         print("/" * 75 + "\n")
         print("Please check that these settings look correct:")
@@ -114,6 +119,13 @@ class installer():
         print("Autostart: {}".format(auto_start))
         print("Autostart Delay: {}".format(auto_delay))
         print("/" * 75 + "\n")
+
+        if not os.path.isfile(os.path.join(server_path, server_jar)):
+            console.warning("server jar not found in location {} !".format(os.path.join(server_path, server_jar)))
+            console.warning("starting installer over")
+            print("\n")
+            self.get_mc_server_data()
+
         resp = input("Do the above settings look correct? (y/n) > ")
         if resp.lower() == "n":
             print("No worries - let's try again:")
@@ -121,6 +133,15 @@ class installer():
             self.get_mc_server_data()
         else:
             print("Saving Your Settings")
+
+            # here we update the database with new tables if needed
+            try:
+                create_tables()
+
+            except Exception as e:
+                logging.critical("Unable to create db - Exiting - {}".format(e))
+                console.critical("Unable to create db - Exiting - {}".format(e))
+                sys.exit(1)
 
             MC_settings.create(
                 server_path=server_path,

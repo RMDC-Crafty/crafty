@@ -1,17 +1,68 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+
+## [v2.1.Alpha]
+This version of Crafty will focus on new features and quality of life improvements.
+
+### Additions
+- Added real disk/memory usage under percentage (#32 - Thanks DiscoverOV)
+
+- Added machines hostname to tornado start message - this allows crafty to show correct URL to self.
+
+- Added several commandline functions to console (#30 - Thanks Aratani)
+
+- Added remote commands - this will be used for remote restarts of the webserver as well as other functions.
+
+- Added ability to change web port and reload web server via the console. (Issue #26)
+
+- Added web server port to crafty settings on the config page
+
+- switched all the start/stop/restart commands to use the new remote commands mechanism for faster webpage response. 
+this fixes several webserver "hanging" bugs - (#36 - Thanks DiscoverOV)
+
+- Added ability to turn off auto-scroll on virtual console (#33 - Thanks Pita Bread)
+
+- Added up arrow to repeat last command in virtual console (#34 - Thanks Pita Bread) 
+
+- Added ability to close crafty via command argument.
+
+- Added ability to reload web server from config page.
+
+- Disable / Enable autostart via the console
+
+- ability to list all users in crafty from console
+
+- ability to list set any users password from console
+
+### Changes
+- Stop command only stops the MC server, it doesn't exit crafty (use exit command for that)
+
+- overhauled the installer to make it more streamlined and fault tolerant.  Database is only 
+written once you say to save the settings. This allows you to break out of the installer 
+without corrupting the database.
+
+- Installer is now web based.
+
+- start / stop / restart commands from web page redirect to virtual console instead of dashboard.
+
+- fixed undocumented bug in getting public ip, now fails gracefully
+
+### Bug Fixes
+- Fixed undocumented bug in installer where auto-start delay wasn't asked.
+- #27 - Installer now verifies the path/jar is correct.
+- fixed undocumented bug where log would say the server crashed when it was stopped gracefully
 ## [v2.0.RC2]
 This version of Crafty patched 2 bugs.
 
 ### Additions
-Added ability to change port/ip of server connection as part of bug fix.
+- Added ability to change port/ip of server connection as part of bug fix.
 
 ### Changes
-None
+- None
 
 ### Bug Fixes
-patched bug where usage history was always empty.
+- patched bug where usage history was always empty.
 
 ## [v2.0.RC1]
 This version of Crafty focuses on Waterfall/Bungee Support, Permissions/Roles

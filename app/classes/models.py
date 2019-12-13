@@ -17,6 +17,7 @@ class BaseModel(Model):
     class Meta:
         database = database
 
+
 class Backups(BaseModel):
     directories = CharField()
     storage_location = CharField()
@@ -24,6 +25,7 @@ class Backups(BaseModel):
 
     class Meta:
         table_name = 'backups'
+
 
 class Users(BaseModel):
     username = CharField(unique=True)
@@ -33,6 +35,7 @@ class Users(BaseModel):
 
     class Meta:
         table_name = 'users'
+
 
 class Roles(BaseModel):
     name = CharField(unique=True)
@@ -45,6 +48,13 @@ class Roles(BaseModel):
 
     class Meta:
         table_name = "roles"
+
+
+class Remote(BaseModel):
+    command = CharField()
+
+    class Meta:
+        table_name = "remote"
 
 
 class MC_settings(BaseModel):
@@ -62,6 +72,7 @@ class MC_settings(BaseModel):
     class Meta:
         table_name = 'mc_settings'
 
+
 class Crafty_settings(BaseModel):
     history_interval = IntegerField()
     history_max_age = IntegerField()
@@ -72,7 +83,6 @@ class Crafty_settings(BaseModel):
 
 class Webserver(BaseModel):
     port_number = IntegerField()
-    server_name = CharField()
 
     class Meta:
         table_name = 'webserver'
@@ -103,24 +113,40 @@ class History(BaseModel):
 
 def create_tables():
     with database:
-        database.create_tables([Users, MC_settings, Webserver, Schedules, History, Crafty_settings, Backups, Roles])
+        database.create_tables([Users,
+                                MC_settings,
+                                Webserver,
+                                Schedules,
+                                History,
+                                Crafty_settings,
+                                Backups,
+                                Roles,
+                                Remote]
+                               )
 
-def default_settings():
+def default_settings(admin_pass):
 
     # get minecraft settings for the server root
-    mc_data = MC_settings.get()
-    data = model_to_dict(mc_data)
-    directories = [data['server_path'], ]
-    backup_directory = json.dumps(directories)
-
+    # mc_data = MC_settings.get()
+    # data = model_to_dict(mc_data)
+    # directories = [data['server_path'], ]
+    # backup_directory = json.dumps(directories)
+    #
     # default backup settings
-    q = Backups.insert({
-        Backups.directories: backup_directory,
-        Backups.storage_location: os.path.abspath(os.path.join(helper.crafty_root, 'backups')),
-        Backups.max_backups: 7
-    })
+    # q = Backups.insert({
+    #     Backups.directories: backup_directory,
+    #     Backups.storage_location: os.path.abspath(os.path.join(helper.crafty_root, 'backups')),
+    #     Backups.max_backups: 7
+    # })
 
-    result = q.execute()
+    # result = q.execute()
+
+    Users.insert({
+        Users.username: 'Admin',
+        Users.password: helper.encode_pass(admin_pass),
+        Users.role: 'Admin',
+        Users.enabled: True
+    }).execute()
 
     # default crafty_settings
     q = Crafty_settings.insert({
@@ -171,6 +197,17 @@ def default_settings():
     ]
 
     Roles.insert_many(perms_insert).execute()
+
+    Webserver.insert({
+        Webserver.port_number: 8000,
+    }).execute()
+
+# this is our upgrade migration function - any new tables after 2.0 need to have
+# default settings created here if they don't already exits
+def do_database_migrations():
+    create_tables()
+
+
 
 def get_perms_for_user(user):
     user_data = {}

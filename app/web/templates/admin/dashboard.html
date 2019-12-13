@@ -40,6 +40,7 @@
         <div class="info-box-content">
           <span class="info-box-text">Host RAM Usage</span>
           <span class="info-box-number"> {{ data['server_data']['mem_percent'] }}<small>%</small></span>
+          <span class="info-box-number"> {{ data['server_data']['mem_usage'] }} / {{ data['server_data']['mem_total'] }}</span>
         </div>
         <!-- /.info-box-content -->
       </div>
@@ -58,6 +59,8 @@
           <span class="info-box-text">Host Disk Usage</span>
           <span class="info-box-number">
              {{ data['server_data']['disk_percent'] }}<small>%</small>
+              <br />
+             {{ data['server_data']['disk_usage'] }} / {{ data['server_data']['disk_total'] }}
           </span>
         </div>
         <!-- /.info-box-content -->

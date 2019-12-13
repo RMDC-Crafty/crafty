@@ -3,11 +3,19 @@ import re
 import logging
 import requests
 import string
+import socket
 import random
 import schedule
 import zipfile
 import yaml
+import psutil
+import json
+import base64
 from datetime import datetime
+
+import smtplib, ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 from OpenSSL import crypto, SSL
 from socket import gethostname
@@ -24,7 +32,10 @@ class helpers:
 
     def __init__(self):
         self.crafty_root = os.path.curdir
+        self.config_dir = os.path.join(self.crafty_root, 'app', 'config')
         self.logs_dir = os.path.join(os.path.curdir, 'logs')
+
+        self.new_install_file = os.path.join(self.config_dir, 'new_install.temp')
         self.crafty_log_file = os.path.join(self.logs_dir, 'crafty.log')
         self.dbpath = os.path.join(self.crafty_root, "app", 'config', 'crafty.sqlite')
 
@@ -32,6 +43,64 @@ class helpers:
         self.web_temp = os.path.join(self.webroot, 'temp')
 
         self.passhasher = PasswordHasher()
+
+        self.can_email = False
+
+    def is_fresh_install(self):
+
+        dbpath = self.get_db_path()
+
+        fresh_install = False
+
+        if not self.check_file_exists(dbpath):
+            fresh_install = True
+
+        return fresh_install
+
+    def is_setup_complete(self):
+        # if we have a new install file
+        if self.check_file_exists(self.new_install_file):
+            return False
+        else:
+            return True
+
+    def is_os_windows(self):
+        if os.name == 'nt':
+            return True
+        else:
+            return False
+
+    def get_memory(self, percentage=100):
+        mem = psutil.virtual_memory()
+        return self.human_readable_file_size(int(mem.available))
+
+    def find_progam_with_server_jar(self, jar_file):
+        # let's give it time to start
+        time.sleep(3)
+        # loop through each process and see if we can find "java" and a command line that has the jar file in it
+        for p in psutil.process_iter():
+            try:
+                if 'java' in p.name():
+                    # for each process
+                    for c in p.cmdline():
+                        if jar_file in c:
+                            return p.pid
+            except (psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+            except psutil.NoSuchProcess:
+                continue
+        return False
+
+    def get_local_ip(self):
+        try:
+            host = socket.gethostname()
+            ip = socket.gethostbyaddr(host)
+
+        except:
+            pass
+            ip = "Server IP"
+
+        return ip[0]
 
     def random_string_generator(self, size=6, chars=string.ascii_uppercase + string.digits):
         """
@@ -59,6 +128,12 @@ class helpers:
         # directory already exists - non-blocking error
         except FileExistsError:
             pass
+
+    def make_new_install_file(self):
+        open(self.new_install_file, 'a').close()
+
+    def del_new_install_file(self):
+        os.remove(self.new_install_file)
 
     def check_file_exists(self, path):
         """
@@ -100,7 +175,13 @@ class helpers:
             return False
 
     def get_public_ip(self):
-        r = requests.get('http://ipinfo.io/ip')
+        try:
+            r = requests.get('http://ipinfo.io/ip', timeout=2)
+        except Exception as e:
+            logging.error("Error found while trying to get public IP: {}".format(e))
+            Console.error("Error found while trying to get public IP: {}".format(e))
+            return False
+
         if r.text:
             logging.info('Your Public IP is: {}'.format(r.text.strip()))
             return r.text.strip()
@@ -265,7 +346,6 @@ class helpers:
         k = crypto.PKey()
         k.generate_key(crypto.TYPE_RSA, 4096)
 
-
         # create a self-signed cert
         cert = crypto.X509()
         cert.get_subject().C = "US"
@@ -321,6 +401,12 @@ class helpers:
             return data
         return False
 
+    def human_readable_file_size(self, num, suffix='B'):
+        for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
+            if abs(num) < 1024.0:
+                return "%3.1f%s%s" % (num, unit, suffix)
+            num /= 1024.0
+        return "%.1f%s%s" % (num, 'Y', suffix)
 
 
 

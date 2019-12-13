@@ -1,12 +1,12 @@
-import os
+#import os
 import re
-import sys
-import json
+#import sys
+#import json
 import time
 
 import psutil
 import schedule
-import datetime
+#import datetime
 import threading
 import logging.config
 
@@ -20,7 +20,6 @@ from app.classes.helpers import helpers
 from app.classes.models import *
 
 helper = helpers()
-
 
 
 class Minecraft_Server():
@@ -43,16 +42,7 @@ class Minecraft_Server():
         self.settings = MC_settings.get()
         self.setup_server_run_command()
 
-    def do_init_setup(self):
-        logging.debug("Minecraft Server Module Loaded")
-        Console.info("Loading Minecraft Server Module")
-
-        self.reload_settings()
-
-        # lets check for orphaned servers
-        self.check_orphaned_server()
-
-
+    def do_auto_start(self):
         # do we want to auto launch the minecraft server?
         if self.settings.auto_start_server:
             delay = int(self.settings.auto_start_delay)
@@ -65,6 +55,23 @@ class Minecraft_Server():
         else:
             logging.info("Auto Start is Disabled")
             Console.info("Auto Start is Disabled")
+
+    def do_init_setup(self):
+        logging.debug("Minecraft Server Module Loaded")
+        Console.info("Loading Minecraft Server Module")
+
+        if helper.is_setup_complete():
+            self.reload_settings()
+            schedule.every(10).seconds.do(self.write_html_server_status)
+            self.write_usage_history()
+            self.reload_history_settings()
+
+        # lets check for orphaned servers - allows for multiple servers running
+        # self.check_orphaned_server()
+
+        # if the db file exists, this isn't a fresh start
+        if helper.is_setup_complete():
+            self.do_auto_start()
 
     def setup_server_run_command(self):
         # configure the server
@@ -105,13 +112,14 @@ class Minecraft_Server():
             Console.warning("Minecraft Server already running...")
             return False
 
+        logging.info("Launching Minecraft server with command: {}".format(self.server_command))
+
         if os.name == "nt":
             logging.info("Windows Detected - launching cmd")
             self.server_command = self.server_command.replace('\\', '/')
-            self.process = pexpect.popen_spawn.PopenSpawn('cmd \n', timeout=None, encoding=None)
-            self.process.send('cd {} \n'.format(self.server_path.replace('\\', '/')))
-            self.process.send(self.server_command + "\n")
-            self.PID = self.process.pid
+            self.process = pexpect.popen_spawn.PopenSpawn('cmd \r\n', timeout=None, encoding=None)
+            self.process.send('cd {} \r\n'.format(self.server_path.replace('\\', '/')))
+            self.process.send(self.server_command + "\r\n")
 
         else:
             logging.info("Linux Detected - launching Bash")
@@ -123,24 +131,11 @@ class Minecraft_Server():
             logging.info("Sending Server Command: {}".format(self.server_command))
             self.process.send(self.server_command + '\n')
 
-        # let's loop through the child processes of the cmd window and find the last one which is java.
-        try:
-            parent = psutil.Process(self.PID)
-        except psutil.NoSuchProcess:
-            return
-        children = parent.children(recursive=True)
-        for p in children:
-            if 'java' in p.name().lower():
-                self.PID = p.pid
-
-        # if we don't have a process set from above, we default back to the parent process (bash / cmd)
-        if self.PID is None:
-            self.PID = parent.pid
-
+        self.PID = helper.find_progam_with_server_jar(self.settings.server_jar)
 
         ts = time.time()
         self.start_time = str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
-        logging.info("Launching Minecraft server with command: {}".format(self.server_command))
+
         logging.info("Minecraft Server Running with PID: {}".format(self.PID))
 
         # write status file
@@ -158,11 +153,9 @@ class Minecraft_Server():
         self.process.send(command + '\n')
 
     def restart_threaded_server(self):
-        if self.check_running():
-            self.stop_threaded_server()
-            time.sleep(3)
-            self.run_threaded_server()
-            self.write_html_server_status()
+        Remote.insert({
+            Remote.command: 'restart_mc_server'
+        }).execute()
 
     def stop_server(self):
 
@@ -172,6 +165,7 @@ class Minecraft_Server():
         else:
             logging.info('Sending stop command to server')
             self.send_command('stop')
+            self.PID = None
 
         for x in range(6):
 
@@ -221,17 +215,6 @@ class Minecraft_Server():
             return False
 
         else:
-            # check to see if the PID still exists
-            if psutil.pid_exists(int(self.PID)):
-                return True
-            else:
-                logging.critical("The server seems to have vanished, did it crash?")
-                self.process = None
-                self.PID = None
-                return False
-
-
-            '''
             # loop through processes
             for proc in psutil.process_iter():
                 try:
@@ -253,12 +236,11 @@ class Minecraft_Server():
                     pass
 
             # the server crashed, or isn't found - so let's reset things.
-            logging.critical("The server seems to have vanished, did it crash?")
+            logging.warning("The server seems to have vanished, did it crash?")
             self.process = None
             self.PID = None
 
             return False
-            '''
 
     def killpid(self, pid):
         logging.info('Killing Process {} and all child processes'.format(pid))
@@ -384,7 +366,11 @@ class Minecraft_Server():
         server_stats = {'cpu_usage': psutil.cpu_percent(interval=0.5) / psutil.cpu_count(),
                         'cpu_cores': psutil.cpu_count(),
                         'mem_percent': psutil.virtual_memory()[2],
+                        'mem_usage': helper.human_readable_file_size(psutil.virtual_memory()[3]),
+                        'mem_total': helper.human_readable_file_size(psutil.virtual_memory()[0]),
                         'disk_percent': psutil.disk_usage('/')[3],
+                        'disk_usage': helper.human_readable_file_size(psutil.disk_usage('/')[1]),
+                        'disk_total': helper.human_readable_file_size(psutil.disk_usage('/')[0]),
                         'boot_time': str(datime),
                         'mc_start_time': self.get_start_time(),
                         'errors': len(errors['errors']),
@@ -492,7 +478,7 @@ class Minecraft_Server():
                 fp = os.path.join(dirpath, f)
                 # skip if it is symbolic link
                 if not os.path.islink(fp):
-                    size = self.human_readable_sizes(os.path.getsize(fp))
+                    size = helper.human_readable_file_size(os.path.getsize(fp))
                     results.append({'path': fp, 'size': size})
 
         return results
@@ -555,13 +541,6 @@ class Minecraft_Server():
                 total += entry.stat(follow_symlinks=False).st_size
         return total
 
-    def human_readable_sizes(self,num, suffix='B'):
-        for unit in ['', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi']:
-            if abs(num) < 1024.0:
-                return "%3.1f %s%s" % (num, unit, suffix)
-            num /= 1024.0
-        return "%.1f %s%s" % (num, 'Yi', suffix)
-
     def search_for_errors(self):
         log_file = os.path.join(self.server_path, "logs", "latest.log")
 
@@ -597,7 +576,7 @@ class Minecraft_Server():
                         # get this directory size, and add it to the total we have running.
                         total_size += self.get_dir_size(os.path.join(root, name))
 
-            level_total_size = self.human_readable_sizes(total_size)
+            level_total_size = helper.human_readable_file_size(total_size)
 
             return {
                 'world_name': world,
@@ -609,6 +588,12 @@ class Minecraft_Server():
                 'world_name': 'Unable to find world name',
                 'world_size': 'Unable to find world size'
             }
+
+    def is_server_pingable(self):
+        if self.ping_server():
+            return True
+        else:
+            return False
 
     def ping_server(self):
 

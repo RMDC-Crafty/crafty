@@ -12,12 +12,14 @@ from app.config.version import __version__
 from app.classes.craftycmd import MainPrompt
 from app.classes.models import *
 from app.classes.install import installer
+from app.classes.remote_coms import remote_commands
 
 from app.classes.minecraft_server import Minecraft_Server
 from app.classes.http import webserver
 
 helper = helpers()
 console = Console()
+
 
 def do_intro():
     intro = "/" * 75 + "\n"
@@ -29,49 +31,10 @@ def do_intro():
     print(intro)
 
 
-def check_for_sql_db():
-    logging.info("Checking for existing DB")
-
-    dbpath = helper.get_db_path()
-
-    if helper.check_file_exists(dbpath):
-
-        # here we update the database with new tables if needed
-        try:
-            create_tables()
-
-        except Exception as e:
-            logging.critical("Unable to create db - Exiting - {}".format(e))
-            console.critical("Unable to create db - Exiting - {}".format(e))
-            sys.exit(1)
-        return True
-    else:
-        logging.info("Unable to find: {} - Launching Creation script".format(dbpath))
-
-        # create the db
-        try:
-            create_tables()
-
-        except Exception as e:
-            logging.critical("Unable to create db - Exiting - {}".format(e))
-            console.critical("Unable to create db - Exiting - {}".format(e))
-            sys.exit(1)
-
-        return False
-
-
-def run_installer():
-    setup = installer()
-    setup.do_install()
-
-
-def setup_admin():
-    setup = installer()
-    admin_password = setup.create_admin()
-    if admin_password is not None:
-        console.info("Your Admin Username is: Admin")
-        console.info("Your Admin password is: {}".format(admin_password))
-        console.info("Please login to the web portal and change this ASAP")
+def show_help():
+    console.help("-h shows this message")
+    console.help("-k stops all crafty processes")
+    sys.exit(0)
 
 
 def start_scheduler():
@@ -79,64 +42,14 @@ def start_scheduler():
         schedule.run_pending()
         time.sleep(.5)
 
-def main():
 
-    # if we don't have a sql_db, we create one, and run the installers
-    if not check_for_sql_db():
-        run_installer()
-        default_settings()
-
-        do_intro()
-
-        mc_server = Minecraft_Server()
-
-        tornado = webserver(mc_server)
-
-        # startup Tornado -
-        tornado.start_web_server()
-        time.sleep(.5)
-
-        # setup the new admin password (random)
-        setup_admin()
-
-    else:
-
-        mc_server = Minecraft_Server()
-
-        # startup Tornado -
-        do_intro()
-
-        tornado = webserver(mc_server)
-
-        tornado.start_web_server()
-        time.sleep(.5)
-
-    time.sleep(.5)
-
-    mc_server.do_init_setup()
-
-    time.sleep(.5)
-
-    # fire off a write_html_status now, and schedule one for every 10 seconds
-    mc_server.write_html_server_status()
-    schedule.every(10).seconds.do(mc_server.write_html_server_status)
-
-    # fire off a history write now, and schedule one for later.
-    mc_server.write_usage_history()
-    mc_server.reload_history_settings()
-
-    logging.info("Starting Scheduler Daemon")
-    Console.info("Starting Scheduler Daemon")
-
-    scheduler = threading.Thread(name='Scheduler', target=start_scheduler, daemon=True)
-    scheduler.start()
-
-    time.sleep(5)
-    Console.info("Crafty Startup Procedure Complete")
-    Console.help("Type 'stop' or 'exit' to shutdown the system")
-
-    Crafty = MainPrompt(mc_server)
-    Crafty.cmdloop()
+def send_kill_command():
+    logging.info("Sending Stop Command To Crafty")
+    Remote.insert({
+        Remote.command: 'exit_crafty'
+    }).execute()
+    time.sleep(2)
+    sys.exit(0)
 
 
 if __name__ == '__main__':
@@ -150,7 +63,74 @@ if __name__ == '__main__':
     helper.ensure_dir_exists(os.path.join(os.path.curdir, "app", 'web', 'temp'))
 
     custom_loggers.setup_logging()
+
+    arg_length = len(sys.argv) - 1
+
+    if arg_length == 1:
+        argument = sys.argv[1]
+
+        if argument == '-k':
+            console.info("Sending Shutdown Command")
+            send_kill_command()
+        else:
+            show_help()
+
+    elif arg_length > 1:
+        show_help()
+
     logging.info("***** Crafty Launched *****")
 
-    main()
+    # is this a fresh install? (is the database there?)
+    fresh_install = helper.is_fresh_install()
+
+    # announce the program
+    do_intro()
+
+    # create the database
+    create_tables()
+
+    admin_pass = None
+
+    if fresh_install:
+        # save a file in app/config/new_install so we know this is a new install
+        helper.make_new_install_file()
+
+        admin_pass = helper.random_string_generator()
+        default_settings(admin_pass)
+
+    logging.info("Starting Scheduler Daemon")
+    Console.info("Starting Scheduler Daemon")
+
+    scheduler = threading.Thread(name='Scheduler', target=start_scheduler, daemon=True)
+    scheduler.start()
+
+    mc_server = Minecraft_Server()
+    mc_server.do_init_setup()
+
+    tornado = webserver(mc_server)
+
+    # startup Tornado
+    tornado.start_web_server(True)
+    websettings = Webserver.get()
+    port_number = websettings.port_number
+
+    Console.info("Starting Tornado HTTPS Server on port {}".format(port_number))
+    if fresh_install:
+        Console.info("Please connect to https://{}:{} to continue the install:".format(
+            helper.get_local_ip(), port_number))
+        Console.info("Your Username is: Admin")
+        Console.info("Your Password is: {}".format(admin_pass))
+
+    # start the remote commands watcher thread
+    remote_coms = remote_commands(mc_server, tornado)
+    remote_coms_thread = threading.Thread(target=remote_coms.start_watcher, daemon=True, name="Remote_Coms")
+    remote_coms_thread.start()
+
+    Console.info("Crafty Startup Procedure Complete")
+    Console.help("Type 'stop' or 'exit' to shutdown the system")
+
+    Crafty = MainPrompt(mc_server)
+    Crafty.cmdloop()
+
+    # main()
 
