@@ -1,13 +1,7 @@
 # Bug Report
 
 <!-- You can leave anything between these brackets in your request, they won't show up when you post it! -->
-<!-- If your bug report doesn't really match with one of the questions below, just delete the entire section:
-
-### Heading 
-
-(Description of section)
-
--->
+<!-- If your bug report doesn't really match with one of the questions below, just delete the entire section.-->
 
 
 
