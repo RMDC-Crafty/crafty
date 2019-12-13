@@ -159,7 +159,7 @@ class MainPrompt(cmd.Cmd):
 
         console.info("Password for {} is now set to {}".format(user, new_pass))
 
-    def help_set_password(self):
+    def help_set_passwd(self):
         console.help("Sets a users password. Example set_password Admin. Use list_users to see defined users")
 
     def help_disable_autostart(self):
