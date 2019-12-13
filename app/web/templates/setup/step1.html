@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{% block title %}Crafty Controller - Login{% end %}</title>
+  {% block meta %} {% end %}
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- Bootstrap 3.3.7 -->
+  <link rel="stylesheet" href="/static/vendors/bootstrap/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/static/vendors/font-awesome/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="/static/vendors/ionicons/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  <!-- Google Font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <a ><b>Crafty </b>Controller</a>
+  </div>
+  <!-- /.login-logo -->
+  <div class="login-box-body">
+    <p class="login-box-msg">
+      <b>4 Questions and a checkbox until your done</b>
+
+    </p>
+
+    <form action="/setup/step1" method="post">
+
+      <div class="form-group has-feedback">
+        {% if data['is_windows'] %}
+          <label>
+            Server Path - <small>Example c:\minecraft\server</small>
+          </label>
+          <input type="text" class="form-control" placeholder="Server Path" name="server_path"
+                 value="c:\windows\minecraft">
+          <span class="glyphicon glyphicon-folder-open form-control-feedback"></span>
+        {% else %}
+        <label>
+            Server Path - <small>Example /var/opt/minecraft/server</small>
+          </label>
+          <input type="text" class="form-control" placeholder="Server Path" name="server_path"
+                 value="/var/opt/minecraft/server">
+          <span class="glyphicon glyphicon-folder-open form-control-feedback"></span>
+        {% end %}
+      </div>
+
+      <div class="form-group has-feedback">
+        <label>
+          Server Jar - <small>Example paper.jar</small>
+        </label>
+        <input type="text" class="form-control" placeholder="Server Jar" name="server_jar" value="paperclip.jar">
+        <span class="glyphicon glyphicon-file form-control-feedback"></span>
+      </div>
+
+      <div class="form-group has-feedback">
+        <label>
+          Server Max Memory in MB <br /><small>Example: 2048 - Currently {{ data['mem']}} available</small>
+        </label>
+        <input type="number" class="form-control" placeholder="Server Jar" name="max_mem" value="2048">
+      </div>
+
+      <div class="form-group has-feedback">
+        <label>
+          Server Min Memory in MB <br /><small>Example: 1024 - Currently {{ data['mem']}} available</small>
+        </label>
+        <input type="number" class="form-control" placeholder="Server Jar" name="min_mem" value="1024">
+      </div>
+
+
+
+      <div class="form-group has-feedback">
+        <label>
+          Auto Start Server after 10 Seconds:
+          <input type="checkbox"  name="auto_start" checked="checked">
+
+        </label>
+
+      </div>
+
+
+
+
+      <div class="row">
+        <div class="col-xs-6">
+
+        </div>
+        <!-- /.col -->
+        <div class="col-xs-6">
+          <button type="submit" class="btn btn-success btn-block btn-flat"> Save and Finish</button>
+        </div>
+        <!-- /.col -->
+      </div>
+        {% raw xsrf_form_html() %}
+    </form>
+    <br />
+
+  </div>
+  <!-- /.login-box-body -->
+</div>
+<!-- jQuery 3 -->
+<script src="/static/vendors/jquery/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="/static/vendors/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- AdminLTE App -->
+<script src="/static/js/adminlte.min.js"></script>
+
+<!-- bootbox -->
+<script src="/static/vendors/bootbox/bootbox.min.js"></script>
+
+
+{% block js-script %}
+{% end %}
+</body>
+</html>

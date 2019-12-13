@@ -71,14 +71,17 @@ class MainPrompt(cmd.Cmd):
         console.help("Stops the server if running, Exits the program")
 
     def do_start(self, line):
-        running_check = self.mc_server_obj.check_running()
-        if running_check:
-            console.warning("Server already running")
+        if helper.is_setup_complete():
+            running_check = self.mc_server_obj.check_running()
+            if running_check:
+                console.warning("Server already running")
+            else:
+                console.info("Starting Minecraft Server in background")
+                Remote.insert({
+                    Remote.command: 'start_mc_server'
+                }).execute()
         else:
-            console.info("Starting Minecraft Server in background")
-            Remote.insert({
-                Remote.command: 'start_mc_server'
-            }).execute()
+            console.warning("Unable to start server, please complete setup in the web GUI first")
 
     def help_start(self):
         console.help("Starts the Minecraft server if not running")

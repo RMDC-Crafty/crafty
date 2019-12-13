@@ -83,7 +83,6 @@ class Crafty_settings(BaseModel):
 
 class Webserver(BaseModel):
     port_number = IntegerField()
-    server_name = CharField()
 
     class Meta:
         table_name = 'webserver'
@@ -125,22 +124,29 @@ def create_tables():
                                 Remote]
                                )
 
-def default_settings():
+def default_settings(admin_pass):
 
     # get minecraft settings for the server root
-    mc_data = MC_settings.get()
-    data = model_to_dict(mc_data)
-    directories = [data['server_path'], ]
-    backup_directory = json.dumps(directories)
-
+    # mc_data = MC_settings.get()
+    # data = model_to_dict(mc_data)
+    # directories = [data['server_path'], ]
+    # backup_directory = json.dumps(directories)
+    #
     # default backup settings
-    q = Backups.insert({
-        Backups.directories: backup_directory,
-        Backups.storage_location: os.path.abspath(os.path.join(helper.crafty_root, 'backups')),
-        Backups.max_backups: 7
-    })
+    # q = Backups.insert({
+    #     Backups.directories: backup_directory,
+    #     Backups.storage_location: os.path.abspath(os.path.join(helper.crafty_root, 'backups')),
+    #     Backups.max_backups: 7
+    # })
 
-    result = q.execute()
+    # result = q.execute()
+
+    Users.insert({
+        Users.username: 'Admin',
+        Users.password: helper.encode_pass(admin_pass),
+        Users.role: 'Admin',
+        Users.enabled: True
+    }).execute()
 
     # default crafty_settings
     q = Crafty_settings.insert({
@@ -191,6 +197,10 @@ def default_settings():
     ]
 
     Roles.insert_many(perms_insert).execute()
+
+    Webserver.insert({
+        Webserver.port_number: 8000,
+    }).execute()
 
 # this is our upgrade migration function - any new tables after 2.0 need to have
 # default settings created here if they don't already exits

@@ -24,12 +24,19 @@ this fixes several webserver "hanging" bugs - (#36 - Thanks DiscoverOV)
 - Added ability to turn off auto-scroll on virtual console (#33 - Thanks Pita Bread)
 
 - Added up arrow to repeat last command in virtual console (#34 - Thanks Pita Bread) 
+
+- Added ability to close crafty via command argument.
+
+- Added ability to reload web server from config page.
+
 ### Changes
 - Stop command only stops the MC server, it doesn't exit crafty (use exit command for that)
 
 - overhauled the installer to make it more streamlined and fault tolerant.  Database is only 
 written once you say to save the settings. This allows you to break out of the installer 
 without corrupting the database.
+
+- Installer is now web based.
 
 - start / stop / restart commands from web page redirect to virtual console instead of dashboard.
 

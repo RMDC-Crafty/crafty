@@ -1,12 +1,12 @@
-import os
+#import os
 import re
-import sys
-import json
+#import sys
+#import json
 import time
 
 import psutil
 import schedule
-import datetime
+#import datetime
 import threading
 import logging.config
 
@@ -20,7 +20,6 @@ from app.classes.helpers import helpers
 from app.classes.models import *
 
 helper = helpers()
-
 
 
 class Minecraft_Server():
@@ -43,16 +42,7 @@ class Minecraft_Server():
         self.settings = MC_settings.get()
         self.setup_server_run_command()
 
-    def do_init_setup(self):
-        logging.debug("Minecraft Server Module Loaded")
-        Console.info("Loading Minecraft Server Module")
-
-        self.reload_settings()
-
-        # lets check for orphaned servers
-        self.check_orphaned_server()
-
-
+    def do_auto_start(self):
         # do we want to auto launch the minecraft server?
         if self.settings.auto_start_server:
             delay = int(self.settings.auto_start_delay)
@@ -65,6 +55,23 @@ class Minecraft_Server():
         else:
             logging.info("Auto Start is Disabled")
             Console.info("Auto Start is Disabled")
+
+    def do_init_setup(self):
+        logging.debug("Minecraft Server Module Loaded")
+        Console.info("Loading Minecraft Server Module")
+
+        if helper.is_setup_complete():
+            self.reload_settings()
+            schedule.every(10).seconds.do(self.write_html_server_status)
+            self.write_usage_history()
+            self.reload_history_settings()
+
+        # lets check for orphaned servers - allows for multiple servers running
+        # self.check_orphaned_server()
+
+        # if the db file exists, this isn't a fresh start
+        if helper.is_setup_complete():
+            self.do_auto_start()
 
     def setup_server_run_command(self):
         # configure the server

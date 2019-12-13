@@ -42,6 +42,7 @@ class PublicHandler(BaseHandler):
 
     def initialize(self, mcserver):
         self.mcserver = mcserver
+        self.console = console
 
     def set_current_user(self, user):
         if user:
@@ -69,6 +70,7 @@ class PublicHandler(BaseHandler):
         entered_user = self.get_argument('username')
         entered_password = self.get_argument('password')
 
+
         try:
             user_data = Users.get(Users.username == entered_user)
 
@@ -77,7 +79,13 @@ class PublicHandler(BaseHandler):
                 login_result = helper.verify_pass(entered_password, user_data.password)
                 if login_result:
                     self.set_current_user(entered_user)
-                    self.redirect(self.get_argument("next", u"/admin/dashboard"))
+
+                    if helper.check_file_exists(helper.new_install_file):
+                        next_page = "/setup/step1"
+                    else:
+                        next_page = '/admin/dashboard'
+
+                    self.redirect(next_page)
         except:
             pass
 
@@ -111,7 +119,6 @@ class AdminHandler(BaseHandler):
         self.mcserver = mcserver
         self.console = console
 
-
     @tornado.web.authenticated
     def get(self, page):
 
@@ -123,6 +130,25 @@ class AdminHandler(BaseHandler):
 
         if page == 'unauthorized':
             template = "admin/denied.html"
+
+        elif page == "reload_web":
+            template = "admin/reload_web_settings.html"
+
+            web_data = Webserver.get()
+            page_data = {}
+            page_data['user_data'] = user_data
+            page_data['web_settings'] = model_to_dict(web_data)
+            context = page_data
+
+            self.render(
+                template,
+                data=context
+            )
+            # reload web server
+            Remote.insert(Remote.insert({
+                Remote.command: 'restart_web_server'
+            }).execute())
+
 
         elif page == 'dashboard':
             template = "admin/dashboard.html"
@@ -153,7 +179,6 @@ class AdminHandler(BaseHandler):
             backup_data = model_to_dict(backup_list)
             backup_path = backup_data['storage_location']
             backup_dirs = json.loads(backup_data['directories'])
-
             context = {
                 'backup_paths': backup_dirs,
                 'backup_path': backup_path,
@@ -261,9 +286,9 @@ class AdminHandler(BaseHandler):
             page_data['backup_config'] = backup_data
 
             # get a listing of directories in the server path.
-            page_data['directories'] = helper.scan_dirs_in_path(self.mcserver.server_path)
+            page_data['directories'] = helper.scan_dirs_in_path(page_data['mc_settings']['server_path'])
 
-            page_data['server_root'] = self.mcserver.server_path
+            page_data['server_root'] = page_data['mc_settings']['server_path']
             page_data['user_data'] = user_data
 
             context = page_data
@@ -341,10 +366,14 @@ class AdminHandler(BaseHandler):
                     user_data['username'], user_data['role_name'], "Server Logs"))
                 self.redirect('/admin/unauthorized')
 
+            data = []
+
             server_log = os.path.join(self.mcserver.server_path, 'logs', 'latest.log')
-            # data = helper.read_whole_file(server_log)
-            data = helper.tail_file(server_log, 500)
-            data.insert(0, "Lines trimmed to ~500 lines for speed sake \n ")
+            if server_log is not None:
+                data = helper.tail_file(server_log, 500)
+                data.insert(0, "Lines trimmed to ~500 lines for speed sake \n ")
+            else:
+                data.insert(0, "Unable to find {} \n ".format(os.path.join(self.mcserver.server_path, 'logs', 'latest.log')))
 
             crafty_data = helper.tail_file(helper.crafty_log_file, 100)
             crafty_data.insert(0, "Lines trimmed to ~100 lines for speed sake \n ")
@@ -493,6 +522,7 @@ class AjaxHandler(BaseHandler):
 
     def initialize(self, mcserver):
         self.mcserver = mcserver
+        self.console = console
 
     @tornado.web.authenticated
     def get(self, page):
@@ -518,7 +548,6 @@ class AjaxHandler(BaseHandler):
                 return_data.append(row_data)
 
             self.write(json.dumps(return_data))
-
 
     def post(self, page):
 
@@ -629,6 +658,71 @@ class AjaxHandler(BaseHandler):
                     self.write("{} deleted".format(username))
 
 
+class SetupHandler(BaseHandler):
+
+    def initialize(self, mcserver):
+        self.mcserver = mcserver
+        self.console = console
+
+    @tornado.web.authenticated
+    def get(self, page):
+
+        context = {}
+        template = ''
+
+        if page == 'step1':
+            context = {
+                'is_windows': helper.is_os_windows(),
+                'mem': helper.get_memory(),
+                'new_pass': helper.random_string_generator(10)
+                }
+            template = "setup/step1.html"
+            helper.del_file(helper.new_install_file)
+
+        else:
+            # 404
+            template = "public/404.html"
+            context = {}
+
+        self.render(
+            template,
+            data=context
+        )
+
+    def post(self, page):
+        if page == 'step1':
+            server_path = self.get_argument('server_path', '')
+            server_jar = self.get_argument('server_jar', '')
+            max_mem = self.get_argument('max_mem', '')
+            min_mem = self.get_argument('min_mem', '')
+            auto_start = self.get_argument('auto_start', '')
+
+            MC_settings.insert({
+                MC_settings.server_path: server_path,
+                MC_settings.server_jar: server_jar,
+                MC_settings.memory_max: max_mem,
+                MC_settings.memory_min: min_mem,
+                MC_settings.additional_args: "",
+                MC_settings.auto_start_server: auto_start,
+                MC_settings.auto_start_delay: 10,
+                MC_settings.server_port: 25565,
+                MC_settings.server_ip: "127.0.0.1"
+            }).execute()
+
+            directories = [server_path, ]
+            backup_directory = json.dumps(directories)
+
+            # default backup settings
+            Backups.insert({
+                Backups.directories: backup_directory,
+                Backups.storage_location: os.path.abspath(os.path.join(helper.crafty_root, 'backups')),
+                Backups.max_backups: 7
+            }).execute()
+
+            self.mcserver.reload_settings()
+            self.redirect("/admin/dashboard")
+
+
 class webserver():
 
     def __init__(self, mc_server):
@@ -681,6 +775,7 @@ class webserver():
             (r'/([a-zA-Z]+)', PublicHandler, dict(mcserver=self.mc_server)),
             (r'/admin/(.*)', AdminHandler, dict(mcserver=self.mc_server)),
             (r'/ajax/(.*)', AjaxHandler, dict(mcserver=self.mc_server)),
+            (r'/setup/(.*)', SetupHandler, dict(mcserver=self.mc_server)),
             (r'/static(.*)', tornado.web.StaticFileHandler, {"path": '/'}),
             (r'/images(.*)', tornado.web.StaticFileHandler, {"path": "/images"})
         ]

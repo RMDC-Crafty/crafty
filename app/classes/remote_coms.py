@@ -1,7 +1,7 @@
 
 import logging
-import threading
 import time
+import sys
 
 from app.classes.models import *
 from app.classes.helpers import helpers
@@ -96,3 +96,14 @@ class remote_commands():
                 self.mc_server_obj.write_html_server_status()
             else:
                 logging.info("Server Not Running - Skipping stop of MC Server")
+
+        if command == "exit_crafty":
+            running = self.mc_server_obj.check_running()
+
+            if running:
+                logging.info("Stopping MC Server")
+                self.mc_server_obj.stop_threaded_server()
+            logging.info("***** Crafty Stopped ***** \n")
+            # sys.exit(0)
+
+            os._exit(0)
