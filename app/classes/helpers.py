@@ -408,13 +408,25 @@ class helpers:
             num /= 1024.0
         return "%.1f%s%s" % (num, 'Y', suffix)
 
-    def check_version(self, branch=str('master')):
+    def check_version(self, branch):
+        url = "https://gitlab.com/Ptarrant1/crafty-web/raw/{}/app/config/version.json".format(branch)
+        print(url)
         try:
-            r = requests.get("https://gitlab.com/Ptarrant1/crafty-web/raw/{}/app/config/version.py".format(branch),
-                             timeout=2)
+            r = requests.get(url, timeout=2)
+            if r.status_code == 200:
+                return json.loads(r.text)
+            else:
+                return {
+                    "major": 'unknown',
+                    "minor": 'unknown',
+                    "sub": 'unknown',
+                }
+
         except Exception as e:
+            print(e)
             pass
-        print(r.text)
+
+
 
     def get_version(self):
         with open(os.path.join(self.config_dir, 'version.json'),'r') as f:

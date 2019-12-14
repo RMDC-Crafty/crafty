@@ -211,6 +211,7 @@ class MainPrompt(cmd.Cmd):
         console.help("Lists all users in the Crafty Controller")
 
     def do_check_version(self, line):
-        this_version = helper.get_version()
-        print(this_version['version'])
-        helper.check_version('master')
+        master = helper.check_version('master')
+        beta = helper.check_version('beta')
+        snaps = helper.check_version('snapshot')
+        print(master)
