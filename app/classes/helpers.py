@@ -410,7 +410,6 @@ class helpers:
 
     def check_version(self, branch):
         url = "https://gitlab.com/Ptarrant1/crafty-web/raw/{}/app/config/version.json".format(branch)
-        print(url)
         try:
             r = requests.get(url, timeout=2)
             if r.status_code == 200:
@@ -426,14 +425,10 @@ class helpers:
             print(e)
             pass
 
-
-
     def get_version(self):
         with open(os.path.join(self.config_dir, 'version.json'),'r') as f:
             version_data = json.load(f)
             return version_data
-
-
 
 
     def scheduler(self, task, mc_server_obj):

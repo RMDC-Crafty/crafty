@@ -210,8 +210,16 @@ class MainPrompt(cmd.Cmd):
     def help_list_users(self):
         console.help("Lists all users in the Crafty Controller")
 
-    def do_check_version(self, line):
+    def do_check_update(self, line):
+        console.info("Getting Latest Version Info:")
         master = helper.check_version('master')
         beta = helper.check_version('beta')
         snaps = helper.check_version('snapshot')
-        print(master)
+        current = helper.get_version()
+        console.info("Master Branch has: {}.{}.{}".format(master['major'], master['minor'], master['sub']))
+        console.info("Beta Branch has: {}.{}.{}".format(beta['major'], beta['minor'], beta['sub']))
+        console.info("Snaps Branch has: {}.{}.{}".format(snaps['major'], snaps['minor'], snaps['sub']))
+        console.info("You are on Version: {}.{}.{}".format(current['major'], current['minor'], current['sub']))
+
+    def help_check_update(self):
+        console.help("Shows version information for you and what is in the repos to help you decide if you should update or not")

@@ -35,6 +35,8 @@ this fixes several webserver "hanging" bugs - (#36 - Thanks DiscoverOV)
 
 - ability to list set any users password from console
 
+- check update function
+
 ### Changes
 - Stop command only stops the MC server, it doesn't exit crafty (use exit command for that)
 
@@ -52,6 +54,7 @@ without corrupting the database.
 - Fixed undocumented bug in installer where auto-start delay wasn't asked.
 - #27 - Installer now verifies the path/jar is correct.
 - fixed undocumented bug where log would say the server crashed when it was stopped gracefully
+
 ## [v2.0.RC2]
 This version of Crafty patched 2 bugs.
 
