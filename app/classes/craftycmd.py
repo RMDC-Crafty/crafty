@@ -20,7 +20,7 @@ class MainPrompt(cmd.Cmd):
         logging.info("***** Crafty Stopped ***** \n")
 
     def do_version(self, line):
-        Console.info(__version__)
+        Console.info('2.0.RC2')
 
     def help_version(self):
         Console.help("Shows the Crafty version")

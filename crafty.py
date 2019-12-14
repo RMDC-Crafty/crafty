@@ -20,7 +20,7 @@ console = Console()
 
 def do_intro():
     intro = "/" * 75 + "\n"
-    intro += '#\t\tWelcome to Crafty Controller - v.{}\t\t #'.format(__version__) + "\n"
+    intro += '#\t\tWelcome to Crafty Controller - v.{}\t\t #'.format("2.0.0") + "\n"
     intro += "/" * 75 + "\n"
     intro += '#   \tServer Manager / Web Portal for your Minecraft server\t\t #' + "\n"
     intro += '#   \t\tHomepage: www.craftycontrol.com\t\t\t\t #' + "\n"
