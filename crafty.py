@@ -8,7 +8,7 @@ import threading
 from app.classes.logger import custom_loggers
 from app.classes.helpers import helpers
 from app.classes.console import Console
-from app.config.version import __version__
+
 from app.classes.craftycmd import MainPrompt
 from app.classes.models import *
 from app.classes.install import installer
@@ -22,8 +22,12 @@ console = Console()
 
 
 def do_intro():
+    version_data = helper.get_version()
+
     intro = "/" * 75 + "\n"
-    intro += '#\t\tWelcome to Crafty Controller - v.{}\t\t #'.format(__version__) + "\n"
+    intro += '#\t\tWelcome to Crafty Controller - v.{}.{}.{}\t\t #'.format(
+        version_data['major'], version_data['minor'], version_data['sub']) + "\n"
+
     intro += "/" * 75 + "\n"
     intro += '#   \tServer Manager / Web Portal for your Minecraft server\t\t #' + "\n"
     intro += '#   \t\tHomepage: www.craftycontrol.com\t\t\t\t #' + "\n"

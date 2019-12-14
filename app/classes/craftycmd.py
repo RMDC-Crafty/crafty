@@ -5,7 +5,6 @@ import time
 import json
 import logging
 
-from app.config.version import __version__
 from app.classes.console import Console
 from app.classes.helpers import helpers
 from app.classes.models import *
@@ -21,7 +20,8 @@ class MainPrompt(cmd.Cmd):
         self.mc_server_obj = mc_server_obj
 
     # overrides the default Prompt
-    prompt = "Crafty Controller {} > ".format(__version__)
+    version_data = helper.get_version()
+    prompt = "Crafty Controller v{}.{}.{} > ".format(version_data['major'], version_data['minor'], version_data['sub'])
 
     def print_crafty_end(self):
         logging.info("***** Crafty Stopped ***** \n")
@@ -209,3 +209,8 @@ class MainPrompt(cmd.Cmd):
 
     def help_list_users(self):
         console.help("Lists all users in the Crafty Controller")
+
+    def do_check_version(self, line):
+        this_version = helper.get_version()
+        print(this_version['version'])
+        helper.check_version('master')

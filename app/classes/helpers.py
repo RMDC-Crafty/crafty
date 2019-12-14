@@ -408,6 +408,20 @@ class helpers:
             num /= 1024.0
         return "%.1f%s%s" % (num, 'Y', suffix)
 
+    def check_version(self, branch=str('master')):
+        try:
+            r = requests.get("https://gitlab.com/Ptarrant1/crafty-web/raw/{}/app/config/version.py".format(branch),
+                             timeout=2)
+        except Exception as e:
+            pass
+        print(r.text)
+
+    def get_version(self):
+        with open(os.path.join(self.config_dir, 'version.json'),'r') as f:
+            version_data = json.load(f)
+            return version_data
+
+
 
 
     def scheduler(self, task, mc_server_obj):

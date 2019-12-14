@@ -724,7 +724,13 @@ class SetupHandler(BaseHandler):
                 Backups.max_backups: 7
             }).execute()
 
+            # reload the server settings
             self.mcserver.reload_settings()
+
+            # do initial setup
+            self.mcserver.do_init_setup()
+
+            # load the dashboard
             self.redirect("/admin/dashboard")
 
 
