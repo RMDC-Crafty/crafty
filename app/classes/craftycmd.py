@@ -5,7 +5,6 @@ import time
 import json
 import logging
 
-from app.config.version import __version__
 from app.classes.console import Console
 from app.classes.helpers import helpers
 from app.classes.models import *

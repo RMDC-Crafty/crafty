@@ -8,7 +8,6 @@ import threading
 from app.classes.logger import custom_loggers
 from app.classes.helpers import helpers
 from app.classes.console import Console
-from app.config.version import __version__
 from app.classes.craftycmd import MainPrompt
 from app.classes.models import *
 from app.classes.install import installer
