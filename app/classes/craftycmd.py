@@ -20,7 +20,7 @@ class MainPrompt(cmd.Cmd):
         self.mc_server_obj = mc_server_obj
 
     # overrides the default Prompt
-    prompt = "Crafty Controller {} > ".format(__version__)
+    prompt = "Crafty Controller {} > ".format('2.1.Alpha')
 
     def print_crafty_end(self):
         logging.info("***** Crafty Stopped ***** \n")
