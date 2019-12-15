@@ -64,6 +64,11 @@
           <!-- Notifications: style can be found in dropdown.less -->
 
           <!-- Tasks: style can be found in dropdown.less -->
+          <li class="">
+            <a href="#" id="update_check" aria-expanded="true">
+              <i class="fa fa-refresh"></i> Check For Updates
+            </a>
+          </li>
 
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
@@ -269,7 +274,36 @@
 <script>
   $(document).ready(function () {
     $('.sidebar-menu').tree()
+
+    $('#update_check').click(function(){
+      update_check();
+    });
   })
+
+  //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
+  function update_check(){
+        bootbox.alert("Getting Version Data");
+
+        $.ajax({
+            type: 'GET',
+            url: '/ajax/update_check',
+            dataType: 'text',
+            success: function (data) {
+                bootbox.hideAll();
+                console.log('Got Version Info From Server')
+                bootbox.alert({
+                    message: data,
+                    backdrop: true,
+                });
+             },
+        });
+    }
+
 </script>
 
 {% block js-script %}

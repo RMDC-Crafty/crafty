@@ -554,6 +554,24 @@ class AjaxHandler(BaseHandler):
 
             self.write(json.dumps(return_data))
 
+        elif page == 'update_check':
+
+            context = {
+                'master': helper.check_version('master'),
+                'beta': helper.check_version('beta'),
+                'snaps': helper.check_version('snapshot'),
+                'current': helper.get_version()
+            }
+
+
+            self.render(
+                'ajax/version.html',
+                data=context
+
+            )
+
+
+
     def post(self, page):
 
         name = tornado.escape.json_decode(self.current_user)
