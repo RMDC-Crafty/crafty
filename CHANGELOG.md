@@ -35,7 +35,7 @@ this fixes several webserver "hanging" bugs - (#36 - Thanks DiscoverOV)
 
 - ability to list set any users password from console
 
-- check update function
+- check update function to both web gui and console 
 
 ### Changes
 - Stop command only stops the MC server, it doesn't exit crafty (use exit command for that)
