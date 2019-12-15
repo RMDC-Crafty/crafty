@@ -150,9 +150,17 @@ class AdminHandler(BaseHandler):
                 data=context
             )
             # reload web server
-            Remote.insert(Remote.insert({
+            Remote.insert({
                 Remote.command: 'restart_web_server'
-            }).execute())
+            }).execute()
+
+
+        elif page == 'reload_mc_settings':
+            Remote.insert({
+                Remote.command: 'reload_mc_settings'
+            }).execute()
+
+            self.redirect("/admin/config")
 
 
         elif page == 'dashboard':

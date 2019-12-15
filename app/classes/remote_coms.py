@@ -49,7 +49,10 @@ class remote_commands():
             time.sleep(1)
             self.tornado_obj.start_web_server(True)
 
-        if command == 'restart_mc_server':
+        elif command == "reload_mc_settings":
+            self.mc_server_obj.reload_settings()
+
+        elif command == 'restart_mc_server':
             running = self.mc_server_obj.check_running()
 
             if running:
@@ -75,7 +78,7 @@ class remote_commands():
                 logging.info("Server not running - Starting Server")
                 self.mc_server_obj.run_threaded_server()
 
-        if command == 'start_mc_server':
+        elif command == 'start_mc_server':
             running = self.mc_server_obj.check_running()
 
             if not running:
@@ -86,7 +89,7 @@ class remote_commands():
             else:
                 logging.info("Server Already Running - Skipping start of MC Server")
 
-        if command == 'stop_mc_server':
+        elif command == 'stop_mc_server':
             running = self.mc_server_obj.check_running()
 
             if running:
@@ -97,7 +100,7 @@ class remote_commands():
             else:
                 logging.info("Server Not Running - Skipping stop of MC Server")
 
-        if command == "exit_crafty":
+        elif command == "exit_crafty":
             running = self.mc_server_obj.check_running()
 
             if running:
