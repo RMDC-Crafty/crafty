@@ -3,7 +3,9 @@ import json
 import datetime
 from peewee import *
 from playhouse.shortcuts import model_to_dict, dict_to_model
+from playhouse.migrate import *
 from app.classes.helpers import helpers
+import logging
 
 helper = helpers()
 
@@ -39,12 +41,13 @@ class Users(BaseModel):
 
 class Roles(BaseModel):
     name = CharField(unique=True)
-    svr_control = BooleanField()
-    svr_console = BooleanField()
-    logs = BooleanField()
-    backups = BooleanField()
-    schedules = BooleanField()
-    config = BooleanField()
+    svr_control = BooleanField(default=0)
+    svr_console = BooleanField(default=0)
+    logs = BooleanField(default=0)
+    backups = BooleanField(default=0)
+    schedules = BooleanField(default=0)
+    config = BooleanField(default=0)
+    files = BooleanField(default=0)
 
     class Meta:
         table_name = "roles"
@@ -165,7 +168,8 @@ def default_settings(admin_pass):
             Roles.logs: 1,
             Roles.backups: 1,
             Roles.schedules: 1,
-            Roles.config: 1
+            Roles.config: 1,
+            Roles.files: 1
         },
         {
             Roles.name: 'Staff',
@@ -175,6 +179,7 @@ def default_settings(admin_pass):
             Roles.backups: 1,
             Roles.schedules: 1,
             Roles.config: 0
+
         },
         {
             Roles.name: 'Backup',
@@ -204,9 +209,35 @@ def default_settings(admin_pass):
 
 # this is our upgrade migration function - any new tables after 2.0 need to have
 # default settings created here if they don't already exits
-def do_database_migrations():
-    create_tables()
 
+def do_database_migrations():
+    logging.info('Upgrading Database fields as needed')
+    create_tables()
+    migrator = SqliteMigrator(database)
+
+    roles_cols = database.get_columns('Roles')
+    create_files_column = True
+
+    for r in roles_cols:
+        if r.name == "files":
+            create_files_column = False
+
+    if create_files_column:
+        logging.info("Didn't find files column in roles - Creating one")
+
+        # files permission for roles table
+        files = BooleanField(default=0)
+
+        # do our migrations
+        migrate(
+            migrator.add_column("Roles", 'files', files),
+        )
+
+        logging.info("Adding files perms to Admin")
+        # give admin access to files permission
+        Roles.update({
+            Roles.files: 1
+        }).where(Roles.name == "Admin").execute()
 
 
 def get_perms_for_user(user):
@@ -223,5 +254,20 @@ def get_perms_for_user(user):
             user_data['backups'] = data['backups']
             user_data['schedules'] = data['schedules']
             user_data['config'] = data['config']
+            user_data['files'] = data['files']
 
     return user_data
+
+def check_role_permission(username, section):
+    user_data = get_perms_for_user(username)
+
+    access = False
+
+    if section in user_data.keys():
+        if user_data[section]:
+            access = True
+
+    if not access:
+        logging.warning('User: {} attempted access to section {} and was denied'.format(username, section))
+
+    return access

@@ -13,14 +13,9 @@ import json
 import base64
 from datetime import datetime
 
-import smtplib, ssl
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-
 from OpenSSL import crypto, SSL
 from socket import gethostname
 import time
-#from pprint import pprint
 
 from app.classes.console import Console
 from argon2 import PasswordHasher
@@ -429,7 +424,6 @@ class helpers:
         with open(os.path.join(self.config_dir, 'version.json'),'r') as f:
             version_data = json.load(f)
             return version_data
-
 
     def scheduler(self, task, mc_server_obj):
         logging.info("Parsing Tasks To Add")

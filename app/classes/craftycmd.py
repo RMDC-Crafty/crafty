@@ -23,6 +23,7 @@ class MainPrompt(cmd.Cmd):
     version_data = helper.get_version()
     prompt = "Crafty Controller v{}.{}.{} > ".format(version_data['major'], version_data['minor'], version_data['sub'])
 
+
     def print_crafty_end(self):
         logging.info("***** Crafty Stopped ***** \n")
 
@@ -222,4 +223,6 @@ class MainPrompt(cmd.Cmd):
         console.info("You are on Version: {}.{}.{}".format(current['major'], current['minor'], current['sub']))
 
     def help_check_update(self):
-        console.help("Shows version information for you and what is in the repos to help you decide if you should update or not")
+        console.help("Shows version information for you and what is in the repos to help you decide if you should "
+                     "update or not")
+

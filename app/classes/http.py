@@ -131,7 +131,10 @@ class AdminHandler(BaseHandler):
         user_data = get_perms_for_user(name)
 
         server_data = self.get_server_data()
-        context = {}
+        context = {
+            'server_data': server_data,
+            'user_data': user_data
+        }
 
         if page == 'unauthorized':
             template = "admin/denied.html"
@@ -154,7 +157,6 @@ class AdminHandler(BaseHandler):
                 Remote.command: 'restart_web_server'
             }).execute()
 
-
         elif page == 'reload_mc_settings':
             Remote.insert({
                 Remote.command: 'reload_mc_settings'
@@ -162,29 +164,20 @@ class AdminHandler(BaseHandler):
 
             self.redirect("/admin/config")
 
-
         elif page == 'dashboard':
             template = "admin/dashboard.html"
-            context['server_data'] = server_data
-            context['user_data'] = user_data
 
         elif page == 'change_password':
             template = "admin/change_pass.html"
-            context['user_data'] = user_data
 
         elif page == 'virtual_console':
-            if not user_data['svr_console']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Virtual Console"))
+            if not check_role_permission(user_data['username'], 'svr_console'):
                 self.redirect('/admin/unauthorized')
 
             template = "admin/virt_console.html"
-            context['user_data'] = user_data
 
         elif page == "backups":
-            if not user_data['backups']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Backups"))
+            if not check_role_permission(user_data['username'], 'backups'):
                 self.redirect('/admin/unauthorized')
 
             template = "admin/backups.html"
@@ -192,17 +185,12 @@ class AdminHandler(BaseHandler):
             backup_data = model_to_dict(backup_list)
             backup_path = backup_data['storage_location']
             backup_dirs = json.loads(backup_data['directories'])
-            context = {
-                'backup_paths': backup_dirs,
-                'backup_path': backup_path,
-                'current_backups': self.mcserver.list_backups(),
-                'user_data': user_data
-            }
+            context['backup_paths'] = backup_dirs
+            context['backup_path'] = backup_path
+            context['current_backups'] = self.mcserver.list_backups()
 
         elif page == "schedules":
-            if not user_data['schedules']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Server Schedules"))
+            if not check_role_permission(user_data['username'], 'schedules'):
                 self.redirect('/admin/unauthorized')
 
             saved = self.get_argument('saved', None)
@@ -210,16 +198,11 @@ class AdminHandler(BaseHandler):
             db_data = Schedules.select()
 
             template = "admin/schedules.html"
-            context = {
-                'db_data': db_data,
-                'saved': saved,
-                'user_data': user_data
-            }
+            context['db_data'] = db_data
+            context['saved'] = saved
 
         elif page == "reloadschedules":
-            if not user_data['schedules']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Reload Schedules"))
+            if not check_role_permission(user_data['username'], 'schedules'):
                 self.redirect('/admin/unauthorized')
 
             logging.info("Reloading Scheduled Tasks")
@@ -238,16 +221,11 @@ class AdminHandler(BaseHandler):
                 helper.scheduler(task, self.mcserver)
 
             template = "admin/schedules.html"
-            context = {
-                'db_data': db_data,
-                'saved': None,
-                'user_data': user_data
-            }
+            context['db_data'] = db_data
+            context['saved'] = None
 
         elif page == "schedule_disable":
-            if not user_data['schedules']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Disable Schedules"))
+            if not check_role_permission(user_data['username'], 'schedules'):
                 self.redirect('/admin/unauthorized')
 
             schedule_id = self.get_argument('id', None)
@@ -257,9 +235,7 @@ class AdminHandler(BaseHandler):
             self.redirect("/admin/reloadschedules")
 
         elif page == "schedule_enable":
-            if not user_data['schedules']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Schedules Enable"))
+            if not check_role_permission(user_data['username'], 'schedules'):
                 self.redirect('/admin/unauthorized')
 
             schedule_id = self.get_argument('id', None)
@@ -269,9 +245,7 @@ class AdminHandler(BaseHandler):
             self.redirect("/admin/reloadschedules")
 
         elif page == 'config':
-            if not user_data['config']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Server Config"))
+            if not check_role_permission(user_data['username'], 'config'):
                 self.redirect('/admin/unauthorized')
 
             saved = self.get_argument('saved', None)
@@ -285,31 +259,26 @@ class AdminHandler(BaseHandler):
             users = Users.select()
 
             page_data = {}
-            page_data['saved'] = saved
-            page_data['invalid'] = invalid
-            page_data['mc_settings'] = model_to_dict(mc_data)
-            page_data['crafty_settings'] = model_to_dict(crafty_data)
-            page_data['web_settings'] = model_to_dict(web_data)
+            context['saved'] = saved
+            context['invalid'] = invalid
+            context['mc_settings'] = model_to_dict(mc_data)
+            context['crafty_settings'] = model_to_dict(crafty_data)
+            context['web_settings'] = model_to_dict(web_data)
 
-            page_data['users'] = users
-            page_data['users_count'] = len(users)
+            context['users'] = users
+            context['users_count'] = len(users)
 
             backup_data = model_to_dict(backup_data)
-            page_data['backup_data'] = json.loads(backup_data['directories'])
-            page_data['backup_config'] = backup_data
+            context['backup_data'] = json.loads(backup_data['directories'])
+            context['backup_config'] = backup_data
 
             # get a listing of directories in the server path.
-            page_data['directories'] = helper.scan_dirs_in_path(page_data['mc_settings']['server_path'])
+            context['directories'] = helper.scan_dirs_in_path(context['mc_settings']['server_path'])
 
-            page_data['server_root'] = page_data['mc_settings']['server_path']
-            page_data['user_data'] = user_data
-
-            context = page_data
+            context['server_root'] = context['mc_settings']['server_path']
 
         elif page == 'downloadbackup':
-            if not user_data['backups']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Backup Download"))
+            if not check_role_permission(user_data['username'], 'backups'):
                 self.redirect('/admin/unauthorized')
 
             path = self.get_argument("file", None, True)
@@ -329,20 +298,14 @@ class AdminHandler(BaseHandler):
             self.redirect("/admin/backups")
 
         elif page == "server_control":
-            if not user_data['svr_control']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Server Control"))
+            if not check_role_permission(user_data['username'], 'svr_control'):
                 self.redirect('/admin/unauthorized')
 
             template = "admin/server_control.html"
             logfile = helper.get_crafty_log_file()
-            context['server_data'] = server_data
-            context['user_data'] = user_data
 
         elif page == 'commands':
-            if not user_data['svr_console']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Virtual Commands"))
+            if not check_role_permission(user_data['username'], 'svr_console'):
                 self.redirect('/admin/unauthorized')
 
             command = self.get_argument("command", None, True)
@@ -374,9 +337,7 @@ class AdminHandler(BaseHandler):
             self.redirect(next_page)
 
         elif page == 'get_logs':
-            if not user_data['logs']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Server Logs"))
+            if not check_role_permission(user_data['username'], 'logs'):
                 self.redirect('/admin/unauthorized')
 
             data = []
@@ -399,13 +360,18 @@ class AdminHandler(BaseHandler):
 
             errors = self.mcserver.search_for_errors()
             template = "admin/logs.html"
-            context = {'log_data': data,
-                       'errors': errors,
-                       'crafty_log': crafty_data,
-                       'scheduler': scheduler_data,
-                       'access': access_data,
-                       'user_data': user_data
-                       }
+
+            context['log_data'] = data
+            context['errors'] = errors
+            context['crafty_log'] = crafty_data
+            context['scheduler'] = scheduler_data
+            context['access'] = access_data
+
+        elif page == "files":
+            if not check_role_permission(user_data['username'], 'files'):
+                self.redirect('/admin/unauthorized')
+
+            template = "admin/server_control.html"
 
         else:
             # 404

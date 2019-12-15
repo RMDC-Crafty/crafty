@@ -36,8 +36,8 @@ def do_intro():
 
 
 def show_help():
-    console.help("-h shows this message")
-    console.help("-k stops all crafty processes")
+    console.help("-h: shows this message")
+    console.help("-k: stops all crafty processes")
     sys.exit(0)
 
 
@@ -102,6 +102,9 @@ if __name__ == '__main__':
         admin_pass = helper.random_string_generator()
         default_settings(admin_pass)
 
+    else:
+        do_database_migrations()
+
     logging.info("Starting Scheduler Daemon")
     Console.info("Starting Scheduler Daemon")
 
@@ -118,7 +121,7 @@ if __name__ == '__main__':
     websettings = Webserver.get()
     port_number = websettings.port_number
 
-    Console.info("Starting Tornado HTTPS Server on port {}".format(port_number))
+    Console.info("Starting Tornado HTTPS Server https://{}:{}".format(helper.get_local_ip(), port_number))
     if fresh_install:
         Console.info("Please connect to https://{}:{} to continue the install:".format(
             helper.get_local_ip(), port_number))

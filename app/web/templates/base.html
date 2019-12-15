@@ -212,6 +212,10 @@
         <li><a href="/admin/schedules"><i class="fa fa-clock-o" aria-hidden="true"></i> <span>Scheduled Tasks </span></a></li>
         {% end %}
 
+        {% if data['user_data']['files'] %}
+        <li><a href="/admin/files"><i class="fa fa-folder-open" aria-hidden="true"></i> <span> File Manager</span> </a></li>
+        {% end %}
+
         {% if data['user_data']['config'] %}
         <li><a href="/admin/config"><i class="fa fa-cog" aria-hidden="true"></i> <span> Config</span> </a></li>
         {% end %}
