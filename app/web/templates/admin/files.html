@@ -6,14 +6,14 @@
 
 <section class="content-header">
   <h1>
-    Change Your Password
+    File Management
     <small>
-       Change is good
+       Be careful here.
     </small>
   </h1>
   <ol class="breadcrumb">
     <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li class="active">Change Password</li>
+    <li class="active">File Management</li>
   </ol>
 </section>
 
@@ -25,15 +25,33 @@
             <div class="box">
                 <div class="box-header with-border">
                   <h3 class="box-title">
-                      Change Password For: {{ data['user_data']['username'] }}
+                      Current Directory: {{ data['pwd'] }}
                   </h3>
                 </div>
                 <div class="box-body">
-                  <form method="post">
-                      <input class="input-lg form-control" type="text" name="password" placeholder="Type your new password" autocomplete="off"/>
-                      <br />
-                      <input type="submit" class="col-xs-12 btn btn-primary btn-load btn-lg" value="Change Password">
+                  <form method="post" id="browser">
                       {% raw xsrf_form_html() %}
+                      <input type="hidden" id="next_dir" name="next_dir" value="" />
+
+                      {% if data['parent'] %}
+                        <a onclick="sub_form('{{ data['parent'] }}')">
+                            <i class="fa fa-level-up" aria-hidden="true"></i>{{ data['parent'] }}
+                        </a>
+                        <br />
+                      {% end %}
+
+                      {% for f in data['listing'] %}
+                        {% if f['type'] == "file" %}
+                            <i class="fa fa-file-o" aria-hidden="true"></i> {{ f['name'] }}<br />
+                        {% else %}
+                            <a onclick="sub_form('{{ f['name'] }}')">
+                                <i class="fa fa-folder-o" aria-hidden="true"></i> {{ f['name'] }}
+                            </a>
+                            <br />
+                        {% end %}
+                      {% end %}
+
+
                   </form>
                 </div>
 
@@ -42,18 +60,32 @@
         <div class="col-md-6">
           <div class="box box-solid">
             <div class="box-header with-border">
-              <i class="fa fa-key"></i>
+              <i class="fa fa-server" aria-hidden="true"></i>
 
-              <h3 class="box-title">Keys to a good password</h3>
+              <h3 class="box-title">FTP Server Control: Server is currently <span class="text-danger">Down </span></h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-              <blockquote>
-                <p>
-                    A secure password is actually a phrase, that is at least 10 char long and contains uncommon words:<br /><br />
-                    Example: 'Bilbo, Creepers hate me so much'
-                </p>
-              </blockquote>
+                <div class="row">
+                    <div class="col-xs-6 text-center">
+                        <a href="/admin/commands?command=server_start"
+                           onclick="delay()"
+                            class="btn btn-app {% if data['server_data']['server_running'] %} disabled {% end %}">
+                            <i class="fa fa-play"></i> Start FTP Server
+                        </a>
+                        <a  href="/admin/commands?command=server_stop"
+                            onclick="delay()"
+                            class="btn btn-app {% if not data['server_data']['server_running'] %} disabled {% end %}">
+                            <i class="fa fa-stop"></i> Stop FTP Server
+                        </a>
+                    </div>
+                    <div class="col-xs-6">
+                        <b>Your Credentials for this session are:</b><br />
+                        Username: Admin<br />
+                        Password: ol2hj5r0v9awq!<br />
+                    </div>
+                </div>
+
             </div>
             <!-- /.box-body -->
           </div>
@@ -74,7 +106,14 @@
 {% end %}
 
 {% block js-script %}
+<script>
+    function sub_form(dir){
+        $('#next_dir').val(dir);
+        document.getElementById('browser').submit();
+    }
 
+
+</script>
 
 
 {% end %}

@@ -12,6 +12,7 @@ import tornado.template
 import tornado.escape
 import tornado.locale
 import tornado.httpserver
+from pathlib import Path
 
 from playhouse.shortcuts import model_to_dict, dict_to_model
 
@@ -133,7 +134,8 @@ class AdminHandler(BaseHandler):
         server_data = self.get_server_data()
         context = {
             'server_data': server_data,
-            'user_data': user_data
+            'user_data': user_data,
+            'version_data': helper.get_version()
         }
 
         if page == 'unauthorized':
@@ -371,7 +373,13 @@ class AdminHandler(BaseHandler):
             if not check_role_permission(user_data['username'], 'files'):
                 self.redirect('/admin/unauthorized')
 
-            template = "admin/server_control.html"
+            template = "admin/files.html"
+
+            mc_data = MC_settings.get()
+            context['mc_settings'] = model_to_dict(mc_data)
+            context['pwd'] = context['mc_settings']['server_path']
+            context['listing'] = helper.scan_dirs_in_path(context['pwd'])
+            context['parent'] = None
 
         else:
             # 404
@@ -388,6 +396,13 @@ class AdminHandler(BaseHandler):
 
         name = tornado.escape.json_decode(self.current_user)
         user_data = get_perms_for_user(name)
+
+        server_data = self.get_server_data()
+        context = {
+            'server_data': server_data,
+            'user_data': user_data,
+            'version_data': helper.get_version()
+        }
 
         if page == 'change_password':
             entered_password = self.get_argument('password')
@@ -483,6 +498,28 @@ class AdminHandler(BaseHandler):
                     ).where(Backups.id == 1).execute()
 
             self.redirect("/admin/config?saved=True")
+
+        elif page == 'files':
+
+            next_dir = self.get_argument('next_dir')
+            path = Path(next_dir)
+
+            template = "admin/files.html"
+            context['pwd'] = next_dir
+
+            context['listing'] = helper.scan_dirs_in_path(context['pwd'])
+
+            mc_data = MC_settings.get()
+            mc_settings = model_to_dict(mc_data)
+            if next_dir == mc_settings['server_path']:
+                context['parent'] = None
+            else:
+                context['parent'] = path.parent
+
+            self.render(
+                template,
+                data=context
+            )
 
 
     def get_server_data(self):

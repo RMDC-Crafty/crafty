@@ -240,7 +240,13 @@
 
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
-      <b>Crafty Controller Version: </b> {% block version %} 2.1.Alpha {% end %}
+      <b>Crafty Controller Version: </b>
+      {% block version %}
+        {{ data['version_data']['major'] }}.
+        {{ data['version_data']['minor'] }}.
+        {{ data['version_data']['sub'] }}
+
+      {% end %}
     </div>
     <strong>Copyright &copy; 2019 <a href="https://craftycontrol.com">Crafty Controller</a>.</strong> All rights
     reserved.
