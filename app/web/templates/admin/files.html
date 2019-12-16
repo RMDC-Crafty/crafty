@@ -42,10 +42,17 @@
 
                       {% for f in data['listing'] %}
                         {% if f['type'] == "file" %}
-                            <i class="fa fa-file-o" aria-hidden="true"></i> {{ f['name'] }}<br />
+                            {% if f['name'][-4:] in data['ext_list'] %}
+                            <a onclick="edit_file('{{ f['name'] }}')">
+                                <span class="text-success"><i class="fa fa-file" aria-hidden="true"></i>{{ f['name'] }}</span>
+                            </a>
+                            {% else %}
+                                <span class="text-danger"><i class="fa fa-file" aria-hidden="true"></i>{{ f['name'] }}</span>
+                            {% end %}
+                            <br />
                         {% else %}
                             <a onclick="sub_form('{{ f['name'] }}')">
-                                <i class="fa fa-folder-o" aria-hidden="true"></i> {{ f['name'] }}
+                                <i class="fa fa-folder" aria-hidden="true"></i> {{ f['name'] }}
                             </a>
                             <br />
                         {% end %}
@@ -107,9 +114,39 @@
 
 {% block js-script %}
 <script>
+
+    //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
+
     function sub_form(dir){
         $('#next_dir').val(dir);
         document.getElementById('browser').submit();
+    }
+
+    function edit_file(file_path){
+        $.ajax({
+            type: 'GET',
+            url: '/ajax/get_file',
+            data: {
+                'file_name': file_path
+            },
+            success: function (data) {
+                console.log('Got file data from server')
+                //console.log(data)
+
+                var dialog = bootbox.dialog({
+                    title: "<h3>Editing: " + file_path + "</h3>",
+                    message: data,
+                    size:"large",
+                    closeButton: true
+                });
+
+             },
+        });
     }
 
 

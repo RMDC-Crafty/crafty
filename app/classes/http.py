@@ -381,6 +381,8 @@ class AdminHandler(BaseHandler):
             context['listing'] = helper.scan_dirs_in_path(context['pwd'])
             context['parent'] = None
 
+            context['ext_list'] = [".txt", ".yml", "ties", "json"]
+
         else:
             # 404
             template = "public/404.html"
@@ -516,6 +518,8 @@ class AdminHandler(BaseHandler):
             else:
                 context['parent'] = path.parent
 
+            context['ext_list'] = [".txt", ".yml", "ties", "json"]
+
             self.render(
                 template,
                 data=context
@@ -574,14 +578,26 @@ class AjaxHandler(BaseHandler):
                 'current': helper.get_version()
             }
 
-
             self.render(
                 'ajax/version.html',
                 data=context
 
             )
 
+        elif page == 'get_file':
+            file_path = self.get_argument('file_name')
+            f = open(file_path, "r")
+            file_data = f.read()
+            context = {
+                "file_data": file_data,
+                "file_path":file_path
+            }
 
+            self.render(
+                'ajax/edit_file.html',
+                data=context
+
+            )
 
     def post(self, page):
 
@@ -690,6 +706,18 @@ class AjaxHandler(BaseHandler):
                 if username:
                     Users.delete().where(Users.username == username).execute()
                     self.write("{} deleted".format(username))
+
+        elif page == 'save_file':
+            file_data = self.get_argument('file_contents')
+            file_path = self.get_argument("file_path")
+            try:
+                file = open(file_path, 'w')
+                file.write(file_data)
+                file.close()
+                logging.error("File {} saved with new content".format(file_path))
+            except Exception as e:
+                logging.error("Unable to save {} due to {} error".format(file_path, e))
+            self.redirect("/admin/files")
 
 
 class SetupHandler(BaseHandler):
