@@ -165,7 +165,6 @@ class Minecraft_Server():
         else:
             logging.info('Sending stop command to server')
             self.send_command('stop')
-            self.PID = None
 
         for x in range(6):
 
@@ -184,30 +183,9 @@ class Minecraft_Server():
                 return True
 
         # if we got this far, the server isn't responding, and needs to be forced down
-        logging.critical('Unable to stop the server - asking console if they want to force it down')
-        Console.critical('The server PID:{} isn\'t responding to stop commands!'.format(self.PID))
+        logging.critical('Unable to stop the server - force it down {}'.format(self.PID))
 
-        resp = input("Do you want to force the server down? y/n >")
-        logging.warning('User responded with {}'.format(resp.lower))
-
-        # ask the parse the response
-        if resp.lower() == "y":
-            Console.warning("Trying to kill the process")
-
-            # try to kill it with fire!
-            self.killpid(self.PID)
-
-            # wait a few seconds to see if we can really kill it
-            time.sleep(5)
-
-            # let them know the outcome
-            if self.check_running():
-                Console.critical("Unable to kill the process - It's still running")
-            else:
-                Console.info("Process was killed successfully")
-        else:
-            Console.critical("No worries - I am letting the server run")
-            Console.critical("The stop command was still sent though, it might close later, or is unresponsive.")
+        self.killpid(self.PID)
 
     def check_running(self):
         # if process is None, we never tried to start

@@ -5,6 +5,7 @@ import sys
 
 from app.classes.models import *
 from app.classes.helpers import helpers
+from app.classes.ftp import ftp_server
 
 helper = helpers()
 

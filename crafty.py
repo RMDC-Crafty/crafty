@@ -11,7 +11,6 @@ from app.classes.console import Console
 
 from app.classes.craftycmd import MainPrompt
 from app.classes.models import *
-from app.classes.install import installer
 from app.classes.remote_coms import remote_commands
 
 from app.classes.minecraft_server import Minecraft_Server
