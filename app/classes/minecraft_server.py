@@ -1,12 +1,6 @@
-#import os
-import re
-#import sys
-#import json
 import time
-
 import psutil
 import schedule
-#import datetime
 import threading
 import logging.config
 
@@ -16,10 +10,7 @@ from pexpect.popen_spawn import PopenSpawn
 
 from app.classes.mc_ping import ping
 from app.classes.console import Console
-from app.classes.helpers import helpers
 from app.classes.models import *
-
-helper = helpers()
 
 
 class Minecraft_Server():
@@ -600,3 +591,4 @@ class Minecraft_Server():
         schedule.every(history_interval).minutes.do(self.write_usage_history).tag('history')
 
 
+mc_server = Minecraft_Server()

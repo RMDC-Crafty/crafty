@@ -17,10 +17,8 @@ from OpenSSL import crypto, SSL
 from socket import gethostname
 import time
 
-from app.classes.console import Console
+from app.classes.console import console
 from argon2 import PasswordHasher
-
-Console = Console()
 
 
 class helpers:
@@ -174,7 +172,7 @@ class helpers:
             r = requests.get('http://ipinfo.io/ip', timeout=2)
         except Exception as e:
             logging.error("Error found while trying to get public IP: {}".format(e))
-            Console.error("Error found while trying to get public IP: {}".format(e))
+            console.error("Error found while trying to get public IP: {}".format(e))
             return False
 
         if r.text:
@@ -313,6 +311,36 @@ class helpers:
             return True
         return False
 
+    def create_ftp_pem(self, cert_dir=None):
+        if cert_dir is None:
+            cert_dir = os.path.join(self.webroot, 'certs')
+
+        # create a directory if needed
+        self.ensure_dir_exists(cert_dir)
+
+        cert_file = os.path.join(cert_dir, 'crafty.crt')
+        key_file = os.path.join(cert_dir, 'crafty.key')
+        pem_file = os.path.join(cert_dir, 'crafty.pem')
+
+        # create new files if we dont already have them.
+        if not self.check_file_exists(cert_file) and not self.check_file_exists(key_file):
+            self.create_self_signed_cert()
+
+        f = open(key_file, "r")
+        key = f.read()
+        f.close()
+
+        f = open(cert_file, "r")
+        cert = f.read()
+        f.close()
+
+        f = open(pem_file, "w")
+        f.write(key + "\n")
+        f.write(cert + "\n")
+        f.close()
+
+
+
     def create_self_signed_cert(self, cert_dir=None):
 
         if cert_dir is None:
@@ -332,12 +360,12 @@ class helpers:
             logging.info('Cert and Key files already exists, not creating them.')
             return True
 
-        Console.info("Generating a self signed SSL")
+        console.info("Generating a self signed SSL")
         logging.info("Generating a self signed SSL")
 
         # create a key pair
         logging.info("Generating a key pair. This might take a moment.")
-        Console.info("Generating a key pair. This might take a moment.")
+        console.info("Generating a key pair. This might take a moment.")
         k = crypto.PKey()
         k.generate_key(crypto.TYPE_RSA, 4096)
 
@@ -1279,3 +1307,6 @@ class helpers:
                 else:
                     logging.warning('Unable to schedule {} every {} {} '.format(
                         task.action, task.interval, task.interval_type))
+
+
+helper = helpers()

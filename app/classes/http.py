@@ -16,12 +16,11 @@ from pathlib import Path
 
 from playhouse.shortcuts import model_to_dict, dict_to_model
 
-from app.classes.console import Console
-from app.classes.helpers import helpers
+from app.classes.console import console
 from app.classes.models import *
+from app.classes.ftp import ftp_svr_object
+from app.classes.minecraft_server import mc_server
 
-console = Console()
-helper = helpers()
 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -330,6 +329,21 @@ class AdminHandler(BaseHandler):
                 self.mcserver.restart_threaded_server()
                 next_page = "/admin/virtual_console"
 
+            elif command == "ftp_server_start":
+                logging.info("inserting command")
+                row = Remote.insert({
+                    Remote.command: 'start_ftp'
+                }).execute()
+                time.sleep(2)
+                next_page = "/admin/files"
+
+            elif command == 'ftp_server_stop':
+                Remote.insert({
+                    Remote.command: 'stop_ftp'
+                }).execute()
+                time.sleep(2)
+                next_page = "/admin/files"
+
             elif command == "backup":
                 backup_thread = threading.Thread(name='backup', target=self.mcserver.backup_server, daemon=False)
                 backup_thread.start()
@@ -381,7 +395,13 @@ class AdminHandler(BaseHandler):
             context['listing'] = helper.scan_dirs_in_path(context['pwd'])
             context['parent'] = None
 
-            context['ext_list'] = [".txt", ".yml", "ties", "json"]
+            context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf']
+
+            ftp_data = Ftp_Srv.get()
+            context['ftp_settings'] = model_to_dict(ftp_data)
+            context['ftp_running'] = ftp_svr_object.check_running()
+
+
 
         else:
             # 404
@@ -513,12 +533,16 @@ class AdminHandler(BaseHandler):
 
             mc_data = MC_settings.get()
             mc_settings = model_to_dict(mc_data)
+
+            ftp_data = Ftp_Srv.get()
+            context['ftp_settings'] = model_to_dict(ftp_data)
+
             if next_dir == mc_settings['server_path']:
                 context['parent'] = None
             else:
                 context['parent'] = path.parent
 
-            context['ext_list'] = [".txt", ".yml", "ties", "json"]
+            context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf']
 
             self.render(
                 template,
@@ -822,8 +846,8 @@ class webserver():
         logging.info("Starting Tornado HTTPS Server on port {}".format(port_number))
 
         if not silent:
-            Console.info("Starting Tornado HTTPS Server on port {}".format(port_number))
-            Console.info("https://{}:{} is up and ready for connection:".format(helper.get_local_ip(), port_number))
+            console.info("Starting Tornado HTTPS Server on port {}".format(port_number))
+            console.info("https://{}:{} is up and ready for connection:".format(helper.get_local_ip(), port_number))
 
         asyncio.set_event_loop(asyncio.new_event_loop())
 
@@ -833,10 +857,10 @@ class webserver():
 
         if not silent:
             if ip:
-                Console.info("Your public IP is: {}".format(ip))
+                console.info("Your public IP is: {}".format(ip))
 
             else:
-                Console.warning("Unable to find your public IP\nThe service might be down, or your internet is down.")
+                console.warning("Unable to find your public IP\nThe service might be down, or your internet is down.")
 
         handlers = [
             (r'/', PublicHandler, dict(mcserver=self.mc_server)),
@@ -884,3 +908,4 @@ class webserver():
         logging.info("Tornado Server Stopped")
 
 
+tornado_srv = webserver(mc_server)

@@ -4,10 +4,8 @@ import datetime
 from peewee import *
 from playhouse.shortcuts import model_to_dict, dict_to_model
 from playhouse.migrate import *
-from app.classes.helpers import helpers
+from app.classes.helpers import helper
 import logging
-
-helper = helpers()
 
 # SQLite database using WAL journal mode and 10MB cache.
 database = SqliteDatabase(helper.get_db_path(), pragmas={
@@ -18,6 +16,12 @@ database = SqliteDatabase(helper.get_db_path(), pragmas={
 class BaseModel(Model):
     class Meta:
         database = database
+
+
+class Ftp_Srv(BaseModel):
+    port = IntegerField()
+    user = CharField()
+    password = CharField()
 
 
 class Backups(BaseModel):
@@ -124,25 +128,15 @@ def create_tables():
                                 Crafty_settings,
                                 Backups,
                                 Roles,
-                                Remote]
+                                Remote,
+                                Ftp_Srv]
                                )
 
 def default_settings(admin_pass):
 
-    # get minecraft settings for the server root
-    # mc_data = MC_settings.get()
-    # data = model_to_dict(mc_data)
-    # directories = [data['server_path'], ]
-    # backup_directory = json.dumps(directories)
-    #
-    # default backup settings
-    # q = Backups.insert({
-    #     Backups.directories: backup_directory,
-    #     Backups.storage_location: os.path.abspath(os.path.join(helper.crafty_root, 'backups')),
-    #     Backups.max_backups: 7
-    # })
+    from app.classes.helpers import helpers
 
-    # result = q.execute()
+    helper = helpers()
 
     Users.insert({
         Users.username: 'Admin',
@@ -207,6 +201,12 @@ def default_settings(admin_pass):
         Webserver.port_number: 8000,
     }).execute()
 
+    Ftp_Srv.insert({
+        Ftp_Srv.port: 2121,
+        Ftp_Srv.user: 'ftps_user',
+        Ftp_Srv.password: helper.random_string_generator(8)
+    }).execute()
+
 # this is our upgrade migration function - any new tables after 2.0 need to have
 # default settings created here if they don't already exits
 
@@ -238,6 +238,22 @@ def do_database_migrations():
         Roles.update({
             Roles.files: 1
         }).where(Roles.name == "Admin").execute()
+
+    # do we have a ftp user already?
+    ftp_user = None
+    try:
+        ftp_user = Ftp_Srv.get_by_id(1)
+    except:
+        pass
+
+    # if not, let's make one.
+    if not ftp_user:
+
+        Ftp_Srv.insert({
+            Ftp_Srv.port: 2121,
+            Ftp_Srv.user: 'ftps_user',
+            Ftp_Srv.password: helper.random_string_generator(8)
+        }).execute()
 
 
 def get_perms_for_user(user):

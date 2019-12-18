@@ -1,4 +1,3 @@
-import os
 import sys
 import time
 import logging
@@ -6,18 +5,16 @@ import schedule
 import threading
 
 from app.classes.logger import custom_loggers
-from app.classes.helpers import helpers
-from app.classes.console import Console
+from app.classes.helpers import helper
+from app.classes.console import console
 
 from app.classes.craftycmd import MainPrompt
 from app.classes.models import *
 from app.classes.remote_coms import remote_commands
 
-from app.classes.minecraft_server import Minecraft_Server
-from app.classes.http import webserver
-
-helper = helpers()
-console = Console()
+from app.classes.minecraft_server import mc_server
+from app.classes.ftp import ftp_svr_object
+from app.classes.http import tornado_srv
 
 
 def do_intro():
@@ -105,38 +102,39 @@ if __name__ == '__main__':
         do_database_migrations()
 
     logging.info("Starting Scheduler Daemon")
-    Console.info("Starting Scheduler Daemon")
+    console.info("Starting Scheduler Daemon")
 
     scheduler = threading.Thread(name='Scheduler', target=start_scheduler, daemon=True)
     scheduler.start()
 
-    mc_server = Minecraft_Server()
     mc_server.do_init_setup()
 
-    tornado = webserver(mc_server)
+
+
+    if ftp_svr_object.last_error is not None:
+        logging.critical("Unable to load FTP server due to error: ".format(ftp_svr_object.last_error))
+        console.critical("Unable to load FTP server due to error: ".format(ftp_svr_object.last_error))
 
     # startup Tornado
-    tornado.start_web_server(True)
+    tornado_srv.start_web_server(True)
     websettings = Webserver.get()
     port_number = websettings.port_number
 
-    Console.info("Starting Tornado HTTPS Server https://{}:{}".format(helper.get_local_ip(), port_number))
+    console.info("Starting Tornado HTTPS Server https://{}:{}".format(helper.get_local_ip(), port_number))
     if fresh_install:
-        Console.info("Please connect to https://{}:{} to continue the install:".format(
+        console.info("Please connect to https://{}:{} to continue the install:".format(
             helper.get_local_ip(), port_number))
-        Console.info("Your Username is: Admin")
-        Console.info("Your Password is: {}".format(admin_pass))
+        console.info("Your Username is: Admin")
+        console.info("Your Password is: {}".format(admin_pass))
 
     # start the remote commands watcher thread
-    remote_coms = remote_commands(mc_server, tornado)
+    remote_coms = remote_commands(mc_server, tornado_srv)
     remote_coms_thread = threading.Thread(target=remote_coms.start_watcher, daemon=True, name="Remote_Coms")
     remote_coms_thread.start()
 
-    Console.info("Crafty Startup Procedure Complete")
-    Console.help("Type 'stop' or 'exit' to shutdown the system")
+    console.info("Crafty Startup Procedure Complete")
+    console.help("Type 'stop' or 'exit' to shutdown the system")
 
     Crafty = MainPrompt(mc_server)
     Crafty.cmdloop()
-
-    # main()
 

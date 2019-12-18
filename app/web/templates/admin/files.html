@@ -68,28 +68,35 @@
           <div class="box box-solid">
             <div class="box-header with-border">
               <i class="fa fa-server" aria-hidden="true"></i>
+                {% if not data['ftp_running'] %}
+                    <h3 class="box-title">FTP Server Control: Server is currently
+                        <span class="text-danger">Down <i class="fa fa-thumbs-down" aria-hidden="true"></i></span></h3>
+                {% else %}
+                    <h3 class="box-title">FTP Server Control: Server is currently
+                        <span class="text-success">Up <i class="fa fa-thumbs-up" aria-hidden="true"></i></span></h3>
+                {% end %}
 
-              <h3 class="box-title">FTP Server Control: Server is currently <span class="text-danger">Down </span></h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
                 <div class="row">
                     <div class="col-xs-6 text-center">
-                        <a href="/admin/commands?command=server_start"
+                        <a href="/admin/commands?command=ftp_server_start"
                            onclick="delay()"
-                            class="btn btn-app {% if data['server_data']['server_running'] %} disabled {% end %}">
+                            class="btn btn-app {% if data['ftp_running'] %} disabled {% end %}">
                             <i class="fa fa-play"></i> Start FTP Server
                         </a>
-                        <a  href="/admin/commands?command=server_stop"
+                        <a  href="/admin/commands?command=ftp_server_stop"
                             onclick="delay()"
-                            class="btn btn-app {% if not data['server_data']['server_running'] %} disabled {% end %}">
+                            class="btn btn-app {% if not data['ftp_running'] %} disabled {% end %}">
                             <i class="fa fa-stop"></i> Stop FTP Server
                         </a>
                     </div>
                     <div class="col-xs-6">
-                        <b>Your Credentials for this session are:</b><br />
-                        Username: Admin<br />
-                        Password: ol2hj5r0v9awq!<br />
+                        <b>The credentials are:</b><br />
+                        Username: {{ data['ftp_settings']['user'] }}<br />
+                        Password: {{ data['ftp_settings']['password'] }}<br />
+                        Port: {{ data['ftp_settings']['port'] }}<br />
                     </div>
                 </div>
 
@@ -146,6 +153,13 @@
                 });
 
              },
+        });
+    }
+
+    function delay(time='1-2'){
+            bootbox.alert({
+            message: "Please give the server " + time + " seconds to respond to your command",
+            backdrop: true
         });
     }
 

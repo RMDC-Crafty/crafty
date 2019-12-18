@@ -1,28 +1,18 @@
-
-import logging
 import time
-import sys
-
 from app.classes.models import *
-from app.classes.helpers import helpers
-from app.classes.ftp import ftp_server
+from app.classes.ftp import ftp_svr_object
 
-helper = helpers()
 
 class remote_commands():
 
     def __init__(self, mc_server_obj, tornado_obj):
-        self.keep_processing = True
         self.mc_server_obj = mc_server_obj
         self.tornado_obj = tornado_obj
         self.clear_all_commands()
 
     def clear_all_commands(self):
         logging.info("Clearing all Remote Commands")
-        Remote.delete().where(Remote.command != '').execute()
-
-    def stop_watching(self):
-        self.keep_processing = False
+        Remote.delete().execute()
 
     def start_watcher(self):
         logging.info("Starting Remote Command Processor Daemon")
@@ -31,17 +21,13 @@ class remote_commands():
 
     def watch_for_commands(self):
         while True:
-            # if we are to keep processing, we process
-            if self.keep_processing:
-                command_instance = Remote.select().where(Remote.id == 1).exists()
-                if command_instance:
-                    command = Remote.get_by_id(1).command
-                    logging.info("Remote Command:{} found - Executing".format(command))
-                    self.handle_command(command)
-                    self.clear_all_commands()
-            # if we are to stop processing, we break out of this loop
-            else:
-                break
+            command_instance = Remote.select().where(Remote.id == 1).exists()
+            if command_instance:
+                command = Remote.get().command
+                logging.info("Remote Command:{} found - Executing".format(command))
+                self.handle_command(command)
+                self.clear_all_commands()
+
             time.sleep(1)
 
     def handle_command(self, command):
@@ -49,6 +35,7 @@ class remote_commands():
             self.tornado_obj.stop_web_server()
             time.sleep(1)
             self.tornado_obj.start_web_server(True)
+            self.clear_all_commands()
 
         elif command == "reload_mc_settings":
             self.mc_server_obj.reload_settings()
@@ -107,7 +94,18 @@ class remote_commands():
             if running:
                 logging.info("Stopping MC Server")
                 self.mc_server_obj.stop_threaded_server()
+
+            if ftp_svr_object.check_running():
+                ftp_svr_object.stop_threaded_ftp_server()
+
             logging.info("***** Crafty Stopped ***** \n")
             # sys.exit(0)
 
             os._exit(0)
+
+        elif command == 'start_ftp':
+            logging.info("Starting FTP Server")
+            ftp_svr_object.run_threaded_ftp_server()
+
+        elif command == 'stop_ftp':
+            ftp_svr_object.stop_threaded_ftp_server()
