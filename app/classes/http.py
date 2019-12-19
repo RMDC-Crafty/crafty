@@ -305,6 +305,10 @@ class AdminHandler(BaseHandler):
             template = "admin/server_control.html"
             logfile = helper.get_crafty_log_file()
 
+            mc_data = MC_settings.get()
+            context['mc_settings'] = model_to_dict(mc_data)
+            context['server_updating'] = self.mcserver.check_updating()
+
         elif page == 'commands':
             if not check_role_permission(user_data['username'], 'svr_console'):
                 self.redirect('/admin/unauthorized')
@@ -330,7 +334,6 @@ class AdminHandler(BaseHandler):
                 next_page = "/admin/virtual_console"
 
             elif command == "ftp_server_start":
-                logging.info("inserting command")
                 row = Remote.insert({
                     Remote.command: 'start_ftp'
                 }).execute()
@@ -475,6 +478,7 @@ class AdminHandler(BaseHandler):
                     MC_settings.auto_start_server: int(self.get_argument('auto_start_server')),
                     MC_settings.server_port: self.get_argument('server_port'),
                     MC_settings.server_ip: self.get_argument('server_ip'),
+                    MC_settings.jar_url: self.get_argument('jar_url'),
                 }).where(MC_settings.id == 1)
 
                 q.execute()
@@ -623,6 +627,17 @@ class AjaxHandler(BaseHandler):
                 data=context
 
             )
+
+        elif page == 'update_jar':
+            Remote.insert({
+                Remote.command: 'update_server_jar'
+            }).execute()
+
+        elif page == 'revert_jar':
+            Remote.insert({
+                Remote.command: 'revert_server_jar'
+            }).execute()
+
 
     def post(self, page):
 

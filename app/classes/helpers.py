@@ -11,6 +11,7 @@ import yaml
 import psutil
 import json
 import base64
+import shutil
 from datetime import datetime
 
 from OpenSSL import crypto, SSL
@@ -339,8 +340,6 @@ class helpers:
         f.write(cert + "\n")
         f.close()
 
-
-
     def create_self_signed_cert(self, cert_dir=None):
 
         if cert_dir is None:
@@ -452,6 +451,35 @@ class helpers:
         with open(os.path.join(self.config_dir, 'version.json'),'r') as f:
             version_data = json.load(f)
             return version_data
+
+    def copy_file(self, source, dest):
+
+        if self.check_file_exists(source):
+            logging.info("Copying {} to {}".format(source,dest))
+            shutil.copyfile(source, dest)
+            return True
+        else:
+            logging.info("Unable to copy {}, file not found".format(source))
+            return False
+
+    def download_file(self, url, dest):
+        r = requests.get(url, timeout=5, allow_redirects=True)
+        if r.status_code != 200:
+            logging.error("Unable to download file from:{}".format(url))
+            return False
+
+        try:
+            open(dest, "wb").write(r.content)
+        except Exception as e:
+            logging.error("Unable to download file from:{} - error:{}".format(url, e))
+            return False
+
+        return True
+
+
+
+
+
 
     def scheduler(self, task, mc_server_obj):
         logging.info("Parsing Tasks To Add")

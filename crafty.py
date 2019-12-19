@@ -109,8 +109,6 @@ if __name__ == '__main__':
 
     mc_server.do_init_setup()
 
-
-
     if ftp_svr_object.last_error is not None:
         logging.critical("Unable to load FTP server due to error: ".format(ftp_svr_object.last_error))
         console.critical("Unable to load FTP server due to error: ".format(ftp_svr_object.last_error))

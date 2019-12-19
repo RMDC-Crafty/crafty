@@ -33,6 +33,7 @@ class ftp_server():
             mc_settings = MC_settings.get_by_id(1)
 
         except Exception as e:
+            logging.critical("Error Loading FTP: ".format(e))
             self.last_error = e
             return False
 

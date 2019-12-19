@@ -9,7 +9,7 @@ import pexpect
 from pexpect.popen_spawn import PopenSpawn
 
 from app.classes.mc_ping import ping
-from app.classes.console import Console
+from app.classes.console import console
 from app.classes.models import *
 
 
@@ -26,6 +26,7 @@ class Minecraft_Server():
         self.server_path = None
         self.server_thread = None
         self.settings = None
+        self.updating = False
 
     def reload_settings(self):
         logging.info("Reloading MC Settings from the DB")
@@ -38,18 +39,18 @@ class Minecraft_Server():
         if self.settings.auto_start_server:
             delay = int(self.settings.auto_start_delay)
             logging.info("Auto Start is Enabled - Waiting {} seconds to start the server".format(delay))
-            Console.info("Auto Start is Enabled - Waiting {} seconds to start the server".format(delay))
+            console.info("Auto Start is Enabled - Waiting {} seconds to start the server".format(delay))
             time.sleep(int(delay))
             # delay the startup as long as the
-            Console.info("Starting Minecraft Server")
+            console.info("Starting Minecraft Server")
             self.run_threaded_server()
         else:
             logging.info("Auto Start is Disabled")
-            Console.info("Auto Start is Disabled")
+            console.info("Auto Start is Disabled")
 
     def do_init_setup(self):
         logging.debug("Minecraft Server Module Loaded")
-        Console.info("Loading Minecraft Server Module")
+        console.info("Loading Minecraft Server Module")
 
         if helper.is_setup_complete():
             self.reload_settings()
@@ -100,7 +101,7 @@ class Minecraft_Server():
     def start_server(self):
 
         if self.check_running():
-            Console.warning("Minecraft Server already running...")
+            console.warning("Minecraft Server already running...")
             return False
 
         logging.info("Launching Minecraft server with command: {}".format(self.server_command))
@@ -254,22 +255,22 @@ class Minecraft_Server():
                             cmdline
                         ))
 
-                        Console.warning("We found another process running the server.jar.")
-                        Console.warning("Process ID: {}".format(p.pid))
-                        Console.warning("Process Name: {}".format(p.name()))
-                        Console.warning("Process Command Line: {}".format(cmdline))
-                        Console.warning("Process Started: {}".format(pidcreated))
+                        console.warning("We found another process running the server.jar.")
+                        console.warning("Process ID: {}".format(p.pid))
+                        console.warning("Process Name: {}".format(p.name()))
+                        console.warning("Process Command Line: {}".format(cmdline))
+                        console.warning("Process Started: {}".format(pidcreated))
 
                         resp = input("Do you wish to kill this other server process? y/n > ")
 
                         if resp.lower() == 'y':
-                            Console.warning('Attempting to kill process: {}'.format(p.pid))
+                            console.warning('Attempting to kill process: {}'.format(p.pid))
 
                             # kill the process
                             p.terminate()
                             # give the process time to die
                             time.sleep(2)
-                            Console.warning('Killed: {}'.format(proc.pid))
+                            console.warning('Killed: {}'.format(proc.pid))
                             self.check_orphaned_server()
 
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
@@ -589,6 +590,136 @@ class Minecraft_Server():
         logging.info("Creating New History Usage Scheduled Task for every {} minutes".format(history_interval))
 
         schedule.every(history_interval).minutes.do(self.write_usage_history).tag('history')
+
+    def update_server_jar(self, with_console=True):
+
+        self.updating = True
+
+        logging.info("Starting Jar Update Process")
+
+        if with_console:
+            console.info("Starting Jar Update Process")
+
+        backup_dir = os.path.join(self.settings.server_path, 'crafty_jar_backups')
+        backup_jar_name = os.path.join(backup_dir, 'old_server.jar')
+        current_jar = os.path.join(self.settings.server_path, self.settings.server_jar)
+        was_running = False
+
+        if self.check_running():
+            was_running = True
+            logging.info("Server was running, stopping server for jar update")
+
+            if with_console:
+                console.info("Server was running, stopping server for jar update")
+
+            self.stop_threaded_server()
+
+        # make sure the backup directory exists
+        helper.ensure_dir_exists(backup_dir)
+
+        # remove the old_server.jar
+        if helper.check_file_exists(backup_jar_name):
+            logging.info("Removing old jar backup: {}".format(backup_jar_name))
+
+            if with_console:
+                console.info("Removing old jar backup: {}".format(backup_jar_name))
+
+            os.remove(backup_jar_name)
+
+        logging.info("Starting Server Jar Download")
+
+        if with_console:
+            console.info("Starting Server Jar Download")
+
+        # backup the server jar file
+        helper.copy_file(current_jar, backup_jar_name)
+
+        # download the new server jar file
+        download_complete = helper.download_file(self.settings.jar_url, current_jar)
+
+        if download_complete:
+            logging.info("Server Jar Download Complete")
+
+            if with_console:
+                console.info("Server Jar Download Complete")
+        else:
+            if with_console:
+                console.info("Server Jar Had An Error")
+
+        if was_running:
+            logging.info("Server was running, starting server backup after update")
+
+            if with_console:
+                console.info("Server was running, starting server backup after update")
+
+            self.run_threaded_server()
+
+        self.updating = False
+
+    def revert_updated_server_jar(self, with_console=True):
+        self.updating = True
+
+        logging.info("Starting Jar Revert Process")
+
+        if with_console:
+            console.info("Starting Jar Revert Process")
+
+        backup_dir = os.path.join(self.settings.server_path, 'crafty_jar_backups')
+        backup_jar_name = os.path.join(backup_dir, 'old_server.jar')
+        current_jar = os.path.join(self.settings.server_path, self.settings.server_jar)
+        was_running = False
+
+        # verify we have a backup
+        if not helper.check_file_exists(backup_jar_name):
+            logging.critical("Can't find server.jar backup! - can't continue")
+            console.critical("Can't find server.jar backup! - can't continue")
+            self.updating = False
+            return False
+
+        if self.check_running():
+            was_running = True
+            logging.info("Server was running, stopping server for jar revert")
+
+            if with_console:
+                console.info("Server was running, stopping server for jar revert")
+
+            self.stop_threaded_server()
+
+        # make sure the backup directory exists
+        helper.ensure_dir_exists(backup_dir)
+
+        # remove the current_server.jar
+        if helper.check_file_exists(backup_jar_name):
+            logging.info("Removing current server jar: {}".format(backup_jar_name))
+
+            if with_console:
+                console.info("Removing current server jar: {}".format(backup_jar_name))
+
+            os.remove(current_jar)
+
+        logging.info("Copying old jar back")
+
+        if with_console:
+            console.info("Copying old jar back")
+
+        helper.copy_file(backup_jar_name, current_jar)
+
+        if was_running:
+            logging.info("Server was running, starting server backup after update")
+
+            if with_console:
+                console.info("Server was running, starting server backup after update")
+
+            self.run_threaded_server()
+
+        self.updating = False
+
+    def check_updating(self):
+        if self.updating:
+            return True
+        else:
+            return False
+            # return True
 
 
 mc_server = Minecraft_Server()

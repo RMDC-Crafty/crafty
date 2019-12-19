@@ -88,6 +88,12 @@ class remote_commands():
             else:
                 logging.info("Server Not Running - Skipping stop of MC Server")
 
+        elif command == 'update_server_jar':
+            self.mc_server_obj.update_server_jar(False)
+
+        elif command == 'revert_server_jar':
+            self.mc_server_obj.revert_updated_server_jar(False)
+
         elif command == "exit_crafty":
             running = self.mc_server_obj.check_running()
 

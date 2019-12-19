@@ -75,6 +75,7 @@ class MC_settings(BaseModel):
     auto_start_delay = IntegerField()
     server_port = IntegerField(default=25565)
     server_ip = CharField(default='127.0.0.1')
+    jar_url = CharField(default='')
 
     class Meta:
         table_name = 'mc_settings'
@@ -214,6 +215,23 @@ def do_database_migrations():
     logging.info('Upgrading Database fields as needed')
     create_tables()
     migrator = SqliteMigrator(database)
+
+    mc_cols = database.get_columns("MC_settings")
+    create_jar_url = True
+    for c in mc_cols:
+        if c.name == "jar_url":
+            create_jar_url = False
+
+    # create the jar url setting
+    if create_jar_url:
+        logging.info("Didn't find jar_url column in mc_settings - Creating one")
+
+        jar_url = CharField(default='')
+
+        migrate(
+            migrator.add_column("MC_settings", 'jar_url', jar_url),
+        )
+
 
     roles_cols = database.get_columns('Roles')
     create_files_column = True

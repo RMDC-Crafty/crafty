@@ -56,6 +56,63 @@
                 </div>
               </div>
         </div>
+
+        <div class="col-xs-6">
+            <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">
+                      Server Jar Update
+                        {% if data['mc_settings']['jar_url'] != '' %}
+                            <span class="text-green">
+                        Ready To Update&nbsp;
+                            <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                            </span>
+                        {% else %}
+                        <span class="text-red">
+                            No Jar Url Set - Can't Update &nbsp;
+                            <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                        </span>
+                        {% end %}
+                  </h3>
+                </div>
+                <div class="box-body">
+
+                    {% if data['mc_settings']['jar_url'] != '' %}
+                    <b>Jar URL</b><br />
+
+                        Your Server Jar will be downloaded from this URL: {{ data['mc_settings']['jar_url'] }}<br /><br />
+
+                    <b>Jar Backup</b><br />
+                        Your Server Jar will be backed up to this location:
+                        {{ data['mc_settings']['server_path'] }}/crafty_jar_backups//old_server.jar.<br />
+                        Any old jars here will be deleted<br />
+
+                        <hr>
+
+                        {% if not data['server_updating'] %}
+                        <a onclick="update()"
+                            class="btn btn-app ">
+                            <i class="fa fa-cloud-download" aria-hidden="true"></i>Update {{ data['mc_settings']['server_jar'] }}
+                        </a>
+
+                        <a onclick="revert()"
+                            class="btn btn-app ">
+                            <i class="fa fa-undo" aria-hidden="true"></i>Undo Update (Revert Back)
+                        </a>
+                        {% else %}
+
+                            <div class="col-xs-12 text-center">
+                                <h4>Server Jar Upgrade In Progress</h4>
+                            </div>
+
+                        {% end %}
+
+                    {% end %}
+
+                </div>
+              </div>
+        </div>
+
     </div>
 
 
@@ -74,11 +131,53 @@
 
 <script>
     function delay(time='5-10'){
-            bootbox.alert({
+        bootbox.alert({
             message: "Please give the server " + time + " seconds to respond to your command",
             backdrop: true
         });
     }
+
+    function update(){
+        send_update_command()
+        bootbox.alert({
+            message: "The update process has started in the background. Feel free to watch the process on the logs page.",
+            backdrop: true
+        });
+        setTimeout(function(){ hide_modals(); }, 3000);
+
+    }
+
+    function revert(){
+        send_revert_command()
+        bootbox.alert({
+            message: "The revert process has started in the background. Feel free to watch the process on the logs page.",
+            backdrop: true
+        });
+        setTimeout(function(){ hide_modals(); }, 3000);
+    }
+
+    function send_update_command(){
+        $.ajax({
+            type: 'GET',
+            url: '/ajax/update_jar',
+            dataType: 'text',
+        });
+    }
+
+    function send_revert_command(){
+        $.ajax({
+            type: 'GET',
+            url: '/ajax/revert_jar',
+            dataType: 'text',
+        });
+    }
+
+    function hide_modals(){
+        bootbox.hideAll()
+    }
+
+
+
 </script>
 
 {% end %}

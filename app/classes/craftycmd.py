@@ -226,3 +226,15 @@ class MainPrompt(cmd.Cmd):
         console.help("Shows version information for you and what is in the repos to help you decide if you should "
                      "update or not")
 
+    def help_update_jar(self):
+        console.help("This will automatically update your server jar. If the server is running, it will be restarted "
+                     "after the download is complete.")
+
+    def do_update_jar(self, line):
+        self.mc_server_obj.update_server_jar()
+
+    def help_revert_jar_upgrade(self):
+        console.help("This will automatically revert your server jar from the last backup copy")
+
+    def do_revert_jar_upgrade(self, line):
+        self.mc_server_obj.revert_updated_server_jar()
