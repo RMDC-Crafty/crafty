@@ -64,6 +64,11 @@
           <!-- Notifications: style can be found in dropdown.less -->
 
           <!-- Tasks: style can be found in dropdown.less -->
+          <li class="">
+            <a href="#" id="update_check" aria-expanded="true">
+              <i class="fa fa-refresh"></i> Check For Updates
+            </a>
+          </li>
 
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
@@ -207,6 +212,10 @@
         <li><a href="/admin/schedules"><i class="fa fa-clock-o" aria-hidden="true"></i> <span>Scheduled Tasks </span></a></li>
         {% end %}
 
+        {% if data['user_data']['files'] %}
+        <li><a href="/admin/files"><i class="fa fa-folder-open" aria-hidden="true"></i> <span> File Manager</span> </a></li>
+        {% end %}
+
         {% if data['user_data']['config'] %}
         <li><a href="/admin/config"><i class="fa fa-cog" aria-hidden="true"></i> <span> Config</span> </a></li>
         {% end %}
@@ -231,7 +240,13 @@
 
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
-      <b>Crafty Controller Version: </b> {% block version %} 2.1.Alpha {% end %}
+      <b>Crafty Controller Version: </b>
+      {% block version %}
+        {{ data['version_data']['major'] }}.
+        {{ data['version_data']['minor'] }}.
+        {{ data['version_data']['sub'] }}
+
+      {% end %}
     </div>
     <strong>Copyright &copy; 2019 <a href="https://craftycontrol.com">Crafty Controller</a>.</strong> All rights
     reserved.
@@ -269,7 +284,36 @@
 <script>
   $(document).ready(function () {
     $('.sidebar-menu').tree()
+
+    $('#update_check').click(function(){
+      update_check();
+    });
   })
+
+  //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
+  function update_check(){
+        bootbox.alert("Getting Version Data");
+
+        $.ajax({
+            type: 'GET',
+            url: '/ajax/update_check',
+            dataType: 'text',
+            success: function (data) {
+                bootbox.hideAll();
+                console.log('Got Version Info From Server')
+                bootbox.alert({
+                    message: data,
+                    backdrop: true,
+                });
+             },
+        });
+    }
+
 </script>
 
 {% block js-script %}

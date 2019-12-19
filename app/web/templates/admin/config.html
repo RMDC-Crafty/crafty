@@ -293,6 +293,18 @@
                                     />
                                 </div>
 
+                                <div class="form-group">
+                                    <label>
+                                        Jar Update URL<br />
+                                        <small>Server Jar Update URL - This is where you define where to update the jar from.</small>
+                                    </label>
+                                    <input type="text"
+                                           name="jar_url" id="jar_url"
+                                           class="form-control" placeholder="https://example.com/latest/server.jar"
+                                           value="{{ data['mc_settings']['jar_url'] }}"
+                                    />
+                                </div>
+
                                 <hr />
 
                                 <!-- radio -->
@@ -337,7 +349,7 @@
 
                                 <div class="form-group">
                                     <label>
-                                        Server Port<br />
+                                        Server Port <br />
                                         <small>Default is 25565 - this is the port crafty will use to get server stats. This should match your server.properties file</small>
                                     </label>
                                     <input type="number"
@@ -457,7 +469,7 @@
 
                 <h3 class="box-title">Your Current Config</h3>
                 <h3 class="box-title pull-right">
-                    <button class="btn btn-sm btn-default">Reload MC Settings</button>
+                    <a href="/admin/reload_mc_settings" class="btn btn-sm btn-default">Reload MC Settings</a>
                     <a href="/admin/reload_web" class="btn btn-sm btn-default">Reload Web Server</a>
                 </h3>
 

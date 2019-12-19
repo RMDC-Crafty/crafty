@@ -37,7 +37,7 @@
   <!-- /.login-logo -->
   <div class="login-box-body">
     <p class="login-box-msg">
-      <b>4 Questions and a checkbox until your done</b>
+      <b>4 Questions and a checkbox until you're done</b>
 
     </p>
 
@@ -88,7 +88,7 @@
       <div class="form-group has-feedback">
         <label>
           Auto Start Server after 10 Seconds:
-          <input type="checkbox"  name="auto_start" checked="checked">
+          <input type="checkbox"  name="auto_start" id="auto_start" checked="checked">
 
         </label>
 
@@ -103,7 +103,7 @@
         </div>
         <!-- /.col -->
         <div class="col-xs-6">
-          <button type="submit" class="btn btn-success btn-block btn-flat"> Save and Finish</button>
+          <button type="submit" onclick="show_warning()" class="btn btn-success btn-block btn-flat"> Save and Finish</button>
         </div>
         <!-- /.col -->
       </div>
@@ -127,6 +127,23 @@
 
 
 {% block js-script %}
+<script>
+
+function show_warning(){
+  if ($('#auto_start').attr('checked'))
+  {
+      var dialog = bootbox.dialog({
+        message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i> Please wait while we start the minecraft server</p>',
+        backdrop: true,
+        closeButton: true
+      });
+
+  }
+}
+
+
+</script>
+
 {% end %}
 </body>
 </html>

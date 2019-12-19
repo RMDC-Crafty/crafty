@@ -11,21 +11,15 @@ import yaml
 import psutil
 import json
 import base64
+import shutil
 from datetime import datetime
-
-import smtplib, ssl
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 
 from OpenSSL import crypto, SSL
 from socket import gethostname
 import time
-#from pprint import pprint
 
-from app.classes.console import Console
+from app.classes.console import console
 from argon2 import PasswordHasher
-
-Console = Console()
 
 
 class helpers:
@@ -179,7 +173,7 @@ class helpers:
             r = requests.get('http://ipinfo.io/ip', timeout=2)
         except Exception as e:
             logging.error("Error found while trying to get public IP: {}".format(e))
-            Console.error("Error found while trying to get public IP: {}".format(e))
+            console.error("Error found while trying to get public IP: {}".format(e))
             return False
 
         if r.text:
@@ -318,6 +312,34 @@ class helpers:
             return True
         return False
 
+    def create_ftp_pem(self, cert_dir=None):
+        if cert_dir is None:
+            cert_dir = os.path.join(self.webroot, 'certs')
+
+        # create a directory if needed
+        self.ensure_dir_exists(cert_dir)
+
+        cert_file = os.path.join(cert_dir, 'crafty.crt')
+        key_file = os.path.join(cert_dir, 'crafty.key')
+        pem_file = os.path.join(cert_dir, 'crafty.pem')
+
+        # create new files if we dont already have them.
+        if not self.check_file_exists(cert_file) and not self.check_file_exists(key_file):
+            self.create_self_signed_cert()
+
+        f = open(key_file, "r")
+        key = f.read()
+        f.close()
+
+        f = open(cert_file, "r")
+        cert = f.read()
+        f.close()
+
+        f = open(pem_file, "w")
+        f.write(key + "\n")
+        f.write(cert + "\n")
+        f.close()
+
     def create_self_signed_cert(self, cert_dir=None):
 
         if cert_dir is None:
@@ -337,12 +359,12 @@ class helpers:
             logging.info('Cert and Key files already exists, not creating them.')
             return True
 
-        Console.info("Generating a self signed SSL")
+        console.info("Generating a self signed SSL")
         logging.info("Generating a self signed SSL")
 
         # create a key pair
         logging.info("Generating a key pair. This might take a moment.")
-        Console.info("Generating a key pair. This might take a moment.")
+        console.info("Generating a key pair. This might take a moment.")
         k = crypto.PKey()
         k.generate_key(crypto.TYPE_RSA, 4096)
 
@@ -407,6 +429,55 @@ class helpers:
                 return "%3.1f%s%s" % (num, unit, suffix)
             num /= 1024.0
         return "%.1f%s%s" % (num, 'Y', suffix)
+
+    def check_version(self, branch):
+        url = "https://gitlab.com/Ptarrant1/crafty-web/raw/{}/app/config/version.json".format(branch)
+        try:
+            r = requests.get(url, timeout=2)
+            if r.status_code == 200:
+                return json.loads(r.text)
+            else:
+                return {
+                    "major": 'unknown',
+                    "minor": 'unknown',
+                    "sub": 'unknown',
+                }
+
+        except Exception as e:
+            print(e)
+            pass
+
+    def get_version(self):
+        with open(os.path.join(self.config_dir, 'version.json'),'r') as f:
+            version_data = json.load(f)
+            return version_data
+
+    def copy_file(self, source, dest):
+
+        if self.check_file_exists(source):
+            logging.info("Copying {} to {}".format(source,dest))
+            shutil.copyfile(source, dest)
+            return True
+        else:
+            logging.info("Unable to copy {}, file not found".format(source))
+            return False
+
+    def download_file(self, url, dest):
+        r = requests.get(url, timeout=5, allow_redirects=True)
+        if r.status_code != 200:
+            logging.error("Unable to download file from:{}".format(url))
+            return False
+
+        try:
+            open(dest, "wb").write(r.content)
+        except Exception as e:
+            logging.error("Unable to download file from:{} - error:{}".format(url, e))
+            return False
+
+        return True
+
+
+
 
 
 
@@ -1264,3 +1335,6 @@ class helpers:
                 else:
                     logging.warning('Unable to schedule {} every {} {} '.format(
                         task.action, task.interval, task.interval_type))
+
+
+helper = helpers()

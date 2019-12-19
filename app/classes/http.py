@@ -12,15 +12,15 @@ import tornado.template
 import tornado.escape
 import tornado.locale
 import tornado.httpserver
+from pathlib import Path
 
 from playhouse.shortcuts import model_to_dict, dict_to_model
 
-from app.classes.console import Console
-from app.classes.helpers import helpers
+from app.classes.console import console
 from app.classes.models import *
+from app.classes.ftp import ftp_svr_object
+from app.classes.minecraft_server import mc_server
 
-console = Console()
-helper = helpers()
 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -131,7 +131,11 @@ class AdminHandler(BaseHandler):
         user_data = get_perms_for_user(name)
 
         server_data = self.get_server_data()
-        context = {}
+        context = {
+            'server_data': server_data,
+            'user_data': user_data,
+            'version_data': helper.get_version()
+        }
 
         if page == 'unauthorized':
             template = "admin/denied.html"
@@ -150,33 +154,31 @@ class AdminHandler(BaseHandler):
                 data=context
             )
             # reload web server
-            Remote.insert(Remote.insert({
+            Remote.insert({
                 Remote.command: 'restart_web_server'
-            }).execute())
+            }).execute()
 
+        elif page == 'reload_mc_settings':
+            Remote.insert({
+                Remote.command: 'reload_mc_settings'
+            }).execute()
+
+            self.redirect("/admin/config")
 
         elif page == 'dashboard':
             template = "admin/dashboard.html"
-            context['server_data'] = server_data
-            context['user_data'] = user_data
 
         elif page == 'change_password':
             template = "admin/change_pass.html"
-            context['user_data'] = user_data
 
         elif page == 'virtual_console':
-            if not user_data['svr_console']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Virtual Console"))
+            if not check_role_permission(user_data['username'], 'svr_console'):
                 self.redirect('/admin/unauthorized')
 
             template = "admin/virt_console.html"
-            context['user_data'] = user_data
 
         elif page == "backups":
-            if not user_data['backups']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Backups"))
+            if not check_role_permission(user_data['username'], 'backups'):
                 self.redirect('/admin/unauthorized')
 
             template = "admin/backups.html"
@@ -184,17 +186,12 @@ class AdminHandler(BaseHandler):
             backup_data = model_to_dict(backup_list)
             backup_path = backup_data['storage_location']
             backup_dirs = json.loads(backup_data['directories'])
-            context = {
-                'backup_paths': backup_dirs,
-                'backup_path': backup_path,
-                'current_backups': self.mcserver.list_backups(),
-                'user_data': user_data
-            }
+            context['backup_paths'] = backup_dirs
+            context['backup_path'] = backup_path
+            context['current_backups'] = self.mcserver.list_backups()
 
         elif page == "schedules":
-            if not user_data['schedules']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Server Schedules"))
+            if not check_role_permission(user_data['username'], 'schedules'):
                 self.redirect('/admin/unauthorized')
 
             saved = self.get_argument('saved', None)
@@ -202,16 +199,11 @@ class AdminHandler(BaseHandler):
             db_data = Schedules.select()
 
             template = "admin/schedules.html"
-            context = {
-                'db_data': db_data,
-                'saved': saved,
-                'user_data': user_data
-            }
+            context['db_data'] = db_data
+            context['saved'] = saved
 
         elif page == "reloadschedules":
-            if not user_data['schedules']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Reload Schedules"))
+            if not check_role_permission(user_data['username'], 'schedules'):
                 self.redirect('/admin/unauthorized')
 
             logging.info("Reloading Scheduled Tasks")
@@ -230,16 +222,11 @@ class AdminHandler(BaseHandler):
                 helper.scheduler(task, self.mcserver)
 
             template = "admin/schedules.html"
-            context = {
-                'db_data': db_data,
-                'saved': None,
-                'user_data': user_data
-            }
+            context['db_data'] = db_data
+            context['saved'] = None
 
         elif page == "schedule_disable":
-            if not user_data['schedules']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Disable Schedules"))
+            if not check_role_permission(user_data['username'], 'schedules'):
                 self.redirect('/admin/unauthorized')
 
             schedule_id = self.get_argument('id', None)
@@ -249,9 +236,7 @@ class AdminHandler(BaseHandler):
             self.redirect("/admin/reloadschedules")
 
         elif page == "schedule_enable":
-            if not user_data['schedules']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Schedules Enable"))
+            if not check_role_permission(user_data['username'], 'schedules'):
                 self.redirect('/admin/unauthorized')
 
             schedule_id = self.get_argument('id', None)
@@ -261,9 +246,7 @@ class AdminHandler(BaseHandler):
             self.redirect("/admin/reloadschedules")
 
         elif page == 'config':
-            if not user_data['config']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Server Config"))
+            if not check_role_permission(user_data['username'], 'config'):
                 self.redirect('/admin/unauthorized')
 
             saved = self.get_argument('saved', None)
@@ -277,31 +260,26 @@ class AdminHandler(BaseHandler):
             users = Users.select()
 
             page_data = {}
-            page_data['saved'] = saved
-            page_data['invalid'] = invalid
-            page_data['mc_settings'] = model_to_dict(mc_data)
-            page_data['crafty_settings'] = model_to_dict(crafty_data)
-            page_data['web_settings'] = model_to_dict(web_data)
+            context['saved'] = saved
+            context['invalid'] = invalid
+            context['mc_settings'] = model_to_dict(mc_data)
+            context['crafty_settings'] = model_to_dict(crafty_data)
+            context['web_settings'] = model_to_dict(web_data)
 
-            page_data['users'] = users
-            page_data['users_count'] = len(users)
+            context['users'] = users
+            context['users_count'] = len(users)
 
             backup_data = model_to_dict(backup_data)
-            page_data['backup_data'] = json.loads(backup_data['directories'])
-            page_data['backup_config'] = backup_data
+            context['backup_data'] = json.loads(backup_data['directories'])
+            context['backup_config'] = backup_data
 
             # get a listing of directories in the server path.
-            page_data['directories'] = helper.scan_dirs_in_path(page_data['mc_settings']['server_path'])
+            context['directories'] = helper.scan_dirs_in_path(context['mc_settings']['server_path'])
 
-            page_data['server_root'] = page_data['mc_settings']['server_path']
-            page_data['user_data'] = user_data
-
-            context = page_data
+            context['server_root'] = context['mc_settings']['server_path']
 
         elif page == 'downloadbackup':
-            if not user_data['backups']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Backup Download"))
+            if not check_role_permission(user_data['username'], 'backups'):
                 self.redirect('/admin/unauthorized')
 
             path = self.get_argument("file", None, True)
@@ -321,20 +299,18 @@ class AdminHandler(BaseHandler):
             self.redirect("/admin/backups")
 
         elif page == "server_control":
-            if not user_data['svr_control']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Server Control"))
+            if not check_role_permission(user_data['username'], 'svr_control'):
                 self.redirect('/admin/unauthorized')
 
             template = "admin/server_control.html"
             logfile = helper.get_crafty_log_file()
-            context['server_data'] = server_data
-            context['user_data'] = user_data
+
+            mc_data = MC_settings.get()
+            context['mc_settings'] = model_to_dict(mc_data)
+            context['server_updating'] = self.mcserver.check_updating()
 
         elif page == 'commands':
-            if not user_data['svr_console']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Virtual Commands"))
+            if not check_role_permission(user_data['username'], 'svr_console'):
                 self.redirect('/admin/unauthorized')
 
             command = self.get_argument("command", None, True)
@@ -357,6 +333,20 @@ class AdminHandler(BaseHandler):
                 self.mcserver.restart_threaded_server()
                 next_page = "/admin/virtual_console"
 
+            elif command == "ftp_server_start":
+                row = Remote.insert({
+                    Remote.command: 'start_ftp'
+                }).execute()
+                time.sleep(2)
+                next_page = "/admin/files"
+
+            elif command == 'ftp_server_stop':
+                Remote.insert({
+                    Remote.command: 'stop_ftp'
+                }).execute()
+                time.sleep(2)
+                next_page = "/admin/files"
+
             elif command == "backup":
                 backup_thread = threading.Thread(name='backup', target=self.mcserver.backup_server, daemon=False)
                 backup_thread.start()
@@ -366,9 +356,7 @@ class AdminHandler(BaseHandler):
             self.redirect(next_page)
 
         elif page == 'get_logs':
-            if not user_data['logs']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Server Logs"))
+            if not check_role_permission(user_data['username'], 'logs'):
                 self.redirect('/admin/unauthorized')
 
             data = []
@@ -391,13 +379,32 @@ class AdminHandler(BaseHandler):
 
             errors = self.mcserver.search_for_errors()
             template = "admin/logs.html"
-            context = {'log_data': data,
-                       'errors': errors,
-                       'crafty_log': crafty_data,
-                       'scheduler': scheduler_data,
-                       'access': access_data,
-                       'user_data': user_data
-                       }
+
+            context['log_data'] = data
+            context['errors'] = errors
+            context['crafty_log'] = crafty_data
+            context['scheduler'] = scheduler_data
+            context['access'] = access_data
+
+        elif page == "files":
+            if not check_role_permission(user_data['username'], 'files'):
+                self.redirect('/admin/unauthorized')
+
+            template = "admin/files.html"
+
+            mc_data = MC_settings.get()
+            context['mc_settings'] = model_to_dict(mc_data)
+            context['pwd'] = context['mc_settings']['server_path']
+            context['listing'] = helper.scan_dirs_in_path(context['pwd'])
+            context['parent'] = None
+
+            context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf']
+
+            ftp_data = Ftp_Srv.get()
+            context['ftp_settings'] = model_to_dict(ftp_data)
+            context['ftp_running'] = ftp_svr_object.check_running()
+
+
 
         else:
             # 404
@@ -414,6 +421,13 @@ class AdminHandler(BaseHandler):
 
         name = tornado.escape.json_decode(self.current_user)
         user_data = get_perms_for_user(name)
+
+        server_data = self.get_server_data()
+        context = {
+            'server_data': server_data,
+            'user_data': user_data,
+            'version_data': helper.get_version()
+        }
 
         if page == 'change_password':
             entered_password = self.get_argument('password')
@@ -464,6 +478,7 @@ class AdminHandler(BaseHandler):
                     MC_settings.auto_start_server: int(self.get_argument('auto_start_server')),
                     MC_settings.server_port: self.get_argument('server_port'),
                     MC_settings.server_ip: self.get_argument('server_ip'),
+                    MC_settings.jar_url: self.get_argument('jar_url'),
                 }).where(MC_settings.id == 1)
 
                 q.execute()
@@ -510,6 +525,35 @@ class AdminHandler(BaseHandler):
 
             self.redirect("/admin/config?saved=True")
 
+        elif page == 'files':
+
+            next_dir = self.get_argument('next_dir')
+            path = Path(next_dir)
+
+            template = "admin/files.html"
+            context['pwd'] = next_dir
+
+            context['listing'] = helper.scan_dirs_in_path(context['pwd'])
+
+            mc_data = MC_settings.get()
+            mc_settings = model_to_dict(mc_data)
+
+            ftp_data = Ftp_Srv.get()
+            context['ftp_settings'] = model_to_dict(ftp_data)
+
+            if next_dir == mc_settings['server_path']:
+                context['parent'] = None
+            else:
+                context['parent'] = path.parent
+
+            context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf']
+            context['ftp_running'] = ftp_svr_object.check_running()
+
+            self.render(
+                template,
+                data=context
+            )
+
 
     def get_server_data(self):
         server_file = os.path.join(helper.get_web_temp_path(), "server_data.json")
@@ -553,6 +597,47 @@ class AjaxHandler(BaseHandler):
                 return_data.append(row_data)
 
             self.write(json.dumps(return_data))
+
+        elif page == 'update_check':
+
+            context = {
+                'master': helper.check_version('master'),
+                'beta': helper.check_version('beta'),
+                'snaps': helper.check_version('snapshot'),
+                'current': helper.get_version()
+            }
+
+            self.render(
+                'ajax/version.html',
+                data=context
+
+            )
+
+        elif page == 'get_file':
+            file_path = self.get_argument('file_name')
+            f = open(file_path, "r")
+            file_data = f.read()
+            context = {
+                "file_data": file_data,
+                "file_path":file_path
+            }
+
+            self.render(
+                'ajax/edit_file.html',
+                data=context
+
+            )
+
+        elif page == 'update_jar':
+            Remote.insert({
+                Remote.command: 'update_server_jar'
+            }).execute()
+
+        elif page == 'revert_jar':
+            Remote.insert({
+                Remote.command: 'revert_server_jar'
+            }).execute()
+
 
     def post(self, page):
 
@@ -662,6 +747,18 @@ class AjaxHandler(BaseHandler):
                     Users.delete().where(Users.username == username).execute()
                     self.write("{} deleted".format(username))
 
+        elif page == 'save_file':
+            file_data = self.get_argument('file_contents')
+            file_path = self.get_argument("file_path")
+            try:
+                file = open(file_path, 'w')
+                file.write(file_data)
+                file.close()
+                logging.error("File {} saved with new content".format(file_path))
+            except Exception as e:
+                logging.error("Unable to save {} due to {} error".format(file_path, e))
+            self.redirect("/admin/files")
+
 
 class SetupHandler(BaseHandler):
 
@@ -724,7 +821,13 @@ class SetupHandler(BaseHandler):
                 Backups.max_backups: 7
             }).execute()
 
+            # reload the server settings
             self.mcserver.reload_settings()
+
+            # do initial setup
+            self.mcserver.do_init_setup()
+
+            # load the dashboard
             self.redirect("/admin/dashboard")
 
 
@@ -759,8 +862,8 @@ class webserver():
         logging.info("Starting Tornado HTTPS Server on port {}".format(port_number))
 
         if not silent:
-            Console.info("Starting Tornado HTTPS Server on port {}".format(port_number))
-            Console.info("https://{}:{} is up and ready for connection:".format(helper.get_local_ip(), port_number))
+            console.info("Starting Tornado HTTPS Server on port {}".format(port_number))
+            console.info("https://{}:{} is up and ready for connection:".format(helper.get_local_ip(), port_number))
 
         asyncio.set_event_loop(asyncio.new_event_loop())
 
@@ -770,10 +873,10 @@ class webserver():
 
         if not silent:
             if ip:
-                Console.info("Your public IP is: {}".format(ip))
+                console.info("Your public IP is: {}".format(ip))
 
             else:
-                Console.warning("Unable to find your public IP\nThe service might be down, or your internet is down.")
+                console.warning("Unable to find your public IP\nThe service might be down, or your internet is down.")
 
         handlers = [
             (r'/', PublicHandler, dict(mcserver=self.mc_server)),
@@ -821,3 +924,4 @@ class webserver():
         logging.info("Tornado Server Stopped")
 
 
+tornado_srv = webserver(mc_server)

@@ -3,9 +3,9 @@ import json
 import datetime
 from peewee import *
 from playhouse.shortcuts import model_to_dict, dict_to_model
-from app.classes.helpers import helpers
-
-helper = helpers()
+from playhouse.migrate import *
+from app.classes.helpers import helper
+import logging
 
 # SQLite database using WAL journal mode and 10MB cache.
 database = SqliteDatabase(helper.get_db_path(), pragmas={
@@ -16,6 +16,12 @@ database = SqliteDatabase(helper.get_db_path(), pragmas={
 class BaseModel(Model):
     class Meta:
         database = database
+
+
+class Ftp_Srv(BaseModel):
+    port = IntegerField()
+    user = CharField()
+    password = CharField()
 
 
 class Backups(BaseModel):
@@ -39,12 +45,13 @@ class Users(BaseModel):
 
 class Roles(BaseModel):
     name = CharField(unique=True)
-    svr_control = BooleanField()
-    svr_console = BooleanField()
-    logs = BooleanField()
-    backups = BooleanField()
-    schedules = BooleanField()
-    config = BooleanField()
+    svr_control = BooleanField(default=0)
+    svr_console = BooleanField(default=0)
+    logs = BooleanField(default=0)
+    backups = BooleanField(default=0)
+    schedules = BooleanField(default=0)
+    config = BooleanField(default=0)
+    files = BooleanField(default=0)
 
     class Meta:
         table_name = "roles"
@@ -68,6 +75,7 @@ class MC_settings(BaseModel):
     auto_start_delay = IntegerField()
     server_port = IntegerField(default=25565)
     server_ip = CharField(default='127.0.0.1')
+    jar_url = CharField(default='')
 
     class Meta:
         table_name = 'mc_settings'
@@ -121,25 +129,15 @@ def create_tables():
                                 Crafty_settings,
                                 Backups,
                                 Roles,
-                                Remote]
+                                Remote,
+                                Ftp_Srv]
                                )
 
 def default_settings(admin_pass):
 
-    # get minecraft settings for the server root
-    # mc_data = MC_settings.get()
-    # data = model_to_dict(mc_data)
-    # directories = [data['server_path'], ]
-    # backup_directory = json.dumps(directories)
-    #
-    # default backup settings
-    # q = Backups.insert({
-    #     Backups.directories: backup_directory,
-    #     Backups.storage_location: os.path.abspath(os.path.join(helper.crafty_root, 'backups')),
-    #     Backups.max_backups: 7
-    # })
+    from app.classes.helpers import helpers
 
-    # result = q.execute()
+    helper = helpers()
 
     Users.insert({
         Users.username: 'Admin',
@@ -165,7 +163,8 @@ def default_settings(admin_pass):
             Roles.logs: 1,
             Roles.backups: 1,
             Roles.schedules: 1,
-            Roles.config: 1
+            Roles.config: 1,
+            Roles.files: 1
         },
         {
             Roles.name: 'Staff',
@@ -175,6 +174,7 @@ def default_settings(admin_pass):
             Roles.backups: 1,
             Roles.schedules: 1,
             Roles.config: 0
+
         },
         {
             Roles.name: 'Backup',
@@ -202,11 +202,76 @@ def default_settings(admin_pass):
         Webserver.port_number: 8000,
     }).execute()
 
+    Ftp_Srv.insert({
+        Ftp_Srv.port: 2121,
+        Ftp_Srv.user: 'ftps_user',
+        Ftp_Srv.password: helper.random_string_generator(8)
+    }).execute()
+
 # this is our upgrade migration function - any new tables after 2.0 need to have
 # default settings created here if they don't already exits
-def do_database_migrations():
-    create_tables()
 
+def do_database_migrations():
+    logging.info('Upgrading Database fields as needed')
+    create_tables()
+    migrator = SqliteMigrator(database)
+
+    mc_cols = database.get_columns("MC_settings")
+    create_jar_url = True
+    for c in mc_cols:
+        if c.name == "jar_url":
+            create_jar_url = False
+
+    # create the jar url setting
+    if create_jar_url:
+        logging.info("Didn't find jar_url column in mc_settings - Creating one")
+
+        jar_url = CharField(default='')
+
+        migrate(
+            migrator.add_column("MC_settings", 'jar_url', jar_url),
+        )
+
+
+    roles_cols = database.get_columns('Roles')
+    create_files_column = True
+
+    for r in roles_cols:
+        if r.name == "files":
+            create_files_column = False
+
+    if create_files_column:
+        logging.info("Didn't find files column in roles - Creating one")
+
+        # files permission for roles table
+        files = BooleanField(default=0)
+
+        # do our migrations
+        migrate(
+            migrator.add_column("Roles", 'files', files),
+        )
+
+        logging.info("Adding files perms to Admin")
+        # give admin access to files permission
+        Roles.update({
+            Roles.files: 1
+        }).where(Roles.name == "Admin").execute()
+
+    # do we have a ftp user already?
+    ftp_user = None
+    try:
+        ftp_user = Ftp_Srv.get_by_id(1)
+    except:
+        pass
+
+    # if not, let's make one.
+    if not ftp_user:
+
+        Ftp_Srv.insert({
+            Ftp_Srv.port: 2121,
+            Ftp_Srv.user: 'ftps_user',
+            Ftp_Srv.password: helper.random_string_generator(8)
+        }).execute()
 
 
 def get_perms_for_user(user):
@@ -223,5 +288,20 @@ def get_perms_for_user(user):
             user_data['backups'] = data['backups']
             user_data['schedules'] = data['schedules']
             user_data['config'] = data['config']
+            user_data['files'] = data['files']
 
     return user_data
+
+def check_role_permission(username, section):
+    user_data = get_perms_for_user(username)
+
+    access = False
+
+    if section in user_data.keys():
+        if user_data[section]:
+            access = True
+
+    if not access:
+        logging.warning('User: {} attempted access to section {} and was denied'.format(username, section))
+
+    return access

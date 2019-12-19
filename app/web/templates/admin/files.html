@@ -1,0 +1,171 @@
+{% extends ../base.html %}
+
+{% block title %}Crafty Controller - File Management{% end %}
+
+{% block content %}
+
+<section class="content-header">
+  <h1>
+    File Management
+    <small>
+       Be careful here.
+    </small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">File Management</li>
+  </ol>
+</section>
+
+
+<section class="content">
+
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">
+                      Current Directory: {{ data['pwd'] }}
+                  </h3>
+                </div>
+                <div class="box-body">
+                  <form method="post" id="browser">
+                      {% raw xsrf_form_html() %}
+                      <input type="hidden" id="next_dir" name="next_dir" value="" />
+
+                      {% if data['parent'] %}
+                        <a onclick="sub_form('{{ data['parent'] }}')">
+                            <i class="fa fa-level-up" aria-hidden="true"></i>{{ data['parent'] }}
+                        </a>
+                        <br />
+                      {% end %}
+
+                      {% for f in data['listing'] %}
+                        {% if f['type'] == "file" %}
+                            {% if f['name'][-4:] in data['ext_list'] %}
+                            <a onclick="edit_file('{{ f['name'] }}')">
+                                <span class="text-success"><i class="fa fa-file" aria-hidden="true"></i>{{ f['name'] }}</span>
+                            </a>
+                            {% else %}
+                                <span class="text-danger"><i class="fa fa-file" aria-hidden="true"></i>{{ f['name'] }}</span>
+                            {% end %}
+                            <br />
+                        {% else %}
+                            <a onclick="sub_form('{{ f['name'] }}')">
+                                <i class="fa fa-folder" aria-hidden="true"></i> {{ f['name'] }}
+                            </a>
+                            <br />
+                        {% end %}
+                      {% end %}
+
+
+                  </form>
+                </div>
+
+              </div>
+        </div>
+        <div class="col-xs-6">
+
+            <div class="box box-solid">
+            <div class="box-header with-border">
+              <i class="fa fa-server" aria-hidden="true"></i>
+                {% if not data['ftp_running'] %}
+                    <h3 class="box-title">FTP Server Control: Server is currently
+                        <span class="text-danger">Down <i class="fa fa-thumbs-down" aria-hidden="true"></i></span></h3>
+                {% else %}
+                    <h3 class="box-title">FTP Server Control: Server is currently
+                        <span class="text-success">Up <i class="fa fa-thumbs-up" aria-hidden="true"></i></span></h3>
+                {% end %}
+
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-xs-6 text-center">
+                        <a href="/admin/commands?command=ftp_server_start"
+                           onclick="delay()"
+                            class="btn btn-app {% if data['ftp_running'] %} disabled {% end %}">
+                            <i class="fa fa-play"></i> Start FTP Server
+                        </a>
+                        <a  href="/admin/commands?command=ftp_server_stop"
+                            onclick="delay()"
+                            class="btn btn-app {% if not data['ftp_running'] %} disabled {% end %}">
+                            <i class="fa fa-stop"></i> Stop FTP Server
+                        </a>
+                    </div>
+                    <div class="col-xs-6">
+                        <b>The credentials are:</b><br />
+                        Username: {{ data['ftp_settings']['user'] }}<br />
+                        Password: {{ data['ftp_settings']['password'] }}<br />
+                        Port: {{ data['ftp_settings']['port'] }}<br />
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+    </div>
+
+
+</section>
+
+<!--
+{{ data }}
+-->
+
+
+
+
+{% end %}
+
+{% block js-script %}
+<script>
+
+    //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
+
+    function sub_form(dir){
+        $('#next_dir').val(dir);
+        document.getElementById('browser').submit();
+    }
+
+    function edit_file(file_path){
+        $.ajax({
+            type: 'GET',
+            url: '/ajax/get_file',
+            data: {
+                'file_name': file_path
+            },
+            success: function (data) {
+                console.log('Got file data from server')
+                //console.log(data)
+
+                var dialog = bootbox.dialog({
+                    title: "<h3>Editing: " + file_path + "</h3>",
+                    message: data,
+                    size:"large",
+                    closeButton: true
+                });
+
+             },
+        });
+    }
+
+    function delay(time='1-2'){
+            bootbox.alert({
+            message: "Please give the server " + time + " seconds to respond to your command",
+            backdrop: true
+        });
+    }
+
+
+</script>
+
+
+{% end %}

@@ -20,7 +20,8 @@ class MainPrompt(cmd.Cmd):
         self.mc_server_obj = mc_server_obj
 
     # overrides the default Prompt
-    prompt = "Crafty Controller {} > ".format('2.1.Alpha')
+    version_data = helper.get_version()
+    prompt = "Crafty Controller v{}.{}.{} > ".format(version_data['major'], version_data['minor'], version_data['sub'])
 
     def print_crafty_end(self):
         logging.info("***** Crafty Stopped ***** \n")
@@ -158,7 +159,7 @@ class MainPrompt(cmd.Cmd):
 
         console.info("Password for {} is now set to {}".format(user, new_pass))
 
-    def help_set_password(self):
+    def help_set_passwd(self):
         console.help("Sets a users password. Example set_password Admin. Use list_users to see defined users")
 
     def help_disable_autostart(self):
@@ -208,3 +209,31 @@ class MainPrompt(cmd.Cmd):
 
     def help_list_users(self):
         console.help("Lists all users in the Crafty Controller")
+
+    def do_check_update(self, line):
+        console.info("Getting Latest Version Info:")
+        master = helper.check_version('master')
+        beta = helper.check_version('beta')
+        snaps = helper.check_version('snapshot')
+        current = helper.get_version()
+        console.info("Master Branch has: {}.{}.{}".format(master['major'], master['minor'], master['sub']))
+        console.info("Beta Branch has: {}.{}.{}".format(beta['major'], beta['minor'], beta['sub']))
+        console.info("Snaps Branch has: {}.{}.{}".format(snaps['major'], snaps['minor'], snaps['sub']))
+        console.info("You are on Version: {}.{}.{}".format(current['major'], current['minor'], current['sub']))
+
+    def help_check_update(self):
+        console.help("Shows version information for you and what is in the repos to help you decide if you should "
+                     "update or not")
+
+    def help_update_jar(self):
+        console.help("This will automatically update your server jar. If the server is running, it will be restarted "
+                     "after the download is complete.")
+
+    def do_update_jar(self, line):
+        self.mc_server_obj.update_server_jar()
+
+    def help_revert_jar_upgrade(self):
+        console.help("This will automatically revert your server jar from the last backup copy")
+
+    def do_revert_jar_upgrade(self, line):
+        self.mc_server_obj.revert_updated_server_jar()
