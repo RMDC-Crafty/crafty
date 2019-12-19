@@ -543,6 +543,7 @@ class AdminHandler(BaseHandler):
                 context['parent'] = path.parent
 
             context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf']
+            context['ftp_running'] = ftp_svr_object.check_running()
 
             self.render(
                 template,
