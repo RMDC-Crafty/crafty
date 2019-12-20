@@ -827,6 +827,9 @@ class SetupHandler(BaseHandler):
             # do initial setup
             self.mcserver.do_init_setup()
 
+            # do FTP setup
+            ftp_svr_object.setup_ftp()
+
             # load the dashboard
             self.redirect("/admin/dashboard")
 

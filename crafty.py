@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import logging
@@ -8,14 +9,7 @@ from app.classes.logger import custom_loggers
 
 from app.classes.helpers import helper
 from app.classes.console import console
-
-from app.classes.craftycmd import MainPrompt
 from app.classes.models import *
-from app.classes.remote_coms import remote_commands
-
-from app.classes.minecraft_server import mc_server
-from app.classes.ftp import ftp_svr_object
-from app.classes.http import tornado_srv
 
 
 def do_intro():
@@ -80,16 +74,15 @@ if __name__ == '__main__':
 
     logging.info("***** Crafty Launched *****")
 
-    # is this a fresh install? (is the database there?)
-    fresh_install = helper.is_fresh_install()
-
     # announce the program
     do_intro()
 
-    # create the database
-    create_tables()
-
     admin_pass = None
+
+    # is this a fresh install?
+    fresh_install = helper.is_fresh_install()
+
+    create_tables()
 
     if fresh_install:
         # save a file in app/config/new_install so we know this is a new install
@@ -101,6 +94,13 @@ if __name__ == '__main__':
     else:
         do_database_migrations()
 
+    # only import / new database tables are created do we load the rest of the things!
+    from app.classes.ftp import ftp_svr_object
+    from app.classes.minecraft_server import mc_server
+    from app.classes.http import tornado_srv
+    from app.classes.craftycmd import MainPrompt
+    from app.classes.remote_coms import remote_commands
+
     logging.info("Starting Scheduler Daemon")
     console.info("Starting Scheduler Daemon")
 
@@ -109,9 +109,7 @@ if __name__ == '__main__':
 
     mc_server.do_init_setup()
 
-    if ftp_svr_object.last_error is not None:
-        logging.critical("Unable to load FTP server due to error: ".format(ftp_svr_object.last_error))
-        console.critical("Unable to load FTP server due to error: ".format(ftp_svr_object.last_error))
+
 
     # startup Tornado
     tornado_srv.start_web_server(True)

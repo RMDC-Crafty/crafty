@@ -44,9 +44,9 @@ class helpers:
 
         dbpath = self.get_db_path()
 
-        fresh_install = False
-
-        if not self.check_file_exists(dbpath):
+        if self.check_file_exists(dbpath):
+            fresh_install = False
+        else:
             fresh_install = True
 
         return fresh_install
