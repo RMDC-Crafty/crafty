@@ -11,6 +11,7 @@ from pexpect.popen_spawn import PopenSpawn
 from app.classes.mc_ping import ping
 from app.classes.console import console
 from app.classes.models import *
+from app.classes.ftp import ftp_svr_object
 
 
 class Minecraft_Server():
@@ -57,6 +58,7 @@ class Minecraft_Server():
             schedule.every(10).seconds.do(self.write_html_server_status)
             self.write_usage_history()
             self.reload_history_settings()
+            ftp_svr_object.setup_ftp()
 
         # lets check for orphaned servers - allows for multiple servers running
         # self.check_orphaned_server()

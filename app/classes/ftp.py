@@ -23,7 +23,7 @@ class ftp_server():
         self.ftp_server_thread = None
         self.running = False
         self.last_error = None
-        self.setup_ftp()
+        # self.setup_ftp()
 
     def setup_ftp(self):
         ftp_settings = None

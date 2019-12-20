@@ -135,9 +135,7 @@ def create_tables():
 
 def default_settings(admin_pass):
 
-    from app.classes.helpers import helpers
-
-    helper = helpers()
+    from app.classes.helpers import helper
 
     Users.insert({
         Users.username: 'Admin',
@@ -213,10 +211,11 @@ def default_settings(admin_pass):
 
 def do_database_migrations():
     logging.info('Upgrading Database fields as needed')
-    create_tables()
+
     migrator = SqliteMigrator(database)
 
     mc_cols = database.get_columns("MC_settings")
+
     create_jar_url = True
     for c in mc_cols:
         if c.name == "jar_url":
