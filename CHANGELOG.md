@@ -37,6 +37,12 @@ this fixes several webserver "hanging" bugs - (#36 - Thanks DiscoverOV)
 
 - check update function to both web gui and console 
 
+- ability to update the server jar from both console, and web interface (server up or down)
+
+- FTPS Server built in
+
+- Web GUI file editor and file manager
+
 ### Changes
 - Stop command only stops the MC server, it doesn't exit crafty (use exit command for that)
 
