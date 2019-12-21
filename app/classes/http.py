@@ -377,6 +377,9 @@ class AdminHandler(BaseHandler):
             access_data = helper.tail_file(os.path.join(helper.logs_dir, 'tornado-access.log'), 100)
             access_data.insert(0, "Lines trimmed to ~100 lines for speed sake \n ")
 
+            ftp_data = helper.tail_file(os.path.join(helper.logs_dir, 'ftp.log'), 100)
+            ftp_data.insert(0, "Lines trimmed to ~100 lines for speed sake \n ")
+
             errors = self.mcserver.search_for_errors()
             template = "admin/logs.html"
 
@@ -385,6 +388,7 @@ class AdminHandler(BaseHandler):
             context['crafty_log'] = crafty_data
             context['scheduler'] = scheduler_data
             context['access'] = access_data
+            context['ftp'] = ftp_data
 
         elif page == "files":
             if not check_role_permission(user_data['username'], 'files'):
