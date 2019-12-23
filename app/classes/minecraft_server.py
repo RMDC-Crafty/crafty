@@ -76,6 +76,10 @@ class Minecraft_Server():
         server_args = self.settings.additional_args
         server_pre_args = self.settings.pre_args
 
+        # verify server jar path is correct
+        if not helper.check_file_exists(os.path.join(self.server_path, self.server_jar)):
+            logging.critical("{} file not found!".format(os.path.join(self.server_path, self.server_jar)))
+
         # set up execute path if we have spaces, we put quotes around it for windows
         if " " in server_path:
             exec_path = '"{}"'.format(server_path)
