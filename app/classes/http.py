@@ -545,10 +545,12 @@ class AdminHandler(BaseHandler):
             ftp_data = Ftp_Srv.get()
             context['ftp_settings'] = model_to_dict(ftp_data)
 
+            mc_settings['server_path'] = str(mc_settings['server_path']).replace("\\", '/')
             if next_dir == mc_settings['server_path']:
                 context['parent'] = None
             else:
                 context['parent'] = path.parent
+                context['parent'] = str(context['parent']).replace("\\", '/')
 
             context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf']
             context['ftp_running'] = ftp_svr_object.check_running()

@@ -396,11 +396,13 @@ class helpers:
         exclude = set(root_path)
 
         files = os.listdir(root_path)
+        root_path = root_path.replace('\\', '/')
         for f in files:
             if os.path.isdir(os.path.join(root_path, f)):
-                structure.append({'type': 'dir', 'name': os.path.join(root_path, f)})
+                # structure.append({'type': 'dir', 'name': os.path.join(root_path, f)})
+                structure.append({'type': 'dir', 'name': "{}/{}".format(root_path, f)})
             else:
-                structure.append({'type': 'file', 'name': os.path.join(root_path, f)})
+                structure.append({'type': 'file', 'name': "{}/{}".format(root_path, f)})
 
         return sorted(structure, key=lambda i: i['name'])
 
