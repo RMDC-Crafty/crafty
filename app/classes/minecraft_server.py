@@ -60,9 +60,6 @@ class Minecraft_Server():
             self.reload_history_settings()
 
 
-        # lets check for orphaned servers - allows for multiple servers running
-        # self.check_orphaned_server()
-
         # if the db file exists, this isn't a fresh start
         if helper.is_setup_complete():
             self.do_auto_start()
@@ -75,10 +72,6 @@ class Minecraft_Server():
         server_min_mem = self.settings.memory_min
         server_args = self.settings.additional_args
         server_pre_args = self.settings.pre_args
-
-        # verify server jar path is correct
-        if not helper.check_file_exists(os.path.join(self.server_path, self.server_jar)):
-            logging.critical("{} file not found!".format(os.path.join(self.server_path, self.server_jar)))
 
         # set up execute path if we have spaces, we put quotes around it for windows
         if " " in server_path:

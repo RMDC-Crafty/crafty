@@ -1,6 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [v2.1.Beta]
+Version Bump. 
 
 ## [v2.1.Alpha]
 This version of Crafty will focus on new features and quality of life improvements.
