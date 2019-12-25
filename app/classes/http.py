@@ -416,21 +416,40 @@ class AdminHandler(BaseHandler):
             config_type = self.get_argument('config_type')
 
             if config_type == 'mc_settings':
+                
+                # Define as variables to eliminate multiple function calls, slowing the processing down
+                server_path = self.get_argument('server_path')
+                server_jar = self.get_argument('server_jar')
 
-                q = MC_settings.update({
-                    MC_settings.server_path: self.get_argument('server_path'),
-                    MC_settings.server_jar: self.get_argument('server_jar'),
-                    MC_settings.memory_max: self.get_argument('memory_max'),
-                    MC_settings.memory_min: self.get_argument('memory_min'),
-                    MC_settings.additional_args: self.get_argument('additional_args'),
-                    MC_settings.pre_args: self.get_argument('pre_args'),
-                    MC_settings.auto_start_server: int(self.get_argument('auto_start_server')),
-                    MC_settings.server_port: self.get_argument('server_port'),
-                    MC_settings.server_ip: self.get_argument('server_ip'),
-                }).where(MC_settings.id == 1)
+                server_path_exists = helpers.check_directory_exist(server_path)
+                
+                # Use pathlib to join specified server path and server JAR file then check if it exists
+                jar_exists = helpers.check_file_exists(os.path.join(server_path, server_jar))
+                
+                if server_path_exists and jar_exists:
+                    q = MC_settings.update({
+                        MC_settings.server_path: self.get_argument('server_path'),
+                        MC_settings.server_jar: self.get_argument('server_jar'),
+                        MC_settings.memory_max: self.get_argument('memory_max'),
+                        MC_settings.memory_min: self.get_argument('memory_min'),
+                        MC_settings.additional_args: self.get_argument('additional_args'),
+                        MC_settings.pre_args: self.get_argument('pre_args'),
+                        MC_settings.auto_start_server: int(self.get_argument('auto_start_server')),
+                        MC_settings.server_port: self.get_argument('server_port'),
+                        MC_settings.server_ip: self.get_argument('server_ip'),
+                    }).where(MC_settings.id == 1)
 
-                q.execute()
-                self.mcserver.reload_settings()
+                    q.execute()
+                    self.mcserver.reload_settings()
+                    
+                elif server_path_exists:
+                    # Redirect to "config invalid" page and log an event
+                    logging.crit('Minecraft server JAR does not exist at {}'.format(os.path.join()))
+                    self.redirect("/admin/config?invalid=True")
+                    
+                else:
+                    logging.crit('Minecraft server directory or JAR does not exist')
+                    self.redirect("/admin/config?invalid=True")
 
             elif config_type == 'crafty_settings':
                 q = Crafty_settings.update({
@@ -449,7 +468,7 @@ class AdminHandler(BaseHandler):
                 backup_storage = self.get_argument('storage_location', None)
 
                 if len(checked) == 0 or len(max_backups) == 0 or len(backup_storage) == 0:
-                    logging.info('Backup settings Invalid: Checked: {}, max_backups: {}, backup_storage: {}'
+                    logging.crit('Backup settings Invalid: Checked: {}, max_backups: {}, backup_storage: {}'
                                  .format(checked, max_backups, backup_storage))
                     self.redirect("/admin/config?invalid=True")
 
