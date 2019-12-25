@@ -444,11 +444,11 @@ class AdminHandler(BaseHandler):
                     
                 elif server_path_exists:
                     # Redirect to "config invalid" page and log an event
-                    logging.crit('Minecraft server JAR does not exist at {}'.format(os.path.join()))
+                    logging.error('Minecraft server JAR does not exist at {}'.format(os.path.join()))
                     self.redirect("/admin/config?invalid=True")
                     
                 else:
-                    logging.crit('Minecraft server directory or JAR does not exist')
+                    logging.error('Minecraft server directory or JAR does not exist')
                     self.redirect("/admin/config?invalid=True")
 
             elif config_type == 'crafty_settings':
@@ -468,7 +468,7 @@ class AdminHandler(BaseHandler):
                 backup_storage = self.get_argument('storage_location', None)
 
                 if len(checked) == 0 or len(max_backups) == 0 or len(backup_storage) == 0:
-                    logging.crit('Backup settings Invalid: Checked: {}, max_backups: {}, backup_storage: {}'
+                    logging.error('Backup settings Invalid: Checked: {}, max_backups: {}, backup_storage: {}'
                                  .format(checked, max_backups, backup_storage))
                     self.redirect("/admin/config?invalid=True")
 
