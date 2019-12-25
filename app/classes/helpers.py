@@ -100,13 +100,18 @@ class helpers:
             return False
 
     def get_public_ip(self):
-        r = requests.get('http://ipinfo.io/ip')
-        if r.text:
-            logging.info('Your Public IP is: {}'.format(r.text.strip()))
-            return r.text.strip()
-        else:
-            logging.warning("Unable to find your public IP!")
+        try:
+            r = requests.get('http://ipinfo.io/ip')
+        except:
+            logging.error("Error occured when finding Public IP, check your internet connection!", exc_info=True)
             return False
+        else:
+            if r.text:
+                logging.info('Your Public IP is: {}'.format(r.text.strip()))
+                return r.text.strip()
+            else:
+                logging.warning("Unable to find your public IP!")
+                return False
 
     def get_web_root_path(self):
         return self.webroot
