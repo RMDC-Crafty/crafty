@@ -10,3 +10,12 @@ __pycache__/
 
 #ignore logs folder
 *.log
+
+#ignore certs
+app/web/certs/
+
+#ignore temp folders
+app/web/temp/
+
+#ignore generated databases 
+app/config/crafty.*

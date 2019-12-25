@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import time
 import asyncio
@@ -472,38 +473,39 @@ class AdminHandler(BaseHandler):
 
             if config_type == 'mc_settings':
 
-                q = MC_settings.update({
-                    MC_settings.server_path: self.get_argument('server_path'),
-                    MC_settings.server_jar: self.get_argument('server_jar'),
-                    MC_settings.memory_max: self.get_argument('memory_max'),
-                    MC_settings.memory_min: self.get_argument('memory_min'),
-                    MC_settings.additional_args: self.get_argument('additional_args'),
-                    MC_settings.pre_args: self.get_argument('pre_args'),
-                    MC_settings.auto_start_server: int(self.get_argument('auto_start_server')),
-                    MC_settings.server_port: self.get_argument('server_port'),
-                    MC_settings.server_ip: self.get_argument('server_ip'),
-                    MC_settings.jar_url: self.get_argument('jar_url'),
-                }).where(MC_settings.id == 1)
+                # Define as variables to eliminate multiple function calls, slowing the processing down
+                server_path = self.get_argument('server_path')
+                server_jar = self.get_argument('server_jar')
 
-                q.execute()
-                self.mcserver.reload_settings()
+                server_path_exists = helper.check_directory_exist(server_path)
+                
+                # Use pathlib to join specified server path and server JAR file then check if it exists
+                jar_exists = helper.check_file_exists(os.path.join(server_path, server_jar))
+                
+                if server_path_exists and jar_exists:
+                    q = MC_settings.update({
+                        MC_settings.server_path: self.get_argument('server_path'),
+                        MC_settings.server_jar: self.get_argument('server_jar'),
+                        MC_settings.memory_max: self.get_argument('memory_max'),
+                        MC_settings.memory_min: self.get_argument('memory_min'),
+                        MC_settings.additional_args: self.get_argument('additional_args'),
+                        MC_settings.pre_args: self.get_argument('pre_args'),
+                        MC_settings.auto_start_server: int(self.get_argument('auto_start_server')),
+                        MC_settings.server_port: self.get_argument('server_port'),
+                        MC_settings.server_ip: self.get_argument('server_ip'),
+                    }).where(MC_settings.id == 1)
 
-            elif config_type == 'crafty_settings':
-                q = Crafty_settings.update({
-                    Crafty_settings.history_interval: self.get_argument('historical_interval'),
-                    Crafty_settings.history_max_age: self.get_argument('history_max_age'),
-                }).where(Crafty_settings.id == 1)
-
-                q.execute()
-
-                q = Webserver.update({
-                    Webserver.port_number: self.get_argument('port_number')
-                })
-
-                q.execute()
-
-                # reload the history settings
-                self.mcserver.reload_history_settings()
+                    q.execute()
+                    self.mcserver.reload_settings()
+                    
+                elif server_path_exists:
+                    # Redirect to "config invalid" page and log an event
+                    logging.error('Minecraft server JAR does not exist at {}'.format(server_path))
+                    self.redirect("/admin/config?invalid=True")
+                    
+                else:
+                    logging.error('Minecraft server directory or JAR does not exist')
+                    self.redirect("/admin/config?invalid=True")
 
             elif config_type == 'backup_settings':
                 checked = self.get_arguments('backup', False)
@@ -511,7 +513,7 @@ class AdminHandler(BaseHandler):
                 backup_storage = self.get_argument('storage_location', None)
 
                 if len(checked) == 0 or len(max_backups) == 0 or len(backup_storage) == 0:
-                    logging.info('Backup settings Invalid: Checked: {}, max_backups: {}, backup_storage: {}'
+                    logging.error('Backup settings Invalid: Checked: {}, max_backups: {}, backup_storage: {}'
                                  .format(checked, max_backups, backup_storage))
                     self.redirect("/admin/config?invalid=True")
 
@@ -846,6 +848,29 @@ class webserver():
         self.mc_server = mc_server
         self.ioloop = None
         self.HTTPServer = None
+        
+    def _asyncio_patch(self):
+        """
+        As of Python 3.8 (on Windows), the asyncio default event handler has changed to "proactor", 
+        where tornado expects the "selector" handler.
+        
+        This function checks if the platform is windows and changes the event handler to suit.
+        
+        (Taken from https://github.com/mkdocs/mkdocs/commit/cf2b136d4257787c0de51eba2d9e30ded5245b31)
+        """
+        logging.debug("Checking if asyncio patch is required")
+        if sys.platform.startswith("win") and sys.version_info >= (3, 8):
+            import asyncio
+            try:
+                from asyncio import WindowsSelectorEventLoopPolicy
+            except ImportError:
+                logging.debug("asyncio patch isn't required")
+                pass  # Can't assign a policy which doesn't exist.
+            else:
+                if not isinstance(asyncio.get_event_loop_policy(), WindowsSelectorEventLoopPolicy):
+                    asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
+                    logging.debug("Applied asyncio patch")
+
 
     def log_function(self, handler):
 
