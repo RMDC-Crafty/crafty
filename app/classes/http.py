@@ -885,6 +885,9 @@ class webserver():
 
     def run_tornado(self, silent=False):
 
+        # First, patch asyncio if needed
+        self._asyncio_patch()
+        
         # let's verify we have an SSL cert
         helper.create_self_signed_cert()
 
