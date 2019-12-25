@@ -8,6 +8,7 @@ import schedule
 import zipfile
 import yaml
 from datetime import datetime
+import sys
 
 from OpenSSL import crypto, SSL
 from socket import gethostname

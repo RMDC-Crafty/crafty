@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import time
 import asyncio
@@ -421,10 +422,10 @@ class AdminHandler(BaseHandler):
                 server_path = self.get_argument('server_path')
                 server_jar = self.get_argument('server_jar')
 
-                server_path_exists = helpers.check_directory_exist(server_path)
+                server_path_exists = helper.check_directory_exist(server_path)
                 
                 # Use pathlib to join specified server path and server JAR file then check if it exists
-                jar_exists = helpers.check_file_exists(os.path.join(server_path, server_jar))
+                jar_exists = helper.check_file_exists(os.path.join(server_path, server_jar))
                 
                 if server_path_exists and jar_exists:
                     q = MC_settings.update({
@@ -444,7 +445,7 @@ class AdminHandler(BaseHandler):
                     
                 elif server_path_exists:
                     # Redirect to "config invalid" page and log an event
-                    logging.error('Minecraft server JAR does not exist at {}'.format(os.path.join()))
+                    logging.error('Minecraft server JAR does not exist at {}'.format(server_path))
                     self.redirect("/admin/config?invalid=True")
                     
                 else:
@@ -643,6 +644,28 @@ class webserver():
 
     def __init__(self, mc_server):
         self.mc_server = mc_server
+    
+    def _asyncio_patch(self):
+        """
+        As of Python 3.8 (on Windows), the asyncio default event handler has changed to "proactor", 
+        where tornado expects the "selector" handler.
+        
+        This function checks if the platform is windows and changes the event handler to suit.
+        
+        (Taken from https://github.com/mkdocs/mkdocs/commit/cf2b136d4257787c0de51eba2d9e30ded5245b31)
+        """
+        logging.debug("Checking if asyncio patch is required")
+        if sys.platform.startswith("win") and sys.version_info >= (3, 8):
+            import asyncio
+            try:
+                from asyncio import WindowsSelectorEventLoopPolicy
+            except ImportError:
+                logging.debug("asyncio patch isn't required")
+                pass  # Can't assign a policy which doesn't exist.
+            else:
+                if not isinstance(asyncio.get_event_loop_policy(), WindowsSelectorEventLoopPolicy):
+                    asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
+                    logging.debug("Applied asyncio patch")
 
     def log_function(self, handler):
 
@@ -665,6 +688,8 @@ class webserver():
         port_number = websettings.port_number
         web_root = helper.get_web_root_path()
 
+        self._asyncio_patch()
+        
         logging.info("Starting Tornado HTTPS Server on port {}".format(port_number))
         Console.info("Starting Tornado HTTPS Server on port {}".format(port_number))
         Console.info("https://serverip:{} is up and ready for connection:".format(port_number))
