@@ -103,7 +103,7 @@ class helpers:
         try:
             r = requests.get('http://ipinfo.io/ip')
         except:
-            logging.error("Error occured when finding Public IP, check your internet connection!", exc_info=True)
+            logging.error("Error occured when finding Public IP, check your internet connection!")
             return False
         else:
             if r.text:
