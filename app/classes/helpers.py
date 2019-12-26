@@ -170,7 +170,7 @@ class helpers:
 
     def get_public_ip(self):
         try:
-            r = requests.get('http://ipinfo.io/ip')
+            r = requests.get('http://ipinfo.io/ip', timeout=5) 
         except:
             logging.error("Error occured when finding Public IP, check your internet connection!")
             return False
