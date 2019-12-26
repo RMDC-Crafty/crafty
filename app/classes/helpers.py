@@ -170,18 +170,18 @@ class helpers:
 
     def get_public_ip(self):
         try:
-            r = requests.get('http://ipinfo.io/ip', timeout=2)
-        except Exception as e:
-            logging.error("Error found while trying to get public IP: {}".format(e))
-            console.error("Error found while trying to get public IP: {}".format(e))
+            r = requests.get('http://ipinfo.io/ip', timeout=5) 
+        except:
+            logging.error("Error occured when finding Public IP, check your internet connection!")
             return False
-
-        if r.text:
-            logging.info('Your Public IP is: {}'.format(r.text.strip()))
-            return r.text.strip()
         else:
-            logging.warning("Unable to find your public IP!")
-            return False
+            if r.text:
+                logging.info('Your Public IP is: {}'.format(r.text.strip()))
+                return r.text.strip()
+            else:
+                logging.warning("Unable to find your public IP!")
+                return False
+
 
     def get_web_root_path(self):
         return self.webroot
