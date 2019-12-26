@@ -28,6 +28,7 @@ class Minecraft_Server():
         self.server_thread = None
         self.settings = None
         self.updating = False
+        self.jar_exists = False
 
     def reload_settings(self):
         logging.info("Reloading MC Settings from the DB")
@@ -87,6 +88,7 @@ class Minecraft_Server():
                                                                             server_exec_path,
                                                                             server_args)
         self.server_path = server_path
+        self.jar_exists = helper.check_file_exists(os.path.join(server_path, server_jar))
 
     def run_threaded_server(self):
         # start the server
@@ -101,6 +103,10 @@ class Minecraft_Server():
 
         if self.check_running():
             console.warning("Minecraft Server already running...")
+            return False
+        
+        if not self.jar_exists:
+            console.warning("Minecraft server JAR does not exist...")
             return False
 
         logging.info("Launching Minecraft server with command: {}".format(self.server_command))
@@ -181,6 +187,9 @@ class Minecraft_Server():
     def check_running(self):
         # if process is None, we never tried to start
         if self.PID is None:
+            return False
+        
+        if not self.jar_exists:
             return False
 
         else:
