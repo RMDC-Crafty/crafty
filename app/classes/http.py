@@ -484,8 +484,8 @@ class AdminHandler(BaseHandler):
                 
                 if server_path_exists and jar_exists:
                     q = MC_settings.update({
-                        MC_settings.server_path: self.get_argument('server_path'),
-                        MC_settings.server_jar: self.get_argument('server_jar'),
+                        MC_settings.server_path: server_path,
+                        MC_settings.server_jar: server_jar ,
                         MC_settings.memory_max: self.get_argument('memory_max'),
                         MC_settings.memory_min: self.get_argument('memory_min'),
                         MC_settings.additional_args: self.get_argument('additional_args'),
