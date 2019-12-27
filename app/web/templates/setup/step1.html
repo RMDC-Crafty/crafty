@@ -37,11 +37,19 @@
   <!-- /.login-logo -->
   <div class="login-box-body">
     <p class="login-box-msg">
-      <b>4 Questions and a checkbox until you're done</b>
+      <b>5 Questions and a checkbox until you're done</b>
 
     </p>
 
     <form action="/setup/step1" method="post">
+
+      <div class="form-group has-feedback">
+        <label>
+          Server Name - <small>Example Survival Server</small>
+        </label>
+        <input type="text" class="form-control" placeholder="Server Name" name="server_name" value="MyFirstServer">
+        <span class="glyphicon glyphicon-file form-control-feedback"></span>
+      </div>
 
       <div class="form-group has-feedback">
         {% if data['is_windows'] %}
@@ -83,8 +91,6 @@
         <input type="number" class="form-control" placeholder="Server Jar" name="min_mem" value="1024">
       </div>
 
-
-
       <div class="form-group has-feedback">
         <label>
           Auto Start Server after 10 Seconds:
@@ -93,9 +99,6 @@
         </label>
 
       </div>
-
-
-
 
       <div class="row">
         <div class="col-xs-6">
@@ -108,6 +111,7 @@
         <!-- /.col -->
       </div>
         {% raw xsrf_form_html() %}
+
     </form>
     <br />
 

@@ -221,6 +221,19 @@
                             </div>
 
                             <div class="box-body">
+
+                                <div class="form-group">
+                                    <label>
+                                        Server Name <br />
+                                        <small>What do you call this server? (example: CraftySurvival)</small>
+                                    </label>
+                                    <input type="text"
+                                           name="server_name" id="server_name"
+                                           class="form-control" placeholder="Server Name"
+                                           value="{{ data['mc_settings']['server_name'] }}"
+                                    />
+                                </div>
+
                                 <div class="form-group">
                                     <label>
                                         Server Path <br />
@@ -342,6 +355,18 @@
                                            name="auto_start_delay" id="auto_start_delay"
                                            class="form-control" placeholder="Autostart Delay"
                                            value="{{ data['mc_settings']['auto_start_delay'] }}"
+                                    />
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        Auto Start Priority<br />
+                                        <small>Order in which this server should be started - lower numbers are started first</small>
+                                    </label>
+                                    <input type="number"
+                                           name="auto_start_priority" id="auto_start_priority"
+                                           class="form-control" placeholder="Autostart Priority"
+                                           value="{{ data['mc_settings']['auto_start_priority'] }}"
                                     />
                                 </div>
 

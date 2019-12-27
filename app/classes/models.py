@@ -66,6 +66,7 @@ class Remote(BaseModel):
 
 
 class MC_settings(BaseModel):
+    server_name = CharField(unique=True)
     server_path = CharField()
     server_jar = CharField()
     memory_max = CharField()
@@ -74,6 +75,7 @@ class MC_settings(BaseModel):
     pre_args = CharField(default='')
     auto_start_server = BooleanField()
     auto_start_delay = IntegerField()
+    auto_start_priority = IntegerField()
     server_port = IntegerField(default=25565)
     server_ip = CharField(default='127.0.0.1')
     jar_url = CharField(default='')
