@@ -493,6 +493,7 @@ class AdminHandler(BaseHandler):
                         MC_settings.auto_start_server: int(self.get_argument('auto_start_server')),
                         MC_settings.server_port: self.get_argument('server_port'),
                         MC_settings.server_ip: self.get_argument('server_ip'),
+                        MC_settings.jar_url: self.get_argument('jar_url'),
                     }).where(MC_settings.id == 1)
 
                     q.execute()

@@ -216,61 +216,6 @@ def do_database_migrations():
 
     mc_cols = database.get_columns("MC_settings")
 
-    create_jar_url = True
-    for c in mc_cols:
-        if c.name == "jar_url":
-            create_jar_url = False
-
-    # create the jar url setting
-    if create_jar_url:
-        logging.info("Didn't find jar_url column in mc_settings - Creating one")
-
-        jar_url = CharField(default='')
-
-        migrate(
-            migrator.add_column("MC_settings", 'jar_url', jar_url),
-        )
-
-
-    roles_cols = database.get_columns('Roles')
-    create_files_column = True
-
-    for r in roles_cols:
-        if r.name == "files":
-            create_files_column = False
-
-    if create_files_column:
-        logging.info("Didn't find files column in roles - Creating one")
-
-        # files permission for roles table
-        files = BooleanField(default=0)
-
-        # do our migrations
-        migrate(
-            migrator.add_column("Roles", 'files', files),
-        )
-
-        logging.info("Adding files perms to Admin")
-        # give admin access to files permission
-        Roles.update({
-            Roles.files: 1
-        }).where(Roles.name == "Admin").execute()
-
-    # do we have a ftp user already?
-    ftp_user = None
-    try:
-        ftp_user = Ftp_Srv.get_by_id(1)
-    except:
-        pass
-
-    # if not, let's make one.
-    if not ftp_user:
-
-        Ftp_Srv.insert({
-            Ftp_Srv.port: 2121,
-            Ftp_Srv.user: 'ftps_user',
-            Ftp_Srv.password: helper.random_string_generator(8)
-        }).execute()
 
 
 def get_perms_for_user(user):

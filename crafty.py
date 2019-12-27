@@ -56,8 +56,10 @@ if __name__ == '__main__':
     # make sure our web temp directory is there
     helper.ensure_dir_exists(os.path.join(os.path.curdir, "app", 'web', 'temp'))
 
+    # sets up our custom logging
     custom_loggers.setup_logging()
 
+    # checking for additional arguments such as -k
     arg_length = len(sys.argv) - 1
 
     if arg_length == 1:
@@ -82,6 +84,7 @@ if __name__ == '__main__':
     # is this a fresh install?
     fresh_install = helper.is_fresh_install()
 
+    # creates the database tables / sqlite database file
     create_tables()
 
     if fresh_install:
