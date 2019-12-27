@@ -7,8 +7,9 @@ import schedule
 import threading
 import logging.config
 
+from app.classes.console import console
 
-def setup_logging():
+def setup_logging(debug=False):
     logging_config_file = os.path.join(os.path.curdir, 'app', 'config', 'logging.json')
 
     if os.path.exists(logging_config_file):
@@ -16,6 +17,8 @@ def setup_logging():
         # open our logging config file
         with open(logging_config_file, 'rt') as f:
             logging_config = json.load(f)
+            if debug:
+                logging_config['loggers']['']['level'] = 'DEBUG'
             logging.config.dictConfig(logging_config)
     else:
         logging.basicConfig(level=logging.DEBUG)
@@ -53,6 +56,7 @@ def send_kill_command():
     time.sleep(2)
     sys.exit(0)
 
+
 if __name__ == '__main__':
     """ Our Main Starter """
     log_file = os.path.join(os.path.curdir, 'logs', 'crafty.log')
@@ -67,21 +71,7 @@ if __name__ == '__main__':
     # ensure the log file is there
     open(log_file, 'a').close()
 
-    # sets up our custom logger
-    setup_logging()
-
-    # setting up the logger object
-    logger = logging.getLogger(__name__)
-
-    # now that logging is setup - let's import the rest of the things we need to run
-    from app.classes.helpers import helper
-    from app.classes.console import console
-
-    # doing a more focused import here, because * imports can be a little crazy.
-    from app.classes.models import peewee, Users, MC_settings, Webserver, Schedules, History, Crafty_settings, Backups, Roles, Remote, Ftp_Srv
-
-    # make sure our web temp directory is there
-    helper.ensure_dir_exists(os.path.join(os.path.curdir, "app", 'web', 'temp'))
+    debug_logging_enabled = False
 
     # checking for additional arguments such as -k
     arg_length = len(sys.argv) - 1
@@ -92,13 +82,30 @@ if __name__ == '__main__':
         if argument == '-k':
             console.info("Sending Shutdown Command")
             send_kill_command()
+        elif argument == '-d':
+            debug_logging_enabled = True
         else:
             show_help()
 
     elif arg_length > 1:
         show_help()
 
-    logger.info("***** Crafty Launched *****")
+    # sets up our logger
+    setup_logging(debug_logging_enabled)
+
+    # setting up the logger object
+    logger = logging.getLogger(__name__)
+
+    # now that logging is setup - let's import the rest of the things we need to run
+    from app.classes.helpers import helper
+
+    # doing a more focused import here, because * imports can be a little crazy.
+    from app.classes.models import peewee, Users, MC_settings, Webserver, Schedules, History, Crafty_settings, Backups, Roles, Remote, Ftp_Srv
+
+    # make sure our web temp directory is there
+    helper.ensure_dir_exists(os.path.join(os.path.curdir, "app", 'web', 'temp'))
+
+    logger.info("***** Crafty Launched: Debugging:{} *****".format(debug_logging_enabled))
 
     # announce the program
     do_intro()
