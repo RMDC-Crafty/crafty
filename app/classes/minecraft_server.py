@@ -13,6 +13,7 @@ from app.classes.console import console
 from app.classes.models import *
 from app.classes.ftp import ftp_svr_object
 
+logger = logging.getLogger(__name__)
 
 class Minecraft_Server():
 

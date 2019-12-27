@@ -2,6 +2,8 @@ import time
 from app.classes.models import *
 from app.classes.ftp import ftp_svr_object
 
+logger = logging.getLogger(__name__)
+
 class remote_commands():
 
     def __init__(self, mc_server_obj, tornado_obj):

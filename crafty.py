@@ -53,7 +53,6 @@ def send_kill_command():
     time.sleep(2)
     sys.exit(0)
 
-
 if __name__ == '__main__':
     """ Our Main Starter """
     log_file = os.path.join(os.path.curdir, 'logs', 'crafty.log')
@@ -71,12 +70,15 @@ if __name__ == '__main__':
     # sets up our custom logger
     setup_logging()
 
+    # setting up the logger object
     logger = logging.getLogger(__name__)
 
     # now that logging is setup - let's import the rest of the things we need to run
     from app.classes.helpers import helper
     from app.classes.console import console
-    from app.classes.models import *
+
+    # doing a more focused import here, because * imports can be a little crazy.
+    from app.classes.models import peewee, Users, MC_settings, Webserver, Schedules, History, Crafty_settings, Backups, Roles, Remote, Ftp_Srv
 
     # make sure our web temp directory is there
     helper.ensure_dir_exists(os.path.join(os.path.curdir, "app", 'web', 'temp'))
@@ -107,17 +109,17 @@ if __name__ == '__main__':
     fresh_install = helper.is_fresh_install()
 
     # creates the database tables / sqlite database file
-    create_tables()
+    peewee.create_tables()
 
     if fresh_install:
         # save a file in app/config/new_install so we know this is a new install
         helper.make_new_install_file()
 
         admin_pass = helper.random_string_generator()
-        default_settings(admin_pass)
+        peewee.default_settings(admin_pass)
 
     else:
-        do_database_migrations()
+        peewee.do_database_migrations()
 
     # only import / new database tables are created do we load the rest of the things!
     from app.classes.ftp import ftp_svr_object

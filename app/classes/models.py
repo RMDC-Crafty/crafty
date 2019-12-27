@@ -14,7 +14,6 @@ database = SqliteDatabase(helper.get_db_path(), pragmas={
 
 logger = logging.getLogger(__name__)
 
-
 class BaseModel(Model):
     class Meta:
         database = database
@@ -111,6 +110,7 @@ class Schedules(BaseModel):
     class Meta:
         table_name = 'schedules'
 
+
 class History(BaseModel):
     id = IntegerField(unique=True, primary_key=True)
     time = DateTimeField(default=datetime.datetime.now)
@@ -121,103 +121,104 @@ class History(BaseModel):
     class Meta:
         table_name = 'history'
 
-def create_tables():
-    with database:
-        database.create_tables([Users,
-                                MC_settings,
-                                Webserver,
-                                Schedules,
-                                History,
-                                Crafty_settings,
-                                Backups,
-                                Roles,
-                                Remote,
-                                Ftp_Srv]
-                               )
+class sqlhelper():
 
-def default_settings(admin_pass):
 
-    from app.classes.helpers import helper
+    def create_tables(self):
+        with database:
+            database.create_tables([Users,
+                                    MC_settings,
+                                    Webserver,
+                                    Schedules,
+                                    History,
+                                    Crafty_settings,
+                                    Backups,
+                                    Roles,
+                                    Remote,
+                                    Ftp_Srv]
+                                   )
 
-    Users.insert({
-        Users.username: 'Admin',
-        Users.password: helper.encode_pass(admin_pass),
-        Users.role: 'Admin',
-        Users.enabled: True
-    }).execute()
+    def default_settings(self, admin_pass):
 
-    # default crafty_settings
-    q = Crafty_settings.insert({
-        Crafty_settings.history_interval: 60,
-        Crafty_settings.history_max_age: 2,
-    })
+        from app.classes.helpers import helper
 
-    result = q.execute()
+        Users.insert({
+            Users.username: 'Admin',
+            Users.password: helper.encode_pass(admin_pass),
+            Users.role: 'Admin',
+            Users.enabled: True
+        }).execute()
 
-    # default roles
-    perms_insert = [
-        {
-            Roles.name: 'Admin',
-            Roles.svr_control: 1,
-            Roles.svr_console: 1,
-            Roles.logs: 1,
-            Roles.backups: 1,
-            Roles.schedules: 1,
-            Roles.config: 1,
-            Roles.files: 1
-        },
-        {
-            Roles.name: 'Staff',
-            Roles.svr_control: 0,
-            Roles.svr_console: 0,
-            Roles.logs: 1,
-            Roles.backups: 1,
-            Roles.schedules: 1,
-            Roles.config: 0
+        # default crafty_settings
+        q = Crafty_settings.insert({
+            Crafty_settings.history_interval: 60,
+            Crafty_settings.history_max_age: 2,
+        })
 
-        },
-        {
-            Roles.name: 'Backup',
-            Roles.svr_control: 0,
-            Roles.svr_console: 0,
-            Roles.logs: 1,
-            Roles.backups: 1,
-            Roles.schedules: 0,
-            Roles.config: 0
-        },
-        {
-            Roles.name: 'Mod',
-            Roles.svr_control: 0,
-            Roles.svr_console: 0,
-            Roles.logs: 1,
-            Roles.backups: 0,
-            Roles.schedules: 0,
-            Roles.config: 0
-        }
-    ]
+        result = q.execute()
 
-    Roles.insert_many(perms_insert).execute()
+        # default roles
+        perms_insert = [
+            {
+                Roles.name: 'Admin',
+                Roles.svr_control: 1,
+                Roles.svr_console: 1,
+                Roles.logs: 1,
+                Roles.backups: 1,
+                Roles.schedules: 1,
+                Roles.config: 1,
+                Roles.files: 1
+            },
+            {
+                Roles.name: 'Staff',
+                Roles.svr_control: 0,
+                Roles.svr_console: 0,
+                Roles.logs: 1,
+                Roles.backups: 1,
+                Roles.schedules: 1,
+                Roles.config: 0
 
-    Webserver.insert({
-        Webserver.port_number: 8000,
-    }).execute()
+            },
+            {
+                Roles.name: 'Backup',
+                Roles.svr_control: 0,
+                Roles.svr_console: 0,
+                Roles.logs: 1,
+                Roles.backups: 1,
+                Roles.schedules: 0,
+                Roles.config: 0
+            },
+            {
+                Roles.name: 'Mod',
+                Roles.svr_control: 0,
+                Roles.svr_console: 0,
+                Roles.logs: 1,
+                Roles.backups: 0,
+                Roles.schedules: 0,
+                Roles.config: 0
+            }
+        ]
 
-    Ftp_Srv.insert({
-        Ftp_Srv.port: 2121,
-        Ftp_Srv.user: 'ftps_user',
-        Ftp_Srv.password: helper.random_string_generator(8)
-    }).execute()
+        Roles.insert_many(perms_insert).execute()
 
-# this is our upgrade migration function - any new tables after 2.0 need to have
-# default settings created here if they don't already exits
+        Webserver.insert({
+            Webserver.port_number: 8000,
+        }).execute()
 
-def do_database_migrations():
-    logger.info('Upgrading Database fields as needed')
+        Ftp_Srv.insert({
+            Ftp_Srv.port: 2121,
+            Ftp_Srv.user: 'ftps_user',
+            Ftp_Srv.password: helper.random_string_generator(8)
+        }).execute()
 
-    migrator = SqliteMigrator(database)
+    # this is our upgrade migration function - any new tables after 2.0 need to have
+    # default settings created here if they don't already exits
 
-    mc_cols = database.get_columns("MC_settings")
+    def do_database_migrations(self):
 
+        migrator = SqliteMigrator(database)
+
+        mc_cols = database.get_columns("MC_settings")
 
 
 def get_perms_for_user(user):
@@ -238,6 +239,7 @@ def get_perms_for_user(user):
 
     return user_data
 
+
 def check_role_permission(username, section):
     user_data = get_perms_for_user(username)
 
@@ -251,3 +253,5 @@ def check_role_permission(username, section):
         logger.warning('User: {} attempted access to section {} and was denied'.format(username, section))
 
     return access
+
+peewee = sqlhelper()

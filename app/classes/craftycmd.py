@@ -10,6 +10,7 @@ from app.classes.models import *
 
 helper = helpers()
 console = Console()
+logger = logging.getLogger(__name__)
 
 class MainPrompt(cmd.Cmd):
     """ The main command class - loads the other modules/prompts """

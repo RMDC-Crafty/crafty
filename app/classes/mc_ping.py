@@ -8,6 +8,8 @@ import logging.config
 # credit to https://gist.github.com/Lonami - https://gist.github.com/Lonami/b09fc1abb471fd0b8b5483d54f737ea0
 # slightly modified for Crafty
 
+logger = logging.getLogger(__name__)
+
 class Server:
     def __init__(self, data):
         self.description = data.get('description')

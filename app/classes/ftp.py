@@ -11,6 +11,8 @@ from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import TLS_FTPHandler
 from pyftpdlib.servers import ThreadedFTPServer
 
+logger = logging.getLogger(__name__)
+
 
 class ftp_server():
 

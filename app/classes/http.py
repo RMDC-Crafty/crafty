@@ -22,6 +22,8 @@ from app.classes.models import *
 from app.classes.ftp import ftp_svr_object
 from app.classes.minecraft_server import mc_server
 
+logger = logging.getLogger(__name__)
+
 class BaseHandler(tornado.web.RequestHandler):
     # tornado.locale.set_default_locale('es_ES')
     # tornado.locale.set_default_locale('de_DE')
