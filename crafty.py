@@ -1,16 +1,25 @@
 import os
 import sys
 import time
+import json
 import logging
 import schedule
 import threading
+import logging.config
 
-from app.classes.logger import custom_loggers
 
-from app.classes.helpers import helper
-from app.classes.console import console
-from app.classes.models import *
+def setup_logging():
+    logging_config_file = os.path.join(os.path.curdir, 'app', 'config', 'logging.json')
 
+    if os.path.exists(logging_config_file):
+
+        # open our logging config file
+        with open(logging_config_file, 'rt') as f:
+            logging_config = json.load(f)
+            logging.config.dictConfig(logging_config)
+    else:
+        logging.basicConfig(level=logging.DEBUG)
+        logging.warning("Unable to read logging config from {} - falling to default mode".format(logging_config_file))
 
 def do_intro():
     version_data = helper.get_version()
@@ -38,7 +47,6 @@ def start_scheduler():
 
 
 def send_kill_command():
-    logging.info("Sending Stop Command To Crafty")
     Remote.insert({
         Remote.command: 'exit_crafty'
     }).execute()
@@ -49,15 +57,29 @@ def send_kill_command():
 if __name__ == '__main__':
     """ Our Main Starter """
     log_file = os.path.join(os.path.curdir, 'logs', 'crafty.log')
-    if not helper.check_file_exists(log_file):
-        helper.ensure_dir_exists(os.path.join(os.path.curdir, 'logs'))
-        open(log_file, 'a').close()
+
+    # ensure the log directory is there
+    try:
+        os.makedirs(os.path.join(os.path.curdir, 'logs'))
+
+    except Exception as e:
+        pass
+
+    # ensure the log file is there
+    open(log_file, 'a').close()
+
+    # sets up our custom logger
+    setup_logging()
+
+    logger = logging.getLogger(__name__)
+
+    # now that logging is setup - let's import the rest of the things we need to run
+    from app.classes.helpers import helper
+    from app.classes.console import console
+    from app.classes.models import *
 
     # make sure our web temp directory is there
     helper.ensure_dir_exists(os.path.join(os.path.curdir, "app", 'web', 'temp'))
-
-    # sets up our custom logging
-    custom_loggers.setup_logging()
 
     # checking for additional arguments such as -k
     arg_length = len(sys.argv) - 1
@@ -74,7 +96,7 @@ if __name__ == '__main__':
     elif arg_length > 1:
         show_help()
 
-    logging.info("***** Crafty Launched *****")
+    logger.info("***** Crafty Launched *****")
 
     # announce the program
     do_intro()
@@ -104,7 +126,7 @@ if __name__ == '__main__':
     from app.classes.craftycmd import MainPrompt
     from app.classes.remote_coms import remote_commands
 
-    logging.info("Starting Scheduler Daemon")
+    logger.info("Starting Scheduler Daemon")
     console.info("Starting Scheduler Daemon")
 
     scheduler = threading.Thread(name='Scheduler', target=start_scheduler, daemon=True)

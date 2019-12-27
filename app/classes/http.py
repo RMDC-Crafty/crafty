@@ -22,8 +22,6 @@ from app.classes.models import *
 from app.classes.ftp import ftp_svr_object
 from app.classes.minecraft_server import mc_server
 
-
-
 class BaseHandler(tornado.web.RequestHandler):
     # tornado.locale.set_default_locale('es_ES')
     # tornado.locale.set_default_locale('de_DE')
@@ -110,7 +108,7 @@ class PublicHandler(BaseHandler):
                 server_data = json.load(f)
             return server_data
         else:
-            logging.warning("Unable to find server_data file for dashboard: {}".format(server_file))
+            logger.warning("Unable to find server_data file for dashboard: {}".format(server_file))
             fake_data = {
                 "server_description": "Unable To Connect",
                 "server_running": False,
@@ -207,16 +205,16 @@ class AdminHandler(BaseHandler):
             if not check_role_permission(user_data['username'], 'schedules'):
                 self.redirect('/admin/unauthorized')
 
-            logging.info("Reloading Scheduled Tasks")
+            logger.info("Reloading Scheduled Tasks")
 
             db_data = Schedules.select()
 
             # clear all user jobs
             schedule.clear('user')
 
-            logging.info("Deleting all old tasks")
+            logger.info("Deleting all old tasks")
 
-            logging.info("There are {} scheduled jobs to parse:".format(len(db_data)))
+            logger.info("There are {} scheduled jobs to parse:".format(len(db_data)))
 
             # loop through the tasks in the db
             for task in db_data:
@@ -501,11 +499,11 @@ class AdminHandler(BaseHandler):
                     
                 elif server_path_exists:
                     # Redirect to "config invalid" page and log an event
-                    logging.error('Minecraft server JAR does not exist at {}'.format(server_path))
+                    logger.error('Minecraft server JAR does not exist at {}'.format(server_path))
                     self.redirect("/admin/config?invalid=True")
                     
                 else:
-                    logging.error('Minecraft server directory or JAR does not exist')
+                    logger.error('Minecraft server directory or JAR does not exist')
                     self.redirect("/admin/config?invalid=True")
 
             elif config_type == 'backup_settings':
@@ -514,12 +512,12 @@ class AdminHandler(BaseHandler):
                 backup_storage = self.get_argument('storage_location', None)
 
                 if len(checked) == 0 or len(max_backups) == 0 or len(backup_storage) == 0:
-                    logging.error('Backup settings Invalid: Checked: {}, max_backups: {}, backup_storage: {}'
+                    logger.error('Backup settings Invalid: Checked: {}, max_backups: {}, backup_storage: {}'
                                  .format(checked, max_backups, backup_storage))
                     self.redirect("/admin/config?invalid=True")
 
                 else:
-                    logging.info("Backup directories set to: {}".format(checked))
+                    logger.info("Backup directories set to: {}".format(checked))
                     json_dirs = json.dumps(list(checked))
                     Backups.update(
                         {
@@ -572,7 +570,7 @@ class AdminHandler(BaseHandler):
                 server_data = json.load(f)
             return server_data
         else:
-            logging.warning("Unable to find server_data file for dashboard: {}".format(server_file))
+            logger.warning("Unable to find server_data file for dashboard: {}".format(server_file))
             return False
 
 
@@ -669,7 +667,7 @@ class AjaxHandler(BaseHandler):
             id_to_del = self.get_body_argument('id', default=None, strip=True)
 
             if id_to_del:
-                logging.info("Got command to del schedule {}".format(id_to_del))
+                logger.info("Got command to del schedule {}".format(id_to_del))
                 q = Schedules.delete().where(Schedules.id == id_to_del)
                 q.execute()
 
@@ -690,7 +688,7 @@ class AjaxHandler(BaseHandler):
 
         elif page == 'add_user':
             if not user_data['config']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
                     user_data['username'], user_data['role_name'], "Add User"))
                 self.redirect('/admin/unauthorized')
 
@@ -708,7 +706,7 @@ class AjaxHandler(BaseHandler):
 
         elif page == "edit_role":
             if not user_data['config']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
                     user_data['username'], user_data['role_name'], "Delete User"))
                 self.redirect('/admin/unauthorized')
 
@@ -727,7 +725,7 @@ class AjaxHandler(BaseHandler):
 
         elif page == "change_password":
             if not user_data['config']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
                     user_data['username'], user_data['role_name'], "Delete User"))
                 self.redirect('/admin/unauthorized')
 
@@ -743,7 +741,7 @@ class AjaxHandler(BaseHandler):
 
         elif page == 'del_user':
             if not user_data['config']:
-                logging.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
                     user_data['username'], user_data['role_name'], "Delete User"))
                 self.redirect('/admin/unauthorized')
 
@@ -763,9 +761,9 @@ class AjaxHandler(BaseHandler):
                 file = open(file_path, 'w')
                 file.write(file_data)
                 file.close()
-                logging.error("File {} saved with new content".format(file_path))
+                logger.error("File {} saved with new content".format(file_path))
             except Exception as e:
-                logging.error("Unable to save {} due to {} error".format(file_path, e))
+                logger.error("Unable to save {} due to {} error".format(file_path, e))
             self.redirect("/admin/files")
 
 
@@ -859,18 +857,18 @@ class webserver():
         
         (Taken from https://github.com/mkdocs/mkdocs/commit/cf2b136d4257787c0de51eba2d9e30ded5245b31)
         """
-        logging.debug("Checking if asyncio patch is required")
+        logger.debug("Checking if asyncio patch is required")
         if sys.platform.startswith("win") and sys.version_info >= (3, 8):
             import asyncio
             try:
                 from asyncio import WindowsSelectorEventLoopPolicy
             except ImportError:
-                logging.debug("asyncio patch isn't required")
+                logger.debug("asyncio patch isn't required")
                 pass  # Can't assign a policy which doesn't exist.
             else:
                 if not isinstance(asyncio.get_event_loop_policy(), WindowsSelectorEventLoopPolicy):
                     asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
-                    logging.debug("Applied asyncio patch")
+                    logger.debug("Applied asyncio patch")
 
 
     def log_function(self, handler):
@@ -897,7 +895,7 @@ class webserver():
         port_number = websettings.port_number
         web_root = helper.get_web_root_path()
 
-        logging.info("Starting Tornado HTTPS Server on port {}".format(port_number))
+        logger.info("Starting Tornado HTTPS Server on port {}".format(port_number))
 
         if not silent:
             console.info("Starting Tornado HTTPS Server on port {}".format(port_number))
@@ -955,11 +953,11 @@ class webserver():
         thread.start()
 
     def stop_web_server(self):
-        logging.info("Shutting Down Tornado Web Server")
+        logger.info("Shutting Down Tornado Web Server")
         ioloop = self.ioloop
         ioloop.stop()
         self.http_server.stop()
-        logging.info("Tornado Server Stopped")
+        logger.info("Tornado Server Stopped")
 
 
 tornado_srv = webserver(mc_server)

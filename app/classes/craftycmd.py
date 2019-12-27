@@ -3,7 +3,6 @@ import cmd
 import sys
 import time
 import json
-import logging
 
 from app.classes.console import Console
 from app.classes.helpers import helpers
@@ -24,7 +23,7 @@ class MainPrompt(cmd.Cmd):
     prompt = "Crafty Controller v{}.{}.{} > ".format(version_data['major'], version_data['minor'], version_data['sub'])
 
     def print_crafty_end(self):
-        logging.info("***** Crafty Stopped ***** \n")
+        logger.info("***** Crafty Stopped ***** \n")
 
     def stop_all_children(self):
         Console.info("Stopping any server daemons")
@@ -169,7 +168,7 @@ class MainPrompt(cmd.Cmd):
         MC_settings.update({
             MC_settings.auto_start_server: False
         }).execute()
-        logging.info("Disabled Minecraft Autostart via the console")
+        logger.info("Disabled Minecraft Autostart via the console")
         Console.info("Disabled Minecraft Autostart")
 
     def help_enable_autostart(self):
@@ -179,7 +178,7 @@ class MainPrompt(cmd.Cmd):
         MC_settings.update({
             MC_settings.auto_start_server: False
         }).execute()
-        logging.info("Enabled Minecraft Autostart via the console")
+        logger.info("Enabled Minecraft Autostart via the console")
         Console.info("Enabled Minecraft Autostart")
 
     def do_reload_webserver(self, line):

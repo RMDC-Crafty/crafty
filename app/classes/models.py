@@ -12,6 +12,8 @@ database = SqliteDatabase(helper.get_db_path(), pragmas={
     'journal_mode': 'wal',
     'cache_size': -1024 * 10})
 
+logger = logging.getLogger(__name__)
+
 
 class BaseModel(Model):
     class Meta:
@@ -210,7 +212,7 @@ def default_settings(admin_pass):
 # default settings created here if they don't already exits
 
 def do_database_migrations():
-    logging.info('Upgrading Database fields as needed')
+    logger.info('Upgrading Database fields as needed')
 
     migrator = SqliteMigrator(database)
 
@@ -246,6 +248,6 @@ def check_role_permission(username, section):
             access = True
 
     if not access:
-        logging.warning('User: {} attempted access to section {} and was denied'.format(username, section))
+        logger.warning('User: {} attempted access to section {} and was denied'.format(username, section))
 
     return access
