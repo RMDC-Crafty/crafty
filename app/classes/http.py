@@ -944,7 +944,11 @@ class webserver():
             
             # API routes
             (r'/api/v1/server/send_command', api_routes.SendCommand, dict(mcserver=self.mc_server)),
-            (r'/api/v1/stats', api_routes.GetHostStats, dict(mcserver=self.mc_server))
+            (r'/api/v1/stats', api_routes.GetHostStats, dict(mcserver=self.mc_server)),
+            (r'/api/v1/server/get_logs', api_routes.GetMCLogs, dict(mcserver=self.mc_server)),
+            (r'/api/v1/server/search_logs', api_routes.SearchMCLogs, dict(mcserver=self.mc_server)),
+            (r'/api/v1/crafty/get_logs', api_routes.GetCraftyLogs),
+            (r'/api/v1/crafty/search_logs', api_routes.SearchCraftyLogs)            
         ]
     
         cert_objects = {
