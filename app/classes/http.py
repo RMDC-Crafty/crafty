@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import time
+import secrets
 import asyncio
 import logging
 import schedule
@@ -712,12 +713,15 @@ class AjaxHandler(BaseHandler):
 
             if new_username:
                 new_pass = helper.random_string_generator()
+                new_token = secrets.token_urlsafe(32)
                 result = Users.insert({
                     Users.username: new_username,
                     Users.role: 'Mod',
-                    Users.password: helper.encode_pass(new_pass)
+                    Users.password: helper.encode_pass(new_pass),
+                    Users.api_token: new_token
                 }).execute()
-
+                
+                logger.info("New user with username {} has API token {}", new_username, new_token)
                 self.write(new_pass)
 
         elif page == "edit_role":
@@ -943,11 +947,18 @@ class webserver():
             (r'/images(.*)', tornado.web.StaticFileHandler, {"path": "/images"}),
             
             # API routes
-            (r'/api/v1/server/send_command', api_routes.SendCommand, dict(mcserver=self.mc_server)),
             (r'/api/v1/stats', api_routes.GetHostStats, dict(mcserver=self.mc_server)),
+            
+            # Server related
+            (r'/api/v1/server/send_command', api_routes.SendCommand, dict(mcserver=self.mc_server)),
             (r'/api/v1/server/get_logs', api_routes.GetMCLogs, dict(mcserver=self.mc_server)),
             (r'/api/v1/server/search_logs', api_routes.SearchMCLogs, dict(mcserver=self.mc_server)),
             (r'/api/v1/server/force_backup', api_routes.ForceServerBackup, dict(mcserver=self.mc_server)),
+            (r'/api/v1/server/start', api_routes.StartServer, dict(mcserver=self.mc_server)),
+            (r'/api/v1/server/stop', api_routes.StopServer, dict(mcserver=self.mc_server)),
+            (r'/api/v1/server/restart', api_routes.RestartServer, dict(mcserver=self.mc_server)),
+            
+            # Crafty related
             (r'/api/v1/crafty/get_logs', api_routes.GetCraftyLogs),
             (r'/api/v1/crafty/search_logs', api_routes.SearchCraftyLogs)            
         ]

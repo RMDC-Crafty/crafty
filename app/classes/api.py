@@ -4,7 +4,7 @@ import tornado.web
 import tornado.escape 
 import logging.config
 
-from app.classes.models import Roles, Users, check_role_permission
+from app.classes.models import Roles, Users, check_role_permission, Remote
 from app.classes.helpers import helper
 
 logger = logging.getLogger(__name__)
@@ -210,7 +210,69 @@ class ForceServerBackup(BaseHandler):
         backup_thread = threading.Thread(name='backup', target=self.mcserver.backup_server, daemon=False)
         backup_thread.start()
         
-        self.return_response(200, {}, {'code':'BAK_INIT'}, {})
+        self.return_response(200, {}, {'code':'SER_BAK_CALLED'}, {})
+
+class StartServer(BaseHandler):
+    
+    def initialize(self, mcserver):
+        self.mcserver = mcserver
+    
+    def post(self):
+        token = self.get_argument('token')
+        user = self.authenticate_user(token)
+        
+        if user is None:
+            self.access_denied('unknown')
+        
+        if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'svr_control'):
+            self.access_denied(user)
             
+        if not self.mcserver.check_running:
+            Remote.insert({
+                Remote.command: 'start_mc_server'
+            }).execute()
+            self.return_response(200, {}, {'code':'SER_START_CALLED'}, {})
+        else:
+            self.return_response(500, {'error':'SER_RUNNING'}, {}, {})
     
+class StopServer(BaseHandler):
     
+    def initialize(self, mcserver):
+        self.mcserver = mcserver
+        
+    def post(self):
+        token = self.get_argument('token')
+        user = self.authenticate_user(token)
+        
+        if user is None:
+            self.access_denied('unknown')
+        
+        if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'svr_control'):
+            self.access_denied(user)
+            
+        if self.mcserver.check_running:
+            Remote.insert({
+                Remote.command: 'stop_mc_server'
+            }).execute()
+            
+            self.return_response(200, {}, {'code':'SER_STOP_CALLED'}, {})
+        else:
+            self.return_response(500, {'error':'SER_NOT_RUNNING'}, {}, {})
+
+class RestartServer(BaseHandler):
+        
+    def initialize(self, mcserver):
+        self.mcserver = mcserver
+        
+    def post(self):
+        token = self.get_argument('token')
+        user = self.authenticate_user(token)
+        
+        if user is None:
+            self.access_denied('unknown')
+        
+        if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'svr_control'):
+            self.access_denied(user)
+        
+        self.mcserver.restart_threaded_server()
+        self.return_response(200, {}, {'code':'SER_RESTART_CALLED'}, {})
