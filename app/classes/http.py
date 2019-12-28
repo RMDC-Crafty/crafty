@@ -134,7 +134,7 @@ class AdminHandler(BaseHandler):
         name = tornado.escape.json_decode(self.current_user)
         user_data = get_perms_for_user(name)
 
-        servers_defined = MC_settings.select(MC_settings.server_name)
+        servers_defined = MC_settings.select(MC_settings.id, MC_settings.server_name)
 
         server_data = self.get_server_data()
 

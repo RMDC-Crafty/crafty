@@ -250,6 +250,21 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-md-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title"><i class="fa fa-clock-o" aria-hidden="true"></i>
+                  Historical Data</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div id="cpu_history" style="height: 250px;"></div>
+            </div>
+
+          </div>
+    </div>
+
 
 </section>
 
@@ -309,6 +324,38 @@
 
     function hide_modals(){
         bootbox.hideAll()
+    }
+
+    $( document ).ready(function() {
+        console.log( "ready!" );
+
+        $.ajax({
+            url: "/ajax/history",
+            method: "get",
+            dataType: "json",
+            success: function(data) {
+                console.log(data)
+                do_history(data)
+            }
+        });
+    });
+
+    function do_history(data){
+        new Morris.Line({
+          // ID of the element in which to draw the chart.
+          element: 'cpu_history',
+          // Chart data records -- each entry in this array corresponds to a point on
+          // the chart.
+          data: data,
+          // The name of the data record attribute that contains x-values.
+          xkey: 'time',
+          // A list of names of data record attributes that contain y-values.
+          ykeys: ['cpu','mem','players'],
+          // Labels for the ykeys -- will be displayed when you hover over the
+          // chart.
+          labels: ['CPU', 'MEM','Players'],
+          parseTime: false
+        });
     }
 
 

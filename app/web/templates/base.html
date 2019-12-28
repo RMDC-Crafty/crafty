@@ -83,7 +83,7 @@
                 <ul class="menu">
                   {% for s in data['servers_defined'] %}
                     <li>
-                      <a href="#">
+                      <a href="/admin/manage_server?server_id={{ s.id }}">
                       Click to manage {{ s.server_name }}
                       </a>
                     </li>
@@ -91,7 +91,6 @@
 
                 </ul>
               </li>
-              <li class="footer"><a href="#">View all</a></li>
             </ul>
           </li>
 
