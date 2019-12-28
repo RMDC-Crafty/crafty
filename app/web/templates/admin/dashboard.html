@@ -88,152 +88,151 @@
   <!-- /.row -->
 
 <div class="row">
-    <div class="col-md-6">
-        <div class="box box-info">
-        <div class="box-header with-border">
-            <i class="fa fa-info-circle" aria-hidden="true"></i>
 
-            <h3 class="box-title">Server Status:
-                {% if data['server_data']['server_running'] %}
-                    <span class="text-green">
-                        Server Running &nbsp;
-                        <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                    </span>
-                {% else %}
-                    <span class="text-red">
-                        Server Down &nbsp;
-                        <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-                    </span>
-                {% end %}
-
-            </h3>
+  <div class="col-xs-3">
+    <div class="box box-widget widget-user-2">
+      <div class="widget-user-header bg-green">
+        <div class="widget-user-image">
+          <img src="/static/images/spigot.png" alt="User Avatar">
         </div>
-        <!-- /.box-header -->
-        <div class="box-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <table class="table">
-                        <tr>
-                          <td><b>Last Boot</b></td>
-                          <td>{{ data['server_data']['boot_time'] }}</td>
-                        </tr>
-                        <tr>
-                          <td><b>Server Startup Time</b></td>
-                          <td>{{ data['server_data']['mc_start_time'] }}</td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <table class="table">
-                        <tr>
-                          <td><b>CPU Usage</b></td>
-                          <td>{{ data['server_data']['cpu_usage'] }}</td>
-                        </tr>
-                        <tr>
-                          <td><b>CPU Cores</b></td>
-                          <td>{{ data['server_data']['cpu_cores'] }}</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-
-          <div class="row">
-                <div class="col-md-6">
-                    <table class="table">
-                        <tr>
-                            <td><b>Server Version</b></td>
-                            <td>{{ data['server_data']['server_version'] }}</td>
-                        </tr>
-                        <tr>
-                            <td><b>Server Description</b></td>
-                            <td>{{ data['server_data']['server_description'] }}</td>
-                        </tr>
-                        <tr>
-                          <td><b>World Name</b></td>
-                          <td>
-                            {{ data['server_data']['world_data']['world_name'] }}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td><b>World Disk Usage</b></td>
-                          <td>{{ data['server_data']['world_data']['world_size'] }}</td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <table class="table">
-                        <tr>
-                          <td width="50%"><b>Errors Found</b></td>
-                          <td>
-                            {{ data['server_data']['errors'] }}&nbsp;
-                            {% if data['server_data']['errors'] >= 1 %}
-                              <a href="/admin/get_logs">
-                                 <span class="label label-danger">Errors - Click to View</span>
-                               </a>
-                            {% else %}
-                              <span class="label label-success">No Errors</span>
-                            {% end %}
-                          </td>
-                        </tr>
-                      <tr>
-                          <td><b>Warnings Found</b></td>
-                          <td>
-                            {{ data['server_data']['warnings'] }}&nbsp;
-                            {% if data['server_data']['warnings'] >= 1 %}
-                               <a href="/admin/get_logs">
-                                 <span class="label label-danger">Warnings - Click to View</span>
-                               </a>
-                            {% else %}
-                               <span class="label label-success">No Warnings</span>
-                            {% end %}
-                          </td>
-                        </tr>
-
-                    </table>
-                </div>
-            </div>
-        </div>
-        <!-- /.box-body -->
+        <h3 class="widget-user-username">Crafty Survival</h3>
+        <h5 class="widget-user-desc">Currently Running</h5>
       </div>
-      <!-- /.box -->
+      <div class="box-footer no-padding">
+        <ul class="nav nav-stacked">
+          <li><a href="#">CPU <span class="pull-right badge bg-blue">12%</span></a></li>
+          <li><a href="#">Mem <span class="pull-right badge bg-red">2GB</span></a></li>
+          <li><a href="#">Players <span class="pull-right badge bg-yellow">12</span></a></li>
+          <li><a href="#">Autostart <span class="pull-right badge bg-blue">Enabled</span></a></li>
+        </ul>
+      </div>
     </div>
+  </div>
 
-    <div class="col-md-6">
-        <div class="box box-info">
+  <div class="col-xs-3">
+    <div class="box box-widget widget-user-2">
+      <div class="widget-user-header bg-green">
+        <div class="widget-user-image">
+          <img src="/static/images/forge.jpeg" alt="User Avatar">
+        </div>
+        <h3 class="widget-user-username">Forge Creative</h3>
+        <h5 class="widget-user-desc">Currently Running</h5>
+      </div>
+      <div class="box-footer no-padding">
+        <ul class="nav nav-stacked">
+          <li><a href="#">CPU <span class="pull-right badge bg-blue">12%</span></a></li>
+          <li><a href="#">Mem <span class="pull-right badge bg-red">2GB</span></a></li>
+          <li><a href="#">Players <span class="pull-right badge bg-yellow">12</span></a></li>
+          <li><a href="#">Autostart <span class="pull-right badge bg-blue">Enabled</span></a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xs-3">
+    <div class="box box-widget widget-user-2">
+      <div class="widget-user-header bg-red">
+        <div class="widget-user-image">
+          <img src="/static/images/vanilla.png" alt="User Avatar">
+        </div>
+        <h3 class="widget-user-username">Vanilla Creative</h3>
+        <h5 class="widget-user-desc">Currently NOT Running</h5>
+      </div>
+      <div class="box-footer no-padding">
+        <ul class="nav nav-stacked">
+          <li><a href="#">CPU <span class="pull-right badge bg-blue">12%</span></a></li>
+          <li><a href="#">Mem <span class="pull-right badge bg-red">2GB</span></a></li>
+          <li><a href="#">Players <span class="pull-right badge bg-yellow">12</span></a></li>
+          <li><a href="#">Autostart <span class="pull-right badge bg-blue">Enabled</span></a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xs-3">
+    <div class="box box-info collapsed-box box-solid">
             <div class="box-header with-border">
-              <h3 class="box-title"><i class="fa fa-users" aria-hidden="true"></i>
-                  Players List</h3>
+              <h3 class="box-title">Create New Server</h3>
+
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
+                </button>
+              </div>
+              <!-- /.box-tools -->
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-              <div class="table-responsive">
-                <ul>
-                    {% for player in data['server_data']['online_stats']['players'] %}
-                        <li>{{ player }}</li>
-                    {% end %}
+              <form action="/setup/step1" method="post">
 
-                </ul>
-              </div>
-              <!-- /.table-responsive -->
+                <div class="form-group has-feedback">
+                  <label>
+                    Server Name - <small>Example Survival Server</small>
+                  </label>
+                  <input type="text" class="form-control" placeholder="Server Name" name="server_name" value="My New Server">
+                  <span class="glyphicon glyphicon-file form-control-feedback"></span>
+                </div>
+
+                <div class="form-group has-feedback">
+                  <label>
+                      Server Path - <small>Example /var/opt/minecraft/server</small>
+                    </label>
+                    <input type="text" class="form-control" placeholder="Server Path" name="server_path"
+                           value="/var/opt/minecraft/server">
+                    <span class="glyphicon glyphicon-folder-open form-control-feedback"></span>
+                </div>
+
+                <div class="form-group has-feedback">
+                  <label>
+                    Server Jar - <small>Example paper.jar</small>
+                  </label>
+                  <input type="text" class="form-control" placeholder="Server Jar" name="server_jar" value="paperclip.jar">
+                  <span class="glyphicon glyphicon-file form-control-feedback"></span>
+                </div>
+
+                <div class="form-group has-feedback">
+                  <label>
+                    Server Max Memory in MB <br /><small>Example: 2048 </small>
+                  </label>
+                  <input type="number" class="form-control" placeholder="Server Jar" name="max_mem" value="2048">
+                </div>
+
+                <div class="form-group has-feedback">
+                  <label>
+                    Server Min Memory in MB <br /><small>Example: 1024 </small>
+                  </label>
+                  <input type="number" class="form-control" placeholder="Server Jar" name="min_mem" value="1024">
+                </div>
+
+                <div class="form-group has-feedback">
+                  <label>
+                    Auto Start Server after 10 Seconds:
+                    <input type="checkbox"  name="auto_start" id="auto_start" >
+
+                  </label>
+
+                </div>
+
+                <div class="row">
+                  <div class="col-xs-6">
+
+                  </div>
+                  <!-- /.col -->
+                  <div class="col-xs-6">
+                    <button type="submit" onclick="show_warning()" class="btn btn-success btn-block btn-flat"> Create New Server</button>
+                  </div>
+                  <!-- /.col -->
+                </div>
+                  {% raw xsrf_form_html() %}
+
+              </form>
             </div>
             <!-- /.box-body -->
-
           </div>
-    </div>
 
-        <div class="col-md-6">
-        <div class="box box-info">
-            <div class="box-header with-border">
-              <h3 class="box-title"><i class="fa fa-clock-o" aria-hidden="true"></i>
-                  Historical Data</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-                <div id="cpu_history" style="height: 250px;"></div>
-            </div>
 
-          </div>
-    </div>
+  </div>
+
+
 
 </div>
 
@@ -249,37 +248,9 @@
 {% block js-script %}
 
 <script>
-    $( document ).ready(function() {
-        console.log( "ready!" );
 
-        $.ajax({
-            url: "/ajax/history",
-            method: "get",
-            dataType: "json",
-            success: function(data) {
-                console.log(data)
-                do_history(data)
-            }
-        });
-    });
 
-    function do_history(data){
-        new Morris.Line({
-          // ID of the element in which to draw the chart.
-          element: 'cpu_history',
-          // Chart data records -- each entry in this array corresponds to a point on
-          // the chart.
-          data: data,
-          // The name of the data record attribute that contains x-values.
-          xkey: 'time',
-          // A list of names of data record attributes that contain y-values.
-          ykeys: ['cpu','mem','players'],
-          // Labels for the ykeys -- will be displayed when you hover over the
-          // chart.
-          labels: ['CPU', 'MEM','Players'],
-          parseTime: false
-        });
-    }
+
 
 
 

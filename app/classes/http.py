@@ -15,13 +15,14 @@ import tornado.locale
 import tornado.httpserver
 from pathlib import Path
 
-from playhouse.shortcuts import model_to_dict, dict_to_model
+from playhouse.shortcuts import *
 
 from app.classes.console import console
 from app.classes.models import *
 from app.classes.ftp import ftp_svr_object
 from app.classes.minecraft_server import mc_server
 import app.classes.api as api_routes
+from app.classes.web_sessions import web_session
 
 logger = logging.getLogger(__name__)
 
@@ -125,6 +126,8 @@ class AdminHandler(BaseHandler):
     def initialize(self, mcserver):
         self.mcserver = mcserver
         self.console = console
+        self.session = web_session(self.current_user)
+
 
     @tornado.web.authenticated
     def get(self, page):
@@ -132,11 +135,20 @@ class AdminHandler(BaseHandler):
         name = tornado.escape.json_decode(self.current_user)
         user_data = get_perms_for_user(name)
 
+        servers_defined = MC_settings.select(MC_settings.id, MC_settings.server_name)
+
         server_data = self.get_server_data()
+
+        # if we haven't picked the managed server - let's choose number 1 as a default
+        if not self.session.get_data(self.current_user, 'managed_server'):
+            self.session.set_data(self.current_user, 'managed_server', servers_defined[0].server_name)
+
         context = {
             'server_data': server_data,
             'user_data': user_data,
-            'version_data': helper.get_version()
+            'version_data': helper.get_version(),
+            'servers_defined': servers_defined,
+            'managed_server': self.session.get_data(self.current_user, 'managed_server')
         }
 
         if page == 'unauthorized':
@@ -485,6 +497,7 @@ class AdminHandler(BaseHandler):
                 
                 if server_path_exists and jar_exists:
                     q = MC_settings.update({
+                        MC_settings.server_name: self.get_argument('server_name'),
                         MC_settings.server_path: server_path,
                         MC_settings.server_jar: server_jar ,
                         MC_settings.memory_max: self.get_argument('memory_max'),
@@ -803,6 +816,7 @@ class SetupHandler(BaseHandler):
 
     def post(self, page):
         if page == 'step1':
+            server_name = self.get_argument('server_name', '')
             server_path = self.get_argument('server_path', '')
             server_jar = self.get_argument('server_jar', '')
             max_mem = self.get_argument('max_mem', '')
@@ -810,6 +824,7 @@ class SetupHandler(BaseHandler):
             auto_start = self.get_argument('auto_start', '')
 
             MC_settings.insert({
+                MC_settings.server_name: server_name,
                 MC_settings.server_path: server_path,
                 MC_settings.server_jar: server_jar,
                 MC_settings.memory_max: max_mem,
@@ -817,6 +832,7 @@ class SetupHandler(BaseHandler):
                 MC_settings.additional_args: "",
                 MC_settings.auto_start_server: auto_start,
                 MC_settings.auto_start_delay: 10,
+                MC_settings.auto_start_priority: 1,
                 MC_settings.server_port: 25565,
                 MC_settings.server_ip: "127.0.0.1"
             }).execute()

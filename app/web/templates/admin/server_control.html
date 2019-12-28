@@ -20,7 +20,7 @@
 
     <div class="row">
         <div class="col-xs-6">
-            <div class="box">
+            <div class="box box-info">
                 <div class="box-header with-border">
                   <h3 class="box-title">
                       Server Actions
@@ -57,8 +57,144 @@
               </div>
         </div>
 
+        <div class="col-md-6">
+            <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title"><i class="fa fa-users" aria-hidden="true"></i>
+                  Players List</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="table-responsive">
+                <ul>
+                    {% for player in data['server_data']['online_stats']['players'] %}
+                        <li>{{ player }}</li>
+                    {% end %}
+
+                </ul>
+              </div>
+              <!-- /.table-responsive -->
+            </div>
+            <!-- /.box-body -->
+
+          </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+        <div class="box box-info">
+        <div class="box-header with-border">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+
+            <h3 class="box-title">Server Status:
+                {% if data['server_data']['server_running'] %}
+                    <span class="text-green">
+                        Server Running &nbsp;
+                        <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                    </span>
+                {% else %}
+                    <span class="text-red">
+                        Server Down &nbsp;
+                        <i class="fa fa-thumbs-down" aria-hidden="true"></i>
+                    </span>
+                {% end %}
+
+            </h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table">
+                        <tr>
+                          <td><b>Last Boot</b></td>
+                          <td>{{ data['server_data']['boot_time'] }}</td>
+                        </tr>
+                        <tr>
+                          <td><b>Server Startup Time</b></td>
+                          <td>{{ data['server_data']['mc_start_time'] }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table">
+                        <tr>
+                          <td><b>CPU Usage</b></td>
+                          <td>{{ data['server_data']['cpu_usage'] }}</td>
+                        </tr>
+                        <tr>
+                          <td><b>CPU Cores</b></td>
+                          <td>{{ data['server_data']['cpu_cores'] }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+          <div class="row">
+                <div class="col-md-6">
+                    <table class="table">
+                        <tr>
+                            <td><b>Server Version</b></td>
+                            <td>{{ data['server_data']['server_version'] }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Server Description</b></td>
+                            <td>{{ data['server_data']['server_description'] }}</td>
+                        </tr>
+                        <tr>
+                          <td><b>World Name</b></td>
+                          <td>
+                            {{ data['server_data']['world_data']['world_name'] }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><b>World Disk Usage</b></td>
+                          <td>{{ data['server_data']['world_data']['world_size'] }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table">
+                        <tr>
+                          <td width="50%"><b>Errors Found</b></td>
+                          <td>
+                            {{ data['server_data']['errors'] }}&nbsp;
+                            {% if data['server_data']['errors'] >= 1 %}
+                              <a href="/admin/get_logs">
+                                 <span class="label label-danger">Errors - Click to View</span>
+                               </a>
+                            {% else %}
+                              <span class="label label-success">No Errors</span>
+                            {% end %}
+                          </td>
+                        </tr>
+                      <tr>
+                          <td><b>Warnings Found</b></td>
+                          <td>
+                            {{ data['server_data']['warnings'] }}&nbsp;
+                            {% if data['server_data']['warnings'] >= 1 %}
+                               <a href="/admin/get_logs">
+                                 <span class="label label-danger">Warnings - Click to View</span>
+                               </a>
+                            {% else %}
+                               <span class="label label-success">No Warnings</span>
+                            {% end %}
+                          </td>
+                        </tr>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+    </div>
+
         <div class="col-xs-6">
-            <div class="box">
+            <div class="box box-info">
                 <div class="box-header with-border">
                   <h3 class="box-title">
                       Server Jar Update
@@ -112,7 +248,21 @@
                 </div>
               </div>
         </div>
+    </div>
 
+    <div class="row">
+        <div class="col-md-6">
+        <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title"><i class="fa fa-clock-o" aria-hidden="true"></i>
+                  Historical Data</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div id="cpu_history" style="height: 250px;"></div>
+            </div>
+
+          </div>
     </div>
 
 
@@ -174,6 +324,38 @@
 
     function hide_modals(){
         bootbox.hideAll()
+    }
+
+    $( document ).ready(function() {
+        console.log( "ready!" );
+
+        $.ajax({
+            url: "/ajax/history",
+            method: "get",
+            dataType: "json",
+            success: function(data) {
+                console.log(data)
+                do_history(data)
+            }
+        });
+    });
+
+    function do_history(data){
+        new Morris.Line({
+          // ID of the element in which to draw the chart.
+          element: 'cpu_history',
+          // Chart data records -- each entry in this array corresponds to a point on
+          // the chart.
+          data: data,
+          // The name of the data record attribute that contains x-values.
+          xkey: 'time',
+          // A list of names of data record attributes that contain y-values.
+          ykeys: ['cpu','mem','players'],
+          // Labels for the ykeys -- will be displayed when you hover over the
+          // chart.
+          labels: ['CPU', 'MEM','Players'],
+          parseTime: false
+        });
     }
 
 

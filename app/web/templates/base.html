@@ -60,8 +60,39 @@
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
           <!-- Messages: style can be found in dropdown.less-->
+          <li class="" style="margin-top:15px;">
+          <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+            <input type="hidden" name="cmd" value="_donations" />
+            <input type="hidden" name="business" value="H2HNTLFZAJRXG" />
+            <input type="hidden" name="currency_code" value="USD" />
+            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+          </form>
+          </li>
+
 
           <!-- Notifications: style can be found in dropdown.less -->
+          <li class="dropdown notifications-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+              <i class="fa fa-server"></i> Managing: {{ data['managed_server'] }}
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">Your Defined Servers</li>
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                  {% for s in data['servers_defined'] %}
+                    <li>
+                      <a href="/admin/manage_server?server_id={{ s.id }}">
+                      Click to manage {{ s.server_name }}
+                      </a>
+                    </li>
+                  {% end %}
+
+                </ul>
+              </li>
+            </ul>
+          </li>
 
           <!-- Tasks: style can be found in dropdown.less -->
           <li class="">
