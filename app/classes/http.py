@@ -947,6 +947,7 @@ class webserver():
             (r'/api/v1/stats', api_routes.GetHostStats, dict(mcserver=self.mc_server)),
             (r'/api/v1/server/get_logs', api_routes.GetMCLogs, dict(mcserver=self.mc_server)),
             (r'/api/v1/server/search_logs', api_routes.SearchMCLogs, dict(mcserver=self.mc_server)),
+            (r'/api/v1/server/force_backup', api_routes.ForceServerBackup, dict(mcserver=self.mc_server)),
             (r'/api/v1/crafty/get_logs', api_routes.GetCraftyLogs),
             (r'/api/v1/crafty/search_logs', api_routes.SearchCraftyLogs)            
         ]

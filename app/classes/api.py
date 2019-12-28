@@ -1,4 +1,5 @@
 import os
+import threading
 import tornado.web
 import tornado.escape 
 import logging.config
@@ -45,21 +46,6 @@ class BaseHandler(tornado.web.RequestHandler):
             logger.warning("Traceback occurred when authenticating user to API. Most likely wrong token")
             return None
             pass
-
-
-class Online(BaseHandler):
-    
-    def get(self):
-        token = self.get_argument('token')
-        user = self.authenticate_user(token)
-        
-        if user is None:
-            self.access_denied('unknown')
-        
-        if not check_role_permission(user, 'api_access'):
-            self.access_denied(user)
-
-        self.return_response(200, '', {'online':True}, '')
         
 class SendCommand(BaseHandler):
     
@@ -205,6 +191,26 @@ class SearchCraftyLogs(BaseHandler):
                 line_list.append({'line_num': line[0], 'message': line[1]})
                 
         self.return_response(200, {}, line_list, {}) 
+
+class ForceServerBackup(BaseHandler):
+    
+    def initialize(self, mcserver):
+        self.mcserver = mcserver
+        
+    def post(self):
+        token = self.get_argument('token')
+        user = self.authenticate_user(token)
+        
+        if user is None:
+            self.access_denied('unknown')
+        
+        if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'backups'):
+            self.access_denied(user)
+            
+        backup_thread = threading.Thread(name='backup', target=self.mcserver.backup_server, daemon=False)
+        backup_thread.start()
+        
+        self.return_response(200, {}, {'code':'BAK_INIT'}, {})
             
     
     
