@@ -944,7 +944,7 @@ class webserver():
             
             # API routes
             (r'/api/v1/server/send_command', api_routes.SendCommand, dict(mcserver=self.mc_server)),
-            (r'/api/v1/online', api_routes.Online)
+            (r'/api/v1/stats', api_routes.GetHostStats, dict(mcserver=self.mc_server))
         ]
     
         cert_objects = {
