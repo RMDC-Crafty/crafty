@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import json
+import secrets
 import logging
 import schedule
 import threading
@@ -116,7 +117,9 @@ if __name__ == '__main__':
         helper.make_new_install_file()
 
         admin_pass = helper.random_string_generator()
-        peewee.default_settings(admin_pass)
+        admin_token = secrets.token_urlsafe(32)
+  
+        peewee.default_settings(admin_pass, admin_token)
 
     else:
         peewee.do_database_migrations()
@@ -149,6 +152,7 @@ if __name__ == '__main__':
             helper.get_local_ip(), port_number))
         console.info("Your Username is: Admin")
         console.info("Your Password is: {}".format(admin_pass))
+        console.info("Your Admin token is: {}".format(admin_token))
 
     # start the remote commands watcher thread
     remote_coms = remote_commands(mc_server, tornado_srv)

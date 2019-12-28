@@ -21,6 +21,7 @@ from app.classes.console import console
 from app.classes.models import *
 from app.classes.ftp import ftp_svr_object
 from app.classes.minecraft_server import mc_server
+import app.classes.api as api_routes
 
 logger = logging.getLogger(__name__)
 
@@ -923,9 +924,13 @@ class webserver():
             (r'/ajax/(.*)', AjaxHandler, dict(mcserver=self.mc_server)),
             (r'/setup/(.*)', SetupHandler, dict(mcserver=self.mc_server)),
             (r'/static(.*)', tornado.web.StaticFileHandler, {"path": '/'}),
-            (r'/images(.*)', tornado.web.StaticFileHandler, {"path": "/images"})
+            (r'/images(.*)', tornado.web.StaticFileHandler, {"path": "/images"}),
+            
+            # API routes
+            (r'/api/v1/server/send_command', api_routes.SendCommand, dict(mcserver=self.mc_server)),
+            (r'/api/v1/online', api_routes.Online)
         ]
-
+    
         cert_objects = {
             'certfile': os.path.join(web_root, 'certs', 'crafty.crt'),
             'keyfile': os.path.join(web_root, 'certs', 'crafty.key')
