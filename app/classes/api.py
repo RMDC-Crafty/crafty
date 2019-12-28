@@ -10,6 +10,10 @@ class BaseHandler(tornado.web.RequestHandler):
     
     def initialize(self, mcserver):
         self.mcserver = mcserver
+        
+    def check_xsrf_cookie(self): 
+        # Disable CSRF protection on API routes
+        pass
     
     def return_response(self, status, errors, data, messages):
         # Define a standardized response 
