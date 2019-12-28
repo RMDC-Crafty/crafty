@@ -127,14 +127,13 @@ class AdminHandler(BaseHandler):
         self.console = console
         self.session = web_session(self.current_user)
 
-
     @tornado.web.authenticated
     def get(self, page):
 
         name = tornado.escape.json_decode(self.current_user)
         user_data = get_perms_for_user(name)
 
-        servers_defined = MC_settings.select(MC_settings.id, MC_settings.server_name)
+        servers_defined = MC_settings.select()
 
         server_data = self.get_server_data()
 
@@ -291,6 +290,29 @@ class AdminHandler(BaseHandler):
 
             context['server_root'] = context['mc_settings']['server_path']
 
+        elif page == 'server_config':
+            if not check_role_permission(user_data['username'], 'config'):
+                self.redirect('/admin/unauthorized')
+
+            saved = self.get_argument('saved', None)
+            invalid = self.get_argument('invalid', None)
+            server_id  = self.get_argument('id', None)
+
+            if server_id is None:
+                self.redirect("/admin/dashboard")
+
+
+            template = "admin/server_config.html"
+
+            mc_data = MC_settings.get_by_id(server_id)
+
+            page_data = {}
+            context['saved'] = saved
+            context['invalid'] = invalid
+            context['mc_settings'] = model_to_dict(mc_data)
+
+            context['server_root'] = context['mc_settings']['server_path']
+
         elif page == 'downloadbackup':
             if not check_role_permission(user_data['username'], 'backups'):
                 self.redirect('/admin/unauthorized')
@@ -421,8 +443,6 @@ class AdminHandler(BaseHandler):
             context['ftp_settings'] = model_to_dict(ftp_data)
             context['ftp_running'] = ftp_svr_object.check_running()
 
-
-
         else:
             # 404
             template = "public/404.html"
@@ -545,6 +565,45 @@ class AdminHandler(BaseHandler):
 
             self.redirect("/admin/config?saved=True")
 
+        elif page == "server_config":
+            # Define as variables to eliminate multiple function calls, slowing the processing down
+            server_path = self.get_argument('server_path')
+            server_jar = self.get_argument('server_jar')
+            server_id = self.get_argument('server_id')
+
+            server_path_exists = helper.check_directory_exist(server_path)
+
+            # Use pathlib to join specified server path and server JAR file then check if it exists
+            jar_exists = helper.check_file_exists(os.path.join(server_path, server_jar))
+
+            if server_path_exists and jar_exists:
+                q = MC_settings.update({
+                    MC_settings.server_name: self.get_argument('server_name'),
+                    MC_settings.server_path: server_path,
+                    MC_settings.server_jar: server_jar,
+                    MC_settings.memory_max: self.get_argument('memory_max'),
+                    MC_settings.memory_min: self.get_argument('memory_min'),
+                    MC_settings.additional_args: self.get_argument('additional_args'),
+                    MC_settings.pre_args: self.get_argument('pre_args'),
+                    MC_settings.auto_start_server: int(self.get_argument('auto_start_server')),
+                    MC_settings.server_port: self.get_argument('server_port'),
+                    MC_settings.server_ip: self.get_argument('server_ip'),
+                    MC_settings.jar_url: self.get_argument('jar_url'),
+                }).where(MC_settings.id == server_id)
+
+                q.execute()
+                self.mcserver.reload_settings()
+                self.redirect("/admin/dashboard")
+
+            elif server_path_exists:
+                # Redirect to "config invalid" page and log an event
+                logger.error('Minecraft server JAR does not exist at {}'.format(server_path))
+                self.redirect("/admin/server_config?invalid=True")
+
+            else:
+                logger.error('Minecraft server directory or JAR does not exist')
+                self.redirect("/admin/server_config?invalid=True")
+
         elif page == 'files':
 
             next_dir = self.get_argument('next_dir')
@@ -575,6 +634,30 @@ class AdminHandler(BaseHandler):
                 template,
                 data=context
             )
+
+        elif page == 'add_server':
+            server_name = self.get_argument('server_name', '')
+            server_path = self.get_argument('server_path', '')
+            server_jar = self.get_argument('server_jar', '')
+            max_mem = self.get_argument('max_mem', '')
+            min_mem = self.get_argument('min_mem', '')
+            auto_start = self.get_argument('auto_start', '')
+
+            MC_settings.insert({
+                MC_settings.server_name: server_name,
+                MC_settings.server_path: server_path,
+                MC_settings.server_jar: server_jar,
+                MC_settings.memory_max: max_mem,
+                MC_settings.memory_min: min_mem,
+                MC_settings.additional_args: "",
+                MC_settings.auto_start_server: auto_start,
+                MC_settings.auto_start_delay: 10,
+                MC_settings.auto_start_priority: 1,
+                MC_settings.server_port: 25565,
+                MC_settings.server_ip: "127.0.0.1"
+            }).execute()
+
+            self.redirect("/admin/dashboard")
 
 
     def get_server_data(self):
@@ -780,6 +863,12 @@ class AjaxHandler(BaseHandler):
             except Exception as e:
                 logger.error("Unable to save {} due to {} error".format(file_path, e))
             self.redirect("/admin/files")
+
+        elif page == "destroy_server":
+            server_id = self.get_body_argument('server_id', default=None, strip=True)
+            if server_id is not None:
+                MC_settings.delete_by_id(server_id)
+
 
 
 class SetupHandler(BaseHandler):

@@ -30,11 +30,12 @@ class Minecraft_Server():
         self.settings = None
         self.updating = False
         self.jar_exists = False
+        self.server_id = None
 
     def reload_settings(self):
         logger.info("Reloading MC Settings from the DB")
 
-        self.settings = MC_settings.get()
+        self.settings = MC_settings.get_by_id(self.server_id)
         self.setup_server_run_command()
 
     def do_auto_start(self):
@@ -51,16 +52,16 @@ class Minecraft_Server():
             logger.info("Auto Start is Disabled")
             console.info("Auto Start is Disabled")
 
-    def do_init_setup(self):
+    def do_init_setup(self, server_id):
         logger.debug("Minecraft Server Module Loaded")
         console.info("Loading Minecraft Server Module")
 
         if helper.is_setup_complete():
+            self.server_id = server_id
             self.reload_settings()
             schedule.every(10).seconds.do(self.write_html_server_status)
             self.write_usage_history()
             self.reload_history_settings()
-
 
         # if the db file exists, this isn't a fresh start
         if helper.is_setup_complete():
@@ -129,7 +130,18 @@ class Minecraft_Server():
             logger.info("Sending Server Command: {}".format(self.server_command))
             self.process.send(self.server_command + '\n')
 
-        self.PID = helper.find_progam_with_server_jar(self.settings.server_jar)
+        # old function - leaving just to be safe.
+        # self.PID = helper.find_progam_with_server_jar(self.settings.server_jar)
+
+        # get the real pid of the java child process that was spawned
+        try:
+            parent = psutil.Process(self.process.pid)
+        except:
+            return
+        children = parent.children(recursive=True)
+        for process in children:
+            if "java" in process.name():
+                self.PID = process.pid
 
         ts = time.time()
         self.start_time = str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))

@@ -1,0 +1,375 @@
+{% extends ../base.html %}
+
+{% block title %}Crafty Controller - Server Configuration{% end %}
+
+{% block content %}
+
+<section class="content-header">
+  <h1>
+    Server Config
+    <small>Configure Your Server</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Server Configuration</li>
+  </ol>
+</section>
+
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="" id="mcserver">
+                <form role="form" method="post">
+                    {% raw xsrf_form_html() %}
+                    <input type="hidden" name="server_id" value="{{ data['mc_settings']['id'] }}"/>
+
+                    <div class="box">
+                        <div class="box-header with-border">
+                          <h3 class="box-title">
+                              Minecraft Server Config
+                          </h3>
+                        </div>
+
+                        <div class="box-body">
+
+                            <div class="form-group">
+                                <label>
+                                    Server Name <br />
+                                    <small>What do you call this server? (example: CraftySurvival)</small>
+                                </label>
+                                <input type="text"
+                                       name="server_name" id="server_name"
+                                       class="form-control" placeholder="Server Name"
+                                       value="{{ data['mc_settings']['server_name'] }}"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    Server Path <br />
+                                    <small>What folder is your server in? (example: C:\minecraft\server)</small>
+                                </label>
+                                <input type="text"
+                                       name="server_path" id="server_path"
+                                       class="form-control" placeholder="Server Path Here"
+                                       value="{{ data['mc_settings']['server_path'] }}"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    Server Jar <br />
+                                    <small>What is your jar filename? (example: paper.jar)</small>
+                                </label>
+                                <input type="text"
+                                       name="server_jar" id="server_jar"
+                                       class="form-control" placeholder="Server Jar Here"
+                                       value="{{ data['mc_settings']['server_jar'] }}"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    Server Max Memory <br />
+                                    <small>Maximum Memory To Use in MB? (example: 2048)</small>
+                                </label>
+                                <input type="number"
+                                       name="memory_max" id="memory_max"
+                                       class="form-control" placeholder="Server Max Memory"
+                                       value="{{ data['mc_settings']['memory_max'] }}"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    Server Min Memory <br />
+                                    <small>Minimum Memory To Use in MB? (example: 1024)</small>
+                                </label>
+                                <input type="number"
+                                       name="memory_min" id="memory_min"
+                                       class="form-control" placeholder="Server Min Memory"
+                                       value="{{ data['mc_settings']['memory_min'] }}"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    Pre Arguments <br />
+                                    <small>Additional Args? (arguments to add after the memory arguments of server command)</small>
+                                </label>
+                                <input type="text"
+                                       name="pre_args" id="pre_args"
+                                       class="form-control" placeholder="Arguments after memory arguments"
+                                       value="{{ data['mc_settings']['pre_args'] }}"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    After Arguments <br />
+                                    <small>Additional Args? (arguments to add at the end of server command)</small>
+                                </label>
+                                <input type="text"
+                                       name="additional_args" id="additional_args"
+                                       class="form-control" placeholder="Extra Arguments"
+                                       value="{{ data['mc_settings']['additional_args'] }}"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    Jar Update URL<br />
+                                    <small>Server Jar Update URL - This is where you define where to update the jar from.</small>
+                                </label>
+                                <input type="text"
+                                       name="jar_url" id="jar_url"
+                                       class="form-control" placeholder="https://example.com/latest/server.jar"
+                                       value="{{ data['mc_settings']['jar_url'] }}"
+                                />
+                            </div>
+
+                            <hr />
+
+                            <!-- radio -->
+                            <div class="form-group">
+                                <b>Auto Start Server On Program Launch?</b>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio"
+                                               name="auto_start_server"
+                                               value="1"
+                                                {% if data['mc_settings']['auto_start_server'] %} checked {% end %}
+                                                />
+                                        Yes - Start the Minecraft Server on program launch.
+                                    </label>
+                                </div>
+
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio"
+                                               name="auto_start_server"
+                                               value="0"
+                                                {% if data['mc_settings']['auto_start_server'] == False %} checked {% end %}
+                                                />
+                                        No - I will start the server myself.
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    Auto Start Delay In Seconds<br />
+                                    <small>Has no effect if auto start is turned off (Example: 10)</small>
+                                </label>
+                                <input type="number"
+                                       name="auto_start_delay" id="auto_start_delay"
+                                       class="form-control" placeholder="Autostart Delay"
+                                       value="{{ data['mc_settings']['auto_start_delay'] }}"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    Auto Start Priority<br />
+                                    <small>Order in which this server should be started - lower numbers are started first</small>
+                                </label>
+                                <input type="number"
+                                       name="auto_start_priority" id="auto_start_priority"
+                                       class="form-control" placeholder="Autostart Priority"
+                                       value="{{ data['mc_settings']['auto_start_priority'] }}"
+                                />
+                            </div>
+
+                            <hr />
+
+                            <div class="form-group">
+                                <label>
+                                    Server Port <br />
+                                    <small>Default is 25565 - this is the port crafty will use to get server stats. This should match your server.properties file</small>
+                                </label>
+                                <input type="number"
+                                       name="server_port" id="server_port"
+                                       class="form-control" placeholder="25565"
+                                       value="{{ data['mc_settings']['server_port'] }}"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    Server IP<br />
+                                    <small>Default is 127.0.0.1 - this is the ip crafty will use to get server stats. This should match your server.properties file</small>
+                                </label>
+                                <input type="text"
+                                       name="server_ip" id="server_ip"
+                                       class="form-control" placeholder="127.0.0.1"
+                                       value="{{ data['mc_settings']['server_ip'] }}"
+                                />
+                            </div>
+
+                        </div>
+
+                        <div class="box-footer">
+                            <a class="btn btn-danger" onclick="delete_server( {{ data['mc_settings']['id'] }} , '{{ data['mc_settings']['server_name'] }}' )">Delete Server</a>
+
+                            <button type="submit" class="btn btn-success pull-right">
+                                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                    </form>
+              </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="box box-solid">
+            <div class="box-header with-border">
+              <i class="fa fa-cog"></i>
+
+                <h3 class="box-title">Your Current Config</h3>
+                <h3 class="box-title pull-right">
+                    <a href="/admin/reload_mc_settings" class="btn btn-sm btn-default">Reload MC Settings</a>
+                    <a href="/admin/reload_web" class="btn btn-sm btn-default">Reload Web Server</a>
+                </h3>
+
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                The server will be launched using this string:<br />
+                <b>
+                java -Xms{{ data['mc_settings']['memory_min'] }}M
+                -Xmx{{ data['mc_settings']['memory_max'] }}M
+                {{ data['mc_settings']['pre_args'] }}
+                -jar {{ data['mc_settings']['server_path'] }}/{{ data['mc_settings']['server_jar'] }} nogui
+                {{ data['mc_settings']['additional_args'] }}
+                </b>
+
+                <hr />
+                {% if data['mc_settings']['auto_start_server'] %}
+                    The server is set to autostart after  <b>{{ data['mc_settings']['auto_start_delay'] }}</b> seconds
+                {% else %}
+                    The server is <b>NOT</b> set to autostart
+                {% end %}
+
+                <hr />
+
+                Crafty will try to connect to <b>{{ data['mc_settings']['server_ip'] }}</b>  on port <b>{{ data['mc_settings']['server_port'] }}</b> to get server status
+
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+    </div>
+
+</section>
+
+
+
+<!--
+{{ data }}
+-->
+
+
+
+
+{% end %}
+
+{% block js-script %}
+
+<script>
+
+    function delete_server(server_id, server_name){
+        bootbox.confirm({
+            title: "Destroy Server: " + server_name + "?",
+            message: "Do you want to delete the server? This cannot be undone.",
+            buttons: {
+                cancel: {
+                    label: '<i class="fa fa-times"></i> Cancel'
+                },
+                confirm: {
+                    label: '<i class="fa fa-check"></i> Confirm'
+                }
+            },
+            callback: function (result) {
+                if (result){
+                    console.log('You said YES?!');
+                    destroy_server(server_id)
+                }
+            }
+        });
+    }
+
+    function destroy_server(id){
+
+        var token = getCookie("_xsrf")
+
+        data_to_send = { server_id :id,  }
+
+        console.log('sending destroy command for server id: ' + id)
+        $.ajax({
+          type: "POST",
+          headers: {'X-XSRFToken': token},
+          url: '/ajax/destroy_server',
+          data: data_to_send,
+          success: function(data){
+            window.location.replace('/admin/dashboard');
+          },
+        });
+    }
+
+    function show_saved(){
+        var dialog = bootbox.dialog({
+            message: "Settings Saved",
+            className: 'modal modal-success fade-in',
+            okButton: false
+        });
+    }
+
+    function show_invalid(){
+        var dialog = bootbox.dialog({
+            message: "Invalid Settings Detected",
+            className: 'modal modal-danger fade-in',
+            okButton: false
+        });
+    }
+
+    function hide_modal(){
+        bootbox.hideAll()
+    }
+
+    //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
+
+
+    $( document ).ready(function() {
+        console.log( "ready!" );
+
+
+        //adding quick/dirty padding
+        $('input').css("margin-bottom",'10px')
+
+        {% if data['saved'] %}
+            show_saved()
+            setTimeout(hide_modal, 1000);
+        {% end %}
+
+        {% if data['invalid'] %}
+            show_invalid()
+            setTimeout(hide_modal, 1000);
+        {% end %}
+
+
+    });
+
+
+
+
+</script>
+
+{% end %}

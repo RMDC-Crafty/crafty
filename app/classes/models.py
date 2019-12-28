@@ -18,6 +18,24 @@ class BaseModel(Model):
     class Meta:
         database = database
 
+class Server_Stats(BaseModel):
+    server_id = IntegerField()
+    time = DateTimeField(default=datetime.datetime.now)
+    server_start_time = CharField()
+    cpu_usage = FloatField()
+    memory_usage = FloatField()
+    max_players = IntegerField()
+    online_players = IntegerField()
+    players = CharField()
+    motd = CharField()
+    server_running = BooleanField()
+    server_version = CharField()
+    world_name = CharField()
+    world_size = FloatField()
+
+    class Meta:
+        table_name = "stats"
+
 
 class Ftp_Srv(BaseModel):
     port = IntegerField()
@@ -60,6 +78,8 @@ class Roles(BaseModel):
 
 class Remote(BaseModel):
     command = CharField()
+    server_id = IntegerField()
+    command_source = CharField(default="Localhost")
 
     class Meta:
         table_name = "remote"

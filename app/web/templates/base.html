@@ -70,30 +70,6 @@
           </form>
           </li>
 
-
-          <!-- Notifications: style can be found in dropdown.less -->
-          <li class="dropdown notifications-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-              <i class="fa fa-server"></i> Managing: {{ data['managed_server'] }}
-            </a>
-            <ul class="dropdown-menu">
-              <li class="header">Your Defined Servers</li>
-              <li>
-                <!-- inner menu: contains the actual data -->
-                <ul class="menu">
-                  {% for s in data['servers_defined'] %}
-                    <li>
-                      <a href="/admin/manage_server?server_id={{ s.id }}">
-                      Click to manage {{ s.server_name }}
-                      </a>
-                    </li>
-                  {% end %}
-
-                </ul>
-              </li>
-            </ul>
-          </li>
-
           <!-- Tasks: style can be found in dropdown.less -->
           <li class="">
             <a href="#" id="update_check" aria-expanded="true">

@@ -130,20 +130,19 @@ if __name__ == '__main__':
 
     # only import / new database tables are created do we load the rest of the things!
     from app.classes.ftp import ftp_svr_object
-    from app.classes.minecraft_server import mc_server
+    # from app.classes.minecraft_server import mc_server
     from app.classes.http import tornado_srv
     from app.classes.craftycmd import MainPrompt
+    from app.classes.minecraft_server import mc_server
+
     from app.classes.remote_coms import remote_commands
+    from app.classes.multiserv import multi
 
     logger.info("Starting Scheduler Daemon")
     console.info("Starting Scheduler Daemon")
 
     scheduler = threading.Thread(name='Scheduler', target=start_scheduler, daemon=True)
     scheduler.start()
-
-    mc_server.do_init_setup()
-
-
 
     # startup Tornado
     tornado_srv.start_web_server(True)
@@ -156,6 +155,16 @@ if __name__ == '__main__':
             helper.get_local_ip(), port_number))
         console.info("Your Username is: Admin")
         console.info("Your Password is: {}".format(admin_pass))
+
+    multi.setup_new_server_obj(1)
+    multi.setup_new_server_obj(2)
+    print(multi.list_servers())
+    themcserver = multi.get_server_obj(1)
+    themcserver.run_threaded_server()
+    themcserver1 = multi.get_server_obj(2)
+    themcserver1.run_threaded_server()
+
+
 
     # start the remote commands watcher thread
     remote_coms = remote_commands(mc_server, tornado_srv)
