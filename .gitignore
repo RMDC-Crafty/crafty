@@ -19,3 +19,4 @@ app/web/temp/
 
 #ignore generated databases 
 app/config/crafty.*
+app/config/new_install.temp
