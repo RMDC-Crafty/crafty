@@ -22,6 +22,7 @@ from app.classes.models import *
 from app.classes.ftp import ftp_svr_object
 from app.classes.minecraft_server import mc_server
 from app.classes.web_sessions import web_session
+from app.classes.multiserv import multi
 
 logger = logging.getLogger(__name__)
 
@@ -349,27 +350,38 @@ class AdminHandler(BaseHandler):
                 self.redirect('/admin/unauthorized')
 
             command = self.get_argument("command", None, True)
-            self.mcserver.reload_settings()
+            id = self.get_argument("id", None, True)
+
+            # grab any defined server object and reload the settings
+            any_serv_obj = multi.get_first_server_object()
+            any_serv_obj.reload_settings()
 
             if command == "server_stop":
                 Remote.insert({
-                    Remote.command: 'stop_mc_server'
+                    Remote.command: 'stop_mc_server',
+                    Remote.server_id: id,
+                    Remote.command_source: "localhost"
                 }).execute()
-                next_page = "/admin/virtual_console"
+                next_page = "/admin/virtual_console?id={}".format(id)
 
             elif command == "server_start":
                 Remote.insert({
-                    Remote.command: 'start_mc_server'
+                    Remote.command: 'start_mc_server',
+                    Remote.server_id: id,
+                    Remote.command_source: "localhost"
                 }).execute()
-                self.mcserver.write_html_server_status()
-                next_page = "/admin/virtual_console"
+                next_page = "/admin/virtual_console?id={}".format(id)
 
             elif command == "server_restart":
-                self.mcserver.restart_threaded_server()
-                next_page = "/admin/virtual_console"
+                Remote.insert({
+                    Remote.command: 'restart_mc_server',
+                    Remote.server_id: id,
+                    Remote.command_source: "localhost"
+                }).execute()
+                next_page = "/admin/virtual_console?id={}".format(id)
 
             elif command == "ftp_server_start":
-                row = Remote.insert({
+                Remote.insert({
                     Remote.command: 'start_ftp'
                 }).execute()
                 time.sleep(2)
@@ -870,7 +882,6 @@ class AjaxHandler(BaseHandler):
                 MC_settings.delete_by_id(server_id)
 
 
-
 class SetupHandler(BaseHandler):
 
     def initialize(self, mcserver):
@@ -935,11 +946,14 @@ class SetupHandler(BaseHandler):
                 Backups.max_backups: 7
             }).execute()
 
-            # reload the server settings
-            self.mcserver.reload_settings()
+            time.sleep(.5)
 
             # do initial setup
-            self.mcserver.do_init_setup()
+            multi.init_all_servers()
+
+            # reload the server settings
+            srv_obj = multi.get_first_server_object()
+            srv_obj.reload_settings()
 
             # do FTP setup
             ftp_svr_object.setup_ftp()

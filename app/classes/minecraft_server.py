@@ -31,12 +31,21 @@ class Minecraft_Server():
         self.updating = False
         self.jar_exists = False
         self.server_id = None
+        self.name = None
 
     def reload_settings(self):
         logger.info("Reloading MC Settings from the DB")
 
         self.settings = MC_settings.get_by_id(self.server_id)
+
         self.setup_server_run_command()
+
+    def get_mc_server_name(self, server_id=None):
+        if server_id is None:
+            server_id = self.server_id
+        server_data = MC_settings.get_by_id(server_id)
+        return server_data.server_name
+
 
     def do_auto_start(self):
         # do we want to auto launch the minecraft server?
@@ -58,6 +67,7 @@ class Minecraft_Server():
 
         if helper.is_setup_complete():
             self.server_id = server_id
+            self.name = self.get_mc_server_name(self.server_id)
             self.reload_settings()
             schedule.every(10).seconds.do(self.write_html_server_status)
             self.write_usage_history()
@@ -103,15 +113,11 @@ class Minecraft_Server():
 
     def start_server(self):
 
-        if self.check_running():
-            console.warning("Minecraft Server already running...")
-            return False
-        
         if not self.jar_exists:
             console.warning("Minecraft server JAR does not exist...")
             return False
 
-        logger.info("Launching Minecraft server with command: {}".format(self.server_command))
+        logger.info("Launching Minecraft server {} with command: {}".format(self.name, self.server_command))
 
         if os.name == "nt":
             logger.info("Windows Detected - launching cmd")
@@ -146,7 +152,7 @@ class Minecraft_Server():
         ts = time.time()
         self.start_time = str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
 
-        logger.info("Minecraft Server Running with PID: {}".format(self.PID))
+        logger.info("Minecraft Server Running {} with PID: {}".format(self.PID, self.name))
 
         # write status file
         self.write_html_server_status()

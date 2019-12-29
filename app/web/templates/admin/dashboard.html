@@ -98,13 +98,19 @@
 
         <div class="box-tools pull-right">
           {% if data['user_data']['svr_control'] %}
-          <a class="btn btn-box-tool disabled" href="/admin/commands?command=server_start&id={{ s.id }}">
+          <a class="btn btn-box-tool" href="/admin/commands?command=server_start&id={{ s.id }}" >
             <i class="fa fa-play"></i>
           </a>
 
-          <a class="btn btn-box-tool disabled" href="/admin/commands?command=server_stop&id={{ s.id }}">
+          <a class="btn btn-box-tool" href="/admin/commands?command=server_stop&id={{ s.id }}">
             <i class="fa fa-stop"></i>
           </a>
+
+          <a class="btn btn-box-tool" href="/admin/commands?command=server_restart&id={{ s.id }}">
+            <i class="fa fa-refresh" aria-hidden="true"></i>
+          </a>
+
+
           {% end %}
 
           {% if data['user_data']['config'] %}
@@ -124,7 +130,11 @@
 
         {% if data['user_data']['svr_control'] %}
         <a href="" class="btn  btn-default">
-          <i class="fa fa-terminal" aria-hidden="true"></i> Terminal
+          <i class="fa fa-eye" aria-hidden="true"></i> View
+        </a>
+
+        <a href="" class="btn  btn-default">
+          <i class="fa fa-terminal" aria-hidden="true"></i> Term
         </a>
         {% end %}
 

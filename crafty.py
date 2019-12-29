@@ -156,18 +156,11 @@ if __name__ == '__main__':
         console.info("Your Username is: Admin")
         console.info("Your Password is: {}".format(admin_pass))
 
-    multi.setup_new_server_obj(1)
-    multi.setup_new_server_obj(2)
-    print(multi.list_servers())
-    themcserver = multi.get_server_obj(1)
-    themcserver.run_threaded_server()
-    themcserver1 = multi.get_server_obj(2)
-    themcserver1.run_threaded_server()
-
-
+    # for each server that is defined, we set them up in the multi class, so we have them ready for later.
+    multi.init_all_servers()
 
     # start the remote commands watcher thread
-    remote_coms = remote_commands(mc_server, tornado_srv)
+    remote_coms = remote_commands(tornado_srv)
     remote_coms_thread = threading.Thread(target=remote_coms.start_watcher, daemon=True, name="Remote_Coms")
     remote_coms_thread.start()
 
