@@ -28,7 +28,7 @@ class BaseHandler(tornado.web.RequestHandler):
     def access_denied(self, user):
         logger.info("User %s was denied access to API route", user)
         self.set_status(403)
-        self.finish(self.return_response(403, 'accessdenied', '', 'You were denied access to the requested resource'))
+        self.finish(self.return_response(403, {'error':'ACCESS_DENIED'}, {}, {'info':'You were denied access to the requested resource'}))
     
     def authenticate_user(self, token):
         try:
