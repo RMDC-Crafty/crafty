@@ -959,6 +959,7 @@ class webserver():
             (r'/api/v1/server/restart', api_routes.RestartServer, dict(mcserver=self.mc_server)),
             
             # Crafty related
+            (r'/api/v1/crafty/add_user', api_routes.CreateUser),
             (r'/api/v1/crafty/get_logs', api_routes.GetCraftyLogs),
             (r'/api/v1/crafty/search_logs', api_routes.SearchCraftyLogs)            
         ]

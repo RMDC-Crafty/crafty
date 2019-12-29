@@ -1,10 +1,11 @@
 import os
+import secrets
 import threading
 import tornado.web
 import tornado.escape 
 import logging.config
 
-from app.classes.models import Roles, Users, check_role_permission, Remote
+from app.classes.models import Roles, Users, check_role_permission, Remote, model_to_dict
 from app.classes.helpers import helper
 
 logger = logging.getLogger(__name__)
@@ -276,3 +277,32 @@ class RestartServer(BaseHandler):
         
         self.mcserver.restart_threaded_server()
         self.return_response(200, {}, {'code':'SER_RESTART_CALLED'}, {})
+
+class CreateUser(BaseHandler):
+    
+    def post(self):
+        token = self.get_argument('token')
+        user = self.authenticate_user(token)
+        
+        if user is None:
+            self.access_denied('unknown')
+        
+        if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'config'):
+            self.access_denied(user)
+        
+        new_username = self.get_argument("username")
+        
+        # TODO: implement role checking
+        #new_role = self.get_argument("role", 'Mod')
+
+        if new_username:
+            new_pass = helper.random_string_generator()
+            new_token = secrets.token_urlsafe(32)
+            result = Users.insert({
+                Users.username: new_username,
+                Users.role: 'Mod',
+                Users.password: helper.encode_pass(new_pass),
+                Users.api_token: new_token
+            }).execute()
+        
+        self.return_response(200, {}, {'code':'COMPLETE', 'username': new_username, 'password': new_pass, 'api_token': new_token}, {})
