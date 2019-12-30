@@ -134,20 +134,13 @@ class AdminHandler(BaseHandler):
         name = tornado.escape.json_decode(self.current_user)
         user_data = get_perms_for_user(name)
 
-        servers_defined = MC_settings.select()
-
-        server_data = self.get_server_data()
-
-        # if we haven't picked the managed server - let's choose number 1 as a default
-        if not self.session.get_data(self.current_user, 'managed_server'):
-            self.session.set_data(self.current_user, 'managed_server', servers_defined[0].server_name)
-
         context = {
-            'server_data': server_data,
+            'server_data': self.get_server_data(),
             'user_data': user_data,
             'version_data': helper.get_version(),
-            'servers_defined': servers_defined,
-            'managed_server': self.session.get_data(self.current_user, 'managed_server')
+            'servers_defined': multi.list_servers(),
+            'managed_server': self.session.get_data(self.current_user, 'managed_server'),
+            'servers_running': multi.list_running_servers()
         }
 
         if page == 'unauthorized':
@@ -188,6 +181,7 @@ class AdminHandler(BaseHandler):
             if not check_role_permission(user_data['username'], 'svr_console'):
                 self.redirect('/admin/unauthorized')
 
+            context['server_id'] = self.get_argument('id', '')
             template = "admin/virt_console.html"
 
         elif page == "backups":
@@ -589,7 +583,7 @@ class AdminHandler(BaseHandler):
             jar_exists = helper.check_file_exists(os.path.join(server_path, server_jar))
 
             if server_path_exists and jar_exists:
-                q = MC_settings.update({
+                MC_settings.update({
                     MC_settings.server_name: self.get_argument('server_name'),
                     MC_settings.server_path: server_path,
                     MC_settings.server_jar: server_jar,
@@ -601,10 +595,11 @@ class AdminHandler(BaseHandler):
                     MC_settings.server_port: self.get_argument('server_port'),
                     MC_settings.server_ip: self.get_argument('server_ip'),
                     MC_settings.jar_url: self.get_argument('jar_url'),
-                }).where(MC_settings.id == server_id)
+                }).where(MC_settings.id == server_id).execute()
 
-                q.execute()
-                self.mcserver.reload_settings()
+                srv_obj = multi.get_first_server_object()
+                srv_obj.reload_settings()
+
                 self.redirect("/admin/dashboard")
 
             elif server_path_exists:
@@ -669,6 +664,8 @@ class AdminHandler(BaseHandler):
                 MC_settings.server_ip: "127.0.0.1"
             }).execute()
 
+            multi.init_all_servers()
+
             self.redirect("/admin/dashboard")
 
 
@@ -694,8 +691,14 @@ class AjaxHandler(BaseHandler):
     def get(self, page):
 
         if page == 'server_log':
+            server_id = self.get_argument('id')
 
-            server_log = os.path.join(self.mcserver.server_path, 'logs', 'latest.log')
+            if server_id is None:
+                logger.warning("Server ID not found in server_log ajax call")
+
+            server_path = multi.get_server_root_path(server_id)
+
+            server_log = os.path.join(server_path, 'logs', 'latest.log')
             data = helper.tail_file(server_log, 40)
 
             for d in data:
@@ -762,11 +765,17 @@ class AjaxHandler(BaseHandler):
         user_data = get_perms_for_user(name)
 
         if page == "send_command":
-            # posted_data = tornado.escape.json_decode(self.request.body)
             command = self.get_body_argument('command', default=None, strip=True)
+            server_id = self.get_argument('id')
+
+            if server_id is None:
+                logger.warning("Server ID not found in send_command ajax call")
+
+            srv_obj = multi.get_server_obj(server_id)
+
             if command:
-                if self.mcserver.check_running:
-                    self.mcserver.send_command(command)
+                if srv_obj.check_running():
+                    srv_obj.send_command(command)
 
         elif page == 'del_file':
             file_to_del = self.get_body_argument('file_name', default=None, strip=True)
@@ -880,6 +889,7 @@ class AjaxHandler(BaseHandler):
             server_id = self.get_body_argument('server_id', default=None, strip=True)
             if server_id is not None:
                 MC_settings.delete_by_id(server_id)
+                multi.init_all_servers()
 
 
 class SetupHandler(BaseHandler):

@@ -29,8 +29,12 @@ class remote_commands():
                 command = command_data['command']
                 server_id = command_data['server_id']
                 source = command_data['command_source']
-                logger.info("Remote Command:{} found for {} from source: {}- Executing".format(
-                    command, server_id, source))
+
+                server_data = MC_settings.get_by_id(server_id)
+                server_name = server_data.server_name
+
+                logger.info("Remote Command: {} found for server: {} from source: {}- Executing".format(
+                    command, server_name, source))
 
                 self.handle_command(command, server_id)
                 self.clear_all_commands()
@@ -109,15 +113,8 @@ class remote_commands():
             if ftp_svr_object.check_running():
                 ftp_svr_object.stop_threaded_ftp_server()
 
-            for s in multi.servers_list:
-                the_srv_obj = s['server_obj']
-                running = the_srv_obj.check_running()
-                server_name = srv_obj.get_mc_server_name()
-
-                if running:
-                    logger.info("Stopping MC Server: {}".format(server_name))
-                    the_srv_obj.stop_threaded_server()
-                    time.sleep(30)
+            # kill all mc servers gracefully
+            multi.stop_all_servers()
 
             logger.info("***** Crafty Stopped ***** \n")
 

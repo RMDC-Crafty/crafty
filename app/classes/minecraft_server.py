@@ -46,7 +46,6 @@ class Minecraft_Server():
         server_data = MC_settings.get_by_id(server_id)
         return server_data.server_name
 
-
     def do_auto_start(self):
         # do we want to auto launch the minecraft server?
         if self.settings.auto_start_server:
@@ -55,15 +54,15 @@ class Minecraft_Server():
             console.info("Auto Start is Enabled - Waiting {} seconds to start the server".format(delay))
             time.sleep(int(delay))
             # delay the startup as long as the
-            console.info("Starting Minecraft Server")
+            console.info("Starting Minecraft Server {}".format(self.name))
             self.run_threaded_server()
         else:
             logger.info("Auto Start is Disabled")
             console.info("Auto Start is Disabled")
 
     def do_init_setup(self, server_id):
-        logger.debug("Minecraft Server Module Loaded")
-        console.info("Loading Minecraft Server Module")
+        logger.debug("Loading Minecraft Server Object for Server ID: {}".format(server_id))
+        console.info("Loading Minecraft Server Object for Server ID: {}".format(server_id))
 
         if helper.is_setup_complete():
             self.server_id = server_id
@@ -136,23 +135,20 @@ class Minecraft_Server():
             logger.info("Sending Server Command: {}".format(self.server_command))
             self.process.send(self.server_command + '\n')
 
-        # old function - leaving just to be safe.
-        # self.PID = helper.find_progam_with_server_jar(self.settings.server_jar)
-
-        # get the real pid of the java child process that was spawned
         try:
             parent = psutil.Process(self.process.pid)
         except:
             return
+
+        time.sleep(.5)
         children = parent.children(recursive=True)
-        for process in children:
-            if "java" in process.name():
-                self.PID = process.pid
+        for c in children:
+            self.PID = c.pid
 
         ts = time.time()
         self.start_time = str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
 
-        logger.info("Minecraft Server Running {} with PID: {}".format(self.PID, self.name))
+        logger.info("Minecraft Server Running {} with PID: {}".format(self.name, self.PID))
 
         # write status file
         self.write_html_server_status()
@@ -176,68 +172,69 @@ class Minecraft_Server():
     def stop_server(self):
 
         if self.detect_bungee_waterfall():
-            logger.info('Waterfall/Bungee Detected: Sending end command to server')
+            logger.info('Waterfall/Bungee Detected: Sending end command to server {}'.format(self.name))
             self.send_command("end")
         else:
-            logger.info('Sending stop command to server')
+            logger.info('Sending stop command to server {}'.format(self.name))
             self.send_command('stop')
 
         for x in range(6):
+            self.PID = None
 
-            if self.check_running():
-                logger.debug('Polling says Minecraft Server is running')
-
+            if self.check_running(True):
+                logger.debug('Polling says Minecraft Server {} is running'.format(self.name))
                 time.sleep(10)
 
             # now the server is dead, we set process to none
             else:
-                logger.debug('Minecraft Server Stopped')
+                logger.debug('Minecraft Server {} Stopped'.format(self.name))
                 self.process = None
                 self.PID = None
                 self.start_time = None
+                self.name = None
                 # return true as the server is down
                 return True
 
         # if we got this far, the server isn't responding, and needs to be forced down
-        logger.critical('Unable to stop the server - force it down {}'.format(self.PID))
+        logger.critical('Unable to stop the server {} - forcing it down {}'.format(self.name, self.PID))
 
         self.killpid(self.PID)
 
-    def check_running(self):
+    def crash_detected(self, name):
+        # let's make sure the settings are setup right
+        self.reload_settings()
+
+        # the server crashed, or isn't found - so let's reset things.
+        logger.warning("The server {} seems to have vanished unexpectedly, did it crash?".format(name))
+
+        if self.settings.auto_start_server:
+            logger.info("The server {} has crashed and auto-start was enabled: Restarting Server ".format(name))
+            self.run_threaded_server()
+        else:
+            logger.info("The server {} has crashed and auto-start was disabled: not restarting the server".format(name))
+
+    def check_running(self, shutting_down=False):
         # if process is None, we never tried to start
         if self.PID is None:
             return False
-        
+
         if not self.jar_exists:
             return False
 
-        else:
-            # loop through processes
-            for proc in psutil.process_iter():
-                try:
-                    # Check if process name contains the given name string.
-                    if 'java' in proc.name().lower():
+        running = psutil.pid_exists(self.PID)
 
-                        # join the command line together so we can search it for the server.jar
-                        cmdline = " ".join(proc.cmdline())
+        if not running:
+            # did the server crash?
+            if not shutting_down:
+                self.crash_detected(self.name)
 
-                        server_jar = self.settings.server_jar
-
-                        if server_jar is None:
-                            return False
-
-                        # if we found the server jar, and the process is java, we can assume it's our server
-                        if server_jar in cmdline:
-                            return True
-                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                    pass
-
-            # the server crashed, or isn't found - so let's reset things.
-            logger.warning("The server seems to have vanished, did it crash?")
             self.process = None
             self.PID = None
-
+            self.name = None
             return False
+
+        else:
+            return True
 
     def killpid(self, pid):
         logger.info('Killing Process {} and all child processes'.format(pid))

@@ -69,23 +69,6 @@ class helpers:
         mem = psutil.virtual_memory()
         return self.human_readable_file_size(int(mem.available))
 
-    def find_progam_with_server_jar(self, jar_file):
-        # let's give it time to start
-        time.sleep(3)
-        # loop through each process and see if we can find "java" and a command line that has the jar file in it
-        for p in psutil.process_iter():
-            try:
-                if 'java' in p.name():
-                    # for each process
-                    for c in p.cmdline():
-                        if jar_file in c:
-                            return p.pid
-            except (psutil.AccessDenied, psutil.ZombieProcess):
-                pass
-            except psutil.NoSuchProcess:
-                continue
-        return False
-
     def get_local_ip(self):
         try:
             host = socket.gethostname()
