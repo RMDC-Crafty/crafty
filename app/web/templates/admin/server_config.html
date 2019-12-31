@@ -318,9 +318,7 @@
 
 
 
-<!--
-{{ data }}
--->
+<!--{{ data }}-->
 
 
 
@@ -380,7 +378,7 @@
 
     function show_invalid(){
         var dialog = bootbox.dialog({
-            message: "Invalid Settings Detected",
+            message: "Invalid Settings Detected: {{ data['errors'] }}",
             className: 'modal modal-danger fade-in',
             okButton: false
         });
@@ -410,9 +408,9 @@
             setTimeout(hide_modal, 1000);
         {% end %}
 
-        {% if data['invalid'] %}
+        {% if data['errors'] %}
             show_invalid()
-            setTimeout(hide_modal, 1000);
+            setTimeout(hide_modal, 3000);
         {% end %}
 
 

@@ -316,7 +316,24 @@
             message: "Please give the server " + time + " seconds to start if auto-start was enabled",
             backdrop: true
         });
+  }
+
+  function show_invalid(){
+      var dialog = bootbox.dialog({
+          message: "Invalid Settings Detected: {{ data['errors'] }}",
+          className: 'modal modal-danger fade-in',
+          okButton: true
+      });
+  }
+
+  function hide_modal(){
+        bootbox.hideAll()
     }
+
+   {% if data['errors'] %}
+      show_invalid()
+      setTimeout(hide_modal, 3000);
+  {% end %}
 
 
 </script>
