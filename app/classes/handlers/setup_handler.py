@@ -9,7 +9,7 @@ from app.classes.handlers.base_handler import BaseHandler
 from app.classes.multiserv import multi
 from app.classes.ftp import ftp_svr_object
 
-
+logger = logging.getLogger(__name__)
 
 class SetupHandler(BaseHandler):
 

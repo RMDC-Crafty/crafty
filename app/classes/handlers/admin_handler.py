@@ -13,6 +13,8 @@ from app.classes.web_sessions import web_session
 from app.classes.multiserv import multi
 from app.classes.ftp import ftp_svr_object
 
+logger = logging.getLogger(__name__)
+
 class AdminHandler(BaseHandler):
 
     def initialize(self, mcserver):

@@ -6,6 +6,7 @@ from app.classes.console import console
 from app.classes.models import *
 from app.classes.handlers.base_handler import BaseHandler
 
+logger = logging.getLogger(__name__)
 
 class PublicHandler(BaseHandler):
 
