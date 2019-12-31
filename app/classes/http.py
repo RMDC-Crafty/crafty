@@ -592,6 +592,9 @@ class AdminHandler(BaseHandler):
                     MC_settings.additional_args: self.get_argument('additional_args'),
                     MC_settings.pre_args: self.get_argument('pre_args'),
                     MC_settings.auto_start_server: int(self.get_argument('auto_start_server')),
+                    MC_settings.auto_start_delay: int(self.get_argument('auto_start_delay')),
+                    MC_settings.auto_start_priority: int(self.get_argument('auto_start_priority')),
+                    MC_settings.crash_detection: 0,
                     MC_settings.server_port: self.get_argument('server_port'),
                     MC_settings.server_ip: self.get_argument('server_ip'),
                     MC_settings.jar_url: self.get_argument('jar_url'),
@@ -650,7 +653,7 @@ class AdminHandler(BaseHandler):
             min_mem = self.get_argument('min_mem', '')
             auto_start = self.get_argument('auto_start', '')
 
-            MC_settings.insert({
+            new_server_id = MC_settings.insert({
                 MC_settings.server_name: server_name,
                 MC_settings.server_path: server_path,
                 MC_settings.server_jar: server_jar,
@@ -660,11 +663,12 @@ class AdminHandler(BaseHandler):
                 MC_settings.auto_start_server: auto_start,
                 MC_settings.auto_start_delay: 10,
                 MC_settings.auto_start_priority: 1,
+                MC_settings.crash_detection: 0,
                 MC_settings.server_port: 25565,
                 MC_settings.server_ip: "127.0.0.1"
             }).execute()
 
-            multi.init_all_servers()
+            multi.setup_new_server_obj(new_server_id)
 
             self.redirect("/admin/dashboard")
 
@@ -889,7 +893,7 @@ class AjaxHandler(BaseHandler):
             server_id = self.get_body_argument('server_id', default=None, strip=True)
             if server_id is not None:
                 MC_settings.delete_by_id(server_id)
-                multi.init_all_servers()
+                multi.remove_server_object(server_id)
 
 
 class SetupHandler(BaseHandler):
@@ -942,6 +946,7 @@ class SetupHandler(BaseHandler):
                 MC_settings.auto_start_server: auto_start,
                 MC_settings.auto_start_delay: 10,
                 MC_settings.auto_start_priority: 1,
+                MC_settings.crash_detection: 0,
                 MC_settings.server_port: 25565,
                 MC_settings.server_ip: "127.0.0.1"
             }).execute()

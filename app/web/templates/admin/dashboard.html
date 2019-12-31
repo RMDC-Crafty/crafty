@@ -280,7 +280,7 @@
                   </div>
                   <!-- /.col -->
                   <div class="col-xs-6">
-                    <button type="submit" onclick="show_warning()" class="btn btn-success btn-block btn-flat"> Create New Server</button>
+                    <button type="submit" onclick="delay()" class="btn btn-success btn-block btn-flat"> Create New Server</button>
                   </div>
                   <!-- /.col -->
                 </div>
@@ -311,9 +311,12 @@
 
 <script>
 
-
-
-
+  function delay(time='5-10'){
+        bootbox.alert({
+            message: "Please give the server " + time + " seconds to start if auto-start was enabled",
+            backdrop: true
+        });
+    }
 
 
 </script>

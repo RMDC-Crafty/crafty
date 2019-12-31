@@ -96,6 +96,7 @@ class MC_settings(BaseModel):
     auto_start_server = BooleanField()
     auto_start_delay = IntegerField()
     auto_start_priority = IntegerField()
+    crash_detection = BooleanField()
     server_port = IntegerField(default=25565)
     server_ip = CharField(default='127.0.0.1')
     jar_url = CharField(default='')

@@ -169,16 +169,67 @@
                                 />
                             </div>
 
+                            <!-- radio -->
                             <div class="form-group">
-                                <label>
-                                    Auto Start Priority<br />
-                                    <small>Order in which this server should be started - lower numbers are started first</small>
-                                </label>
-                                <input type="number"
-                                       name="auto_start_priority" id="auto_start_priority"
-                                       class="form-control" placeholder="Autostart Priority"
-                                       value="{{ data['mc_settings']['auto_start_priority'] }}"
-                                />
+                                <b>Auto Start Priority<br /><small>No effect if auto start is not enabled</small></b>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio"
+                                               name="auto_start_priority"
+                                               value="1"
+                                                {% if data['mc_settings']['auto_start_priority'] == 1 %} checked {% end %}
+                                                />
+                                        Highest Priority
+                                    </label>
+                                </div>
+
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio"
+                                               name="auto_start_priority"
+                                               value="2"
+                                                {% if data['mc_settings']['auto_start_priority'] == 2 %} checked {% end %}
+                                                />
+                                        Medium Priority
+                                    </label>
+                                </div>
+
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio"
+                                               name="auto_start_priority"
+                                               value="3"
+                                                {% if data['mc_settings']['auto_start_priority'] == 3 %} checked {% end %}
+                                                />
+                                        Lowest Priority
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- radio -->
+                            <div class="form-group">
+                                <b>Turn On Crash Detection?<br /><small>If the server stops, it will automatically be restarted</small></b>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio"
+                                               name="crash_detection"
+                                               value="1"
+                                                {% if data['mc_settings']['crash_detection'] %} checked {% end %}
+                                                />
+                                        Yes - Start the Minecraft Server on program launch.
+                                    </label>
+                                </div>
+
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio"
+                                               name="crash_detection"
+                                               value="0"
+                                                {% if data['mc_settings']['crash_detection'] == False %} checked {% end %}
+                                                />
+                                        No - I will start the server myself.
+                                    </label>
+                                </div>
                             </div>
 
                             <hr />

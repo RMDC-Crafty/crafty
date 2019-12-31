@@ -207,11 +207,11 @@ class Minecraft_Server():
         # the server crashed, or isn't found - so let's reset things.
         logger.warning("The server {} seems to have vanished unexpectedly, did it crash?".format(name))
 
-        if self.settings.auto_start_server:
-            logger.info("The server {} has crashed and auto-start was enabled: Restarting Server ".format(name))
+        if self.settings.crash_detection:
+            logger.info("The server {} has crashed and will be restarted: Restarting Server ".format(name))
             self.run_threaded_server()
         else:
-            logger.info("The server {} has crashed and auto-start was disabled: not restarting the server".format(name))
+            logger.info("The server {0} has crashed, crash detection is disabled - {0} will not be restarted".format(name))
 
     def check_running(self, shutting_down=False):
         # if process is None, we never tried to start

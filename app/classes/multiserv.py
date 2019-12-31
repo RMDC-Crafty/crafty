@@ -4,14 +4,17 @@ from app.classes.models import MC_settings
 
 logger = logging.getLogger(__name__)
 
+
 class multi_serve():
 
     def __init__(self):
-        self.servers_list = []
+        self.servers_list = {}
 
     def init_all_servers(self):
 
-        self.servers_list = []
+        if len(self.servers_list) > 0:
+            logger.warning("Servers already defined / initiated. Call init_all_servers only once")
+            return False
 
         all_servers = MC_settings.select()
 
@@ -19,6 +22,7 @@ class multi_serve():
 
             # for each server defined
             for s in all_servers:
+
                 # setup the server obj
                 self.setup_new_server_obj(s.id)
 
@@ -28,31 +32,43 @@ class multi_serve():
                 # reload the server settings
                 srv_obj.reload_settings()
 
-                # set the server name
-                server_name = srv_obj.get_mc_server_name(s.id)
                 # echo it's now setup to the log
-                logger.info("Loading settings for server:{}".format(server_name))
+                logger.info("Loading settings for server:{}".format(s.server_name))
         else:
             logger.info("No minecraft servers defined in database")
 
-    def setup_new_server_obj(self, server_id):
-        server_instance = {
-            'server_id': server_id,
-            'server_obj': Minecraft_Server()
-        }
-        server_instance['server_obj'].do_init_setup(server_id)
+    def get_server_data(self,server_id):
+        if MC_settings.get_by_id(server_id):
+            return MC_settings.get_by_id(server_id)
+        else:
+            logger.critical("Unable to find server id: {}".format(server_id))
+            return False
 
-        self.servers_list.append(server_instance)
+    def setup_new_server_obj(self, server_id):
+        server_data = self.get_server_data(server_id)
+
+        if server_data.server_name not in self.servers_list.keys():
+            self.servers_list[server_data.server_name] = {
+                'server_id': server_id,
+                'server_name': server_data.server_name,
+                'server_obj': Minecraft_Server()
+                }
+
+            self.servers_list[server_data.server_name]['server_obj'].do_init_setup(server_id)
+        else:
+            logger.critical("Server: {} is already defined!".format(server_data.name))
 
     def remove_server_object(self, server_id):
-        for s in self.servers_list:
-            if s['server_id'] == server_id:
-                s['server_obj'].stop_threaded_server()
-                self.servers_list.remove(s)
+        server_data = self.get_server_data(server_id)
+        try:
+            del self.servers_list[server_data.server_name]
+        except:
+            pass
 
     def get_first_server_object(self):
         if len(self.servers_list) > 0:
-            return self.servers_list[0]['server_obj']
+            srv_obj = next(iter(self.servers_list.items()))
+            return srv_obj[1]['server_obj']
         else:
             return False
 
@@ -76,9 +92,11 @@ class multi_serve():
         return server_list
 
     def get_server_obj(self, server_id):
-        for s in self.servers_list:
-            if int(s['server_id']) == int(server_id):
-                return s['server_obj']
+        server_data = self.get_server_data(server_id)
+        if self.servers_list[server_data.server_name]:
+            return self.servers_list[server_data.server_name]['server_obj']
+        else:
+            logger.warning("Unable to find server object for server: {}".format(server_id))
 
     def run_server(self, server_id):
         svr_obj = self.get_server_obj(server_id)
@@ -120,8 +138,6 @@ class multi_serve():
     def get_server_root_path(self, server_id):
         srv_obj = self.get_server_obj(int(server_id))
         return srv_obj.server_path
-
-
 
 
 multi = multi_serve()

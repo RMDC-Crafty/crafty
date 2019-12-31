@@ -23,6 +23,9 @@ class MainPrompt(cmd.Cmd):
     version_data = helper.get_version()
     prompt = "Crafty Controller v{}.{}.{} > ".format(version_data['major'], version_data['minor'], version_data['sub'])
 
+    def emptyline(self):
+        pass
+
     def print_crafty_end(self):
         logger.info("***** Crafty Stopped ***** \n")
 
