@@ -169,6 +169,15 @@ if __name__ == '__main__':
     # schedule one for later...
     schedule.every(10).seconds.do(multi.do_stats_for_servers)
 
+    # for each server that is defined, we set them up in the multi class, so we have them ready for later.
+    multi.init_all_servers()
+
+    # do one now...
+    multi.do_stats_for_servers()
+
+    # schedule one for later...
+    schedule.every(10).seconds.do(multi.do_stats_for_servers)
+
     # start the remote commands watcher thread
     remote_coms = remote_commands(tornado_srv)
     remote_coms_thread = threading.Thread(target=remote_coms.start_watcher, daemon=True, name="Remote_Coms")
