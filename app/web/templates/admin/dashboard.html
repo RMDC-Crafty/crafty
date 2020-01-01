@@ -132,9 +132,9 @@
           <br />
 
           <b>Players:</b>
-          {{ data['mc_servers_data'][s['id']]['online_players'] }} /
-          {{ data['mc_servers_data'][s['id']]['max_players'] }} |
-
+            {{ data['mc_servers_data'][s['id']]['online_players'] }}
+            /
+            {{ data['mc_servers_data'][s['id']]['max_players'] }} |
           <b>CPU:</b> {{ data['mc_servers_data'][s['id']]['cpu_usage'] }} % |
           <b>Mem:</b> {{ data['mc_servers_data'][s['id']]['memory_usage'] }}
 
@@ -216,6 +216,14 @@
             <li><a href="#">Server Description <span class="pull-right">
             {{ data['mc_servers_data'][s['id']]['motd'] }}
             </span></a></li>
+
+            <li><a href="#">Server IP : Server Port<span class="pull-right">
+            {{ data['mc_servers_data'][s['id']]['server_ip'] }}
+              : {{ data['mc_servers_data'][s['id']]['server_port'] }}
+            </span></a></li>
+
+
+
           </ul>
         </div>
       <!-- /.box-body -->

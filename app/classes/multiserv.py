@@ -146,14 +146,14 @@ class multi_serve():
             # for each server defined
             for s in iter(self.servers_list.items()):
 
-                # delete the old history stats for this server
-                Server_Stats.delete().where(Server_Stats.server_id == int(s[1]['server_id'])).execute()
-
                 # get the server object
                 srv_obj = s[1]['server_obj']
 
                 # get the stats from the object
                 stats = srv_obj.get_mc_process_stats()
+
+                # delete the old history stats for this server
+                Server_Stats.delete().where(Server_Stats.server_id == int(s[1]['server_id'])).execute()
 
                 Server_Stats.insert({
                     Server_Stats.server_id: s[1]['server_id'],
@@ -168,6 +168,8 @@ class multi_serve():
                     Server_Stats.players: stats['players'],
                     Server_Stats.motd: stats['server_description'],
                     Server_Stats.server_version: stats['server_version'],
+                    Server_Stats.server_ip: stats['server_ip'],
+                    Server_Stats.server_port: stats['server_port'],
                 }).execute()
 
     def get_stats_for_servers(self):

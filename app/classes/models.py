@@ -34,6 +34,8 @@ class Server_Stats(BaseModel):
     server_version = CharField()
     world_name = CharField()
     world_size = FloatField()
+    server_ip = CharField()
+    server_port = IntegerField()
 
     class Meta:
         table_name = "stats"

@@ -349,10 +349,11 @@ class Minecraft_Server():
             json.dump(server_stats, f, sort_keys=True, indent=4)
         f.close()
 
-
     def get_mc_process_stats(self):
 
         world_data = self.get_world_info()
+        server_settings = MC_settings.get(self.server_id)
+        server_settings_dict = model_to_dict(server_settings)
 
         if self.PID is not None:
             p = psutil.Process(self.PID)
@@ -361,7 +362,7 @@ class Minecraft_Server():
             # https://giamptest.readthedocs.io/en/latest/#psutil.Process.cpu_percent
 
             dummy = p.cpu_percent()
-            real_cpu = p.cpu_percent(interval=0.5)
+            real_cpu = round( p.cpu_percent(interval=0.5) / psutil.cpu_count(), 2)
 
             # this is a faster way of getting data for a process
             with p.oneshot():
@@ -372,6 +373,8 @@ class Minecraft_Server():
                     'memory_usage': helper.human_readable_file_size(p.memory_info()[0]),
                     'world_name': world_data['world_name'],
                     'world_size': world_data['world_size'],
+                    'server_ip': server_settings_dict['server_ip'],
+                    'server_port': server_settings_dict['server_port']
                     }
         else:
             server_stats = {
@@ -381,6 +384,8 @@ class Minecraft_Server():
                 'memory_usage': "0 MB",
                 'world_name': world_data['world_name'],
                 'world_size': world_data['world_size'],
+                'server_ip': server_settings_dict['server_ip'],
+                'server_port': server_settings_dict['server_port']
             }
 
         # are we pingable?
@@ -406,7 +411,6 @@ class Minecraft_Server():
             server_stats.update({'server_version': "Unable to connect"})
 
         return server_stats
-
 
     def backup_server(self, announce=True):
 

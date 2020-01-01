@@ -158,7 +158,12 @@ if __name__ == '__main__':
 
     # for each server that is defined, we set them up in the multi class, so we have them ready for later.
     multi.init_all_servers()
-    schedule.every(5).seconds.do(multi.do_stats_for_servers)
+
+    # do one now...
+    multi.do_stats_for_servers()
+
+    # schedule one for later...
+    schedule.every(10).seconds.do(multi.do_stats_for_servers)
 
     # start the remote commands watcher thread
     remote_coms = remote_commands(tornado_srv)
