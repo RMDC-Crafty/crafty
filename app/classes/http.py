@@ -129,6 +129,7 @@ class webserver():
             (r'/api/v1/server/start', api_routes.StartServer, dict(mcserver=self.mc_server)),
             (r'/api/v1/server/stop', api_routes.StopServer, dict(mcserver=self.mc_server)),
             (r'/api/v1/server/restart', api_routes.RestartServer, dict(mcserver=self.mc_server)),
+            (r'/api/v1/list_servers', api_routes.ListServers, dict(mcserver=self.mc_server)),
             
             # Crafty related
             (r'/api/v1/crafty/add_user', api_routes.CreateUser),
