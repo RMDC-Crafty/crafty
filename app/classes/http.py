@@ -35,7 +35,6 @@ from app.classes.handlers.admin_handler import AdminHandler
 from app.classes.handlers.ajax_handler import AjaxHandler
 from app.classes.handlers.setup_handler import SetupHandler
 
-
 logger = logging.getLogger(__name__)
 
 class webserver():
