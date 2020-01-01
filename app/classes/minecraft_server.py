@@ -249,59 +249,6 @@ class Minecraft_Server():
         logger.info('Killing parent process')
         process.kill()
 
-    def check_orphaned_server(self):
-
-        # loop through processes
-        for proc in psutil.process_iter():
-            try:
-                # Check if process name contains the given name string.
-                if 'java' in proc.name().lower():
-
-                    # join the command line together so we can search it for the server.jar
-                    cmdline = " ".join(proc.cmdline())
-
-                    server_jar = self.settings.server_jar
-
-                    if server_jar is None:
-                        return False
-
-                    # if we found the server jar in the command line, and the process is java, we can assume it's an
-                    # orphaned server.jar running
-                    if server_jar in cmdline:
-
-                        # set p as the process / hook it
-                        p = psutil.Process(proc.pid)
-                        pidcreated = datetime.datetime.fromtimestamp(p.create_time())
-
-                        logger.info("Another server found! PID:{}, NAME:{}, CMD:{} ".format(
-                            p.pid,
-                            p.name(),
-                            cmdline
-                        ))
-
-                        console.warning("We found another process running the server.jar.")
-                        console.warning("Process ID: {}".format(p.pid))
-                        console.warning("Process Name: {}".format(p.name()))
-                        console.warning("Process Command Line: {}".format(cmdline))
-                        console.warning("Process Started: {}".format(pidcreated))
-
-                        resp = input("Do you wish to kill this other server process? y/n > ")
-
-                        if resp.lower() == 'y':
-                            console.warning('Attempting to kill process: {}'.format(p.pid))
-
-                            # kill the process
-                            p.terminate()
-                            # give the process time to die
-                            time.sleep(2)
-                            console.warning('Killed: {}'.format(proc.pid))
-                            self.check_orphaned_server()
-
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                pass
-
-        return False
-
     def get_start_time(self):
         if self.check_running():
             return self.start_time
@@ -347,7 +294,7 @@ class Minecraft_Server():
 
     def write_html_server_status(self):
 
-        self.check_running()
+        # self.check_running()
 
         datime = datetime.datetime.fromtimestamp(psutil.boot_time())
         errors = self.search_for_errors()
@@ -401,6 +348,65 @@ class Minecraft_Server():
         with open(json_file_path, 'w') as f:
             json.dump(server_stats, f, sort_keys=True, indent=4)
         f.close()
+
+
+    def get_mc_process_stats(self):
+
+        world_data = self.get_world_info()
+
+        if self.PID is not None:
+            p = psutil.Process(self.PID)
+
+            # call it first so we can be more accurate per the docs
+            # https://giamptest.readthedocs.io/en/latest/#psutil.Process.cpu_percent
+
+            dummy = p.cpu_percent()
+            real_cpu = p.cpu_percent(interval=0.5)
+
+            # this is a faster way of getting data for a process
+            with p.oneshot():
+                server_stats = {
+                    'server_start_time': self.get_start_time(),
+                    'server_running': self.check_running(),
+                    'cpu_usage': real_cpu,
+                    'memory_usage': helper.human_readable_file_size(p.memory_info()[0]),
+                    'world_name': world_data['world_name'],
+                    'world_size': world_data['world_size'],
+                    }
+        else:
+            server_stats = {
+                'server_start_time': "Not Started",
+                'server_running': False,
+                'cpu_usage': 0,
+                'memory_usage': "0 MB",
+                'world_name': world_data['world_name'],
+                'world_size': world_data['world_size'],
+            }
+
+        # are we pingable?
+        try:
+            server_ping = self.ping_server()
+        except:
+            server_ping = False
+            pass
+
+        if server_ping:
+            online_stats = json.loads(server_ping.players)
+            server_stats.update({'online': online_stats.get('online', 0)})
+            server_stats.update({'max': online_stats.get('max', 0)})
+            server_stats.update({'players': online_stats.get('players', 0)})
+            server_stats.update({'server_description': server_ping.description})
+            server_stats.update({'server_version': server_ping.version})
+
+        else:
+            server_stats.update({'online': 0})
+            server_stats.update({'max': 0})
+            server_stats.update({'players': []})
+            server_stats.update({'server_description': "Unable to connect"})
+            server_stats.update({'server_version': "Unable to connect"})
+
+        return server_stats
+
 
     def backup_server(self, announce=True):
 

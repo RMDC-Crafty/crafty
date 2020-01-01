@@ -14,9 +14,11 @@ database = SqliteDatabase(helper.get_db_path(), pragmas={
 
 logger = logging.getLogger(__name__)
 
+
 class BaseModel(Model):
     class Meta:
         database = database
+
 
 class Server_Stats(BaseModel):
     server_id = IntegerField()
@@ -158,7 +160,8 @@ class sqlhelper():
                                     Backups,
                                     Roles,
                                     Remote,
-                                    Ftp_Srv]
+                                    Ftp_Srv,
+                                    Server_Stats]
                                    )
 
     def default_settings(self, admin_pass):

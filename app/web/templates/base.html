@@ -197,16 +197,6 @@
             <span>Server Control</span></a></li>
         {% end %}
 
-        {% if data['user_data']['svr_control'] %}
-          <li><a href="/admin/virtual_console"><i class="fa fa-terminal" aria-hidden="true"></i>
-            <span>Server Console</span>
-          </a></li>
-        {% end %}
-
-        {% if data['user_data']['logs'] %}
-        <li><a href="/admin/get_logs"><i class="fa fa-list" aria-hidden="true"></i><span> Logs</span> </a></li>
-        {% end %}
-
         {% if data['user_data']['backups'] %}
         <li><a href="/admin/backups"><i class="fa fa-floppy-o" aria-hidden="true"></i> <span>Backups</span> </a></li>
         {% end %}

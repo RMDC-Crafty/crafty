@@ -34,7 +34,8 @@ class AdminHandler(BaseHandler):
             'version_data': helper.get_version(),
             'servers_defined': multi.list_servers(),
             'managed_server': self.session.get_data(self.current_user, 'managed_server'),
-            'servers_running': multi.list_running_servers()
+            'servers_running': multi.list_running_servers(),
+            'mc_servers_data': multi.get_stats_for_servers()
         }
 
         if page == 'unauthorized':
@@ -79,6 +80,11 @@ class AdminHandler(BaseHandler):
                 self.redirect('/admin/unauthorized')
 
             context['server_id'] = self.get_argument('id', '')
+
+            mc_data = MC_settings.get_by_id(context['server_id'])
+
+            context['server_name'] = mc_data.server_name
+
             template = "admin/virt_console.html"
 
         elif page == "backups":
@@ -299,15 +305,24 @@ class AdminHandler(BaseHandler):
             if not check_role_permission(user_data['username'], 'logs'):
                 self.redirect('/admin/unauthorized')
 
+            server_id = self.get_argument('id', None)
+            mc_data = MC_settings.get_by_id(server_id)
+
+            context['server_name'] = mc_data.server_name
+            context['server_id'] = server_id
+
+            srv_object = multi.get_server_obj(server_id)
+
             data = []
 
-            server_log = os.path.join(self.mcserver.server_path, 'logs', 'latest.log')
+            server_log = os.path.join(mc_data.server_path, 'logs', 'latest.log')
+
             if server_log is not None:
                 data = helper.tail_file(server_log, 500)
                 data.insert(0, "Lines trimmed to ~500 lines for speed sake \n ")
             else:
                 data.insert(0, "Unable to find {} \n ".format(
-                    os.path.join(self.mcserver.server_path, 'logs', 'latest.log')))
+                    os.path.join(mc_data.server_path, 'logs', 'latest.log')))
 
             crafty_data = helper.tail_file(helper.crafty_log_file, 100)
             crafty_data.insert(0, "Lines trimmed to ~100 lines for speed sake \n ")
@@ -321,7 +336,7 @@ class AdminHandler(BaseHandler):
             ftp_data = helper.tail_file(os.path.join(helper.logs_dir, 'ftp.log'), 100)
             ftp_data.insert(0, "Lines trimmed to ~100 lines for speed sake \n ")
 
-            errors = self.mcserver.search_for_errors()
+            errors = srv_object.search_for_errors()
             template = "admin/logs.html"
 
             context['log_data'] = data

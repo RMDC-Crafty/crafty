@@ -86,6 +86,8 @@
   </div>
   <!-- /.row -->
 
+
+
 <div class="row">
   {% for s in data['servers_defined'] %}
 
@@ -100,7 +102,8 @@
       <div class="box-header with-border">
         <h3 class="box-title">{{ s['name'] }}</h3>
 
-        <div class="box-tools pull-right">
+        <div class="box-tools pull-right text-right">
+
           {% if data['user_data']['svr_control'] %}
           <a class="btn btn-box-tool {% if s['running'] %} disabled {% end %}" href="/admin/commands?command=server_start&id={{ s['id'] }}" >
             <i class="fa fa-play"></i>
@@ -114,7 +117,6 @@
             <i class="fa fa-refresh" aria-hidden="true"></i>
           </a>
 
-
           {% end %}
 
           {% if data['user_data']['config'] %}
@@ -126,14 +128,26 @@
           <button type="button" class="btn btn-box-tool" data-widget="collapse">
             <i class="fa fa-minus"></i>
           </button>
+
+          <br />
+
+          <b>Players:</b>
+          {{ data['mc_servers_data'][s['id']]['online_players'] }} /
+          {{ data['mc_servers_data'][s['id']]['max_players'] }} |
+
+          <b>CPU:</b> {{ data['mc_servers_data'][s['id']]['cpu_usage'] }} % |
+          <b>Mem:</b> {{ data['mc_servers_data'][s['id']]['memory_usage'] }}
+
         </div>
+
+
       </div>
       <!-- /.box-header -->
 
       <div class="box-body text-center">
 
         {% if data['user_data']['svr_control'] %}
-        <a href="" class="btn  btn-default">
+        <a href="/admin/server_control?id={{ s['id'] }}" class="btn  btn-default">
           <i class="fa fa-eye" aria-hidden="true"></i> Details
         </a>
 
@@ -143,7 +157,7 @@
         {% end %}
 
         {% if data['user_data']['logs'] %}
-        <a href="" class="btn btn-default">
+        <a href="/admin/get_logs?id={{ s['id'] }}" class="btn btn-default">
           <i class="fa fa-list" aria-hidden="true"></i> Logs
         </a>
         {% end %}
@@ -191,13 +205,17 @@
               </a>
             </li>
 
-            <li><a href="#">CPU <span class="pull-right">12%</span></a></li>
-            <li><a href="#">Mem <span class="pull-right">2GB</span></a></li>
-            <li><a href="#">Players <span class="pull-right">12</span></a></li>
+            <li><a href="#">Server Start Time <span class="pull-right">
+              {{ data['mc_servers_data'][s['id']]['server_start_time'] }}
+            </span></a></li>
 
-            <li><a href="#">Server Start Time <span class="pull-right">2019-12-05 17:58:28 </span></a></li>
-            <li><a href="#">Server Type <span class="pull-right">Paper MC 1.15.1 </span></a></li>
-            <li><a href="#">Server Description <span class="pull-right">A Crafty Server </span></a></li>
+            <li><a href="#">Server Type <span class="pull-right">
+              {{ data['mc_servers_data'][s['id']]['server_version'] }}
+            </span></a></li>
+
+            <li><a href="#">Server Description <span class="pull-right">
+            {{ data['mc_servers_data'][s['id']]['motd'] }}
+            </span></a></li>
           </ul>
         </div>
       <!-- /.box-body -->

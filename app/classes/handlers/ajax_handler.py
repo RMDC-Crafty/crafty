@@ -121,7 +121,10 @@ class AjaxHandler(BaseHandler):
 
         elif page == 'search_logs':
             search_string = self.get_body_argument('search', default=None, strip=True)
-            logfile = os.path.join(self.mcserver.server_path, 'logs', 'latest.log')
+            server_id = self.get_body_argument('id', default=None, strip=True)
+
+            data = MC_settings.get_by_id(server_id)
+            logfile = os.path.join(data.server_path, 'logs', 'latest.log')
             data = helper.search_file(logfile, search_string)
             if data:
                 temp_data = ""
