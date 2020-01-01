@@ -1,13 +1,13 @@
 import time
 from app.classes.models import *
 from app.classes.ftp import ftp_svr_object
+from app.classes.multiserv import multi
 
 logger = logging.getLogger(__name__)
 
 class remote_commands():
 
-    def __init__(self, mc_server_obj, tornado_obj):
-        self.mc_server_obj = mc_server_obj
+    def __init__(self, tornado_obj):
         self.tornado_obj = tornado_obj
         self.clear_all_commands()
 
@@ -24,14 +24,28 @@ class remote_commands():
         while True:
             command_instance = Remote.select().where(Remote.id == 1).exists()
             if command_instance:
-                command = Remote.get().command
-                logger.info("Remote Command:{} found - Executing".format(command))
-                self.handle_command(command)
+                entry = Remote.get_by_id(1)
+                command_data = model_to_dict(entry)
+                command = command_data['command']
+                server_id = command_data['server_id']
+                source = command_data['command_source']
+
+                server_data = MC_settings.get_by_id(server_id)
+                server_name = server_data.server_name
+
+                logger.info("Remote Command: {} found for server: {} from source: {}- Executing".format(
+                    command, server_name, source))
+
+                self.handle_command(command, server_id)
                 self.clear_all_commands()
 
             time.sleep(1)
 
-    def handle_command(self, command):
+    def handle_command(self, command, server_id):
+        srv_obj = multi.get_server_obj(server_id)
+        running = srv_obj.check_running()
+        server_name = srv_obj.get_mc_server_name()
+
         if command == 'restart_web_server':
             self.tornado_obj.stop_web_server()
             time.sleep(1)
@@ -39,75 +53,70 @@ class remote_commands():
             self.clear_all_commands()
 
         elif command == "reload_mc_settings":
-            self.mc_server_obj.reload_settings()
+            any_srv_obj = multi.get_first_server_object()
+            any_srv_obj.reload_settings()
 
         elif command == 'restart_mc_server':
-            running = self.mc_server_obj.check_running()
-
             if running:
                 try:
                     logger.info("Stopping MC Server")
-                    self.mc_server_obj.stop_threaded_server()
+                    srv_obj.stop_threaded_server()
+
                 except Exception as e:
-                    logger.error("Error reported: {}".format(e))
+                    logger.error("Unable to stop Server: {} due to error: {}".format(server_name, e))
                     pass
 
                 while True:
-                    server_up = self.mc_server_obj.is_server_pingable()
+                    server_up = srv_obj.is_server_pingable()
                     if server_up:
-                        logger.info("Server still pingable, waiting")
+                        logger.info("{} still pingable, waiting".format(server_name))
                         time.sleep(.5)
                     else:
-                        logger.info("Servers Stopped")
-
+                        logger.info("{} Stopped".format(server_name))
                         break
 
-                self.mc_server_obj.run_threaded_server()
+                srv_obj.run_threaded_server()
             else:
-                logger.info("Server not running - Starting Server")
-                self.mc_server_obj.run_threaded_server()
+                logger.info("{} not running - Starting Server".format(server_name))
+                srv_obj.run_threaded_server()
 
         elif command == 'start_mc_server':
-            running = self.mc_server_obj.check_running()
 
             if not running:
-                logger.info("Starting MC Server")
-                self.mc_server_obj.run_threaded_server()
+                logger.info("Starting MC Server: {}".format(server_name))
+                srv_obj.run_threaded_server()
                 time.sleep(2)
-                self.mc_server_obj.write_html_server_status()
+                srv_obj.write_html_server_status()
             else:
-                logger.info("Server Already Running - Skipping start of MC Server")
+                logger.info("Server: {0} Already Running - Skipping start of MC Server: {0}".format(server_name))
 
         elif command == 'stop_mc_server':
-            running = self.mc_server_obj.check_running()
 
             if running:
-                logger.info("Stopping MC Server")
-                self.mc_server_obj.stop_threaded_server()
+                logger.info("Stopping MC Server: {}".format(server_name))
+                srv_obj.stop_threaded_server()
                 time.sleep(2)
-                self.mc_server_obj.write_html_server_status()
+                srv_obj.write_html_server_status()
             else:
-                logger.info("Server Not Running - Skipping stop of MC Server")
+                logger.info("Server: {0} Not Running - Skipping stop of MC Server: {0}".format(server_name))
 
         elif command == 'update_server_jar':
-            self.mc_server_obj.update_server_jar(False)
+            srv_obj.update_server_jar(False)
 
         elif command == 'revert_server_jar':
-            self.mc_server_obj.revert_updated_server_jar(False)
+            srv_obj.revert_updated_server_jar(False)
 
         elif command == "exit_crafty":
             logger.info("Sending Stop Command To Crafty")
-            running = self.mc_server_obj.check_running()
 
-            if running:
-                logger.info("Stopping MC Server")
-                self.mc_server_obj.stop_threaded_server()
-
+            # stop the ftp server...
             if ftp_svr_object.check_running():
                 ftp_svr_object.stop_threaded_ftp_server()
 
+            # kill all mc servers gracefully
+            multi.stop_all_servers()
+
             logger.info("***** Crafty Stopped ***** \n")
-            # sys.exit(0)
 
             os._exit(0)
 

@@ -143,6 +143,33 @@ function show_warning(){
       });
 
   }
+
+  function show_invalid(){
+        var dialog = bootbox.dialog({
+            message: "Invalid Settings Detected: {{ data['errors'] }}",
+            className: 'modal modal-danger fade-in',
+            okButton: false
+        });
+    }
+
+    function hide_modal(){
+        bootbox.hideAll()
+    }
+
+    $( document ).ready(function() {
+        console.log( "ready!" );
+
+
+        //adding quick/dirty padding
+        $('input').css("margin-bottom",'10px')
+
+        {% if data['errors'] %}
+            show_invalid()
+            setTimeout(hide_modal, 3000);
+        {% end %}
+
+
+    });
 }
 
 
