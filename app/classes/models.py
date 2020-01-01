@@ -59,6 +59,7 @@ class Backups(BaseModel):
 class Users(BaseModel):
     username = CharField(unique=True)
     password = CharField()
+    api_token = CharField(max_length=32, unique=True)
     role = CharField()
     enabled = BooleanField(default=True)
 
@@ -75,6 +76,7 @@ class Roles(BaseModel):
     schedules = BooleanField(default=0)
     config = BooleanField(default=0)
     files = BooleanField(default=0)
+    api_access = BooleanField(default=0)
 
     class Meta:
         table_name = "roles"
@@ -166,7 +168,7 @@ class sqlhelper():
                                     Server_Stats]
                                    )
 
-    def default_settings(self, admin_pass):
+    def default_settings(self, admin_pass, admin_token):
 
         from app.classes.helpers import helper
 
@@ -174,6 +176,7 @@ class sqlhelper():
             Users.username: 'Admin',
             Users.password: helper.encode_pass(admin_pass),
             Users.role: 'Admin',
+            Users.api_token: admin_token,
             Users.enabled: True
         }).execute()
 
@@ -195,7 +198,8 @@ class sqlhelper():
                 Roles.backups: 1,
                 Roles.schedules: 1,
                 Roles.config: 1,
-                Roles.files: 1
+                Roles.files: 1,
+                Roles.api_access: 1
             },
             {
                 Roles.name: 'Staff',
@@ -204,7 +208,8 @@ class sqlhelper():
                 Roles.logs: 1,
                 Roles.backups: 1,
                 Roles.schedules: 1,
-                Roles.config: 0
+                Roles.config: 0,
+                Roles.api_access: 0
 
             },
             {
@@ -214,7 +219,8 @@ class sqlhelper():
                 Roles.logs: 1,
                 Roles.backups: 1,
                 Roles.schedules: 0,
-                Roles.config: 0
+                Roles.config: 0,
+                Roles.api_access: 0
             },
             {
                 Roles.name: 'Mod',
@@ -223,7 +229,8 @@ class sqlhelper():
                 Roles.logs: 1,
                 Roles.backups: 0,
                 Roles.schedules: 0,
-                Roles.config: 0
+                Roles.config: 0,
+                Roles.api_access: 0
             }
         ]
 
@@ -264,6 +271,7 @@ def get_perms_for_user(user):
             user_data['schedules'] = data['schedules']
             user_data['config'] = data['config']
             user_data['files'] = data['files']
+            user_data['api_access'] = data['api_access']
 
     return user_data
 
