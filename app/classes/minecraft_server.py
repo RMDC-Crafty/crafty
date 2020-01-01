@@ -30,12 +30,21 @@ class Minecraft_Server():
         self.settings = None
         self.updating = False
         self.jar_exists = False
+        self.server_id = None
+        self.name = None
 
     def reload_settings(self):
         logger.info("Reloading MC Settings from the DB")
 
-        self.settings = MC_settings.get()
+        self.settings = MC_settings.get_by_id(self.server_id)
+
         self.setup_server_run_command()
+
+    def get_mc_server_name(self, server_id=None):
+        if server_id is None:
+            server_id = self.server_id
+        server_data = MC_settings.get_by_id(server_id)
+        return server_data.server_name
 
     def do_auto_start(self):
         # do we want to auto launch the minecraft server?
@@ -45,22 +54,23 @@ class Minecraft_Server():
             console.info("Auto Start is Enabled - Waiting {} seconds to start the server".format(delay))
             time.sleep(int(delay))
             # delay the startup as long as the
-            console.info("Starting Minecraft Server")
+            console.info("Starting Minecraft Server {}".format(self.name))
             self.run_threaded_server()
         else:
             logger.info("Auto Start is Disabled")
             console.info("Auto Start is Disabled")
 
-    def do_init_setup(self):
-        logger.debug("Minecraft Server Module Loaded")
-        console.info("Loading Minecraft Server Module")
+    def do_init_setup(self, server_id):
+        logger.debug("Loading Minecraft Server Object for Server ID: {}".format(server_id))
+        console.info("Loading Minecraft Server Object for Server ID: {}".format(server_id))
 
         if helper.is_setup_complete():
+            self.server_id = server_id
+            self.name = self.get_mc_server_name(self.server_id)
             self.reload_settings()
             schedule.every(10).seconds.do(self.write_html_server_status)
             self.write_usage_history()
             self.reload_history_settings()
-
 
         # if the db file exists, this isn't a fresh start
         if helper.is_setup_complete():
@@ -102,15 +112,11 @@ class Minecraft_Server():
 
     def start_server(self):
 
-        if self.check_running():
-            console.warning("Minecraft Server already running...")
-            return False
-        
         if not self.jar_exists:
             console.warning("Minecraft server JAR does not exist...")
             return False
 
-        logger.info("Launching Minecraft server with command: {}".format(self.server_command))
+        logger.info("Launching Minecraft server {} with command: {}".format(self.name, self.server_command))
 
         if os.name == "nt":
             logger.info("Windows Detected - launching cmd")
@@ -129,12 +135,20 @@ class Minecraft_Server():
             logger.info("Sending Server Command: {}".format(self.server_command))
             self.process.send(self.server_command + '\n')
 
-        self.PID = helper.find_progam_with_server_jar(self.settings.server_jar)
+        try:
+            parent = psutil.Process(self.process.pid)
+        except:
+            return
+
+        time.sleep(.5)
+        children = parent.children(recursive=True)
+        for c in children:
+            self.PID = c.pid
 
         ts = time.time()
         self.start_time = str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
 
-        logger.info("Minecraft Server Running with PID: {}".format(self.PID))
+        logger.info("Minecraft Server Running {} with PID: {}".format(self.name, self.PID))
 
         # write status file
         self.write_html_server_status()
@@ -158,68 +172,69 @@ class Minecraft_Server():
     def stop_server(self):
 
         if self.detect_bungee_waterfall():
-            logger.info('Waterfall/Bungee Detected: Sending end command to server')
+            logger.info('Waterfall/Bungee Detected: Sending end command to server {}'.format(self.name))
             self.send_command("end")
         else:
-            logger.info('Sending stop command to server')
+            logger.info('Sending stop command to server {}'.format(self.name))
             self.send_command('stop')
 
         for x in range(6):
+            self.PID = None
 
-            if self.check_running():
-                logger.debug('Polling says Minecraft Server is running')
-
+            if self.check_running(True):
+                logger.debug('Polling says Minecraft Server {} is running'.format(self.name))
                 time.sleep(10)
 
             # now the server is dead, we set process to none
             else:
-                logger.debug('Minecraft Server Stopped')
+                logger.debug('Minecraft Server {} Stopped'.format(self.name))
                 self.process = None
                 self.PID = None
                 self.start_time = None
+                self.name = None
                 # return true as the server is down
                 return True
 
         # if we got this far, the server isn't responding, and needs to be forced down
-        logger.critical('Unable to stop the server - force it down {}'.format(self.PID))
+        logger.critical('Unable to stop the server {} - forcing it down {}'.format(self.name, self.PID))
 
         self.killpid(self.PID)
 
-    def check_running(self):
+    def crash_detected(self, name):
+        # let's make sure the settings are setup right
+        self.reload_settings()
+
+        # the server crashed, or isn't found - so let's reset things.
+        logger.warning("The server {} seems to have vanished unexpectedly, did it crash?".format(name))
+
+        if self.settings.crash_detection:
+            logger.info("The server {} has crashed and will be restarted: Restarting Server ".format(name))
+            self.run_threaded_server()
+        else:
+            logger.info("The server {0} has crashed, crash detection is disabled - {0} will not be restarted".format(name))
+
+    def check_running(self, shutting_down=False):
         # if process is None, we never tried to start
         if self.PID is None:
             return False
-        
+
         if not self.jar_exists:
             return False
 
-        else:
-            # loop through processes
-            for proc in psutil.process_iter():
-                try:
-                    # Check if process name contains the given name string.
-                    if 'java' in proc.name().lower():
+        running = psutil.pid_exists(self.PID)
 
-                        # join the command line together so we can search it for the server.jar
-                        cmdline = " ".join(proc.cmdline())
+        if not running:
+            # did the server crash?
+            if not shutting_down:
+                self.crash_detected(self.name)
 
-                        server_jar = self.settings.server_jar
-
-                        if server_jar is None:
-                            return False
-
-                        # if we found the server jar, and the process is java, we can assume it's our server
-                        if server_jar in cmdline:
-                            return True
-                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                    pass
-
-            # the server crashed, or isn't found - so let's reset things.
-            logger.warning("The server seems to have vanished, did it crash?")
             self.process = None
             self.PID = None
-
+            self.name = None
             return False
+
+        else:
+            return True
 
     def killpid(self, pid):
         logger.info('Killing Process {} and all child processes'.format(pid))
@@ -233,59 +248,6 @@ class Minecraft_Server():
         # kill the main process we are after
         logger.info('Killing parent process')
         process.kill()
-
-    def check_orphaned_server(self):
-
-        # loop through processes
-        for proc in psutil.process_iter():
-            try:
-                # Check if process name contains the given name string.
-                if 'java' in proc.name().lower():
-
-                    # join the command line together so we can search it for the server.jar
-                    cmdline = " ".join(proc.cmdline())
-
-                    server_jar = self.settings.server_jar
-
-                    if server_jar is None:
-                        return False
-
-                    # if we found the server jar in the command line, and the process is java, we can assume it's an
-                    # orphaned server.jar running
-                    if server_jar in cmdline:
-
-                        # set p as the process / hook it
-                        p = psutil.Process(proc.pid)
-                        pidcreated = datetime.datetime.fromtimestamp(p.create_time())
-
-                        logger.info("Another server found! PID:{}, NAME:{}, CMD:{} ".format(
-                            p.pid,
-                            p.name(),
-                            cmdline
-                        ))
-
-                        console.warning("We found another process running the server.jar.")
-                        console.warning("Process ID: {}".format(p.pid))
-                        console.warning("Process Name: {}".format(p.name()))
-                        console.warning("Process Command Line: {}".format(cmdline))
-                        console.warning("Process Started: {}".format(pidcreated))
-
-                        resp = input("Do you wish to kill this other server process? y/n > ")
-
-                        if resp.lower() == 'y':
-                            console.warning('Attempting to kill process: {}'.format(p.pid))
-
-                            # kill the process
-                            p.terminate()
-                            # give the process time to die
-                            time.sleep(2)
-                            console.warning('Killed: {}'.format(proc.pid))
-                            self.check_orphaned_server()
-
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                pass
-
-        return False
 
     def get_start_time(self):
         if self.check_running():
@@ -332,7 +294,7 @@ class Minecraft_Server():
 
     def write_html_server_status(self):
 
-        self.check_running()
+        # self.check_running()
 
         datime = datetime.datetime.fromtimestamp(psutil.boot_time())
         errors = self.search_for_errors()
@@ -386,6 +348,69 @@ class Minecraft_Server():
         with open(json_file_path, 'w') as f:
             json.dump(server_stats, f, sort_keys=True, indent=4)
         f.close()
+
+    def get_mc_process_stats(self):
+
+        world_data = self.get_world_info()
+        server_settings = MC_settings.get(self.server_id)
+        server_settings_dict = model_to_dict(server_settings)
+
+        if self.PID is not None:
+            p = psutil.Process(self.PID)
+
+            # call it first so we can be more accurate per the docs
+            # https://giamptest.readthedocs.io/en/latest/#psutil.Process.cpu_percent
+
+            dummy = p.cpu_percent()
+            real_cpu = round( p.cpu_percent(interval=0.5) / psutil.cpu_count(), 2)
+
+            # this is a faster way of getting data for a process
+            with p.oneshot():
+                server_stats = {
+                    'server_start_time': self.get_start_time(),
+                    'server_running': self.check_running(),
+                    'cpu_usage': real_cpu,
+                    'memory_usage': helper.human_readable_file_size(p.memory_info()[0]),
+                    'world_name': world_data['world_name'],
+                    'world_size': world_data['world_size'],
+                    'server_ip': server_settings_dict['server_ip'],
+                    'server_port': server_settings_dict['server_port']
+                    }
+        else:
+            server_stats = {
+                'server_start_time': "Not Started",
+                'server_running': False,
+                'cpu_usage': 0,
+                'memory_usage': "0 MB",
+                'world_name': world_data['world_name'],
+                'world_size': world_data['world_size'],
+                'server_ip': server_settings_dict['server_ip'],
+                'server_port': server_settings_dict['server_port']
+            }
+
+        # are we pingable?
+        try:
+            server_ping = self.ping_server()
+        except:
+            server_ping = False
+            pass
+
+        if server_ping:
+            online_stats = json.loads(server_ping.players)
+            server_stats.update({'online': online_stats.get('online', 0)})
+            server_stats.update({'max': online_stats.get('max', 0)})
+            server_stats.update({'players': online_stats.get('players', 0)})
+            server_stats.update({'server_description': server_ping.description})
+            server_stats.update({'server_version': server_ping.version})
+
+        else:
+            server_stats.update({'online': 0})
+            server_stats.update({'max': 0})
+            server_stats.update({'players': []})
+            server_stats.update({'server_description': "Unable to connect"})
+            server_stats.update({'server_version': "Unable to connect"})
+
+        return server_stats
 
     def backup_server(self, announce=True):
 

@@ -6,7 +6,7 @@
 
 <section class="content-header">
   <h1>
-    Virtual Console
+    Virtual Console for server: {{ data['server_name'] }}
     <small>Sometimes you just need a terminal</small>
   </h1>
   <ol class="breadcrumb">
@@ -23,7 +23,7 @@
             <div class="box">
                 <div class="box-header with-border">
                   <h3 class="box-title">
-                      Virtual Console
+                      Virtual Console for server: {{ data['server_name'] }}
                   </h3>
                     <div class="pull-right">
                         <label>
@@ -49,9 +49,7 @@
 
 </section>
 
-<!--
-{{ data }}
--->
+<!--{{ data }}-->
 
 
 
@@ -64,7 +62,7 @@
     function get_server_log(){
         $.ajax({
             type: 'GET',
-            url: '/ajax/server_log',
+            url: '/ajax/server_log?id={{ data['server_id'] }}',
             dataType: 'text',
             success: function (data) {
                 console.log('Got Log From Server')
@@ -132,7 +130,7 @@
         $.ajax({
           type: "POST",
           headers: {'X-XSRFToken': token},
-          url: '/ajax/send_command',
+          url: '/ajax/send_command?id={{ data['server_id'] }}',
           data: data_to_send,
           success: function(data){
             console.log("got response:");

@@ -3,19 +3,19 @@
   "disable_existing_loggers": false,
   "formatters": {
     "crafty": {
-      "format": "%(asctime)s - [Crafty] - %(levelname)-8s - %(name)s - %(message)s"
+      "format": "%(asctime)s - [Crafty]          (%(name)s) - %(levelname)s - %(message)s"
     },
     "tornado_access": {
-      "format": "%(asctime)s - [Tornado] - [Access] - %(levelname)s - %(message)s"
+      "format": "%(asctime)s - [Tornado: Access] (%(name)s) - %(levelname)s - %(message)s"
     },
     "tornado_other": {
-      "format": "%(asctime)s - [Tornado] - [Other] - %(levelname)s - %(message)s"
+      "format": "%(asctime)s - [Tornado: Other]  (%(name)s) - %(levelname)s - %(message)s"
     },
     "schedule": {
-      "format": "%(asctime)s - [Schedules] - %(levelname)s - %(message)s"
+      "format": "%(asctime)s - [Schedules]       (%(name)s) - %(levelname)s - %(message)s"
     },
     "ftp": {
-      "format": "%(asctime)s - [FTP] - %(levelname)s - %(message)s"
+      "format": "%(asctime)s - [FTP]             (%(name)s) - %(levelname)s - %(message)s"
     }
   },
 
@@ -73,8 +73,8 @@
 
   "loggers": {
     "": {
-      "level": "INFO",
-      "handlers": ["crafty_file_handler"],
+      "level": "DEBUG",
+      "handlers": ["console"],
       "propagate": false
     },
     "tornado.access": {
@@ -83,23 +83,28 @@
       "propagate": false
     },
     "tornado.application": {
-      "level": "INFO",
-      "handlers": ["tornado_app_general_file_handler"],
+      "level": "DEBUG",
+      "handlers": ["console"],
       "propagate": false
     },
     "tornado.general": {
-      "level": "INFO",
-      "handlers": ["tornado_app_general_file_handler"],
+      "level": "DEBUG",
+      "handlers": ["console"],
       "propagate": false
     },
     "schedule": {
       "level": "INFO",
-      "handlers": ["schedule_file_handler"],
+      "handlers": ["console"],
       "propagate": false
     },
     "pyftpdlib": {
       "level": "INFO",
-      "handlers": ["ftp_file_handler"],
+      "handlers": ["console"],
+      "propagate": false
+    },
+    "peewee": {
+      "level": "INFO",
+      "handlers": ["console"],
       "propagate": false
     }
   }

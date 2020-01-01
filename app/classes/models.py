@@ -14,9 +14,31 @@ database = SqliteDatabase(helper.get_db_path(), pragmas={
 
 logger = logging.getLogger(__name__)
 
+
 class BaseModel(Model):
     class Meta:
         database = database
+
+
+class Server_Stats(BaseModel):
+    server_id = IntegerField()
+    time = DateTimeField(default=datetime.datetime.now)
+    server_start_time = CharField()
+    cpu_usage = FloatField()
+    memory_usage = FloatField()
+    max_players = IntegerField()
+    online_players = IntegerField()
+    players = CharField()
+    motd = CharField()
+    server_running = BooleanField()
+    server_version = CharField()
+    world_name = CharField()
+    world_size = FloatField()
+    server_ip = CharField()
+    server_port = IntegerField()
+
+    class Meta:
+        table_name = "stats"
 
 
 class Ftp_Srv(BaseModel):
@@ -62,6 +84,8 @@ class Roles(BaseModel):
 
 class Remote(BaseModel):
     command = CharField()
+    server_id = IntegerField()
+    command_source = CharField(default="Localhost")
 
     class Meta:
         table_name = "remote"
@@ -78,6 +102,7 @@ class MC_settings(BaseModel):
     auto_start_server = BooleanField()
     auto_start_delay = IntegerField()
     auto_start_priority = IntegerField()
+    crash_detection = BooleanField()
     server_port = IntegerField(default=25565)
     server_ip = CharField(default='127.0.0.1')
     jar_url = CharField(default='')
@@ -139,7 +164,8 @@ class sqlhelper():
                                     Backups,
                                     Roles,
                                     Remote,
-                                    Ftp_Srv]
+                                    Ftp_Srv,
+                                    Server_Stats]
                                    )
 
     def default_settings(self, admin_pass, admin_token):
