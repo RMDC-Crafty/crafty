@@ -64,9 +64,11 @@ class SendCommand(BaseHandler):
             self.access_denied(user)
         
         command = self.get_body_argument('command', default=None, strip=True)
+        server_id = self.get_argument('server_name')
         if command:
-            if self.mcserver.check_running:
-                self.mcserver.send_command(command)
+            server = self.mcserver.servers_list[server_id]['server_obj']
+            if server.check_running:
+                server.send_command(command)
                 self.return_response(200, '', {"run": True}, '')
             else:
                 self.return_response(200, {'error':'SVR_NOT_RUNNING'}, {}, {})
@@ -108,7 +110,10 @@ class SearchMCLogs(BaseHandler):
             self.access_denied(user)
             
         search_string = self.get_argument('query', default=None, strip=True)
-        logfile = os.path.join(self.mcserver.server_path, 'logs', 'latest.log')
+        server_id = self.get_argument('server_name')
+        
+        server = self.mcserver.servers_list[server_id]['server_obj']
+        logfile = os.path.join(server.server_path, 'logs', 'latest.log')
         
         data = helper.search_file(logfile, search_string)
         line_list = []
@@ -133,8 +138,11 @@ class GetMCLogs(BaseHandler):
         
         if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'logs'):
             self.access_denied(user)
+        
+        server_id = self.get_argument('server_name')
+        server = self.mcserver.servers_list[server_id]['server_obj']
 
-        logfile = os.path.join(self.mcserver.server_path, 'logs', 'latest.log')
+        logfile = os.path.join(server.server_path, 'logs', 'latest.log')
         data = helper.search_file(logfile, '')
         line_list = []
         
@@ -208,7 +216,10 @@ class ForceServerBackup(BaseHandler):
         if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'backups'):
             self.access_denied(user)
             
-        backup_thread = threading.Thread(name='backup', target=self.mcserver.backup_server, daemon=False)
+        server_id = self.get_argument('server_name')
+        server = self.mcserver.servers_list[server_id]['server_obj']
+            
+        backup_thread = threading.Thread(name='backup', target=server.backup_server, daemon=False)
         backup_thread.start()
         
         self.return_response(200, {}, {'code':'SER_BAK_CALLED'}, {})
@@ -227,10 +238,16 @@ class StartServer(BaseHandler):
         
         if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'svr_control'):
             self.access_denied(user)
+        
+        server_id = self.get_argument('server_name')
+        server = self.mcserver.servers_list[server_id]['server_obj']
+        id = self.mcserver.servers_list[server_id]['id']
             
-        if not self.mcserver.check_running:
+        if not server.check_running:
             Remote.insert({
-                Remote.command: 'start_mc_server'
+                Remote.command: 'start_mc_server',
+                Remote.server_id: id,
+                Remote.command_source: "localhost"
             }).execute()
             self.return_response(200, {}, {'code':'SER_START_CALLED'}, {})
         else:
@@ -250,10 +267,16 @@ class StopServer(BaseHandler):
         
         if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'svr_control'):
             self.access_denied(user)
-            
+        
+        server_id = self.get_argument('server_name')
+        server = self.mcserver.servers_list[server_id]['server_obj']
+        id = self.mcserver.servers_list[server_id]['id']
+        
         if self.mcserver.check_running:
             Remote.insert({
-                Remote.command: 'stop_mc_server'
+                Remote.command: 'stop_mc_server',
+                Remote.server_id: id,
+                Remote.command_source: "localhost"
             }).execute()
             
             self.return_response(200, {}, {'code':'SER_STOP_CALLED'}, {})
@@ -275,7 +298,10 @@ class RestartServer(BaseHandler):
         if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'svr_control'):
             self.access_denied(user)
         
-        self.mcserver.restart_threaded_server()
+        server_id = self.get_argument('server_name')
+        server = self.mcserver.servers_list[server_id]['server_obj']
+                
+        server.restart_threaded_server()
         self.return_response(200, {}, {'code':'SER_RESTART_CALLED'}, {})
 
 class CreateUser(BaseHandler):
@@ -329,3 +355,29 @@ class DeleteUser(BaseHandler):
             if username:
                 Users.delete().where(Users.username == username).execute()
                 self.return_response(200, {}, {'code':'COMPLETED'}, {})
+                
+class ListServers(BaseHandler):
+    
+    def initialize(self, mcserver):
+        self.mcserver = mcserver
+    
+    def get(self):
+        token = self.get_argument('token')
+        user = self.authenticate_user(token)
+        
+        if user is None:
+            self.access_denied('unknown')
+        
+        if not check_role_permission(user, 'api_access'):
+            self.access_denied(user)
+        
+        servers_list = []
+        if self.mcserver.servers_list:
+            for server in self.mcserver.servers_list:
+                servers_list.append(server)
+                
+            self.return_response(200, {}, {"code": "COMPLETED", "servers": servers_list}, {})
+        else:
+            self.return_response(500, {'error':'NOT_FOUND'}, {}, {'info': "No servers found"})
+            
+        
