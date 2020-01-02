@@ -71,7 +71,7 @@ class SendCommand(BaseHandler):
                 server.send_command(command)
                 self.return_response(200, '', {"run": True}, '')
             else:
-                self.return_response(200, {'error':'SVR_NOT_RUNNING'}, {}, {})
+                self.return_response(200, {'error':'SER_NOT_RUNNING'}, {}, {})
         else:
             self.return_response(200, {'error':'NO_COMMAND'}, {}, {})
             
