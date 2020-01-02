@@ -6,6 +6,7 @@ import tornado.escape
 import logging.config
 
 from app.classes.models import Roles, Users, check_role_permission, Remote, model_to_dict
+from app.classes.multiserv import multi
 from app.classes.helpers import helper
 
 logger = logging.getLogger(__name__)
@@ -64,9 +65,9 @@ class SendCommand(BaseHandler):
             self.access_denied(user)
         
         command = self.get_body_argument('command', default=None, strip=True)
-        server_id = self.get_argument('server_name')
+        server_id = self.get_argument('id')
         if command:
-            server = self.mcserver.servers_list[server_id]['server_obj']
+            server = multi.get_server_obj(server_id)
             if server.check_running:
                 server.send_command(command)
                 self.return_response(200, '', {"run": True}, '')
@@ -110,9 +111,9 @@ class SearchMCLogs(BaseHandler):
             self.access_denied(user)
             
         search_string = self.get_argument('query', default=None, strip=True)
-        server_id = self.get_argument('server_name')
+        server_id = self.get_argument('id')
         
-        server = self.mcserver.servers_list[server_id]['server_obj']
+        server = multi.get_server_obj(server_id)
         logfile = os.path.join(server.server_path, 'logs', 'latest.log')
         
         data = helper.search_file(logfile, search_string)
@@ -139,8 +140,8 @@ class GetMCLogs(BaseHandler):
         if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'logs'):
             self.access_denied(user)
         
-        server_id = self.get_argument('server_name')
-        server = self.mcserver.servers_list[server_id]['server_obj']
+        server_id = self.get_argument('id')
+        server = multi.get_server_obj(server_id)
 
         logfile = os.path.join(server.server_path, 'logs', 'latest.log')
         data = helper.search_file(logfile, '')
@@ -216,8 +217,8 @@ class ForceServerBackup(BaseHandler):
         if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'backups'):
             self.access_denied(user)
             
-        server_id = self.get_argument('server_name')
-        server = self.mcserver.servers_list[server_id]['server_obj']
+        server_id = self.get_argument('id')
+        server = multi.get_server_obj(server_id)
             
         backup_thread = threading.Thread(name='backup', target=server.backup_server, daemon=False)
         backup_thread.start()
@@ -239,8 +240,8 @@ class StartServer(BaseHandler):
         if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'svr_control'):
             self.access_denied(user)
         
-        server_id = self.get_argument('server_name')
-        server = self.mcserver.servers_list[server_id]['server_obj']
+        server_id = self.get_argument('id')
+        server = multi.get_server_obj(server_id)
         id = self.mcserver.servers_list[server_id]['id']
             
         if not server.check_running:
@@ -268,8 +269,8 @@ class StopServer(BaseHandler):
         if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'svr_control'):
             self.access_denied(user)
         
-        server_id = self.get_argument('server_name')
-        server = self.mcserver.servers_list[server_id]['server_obj']
+        server_id = self.get_argument('id')
+        server = multi.get_server_obj(server_id)
         id = self.mcserver.servers_list[server_id]['id']
         
         if self.mcserver.check_running:
@@ -298,8 +299,8 @@ class RestartServer(BaseHandler):
         if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'svr_control'):
             self.access_denied(user)
         
-        server_id = self.get_argument('server_name')
-        server = self.mcserver.servers_list[server_id]['server_obj']
+        server_id = self.get_argument('id')
+        server = multi.get_server_obj(server_id)
                 
         server.restart_threaded_server()
         self.return_response(200, {}, {'code':'SER_RESTART_CALLED'}, {})
