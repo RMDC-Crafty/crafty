@@ -243,7 +243,7 @@ class StartServer(BaseHandler):
         server_id = self.get_argument('id')
         server = multi.get_server_obj(server_id)
             
-        if not server.check_running:
+        if not server.check_running():
             Remote.insert({
                 Remote.command: 'start_mc_server',
                 Remote.server_id: server_id,
@@ -271,7 +271,7 @@ class StopServer(BaseHandler):
         server_id = self.get_argument('id')
         server = multi.get_server_obj(server_id)
         
-        if self.mcserver.check_running:
+        if server.check_running():
             Remote.insert({
                 Remote.command: 'stop_mc_server',
                 Remote.server_id: server_id,
