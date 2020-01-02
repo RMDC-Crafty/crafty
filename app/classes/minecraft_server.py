@@ -294,7 +294,8 @@ class Minecraft_Server():
         server_settings = MC_settings.get(self.server_id)
         server_settings_dict = model_to_dict(server_settings)
 
-        if self.PID is not None:
+        # DONT ever rely on a variable being correct
+        if self.PID is not None and not self.check_running():
             p = psutil.Process(self.PID)
 
             # call it first so we can be more accurate per the docs
