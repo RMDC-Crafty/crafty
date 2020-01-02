@@ -1,7 +1,13 @@
+import time
 import logging
+import psutil
+from datetime import datetime
+
+
 from app.classes.minecraft_server import Minecraft_Server
-from app.classes.models import MC_settings, Server_Stats
+from app.classes.models import MC_settings, Server_Stats, Host_Stats
 from playhouse.shortcuts import *
+from app.classes.helpers import helper
 
 logger = logging.getLogger(__name__)
 
@@ -102,10 +108,12 @@ class multi_serve():
     def run_server(self, server_id):
         svr_obj = self.get_server_obj(server_id)
         svr_obj.run_threaded_server()
+        self.do_stats_for_servers()
 
     def stop_server(self, server_id):
         svr_obj = self.get_server_obj(server_id)
         svr_obj.stop_threaded_server()
+        self.do_stats_for_servers()
 
     def stop_all_servers(self):
         logger.info("Stopping All Servers")
@@ -187,5 +195,31 @@ class multi_serve():
                         server_stats = Server_Stats.get(Server_Stats.server_id == int(server_id))
                         all_servers_return.update({server_id: model_to_dict(server_stats)})
         return all_servers_return
+
+    def do_host_status(self):
+        boot_time = datetime.fromtimestamp(psutil.boot_time())
+
+        insert_id = Host_Stats.insert({
+            Host_Stats.boot_time: str(boot_time),
+            Host_Stats.cpu_usage: round(psutil.cpu_percent(interval=0.5) / psutil.cpu_count(), 2),
+            Host_Stats.cpu_cores: psutil.cpu_count(),
+            Host_Stats.cpu_cur_freq: round(psutil.cpu_freq()[0], 2),
+            Host_Stats.cpu_max_freq: psutil.cpu_freq()[2],
+            Host_Stats.mem_percent: psutil.virtual_memory()[2],
+            Host_Stats.mem_usage: helper.human_readable_file_size(psutil.virtual_memory()[3]),
+            Host_Stats.mem_total: helper.human_readable_file_size(psutil.virtual_memory()[0]),
+            Host_Stats.disk_percent: psutil.disk_usage('/')[3],
+            Host_Stats.disk_usage: helper.human_readable_file_size(psutil.disk_usage('/')[1]),
+            Host_Stats.disk_total: helper.human_readable_file_size(psutil.disk_usage('/')[0]),
+        }).execute()
+
+        # make sure we only have 1 record/row
+        Host_Stats.delete().where(Host_Stats.id < int(insert_id)).execute()
+
+    def get_host_status(self):
+        q = Host_Stats.get()
+        data = model_to_dict(q)
+        return data
+
 
 multi = multi_serve()

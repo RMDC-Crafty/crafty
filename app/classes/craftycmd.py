@@ -7,6 +7,7 @@ import json
 from app.classes.console import Console
 from app.classes.helpers import helpers
 from app.classes.models import *
+from app.classes.multiserv import multi
 
 helper = helpers()
 console = Console()
@@ -102,7 +103,7 @@ class MainPrompt(cmd.Cmd):
         console.help("Shows system information such as CPU/Mem/Disk Usage and Server stats: Online / Max players etc")
 
     def do_show_stats(self, line):
-        self.mc_server_obj.write_html_server_status()
+        multi.do_host_status()
         json_file_path = os.path.join(helper.get_web_temp_path(), 'server_data.json')
 
         try:

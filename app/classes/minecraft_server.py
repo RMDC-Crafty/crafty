@@ -68,8 +68,6 @@ class Minecraft_Server():
             self.server_id = server_id
             self.name = self.get_mc_server_name(self.server_id)
             self.reload_settings()
-            schedule.every(10).seconds.do(self.write_html_server_status)
-            self.write_usage_history()
             self.reload_history_settings()
 
         # if the db file exists, this isn't a fresh start
@@ -149,9 +147,6 @@ class Minecraft_Server():
         self.start_time = str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
 
         logger.info("Minecraft Server Running {} with PID: {}".format(self.name, self.PID))
-
-        # write status file
-        self.write_html_server_status()
 
     def send_command(self, command):
 
@@ -275,13 +270,14 @@ class Minecraft_Server():
             online_data = {'online': 0}
 
         # write performance data to db
-        insert_result = History.insert(
-            cpu=server_stats['cpu_usage'],
-            memory=server_stats['mem_percent'],
-            players=online_data['online']
-        ).execute()
+        insert_result = History.insert({
+            History.server_id: self.server_id,
+            History.cpu: server_stats['cpu_usage'],
+            History.memory: server_stats['mem_percent'],
+            History.players:online_data['online']
+        }).execute()
 
-        logger.info("Inserted History Record Number {}".format(insert_result))
+        logger.debug("Inserted History Record Number {}".format(insert_result))
 
         query = Crafty_settings.select(Crafty_settings.history_max_age)
         max_days = query[0].history_max_age
@@ -291,63 +287,6 @@ class Minecraft_Server():
 
         # delete items older than 1 week
         History.delete().where(History.time < max_age).execute()
-
-    def write_html_server_status(self):
-
-        # self.check_running()
-
-        datime = datetime.datetime.fromtimestamp(psutil.boot_time())
-        errors = self.search_for_errors()
-        try:
-            server_ping = self.ping_server()
-        except:
-            server_ping = False
-            pass
-
-        server_stats = {'cpu_usage': psutil.cpu_percent(interval=0.5) / psutil.cpu_count(),
-                        'cpu_cores': psutil.cpu_count(),
-                        'mem_percent': psutil.virtual_memory()[2],
-                        'mem_usage': helper.human_readable_file_size(psutil.virtual_memory()[3]),
-                        'mem_total': helper.human_readable_file_size(psutil.virtual_memory()[0]),
-                        'disk_percent': psutil.disk_usage('/')[3],
-                        'disk_usage': helper.human_readable_file_size(psutil.disk_usage('/')[1]),
-                        'disk_total': helper.human_readable_file_size(psutil.disk_usage('/')[0]),
-                        'boot_time': str(datime),
-                        'mc_start_time': self.get_start_time(),
-                        'errors': len(errors['errors']),
-                        'warnings': len(errors['warnings']),
-                        'world_data': self.get_world_info(),
-                        'server_running': self.check_running()
-                        }
-        if server_ping:
-            server_stats.update({'server_description': server_ping.description})
-            server_stats.update({'server_version': server_ping.version})
-            online_stats = json.loads(server_ping.players)
-
-            if online_stats:
-                online_data = {
-                    'online': online_stats.get('online', 0),
-                    'max': online_stats.get('max', 0),
-                    'players': online_stats.get('players', [])
-                }
-                server_stats.update({'online_stats': online_data})
-
-        else:
-            server_stats.update({'server_description': 'Unable To Connect'})
-            server_stats.update({'server_version': 'Unable to Connect'})
-
-            online_data = {
-                'online': 0,
-                'max': 0,
-                'players': []
-            }
-            server_stats.update({'online_stats': online_data})
-
-        json_file_path = os.path.join(helper.get_web_temp_path(), 'server_data.json')
-
-        with open(json_file_path, 'w') as f:
-            json.dump(server_stats, f, sort_keys=True, indent=4)
-        f.close()
 
     def get_mc_process_stats(self):
 

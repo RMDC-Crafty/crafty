@@ -104,7 +104,7 @@ if __name__ == '__main__':
     from app.classes.models import peewee, Users, MC_settings, Webserver, Schedules, History, Crafty_settings, Backups, Roles, Remote, Ftp_Srv
 
     # make sure our web temp directory is there
-    helper.ensure_dir_exists(os.path.join(os.path.curdir, "app", 'web', 'temp'))
+    # helper.ensure_dir_exists(os.path.join(os.path.curdir, "app", 'web', 'temp'))
 
     logger.info("***** Crafty Launched: Debugging:{} *****".format(debug_logging_enabled))
 
@@ -174,9 +174,11 @@ if __name__ == '__main__':
 
     # do one now...
     multi.do_stats_for_servers()
+    multi.do_host_status()
 
     # schedule one for later...
     schedule.every(10).seconds.do(multi.do_stats_for_servers)
+    schedule.every(10).seconds.do(multi.do_host_status)
 
     # start the remote commands watcher thread
     remote_coms = remote_commands(tornado_srv)

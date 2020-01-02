@@ -26,7 +26,9 @@
 
         <div class="info-box-content">
           <span class="info-box-text">Host Total CPU Usage</span>
-          <span class="info-box-number"> {{ data['server_data']['cpu_usage'] }} <small>%</small></span>
+          <span class="info-box-number"> {{ data['host_stats']['cpu_usage'] }} <small>%</small> across {{ data['host_stats']['cpu_cores'] }} <small>Cores</small>
+          <span class="info-box-number"> {{ round( data['host_stats']['cpu_cur_freq'] / 1000, 2) }} Ghz / {{ round( data['host_stats']['cpu_max_freq'] / 1000, 1) }} Ghz
+          </span>
         </div>
         <!-- /.info-box-content -->
       </div>
@@ -39,8 +41,8 @@
 
         <div class="info-box-content">
           <span class="info-box-text">Host Total RAM Usage</span>
-          <span class="info-box-number"> {{ data['server_data']['mem_percent'] }}<small>%</small></span>
-          <span class="info-box-number"> {{ data['server_data']['mem_usage'] }} / {{ data['server_data']['mem_total'] }}</span>
+          <span class="info-box-number"> {{ data['host_stats']['mem_percent'] }}<small>%</small></span>
+          <span class="info-box-number"> {{ data['host_stats']['mem_usage'] }} / {{ data['host_stats']['mem_total'] }}</span>
         </div>
         <!-- /.info-box-content -->
       </div>
@@ -58,9 +60,9 @@
         <div class="info-box-content">
           <span class="info-box-text">Host Total Disk Usage</span>
           <span class="info-box-number">
-             {{ data['server_data']['disk_percent'] }}<small>%</small>
+             {{ data['host_stats']['disk_percent'] }}<small>%</small>
               <br />
-             {{ data['server_data']['disk_usage'] }} / {{ data['server_data']['disk_total'] }}
+             {{ data['host_stats']['disk_usage'] }} / {{ data['host_stats']['disk_total'] }}
           </span>
         </div>
         <!-- /.info-box-content -->
@@ -163,19 +165,19 @@
         {% end %}
 
         {% if data['user_data']['backups'] %}
-        <a href="" class="btn btn-default">
+        <a href="" class="btn btn-default disabled">
           <i class="fa fa-save" aria-hidden="true"></i> Backup
         </a>
         {% end %}
 
         {% if data['user_data']['schedules'] %}
-        <a href="" class="btn btn-default">
+        <a href="" class="btn btn-default disabled">
           <i class="fa fa-clock-o" aria-hidden="true"></i> Tasks
         </a>
         {% end %}
 
         {% if data['user_data']['files'] %}
-        <a href="" class="btn btn-default">
+        <a href="" class="btn btn-default disabled">
           <i class="fa fa-folder-o" aria-hidden="true"></i> Files
         </a>
         {% end %}
@@ -327,9 +329,7 @@
 
 
 </section>
-<!--
-{{ data['server_data'] }}
--->
+
 
 {% end %}
 

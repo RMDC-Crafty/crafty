@@ -86,7 +86,7 @@ class remote_commands():
                 logger.info("Starting MC Server: {}".format(server_name))
                 srv_obj.run_threaded_server()
                 time.sleep(2)
-                srv_obj.write_html_server_status()
+                multi.do_stats_for_servers()
             else:
                 logger.info("Server: {0} Already Running - Skipping start of MC Server: {0}".format(server_name))
 
@@ -96,7 +96,7 @@ class remote_commands():
                 logger.info("Stopping MC Server: {}".format(server_name))
                 srv_obj.stop_threaded_server()
                 time.sleep(2)
-                srv_obj.write_html_server_status()
+                multi.do_stats_for_servers()
             else:
                 logger.info("Server: {0} Not Running - Skipping stop of MC Server: {0}".format(server_name))
 

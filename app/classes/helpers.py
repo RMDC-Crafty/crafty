@@ -1,5 +1,6 @@
 import os
 import re
+import yaml
 import logging
 import requests
 import string
@@ -7,7 +8,6 @@ import socket
 import random
 import schedule
 import zipfile
-import yaml
 import psutil
 import json
 import base64
