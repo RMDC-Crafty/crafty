@@ -19,6 +19,20 @@ class BaseModel(Model):
     class Meta:
         database = database
 
+class Host_Stats(BaseModel):
+    time = DateTimeField(default=datetime.datetime.now)
+    boot_time = CharField()
+    cpu_usage = FloatField()
+    cpu_cores = IntegerField()
+    cpu_cur_freq = FloatField()
+    cpu_max_freq = FloatField()
+    mem_percent = FloatField()
+    mem_usage = CharField()
+    mem_total = CharField()
+    disk_percent = FloatField()
+    disk_usage = CharField()
+    disk_total = CharField()
+
 
 class Server_Stats(BaseModel):
     server_id = IntegerField()
@@ -140,6 +154,7 @@ class Schedules(BaseModel):
 
 class History(BaseModel):
     id = IntegerField(unique=True, primary_key=True)
+    server_id = IntegerField()
     time = DateTimeField(default=datetime.datetime.now)
     cpu = FloatField()
     memory = FloatField()
@@ -163,7 +178,8 @@ class sqlhelper():
                                     Roles,
                                     Remote,
                                     Ftp_Srv,
-                                    Server_Stats]
+                                    Server_Stats,
+                                    Host_Stats]
                                    )
 
     def default_settings(self, admin_pass):

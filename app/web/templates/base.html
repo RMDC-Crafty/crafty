@@ -63,7 +63,7 @@
         <ul class="nav navbar-nav">
           <!-- Messages: style can be found in dropdown.less-->
           <li>
-            <a class="btn btn-success" href="https://craftycontrol.com/donate-to-crafty/" target="_blank">Donate / Buy me some Coffee</a>
+            <a class="btn btn-success" href="https://craftycontrol.com/donate-to-crafty/" target="_blank">Donate</a>
           </li>
 
           <!-- Tasks: style can be found in dropdown.less -->
@@ -195,18 +195,6 @@
         {% if data['user_data']['svr_control'] %}
           <li><a href="/admin/server_control"><i class="fa fa-power-off" aria-hidden="true"></i>
             <span>Server Control</span></a></li>
-        {% end %}
-
-        {% if data['user_data']['backups'] %}
-        <li><a href="/admin/backups"><i class="fa fa-floppy-o" aria-hidden="true"></i> <span>Backups</span> </a></li>
-        {% end %}
-
-        {% if data['user_data']['schedules'] %}
-        <li><a href="/admin/schedules"><i class="fa fa-clock-o" aria-hidden="true"></i> <span>Scheduled Tasks </span></a></li>
-        {% end %}
-
-        {% if data['user_data']['files'] %}
-        <li><a href="/admin/files"><i class="fa fa-folder-open" aria-hidden="true"></i> <span> File Manager</span> </a></li>
         {% end %}
 
         {% if data['user_data']['config'] %}

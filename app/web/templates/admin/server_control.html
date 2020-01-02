@@ -24,7 +24,7 @@
                 <div class="box-header with-border">
                   <h3 class="box-title">
                       Server Actions
-                        {% if data['server_data']['server_running'] %}
+                        {% if data['server_running'] %}
                             <span class="text-green">
                         Server Running &nbsp;
                             <i class="fa fa-thumbs-up" aria-hidden="true"></i>
@@ -37,23 +37,7 @@
                         {% end %}
                   </h3>
                 </div>
-                <div class="box-body">
-                    <a href="/admin/commands?command=server_start"
-                       onclick="delay()"
-                        class="btn btn-app {% if data['server_data']['server_running'] %} disabled {% end %}">
-                        <i class="fa fa-play"></i> Start Server
-                    </a>
-                    <a  href="/admin/commands?command=server_stop"
-                        onclick="delay()"
-                        class="btn btn-app {% if not data['server_data']['server_running'] %} disabled {% end %}">
-                        <i class="fa fa-stop"></i> Stop Server
-                    </a>
-                    <a  href="/admin/commands?command=server_restart"
-                        onclick="delay('15-20')"
-                        class="btn btn-app {% if not data['server_data']['server_running'] %} disabled {% end %}">
-                        <i class="fa fa-refresh"></i> Restart Server
-                    </a>
-                </div>
+
               </div>
         </div>
 
@@ -67,9 +51,7 @@
             <div class="box-body">
               <div class="table-responsive">
                 <ul>
-                    {% for player in data['server_data']['online_stats']['players'] %}
-                        <li>{{ player }}</li>
-                    {% end %}
+
 
                 </ul>
               </div>
@@ -89,7 +71,7 @@
             <i class="fa fa-info-circle" aria-hidden="true"></i>
 
             <h3 class="box-title">Server Status:
-                {% if data['server_data']['server_running'] %}
+                {% if data['server_running'] %}
                     <span class="text-green">
                         Server Running &nbsp;
                         <i class="fa fa-thumbs-up" aria-hidden="true"></i>
@@ -104,90 +86,7 @@
             </h3>
         </div>
         <!-- /.box-header -->
-        <div class="box-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <table class="table">
-                        <tr>
-                          <td><b>Last Boot</b></td>
-                          <td>{{ data['server_data']['boot_time'] }}</td>
-                        </tr>
-                        <tr>
-                          <td><b>Server Startup Time</b></td>
-                          <td>{{ data['server_data']['mc_start_time'] }}</td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <table class="table">
-                        <tr>
-                          <td><b>CPU Usage</b></td>
-                          <td>{{ data['server_data']['cpu_usage'] }}</td>
-                        </tr>
-                        <tr>
-                          <td><b>CPU Cores</b></td>
-                          <td>{{ data['server_data']['cpu_cores'] }}</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
 
-          <div class="row">
-                <div class="col-md-6">
-                    <table class="table">
-                        <tr>
-                            <td><b>Server Version</b></td>
-                            <td>{{ data['server_data']['server_version'] }}</td>
-                        </tr>
-                        <tr>
-                            <td><b>Server Description</b></td>
-                            <td>{{ data['server_data']['server_description'] }}</td>
-                        </tr>
-                        <tr>
-                          <td><b>World Name</b></td>
-                          <td>
-                            {{ data['server_data']['world_data']['world_name'] }}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td><b>World Disk Usage</b></td>
-                          <td>{{ data['server_data']['world_data']['world_size'] }}</td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <table class="table">
-                        <tr>
-                          <td width="50%"><b>Errors Found</b></td>
-                          <td>
-                            {{ data['server_data']['errors'] }}&nbsp;
-                            {% if data['server_data']['errors'] >= 1 %}
-                              <a href="/admin/get_logs">
-                                 <span class="label label-danger">Errors - Click to View</span>
-                               </a>
-                            {% else %}
-                              <span class="label label-success">No Errors</span>
-                            {% end %}
-                          </td>
-                        </tr>
-                      <tr>
-                          <td><b>Warnings Found</b></td>
-                          <td>
-                            {{ data['server_data']['warnings'] }}&nbsp;
-                            {% if data['server_data']['warnings'] >= 1 %}
-                               <a href="/admin/get_logs">
-                                 <span class="label label-danger">Warnings - Click to View</span>
-                               </a>
-                            {% else %}
-                               <span class="label label-success">No Warnings</span>
-                            {% end %}
-                          </td>
-                        </tr>
-
-                    </table>
-                </div>
-            </div>
-        </div>
         <!-- /.box-body -->
       </div>
       <!-- /.box -->

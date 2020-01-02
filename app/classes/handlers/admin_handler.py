@@ -29,7 +29,6 @@ class AdminHandler(BaseHandler):
         user_data = get_perms_for_user(name)
 
         context = {
-            'server_data': self.get_server_data(),
             'user_data': user_data,
             'version_data': helper.get_version(),
             'servers_defined': multi.list_servers(),
@@ -67,8 +66,10 @@ class AdminHandler(BaseHandler):
             self.redirect("/admin/config")
 
         elif page == 'dashboard':
+            multi.do_stats_for_servers()
             errors = self.get_argument('errors', None)
             context['errors'] = errors
+            context['host_stats'] = multi.get_host_status()
 
             template = "admin/dashboard.html"
 
@@ -237,10 +238,18 @@ class AdminHandler(BaseHandler):
             if not check_role_permission(user_data['username'], 'svr_control'):
                 self.redirect('/admin/unauthorized')
 
+            server_id = self.get_argument('id', None)
+
+            if server_id is None:
+                self.redirect("/admin/dashboard")
+
             template = "admin/server_control.html"
             logfile = helper.get_crafty_log_file()
 
             mc_data = MC_settings.get()
+
+            srv_obj = multi.get_server_obj(server_id)
+            context['server_running'] = srv_obj.check_running()
             context['mc_settings'] = model_to_dict(mc_data)
             context['server_updating'] = self.mcserver.check_updating()
 
