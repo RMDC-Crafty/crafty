@@ -242,12 +242,11 @@ class StartServer(BaseHandler):
         
         server_id = self.get_argument('id')
         server = multi.get_server_obj(server_id)
-        id = self.mcserver.servers_list[server_id]['id']
             
         if not server.check_running:
             Remote.insert({
                 Remote.command: 'start_mc_server',
-                Remote.server_id: id,
+                Remote.server_id: server_id,
                 Remote.command_source: "localhost"
             }).execute()
             self.return_response(200, {}, {'code':'SER_START_CALLED'}, {})
@@ -271,12 +270,11 @@ class StopServer(BaseHandler):
         
         server_id = self.get_argument('id')
         server = multi.get_server_obj(server_id)
-        id = self.mcserver.servers_list[server_id]['id']
         
         if self.mcserver.check_running:
             Remote.insert({
                 Remote.command: 'stop_mc_server',
-                Remote.server_id: id,
+                Remote.server_id: server_id,
                 Remote.command_source: "localhost"
             }).execute()
             
@@ -372,13 +370,7 @@ class ListServers(BaseHandler):
         if not check_role_permission(user, 'api_access'):
             self.access_denied(user)
         
-        servers_list = []
-        if self.mcserver.servers_list:
-            for server in self.mcserver.servers_list:
-                servers_list.append(server)
-                
-            self.return_response(200, {}, {"code": "COMPLETED", "servers": servers_list}, {})
-        else:
-            self.return_response(500, {'error':'NOT_FOUND'}, {}, {'info': "No servers found"})
+        self.return_response(200, {}, {"code": "COMPLETED", "servers": multi.list_servers()}, {})
+
             
         
