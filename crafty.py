@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import json
+import secrets
 import logging
 import schedule
 import threading
@@ -123,7 +124,9 @@ if __name__ == '__main__':
         helper.make_new_install_file()
 
         admin_pass = helper.random_string_generator()
-        peewee.default_settings(admin_pass)
+        admin_token = secrets.token_urlsafe(32)
+  
+        peewee.default_settings(admin_pass, admin_token)
 
     else:
         peewee.do_database_migrations()
@@ -155,6 +158,16 @@ if __name__ == '__main__':
             helper.get_local_ip(), port_number))
         console.info("Your Username is: Admin")
         console.info("Your Password is: {}".format(admin_pass))
+        console.info("Your Admin token is: {}".format(admin_token))
+
+    # for each server that is defined, we set them up in the multi class, so we have them ready for later.
+    multi.init_all_servers()
+
+    # do one now...
+    multi.do_stats_for_servers()
+
+    # schedule one for later...
+    schedule.every(10).seconds.do(multi.do_stats_for_servers)
 
     # for each server that is defined, we set them up in the multi class, so we have them ready for later.
     multi.init_all_servers()
