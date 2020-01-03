@@ -41,6 +41,7 @@ def do_intro():
 def show_help():
     console.help("-h: shows this message")
     console.help("-k: stops all crafty processes")
+    console.help("--no-console: don't start the console")
     sys.exit(0)
 
 
@@ -73,6 +74,8 @@ if __name__ == '__main__':
     open(log_file, 'a').close()
 
     debug_logging_enabled = False
+    do_console = True
+    freeze_loop = False
 
     # checking for additional arguments such as -k
     arg_length = len(sys.argv) - 1
@@ -85,6 +88,9 @@ if __name__ == '__main__':
             send_kill_command()
         elif argument == '-d':
             debug_logging_enabled = True
+        elif argument == '--daemon':
+            do_console = False
+            freeze_loop = True
         else:
             show_help()
 
@@ -188,6 +194,14 @@ if __name__ == '__main__':
     console.info("Crafty Startup Procedure Complete")
     console.help("Type 'stop' or 'exit' to shutdown the system")
 
-    Crafty = MainPrompt(mc_server)
-    Crafty.cmdloop()
+    if do_console:
+        Crafty = MainPrompt(mc_server)
+        Crafty.cmdloop()
+    else:
+        console.info("Not starting crafty console")
+    
+    if freeze_loop:
+        # Freeze the program in a loop
+        while True:
+            pass
 
