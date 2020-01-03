@@ -460,55 +460,6 @@ class helpers:
             return False
 
         return True
-    
-    def get_installation_stats(self, mcserver):
-        datime = datetime.fromtimestamp(psutil.boot_time())
-        errors = mcserver.search_for_errors()
-        try:
-            server_ping = mcserver.ping_server()
-        except:
-            server_ping = False
-            pass
-
-        server_stats = {'cpu_usage': psutil.cpu_percent(interval=0.5) / psutil.cpu_count(),
-                        'cpu_cores': psutil.cpu_count(),
-                        'mem_percent': psutil.virtual_memory()[2],
-                        'mem_usage': self.human_readable_file_size(psutil.virtual_memory()[3]),
-                        'mem_total': self.human_readable_file_size(psutil.virtual_memory()[0]),
-                        'disk_percent': psutil.disk_usage('/')[3],
-                        'disk_usage': self.human_readable_file_size(psutil.disk_usage('/')[1]),
-                        'disk_total': self.human_readable_file_size(psutil.disk_usage('/')[0]),
-                        'boot_time': str(datime),
-                        'mc_start_time': mcserver.get_start_time(),
-                        'errors': len(errors['errors']),
-                        'warnings': len(errors['warnings']),
-                        'world_data': mcserver.get_world_info(),
-                        'server_running': mcserver.check_running()
-                        }
-        if server_ping:
-            server_stats.update({'server_description': server_ping.description})
-            server_stats.update({'server_version': server_ping.version})
-            online_stats = json.loads(server_ping.players)
-
-            if online_stats:
-                online_data = {
-                    'online': online_stats.get('online', 0),
-                    'max': online_stats.get('max', 0),
-                    'players': online_stats.get('players', [])
-                }
-                server_stats.update({'online_stats': online_data})
-
-        else:
-            server_stats.update({'server_description': 'Unable To Connect'})
-            server_stats.update({'server_version': 'Unable to Connect'})
-
-            online_data = {
-                'online': 0,
-                'max': 0,
-                'players': []
-            }
-            server_stats.update({'online_stats': online_data})
-        return server_stats
 
     def scheduler(self, task, mc_server_obj):
         logger.info("Parsing Tasks To Add")

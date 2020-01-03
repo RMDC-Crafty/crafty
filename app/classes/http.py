@@ -119,7 +119,8 @@ class webserver():
             (r'/images(.*)', tornado.web.StaticFileHandler, {"path": "/images"}),
             
             # API routes
-            (r'/api/v1/stats', api_routes.GetHostStats, dict(mcserver=self.mc_server)),
+            (r'/api/v1/host_stats', api_routes.GetHostStats, dict(mcserver=self.mc_server)),
+            (r'/api/v1/server_stats', api_routes.GetServerStats, dict(mcserver=self.mc_server)),
             
             # Server related
             (r'/api/v1/server/send_command', api_routes.SendCommand, dict(mcserver=self.mc_server)),

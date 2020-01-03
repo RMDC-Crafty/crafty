@@ -91,9 +91,24 @@ class GetHostStats(BaseHandler):
         if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'logs'):
             self.access_denied(user)
         
-        server_stats = helper.get_installation_stats(self.mcserver)
+        self.return_response(200, {}, self.mcserver.get_host_status(), {})
         
-        self.return_response(200, {}, server_stats, {})
+class GetServerStats(BaseHandler):
+    
+    def initialize(self, mcserver):
+        self.mcserver = mcserver
+    
+    def get(self):
+        token = self.get_argument('token')
+        user = self.authenticate_user(token)
+        
+        if user is None:
+            self.access_denied('unknown')
+        
+        if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'logs'):
+            self.access_denied(user)
+        
+        self.return_response(200, {}, self.mcserver.get_stats_for_servers(), {})
         
 class SearchMCLogs(BaseHandler):
     
@@ -130,7 +145,7 @@ class GetMCLogs(BaseHandler):
     def initialize(self, mcserver):
         self.mcserver = mcserver
         
-    def post(self):
+    def get(self):
         token = self.get_argument('token')
         user = self.authenticate_user(token)
         
@@ -155,7 +170,7 @@ class GetMCLogs(BaseHandler):
         
 class GetCraftyLogs(BaseHandler):
         
-    def post(self):
+    def get(self):
         token = self.get_argument('token')
         user = self.authenticate_user(token)
         
@@ -336,7 +351,7 @@ class CreateUser(BaseHandler):
 
 class DeleteUser(BaseHandler):
     
-    def delete(self):
+    def post(self):
         token = self.get_argument('token')
         user = self.authenticate_user(token)
         
