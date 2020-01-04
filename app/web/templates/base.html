@@ -157,6 +157,19 @@
                     Server Config
                   </div>
 
+                  <div class="col-xs-1">
+                    {% if data['user_data']['api_access'] %}
+                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+                      {% else %}
+                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+                      {% end %}
+                  </div>
+                  <div class="col-xs-10">
+                    API Access
+                  </div>
+
+
+
                 </div>
 
 

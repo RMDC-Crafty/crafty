@@ -310,6 +310,14 @@
                 and kept for <b>{{ data['backup_config']['max_backups'] }}</b> days
 
                 <hr />
+                {% for u in data['users'] %}
+                    {% if u.username == data['user_data']['username'] %}
+                Your API Key: <b>{{ u.api_token }}</b>
+                    {% end %}
+                {% end %}
+
+
+                <hr />
 
                 You have <b>{{ data['users_count'] }}</b> users defined
 
