@@ -40,6 +40,10 @@ class helpers:
         self.passhasher = PasswordHasher()
 
         self.can_email = False
+    
+    def redefine_paths(self, config_dir, db_dir):
+        self.dbpath = os.path.join(db_dir, "crafty.sqlite")
+        self.config_dir = config_dir
 
     def is_fresh_install(self):
 

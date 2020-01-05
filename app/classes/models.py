@@ -8,6 +8,7 @@ from app.classes.helpers import helper
 import logging
 
 # SQLite database using WAL journal mode and 10MB cache.
+# Note: runs on import
 database = SqliteDatabase(helper.get_db_path(), pragmas={
     'journal_mode': 'wal',
     'cache_size': -1024 * 10})
