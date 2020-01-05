@@ -2,9 +2,11 @@ import os
 import sys
 import time
 import json
+import yaml
 import secrets
 import logging
 import schedule
+import argparse
 import threading
 import logging.config
 
@@ -73,32 +75,20 @@ if __name__ == '__main__':
     # ensure the log file is there
     open(log_file, 'a').close()
 
-    debug_logging_enabled = False
     do_console = True
     freeze_loop = False
 
-    # checking for additional arguments such as -k
-    arg_length = len(sys.argv) - 1
-
-    if arg_length == 1:
-        argument = sys.argv[1]
-
-        if argument == '-k':
-            console.info("Sending Shutdown Command")
-            send_kill_command()
-        elif argument == '-d':
-            debug_logging_enabled = True
-        elif argument == '--daemon':
-            do_console = False
-            freeze_loop = True
-        else:
-            show_help()
-
-    elif arg_length > 1:
-        show_help()
+    parser = argparse.ArgumentParser("Crafty Web - A Minecraft Server GUI")
+    
+    parser.add_argument('-k', '--kill-all', action='store_true', help="Find and terminate all running Crafty instances on the host system.")
+    parser.add_argument('-v', '--verbose', action='store_true', help="Sets Crafty's logging level to debug.")
+    parser.add_argument('-d', '--daemonize', action='store_true', help="Prevent exit of crafty.py and disable console.")
+    parser.add_argument('-c', '--config', help="Specify a config file to tell Crafty where to store it's database, version, etc.")
+    
+    args = parser.parse_args()
 
     # sets up our logger
-    setup_logging(debug_logging_enabled)
+    setup_logging(args.verbose)
 
     # setting up the logger object
     logger = logging.getLogger(__name__)
@@ -106,22 +96,46 @@ if __name__ == '__main__':
     # now that logging is setup - let's import the rest of the things we need to run
     from app.classes.helpers import helper
 
-    # doing a more focused import here, because * imports can be a little crazy.
-    from app.classes.models import peewee, Users, MC_settings, Webserver, Schedules, History, Crafty_settings, Backups, Roles, Remote, Ftp_Srv
-
     # make sure our web temp directory is there
     # helper.ensure_dir_exists(os.path.join(os.path.curdir, "app", 'web', 'temp'))
 
-    logger.info("***** Crafty Launched: Debugging:{} *****".format(debug_logging_enabled))
+    logger.info("***** Crafty Launched: Verbose mode enabled: {} *****".format(args.verbose))
 
     # announce the program
     do_intro()
 
     admin_pass = None
-
+    
+    # load config file and reprogram default values
+    if args.config:
+        config_path = os.path.join(os.curdir, args.config)
+        logger.info("Loading config from file {}".format(config_path))
+        try:
+            with open(config_path) as f:
+                cfg = yaml.safe_load(f)
+                f.close()
+        except:
+            logger.critical("Specified config has invalid syntax/cannot be read. Error is: ", exc_info=True)
+        else:
+            logger.info("Setting config and db paths")
+            helper.redefine_paths(cfg['config_dir'], cfg['db_dir'])
+                      
+            if not args.daemonize:
+                daemon_mode = cfg['daemon_mode']
+    else:
+        logger.warn("No config specified")
+        
+    # prioritize command line flags
+    if args.daemonize:
+        daemon_mode = args.daemonize
+    
     # is this a fresh install?
     fresh_install = helper.is_fresh_install()
-
+    
+    # doing a more focused import here, because * imports can be a little crazy.
+    # also import after config and cmd args
+    from app.classes.models import peewee, Users, MC_settings, Webserver, Schedules, History, Crafty_settings, Backups, Roles, Remote, Ftp_Srv
+    
     # creates the database tables / sqlite database file
     peewee.create_tables()
 
@@ -194,14 +208,15 @@ if __name__ == '__main__':
     console.info("Crafty Startup Procedure Complete")
     console.help("Type 'stop' or 'exit' to shutdown the system")
 
-    if do_console:
+    if not daemon_mode:
         Crafty = MainPrompt(mc_server)
         Crafty.cmdloop()
     else:
-        console.info("Not starting crafty console")
+        logger.info("Not starting crafty console due to daemonize mode")
     
-    if freeze_loop:
+    if daemon_mode:
         # Freeze the program in a loop
+        logger.info("Freezing program due to daemonize mode")
         while True:
             pass
 

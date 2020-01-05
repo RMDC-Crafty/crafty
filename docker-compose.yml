@@ -8,4 +8,4 @@ services:
       - "25500-25600"
     volumes: 
       - ./minecraft_servers:/minecraft_servers
-      #- ./app/config:/crafty-web/app/config
+      - ./db:/crafty_db
