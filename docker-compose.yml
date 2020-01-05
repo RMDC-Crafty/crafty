@@ -7,5 +7,5 @@ services:
       - "8000:8000"
       - "25500-25600"
     volumes: 
-      - ./minecraft_servers:/minecraft_servers
-      - ./db:/crafty_db
+      - ./docker/minecraft_servers:/minecraft_servers
+      - ./docker/db:/crafty_db

@@ -25,6 +25,5 @@ app/config/crafty.*
 app/config/new_install.temp
 
 # kevdagoat custom patterns :)
-mc/
-.vscode/
+.vscode/*
 custom_scripts/
