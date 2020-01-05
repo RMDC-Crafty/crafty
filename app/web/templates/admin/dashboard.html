@@ -26,7 +26,7 @@
 
         <div class="info-box-content">
           <span class="info-box-text">Host CPU Usage</span>
-          <span class="info-box-number"> {{ data['server_data']['cpu_usage'] }} <small>%</small></span>
+          <span class="info-box-number"> {{ round( data['server_data']['cpu_usage'], 2) }} <small>%</small></span>
         </div>
         <!-- /.info-box-content -->
       </div>
