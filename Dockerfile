@@ -13,5 +13,5 @@ RUN pip3 install -r requirements.txt
 EXPOSE 8000
 EXPOSE 25500-25600
 
-CMD ["python3", "crafty.py", "-c", "/crafty_web/docker_config.yml"]
+CMD ["python3", "crafty.py", "-c", "/crafty_web/configs/docker_config.yml"]
 
