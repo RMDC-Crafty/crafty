@@ -75,9 +75,8 @@ if __name__ == '__main__':
     # ensure the log file is there
     open(log_file, 'a').close()
 
-    do_console = True
-    freeze_loop = False
-
+    daemon_mode = False
+    
     parser = argparse.ArgumentParser("Crafty Web - A Minecraft Server GUI")
     
     parser.add_argument('-k', '--kill-all', action='store_true', help="Find and terminate all running Crafty instances on the host system.")
