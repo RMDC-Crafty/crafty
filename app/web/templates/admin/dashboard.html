@@ -26,7 +26,7 @@
 
         <div class="info-box-content">
           <span class="info-box-text">Host Total CPU Usage</span>
-          <span class="info-box-number"> {{ data['host_stats']['cpu_usage'] }} <small>%</small> across {{ data['host_stats']['cpu_cores'] }} <small>Cores</small>
+          <span class="info-box-number"> {{ round( data['host_stats']['cpu_usage'], 2) }} <small>%</small> across {{ data['host_stats']['cpu_cores'] }} <small>Cores</small>
           <span class="info-box-number"> {{ round( data['host_stats']['cpu_cur_freq'] / 1000, 2) }} Ghz / {{ round( data['host_stats']['cpu_max_freq'] / 1000, 1) }} Ghz
           </span>
         </div>
