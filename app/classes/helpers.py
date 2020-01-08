@@ -465,6 +465,21 @@ class helpers:
             return False
 
         return True
+    
+    def load_server_properties(self, mc_server_obj, properties_name="server.properties"):
+        # get server path 
+        server_path = mc_server_obj.server_path
+        # Create config path
+        config_path = os.path.join(server_path, properties_name)
+        
+        # make sure that the file exists
+        if os.path.isfile(config_path):
+            config = configparser.ConfigParser()
+            config.read(config_path)
+            return config
+        else:
+            return None
+        
 
     def scheduler(self, task, mc_server_obj):
         logger.info("Parsing Tasks To Add")
