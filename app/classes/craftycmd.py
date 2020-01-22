@@ -167,24 +167,72 @@ class MainPrompt(cmd.Cmd):
         console.help("Sets a users password. Example set_password Admin. Use list_users to see defined users")
 
     def help_disable_autostart(self):
-        console.help("Disables Minecraft Server Autostarting on Crafty Launch")
+        console.help("Disables Server Autostarting on Crafty Launch")
+        console.help("Specify the server to modify by ID number")
+        console.help("Example: disable_autostart 1 - this will disable auto-start for server 1")
+        console.help("You can get a server id by issuing list_servers")
 
     def do_disable_autostart(self, line):
+        if line == '':
+            self.help_disable_autostart()
+            return 0
+
+        try:
+            int(line)
+        except ValueError:
+            console.error("Server ID must be a string")
+            self.help_disable_autostart()
+            return 0
+
+        try:
+            server = MC_settings.get_by_id(line)
+
+        except Exception as e:
+            console.help("Unable to find a server with that ID: {}".format(e))
+            return 0
+
+        server = int(line)
+
         MC_settings.update({
             MC_settings.auto_start_server: False
-        }).execute()
-        logger.info("Disabled Minecraft Autostart via the console")
-        Console.info("Disabled Minecraft Autostart")
+        }).where(MC_settings.id == server).execute()
+
+        logger.info("Disabled Autostart for Server {} via the console".format(server))
+        Console.info("Disabled Autostart for Server {} ".format(server))
 
     def help_enable_autostart(self):
-        console.help("Enables Minecraft Server Autostarting on Crafty Launch")
+        console.help("Enables Server Autostarting on Crafty Launch")
+        console.help("Specify the server to modify by ID number")
+        console.help("Example: enable_autostart 1 - this will enable auto-start for server 1")
+        console.help("You can get a server id by issuing list_servers")
 
-    def do_enable_autostart(self,line):
+    def do_enable_autostart(self, line):
+        if line == '':
+            self.help_enable_autostart()
+            return 0
+
+        try:
+            int(line)
+        except ValueError:
+            console.error("Server ID must be a string")
+            self.help_enable_autostart()
+            return 0
+
+        try:
+            server = MC_settings.get_by_id(line)
+
+        except Exception as e:
+            console.help("Unable to find a server with that ID: {}".format(e))
+            return 0
+
+        server = int(line)
+
         MC_settings.update({
-            MC_settings.auto_start_server: False
-        }).execute()
-        logger.info("Enabled Minecraft Autostart via the console")
-        Console.info("Enabled Minecraft Autostart")
+            MC_settings.auto_start_server: True
+        }).where(MC_settings.id == server).execute()
+
+        logger.info("Enabled Autostart for Server {} via the console".format(server))
+        Console.info("Enabled Autostart for Server {} ".format(server))
 
     def do_reload_webserver(self, line):
         Remote.insert({
@@ -241,3 +289,18 @@ class MainPrompt(cmd.Cmd):
 
     def do_revert_jar_upgrade(self, line):
         self.mc_server_obj.revert_updated_server_jar()
+
+    def do_list_servers(self, line):
+        servers = MC_settings.select()
+        console.info("Servers Defined:")
+        console.info('-'*30)
+        for s in servers:
+            console.info("Server ID: {}".format(s.id))
+            console.info("Name:{}".format(s.server_name))
+            console.info("Path: {}".format(s.server_path))
+            console.info("Memory: {}/{}:".format(s.memory_min, s.memory_max))
+            console.info("IP {} / Port: {}".format(s.server_ip, s.server_port))
+            console.info("AutoStart: {}".format(s.auto_start_server))
+            console.info('-' * 30)
+
+

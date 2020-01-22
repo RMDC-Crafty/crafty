@@ -122,7 +122,7 @@ if __name__ == '__main__':
             if not args.daemonize:
                 daemon_mode = cfg['daemon_mode']
     else:
-        logger.warn("No config specified")
+        logger.warning("No config specified")
         
     # prioritize command line flags
     if args.daemonize:
