@@ -133,20 +133,19 @@ class Minecraft_Server():
             logger.info("Sending Server Command: {}".format(self.server_command))
             self.process.send(self.server_command + '\n')
 
-        try:
-            parent = psutil.Process(self.process.pid)
-        except:
-            return
-
-        time.sleep(.5)
-        children = parent.children(recursive=True)
-        for c in children:
-            self.PID = c.pid
-
         ts = time.time()
         self.start_time = str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
 
-        logger.info("Minecraft Server Running {} with PID: {}".format(self.name, self.PID))
+        if psutil.pid_exists(self.process.pid):
+            parent = psutil.Process(self.process.pid)
+            time.sleep(.5)
+            children = parent.children(recursive=True)
+            for c in children:
+                self.PID = c.pid
+                logger.info("Minecraft Server Running {} with PID: {}".format(self.name, self.PID))
+        else:
+            logger.warning("Server PID: {} died right after starting - is this a server config issue?".format(self.PID))
+
 
     def send_command(self, command):
 
@@ -294,8 +293,7 @@ class Minecraft_Server():
         server_settings = MC_settings.get(self.server_id)
         server_settings_dict = model_to_dict(server_settings)
 
-        # DONT ever rely on a variable being correct
-        if self.PID is not None and not self.check_running():
+        if self.check_running():
             p = psutil.Process(self.PID)
 
             # call it first so we can be more accurate per the docs

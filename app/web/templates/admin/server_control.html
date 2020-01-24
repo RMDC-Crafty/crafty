@@ -6,8 +6,8 @@
 
 <section class="content-header">
   <h1>
-    Server Control
-    <small>Start / Stop / Restart</small>
+    Server Details
+    <small>I demand to see the things!</small>
   </h1>
   <ol class="breadcrumb">
     <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -19,38 +19,37 @@
 <section class="content">
 
     <div class="row">
-        <div class="col-xs-6">
+        <div class="col-md-6">
             <div class="box box-info">
                 <div class="box-header with-border">
-                  <h3 class="box-title">
-                      Server Actions
-                        {% if data['server_running'] %}
-                            <span class="text-green">
-                        Server Running &nbsp;
-                            <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                            </span>
-                        {% else %}
-                        <span class="text-red">
-                            Server Down &nbsp;
-                            <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-                        </span>
-                        {% end %}
-                  </h3>
+                  <h3 class="box-title"><i class="fa fa-clock-o" aria-hidden="true"></i>
+                      Historical Data</h3>
                 </div>
-
-              </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="cpu_history" style="height: 250px;"></div>
+                </div>
+            </div>
         </div>
+
 
         <div class="col-md-6">
             <div class="box box-info">
             <div class="box-header with-border">
               <h3 class="box-title"><i class="fa fa-users" aria-hidden="true"></i>
-                  Players List</h3>
+                  Current Players</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
               <div class="table-responsive">
                 <ul>
+                    {% if data['players_online'] > 0 %}
+                        {% for p in list(data['players']) %}
+                            <li>{{ p }}</li>
+                        {% end %}
+                    {% else %}
+                        No Players Online
+                    {% end %}
 
 
                 </ul>
@@ -64,105 +63,7 @@
 
     </div>
 
-    <div class="row">
-        <div class="col-md-6">
-        <div class="box box-info">
-        <div class="box-header with-border">
-            <i class="fa fa-info-circle" aria-hidden="true"></i>
 
-            <h3 class="box-title">Server Status:
-                {% if data['server_running'] %}
-                    <span class="text-green">
-                        Server Running &nbsp;
-                        <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                    </span>
-                {% else %}
-                    <span class="text-red">
-                        Server Down &nbsp;
-                        <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-                    </span>
-                {% end %}
-
-            </h3>
-        </div>
-        <!-- /.box-header -->
-
-        <!-- /.box-body -->
-      </div>
-      <!-- /.box -->
-    </div>
-
-        <div class="col-xs-6">
-            <div class="box box-info">
-                <div class="box-header with-border">
-                  <h3 class="box-title">
-                      Server Jar Update
-                        {% if data['mc_settings']['jar_url'] != '' %}
-                            <span class="text-green">
-                        Ready To Update&nbsp;
-                            <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                            </span>
-                        {% else %}
-                        <span class="text-red">
-                            No Jar Url Set - Can't Update &nbsp;
-                            <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-                        </span>
-                        {% end %}
-                  </h3>
-                </div>
-                <div class="box-body">
-
-                    {% if data['mc_settings']['jar_url'] != '' %}
-                    <b>Jar URL</b><br />
-
-                        Your Server Jar will be downloaded from this URL: {{ data['mc_settings']['jar_url'] }}<br /><br />
-
-                    <b>Jar Backup</b><br />
-                        Your Server Jar will be backed up to this location:
-                        {{ data['mc_settings']['server_path'] }}/crafty_jar_backups//old_server.jar.<br />
-                        Any old jars here will be deleted<br />
-
-                        <hr>
-
-                        {% if not data['server_updating'] %}
-                        <a onclick="update()"
-                            class="btn btn-app ">
-                            <i class="fa fa-cloud-download" aria-hidden="true"></i>Update {{ data['mc_settings']['server_jar'] }}
-                        </a>
-
-                        <a onclick="revert()"
-                            class="btn btn-app ">
-                            <i class="fa fa-undo" aria-hidden="true"></i>Undo Update (Revert Back)
-                        </a>
-                        {% else %}
-
-                            <div class="col-xs-12 text-center">
-                                <h4>Server Jar Upgrade In Progress</h4>
-                            </div>
-
-                        {% end %}
-
-                    {% end %}
-
-                </div>
-              </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6">
-        <div class="box box-info">
-            <div class="box-header with-border">
-              <h3 class="box-title"><i class="fa fa-clock-o" aria-hidden="true"></i>
-                  Historical Data</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-                <div id="cpu_history" style="height: 250px;"></div>
-            </div>
-
-          </div>
-    </div>
 
 
 </section>

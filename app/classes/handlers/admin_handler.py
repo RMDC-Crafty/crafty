@@ -252,6 +252,9 @@ class AdminHandler(BaseHandler):
             context['server_running'] = srv_obj.check_running()
             context['mc_settings'] = model_to_dict(mc_data)
             context['server_updating'] = self.mcserver.check_updating()
+            context['players'] = context['mc_servers_data'][int(server_id)]['players'].split(',')
+            context['players_online'] = context['mc_servers_data'][int(server_id)]['online_players']
+
 
         elif page == 'commands':
             if not check_role_permission(user_data['username'], 'svr_console'):
