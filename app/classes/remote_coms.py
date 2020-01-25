@@ -81,14 +81,9 @@ class remote_commands():
                 srv_obj.run_threaded_server()
 
         elif command == 'start_mc_server':
-
-            if not running:
-                logger.info("Starting MC Server: {}".format(server_name))
-                srv_obj.run_threaded_server()
-                time.sleep(2)
-                multi.do_stats_for_servers()
-            else:
-                logger.info("Server: {0} Already Running - Skipping start of MC Server: {0}".format(server_name))
+            srv_obj.run_threaded_server()
+            time.sleep(2)
+            multi.do_stats_for_servers()
 
         elif command == 'stop_mc_server':
 
@@ -100,11 +95,11 @@ class remote_commands():
             else:
                 logger.info("Server: {0} Not Running - Skipping stop of MC Server: {0}".format(server_name))
 
-        elif command == 'update_server_jar':
-            srv_obj.update_server_jar(False)
+        #elif command == 'update_server_jar':
+            # srv_obj.update_server_jar(False)
 
-        elif command == 'revert_server_jar':
-            srv_obj.revert_updated_server_jar(False)
+        #elif command == 'revert_server_jar':
+            # srv_obj.revert_updated_server_jar(False)
 
         elif command == "exit_crafty":
             logger.info("Sending Stop Command To Crafty")

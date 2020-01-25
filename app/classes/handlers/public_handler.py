@@ -5,6 +5,7 @@ import tornado.escape
 from app.classes.console import console
 from app.classes.models import *
 from app.classes.handlers.base_handler import BaseHandler
+from app.classes.multiserv import multi
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +73,7 @@ class PublicHandler(BaseHandler):
 
 
     def get_server_data(self):
+
         server_file = os.path.join( helper.get_web_temp_path(), "server_data.json")
 
         if helper.check_file_exists(server_file):

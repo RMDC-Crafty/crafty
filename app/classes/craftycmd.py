@@ -32,34 +32,52 @@ class MainPrompt(cmd.Cmd):
 
     def stop_all_children(self):
         Console.info("Stopping any server daemons")
-
-        if self.mc_server_obj.check_running:
-            try:
-                self.mc_server_obj.stop_threaded_server()
-                self.print_crafty_end()
-            except:
-                self.print_crafty_end()
-        else:
-            self.print_crafty_end()
+        multi.stop_all_servers()
+        self.print_crafty_end()
 
     def do_stop(self, line):
-        running = self.mc_server_obj.check_running()
+        if line == '':
+            self.help_stop()
+            return 0
 
-        if running:
-            try:
-                console.info("Stopping MC Server")
+        try:
+            int(line)
+        except ValueError:
+            console.error("Server ID must be a number")
+            self.help_stop()
+            return 0
+
+        try:
+            server = MC_settings.get_by_id(line)
+
+        except Exception as e:
+            console.help("Unable to find a server with that ID: {}".format(e))
+            return 0
+
+        server = int(line)
+
+        if helper.is_setup_complete():
+
+            srv_obj = multi.get_server_obj(server)
+
+            if not srv_obj.check_running():
+                console.warning("Server already stopped")
+            else:
+                console.info("Stopping Minecraft Server")
+                multi.stop_server(server)
+                '''
                 Remote.insert({
                     Remote.command: 'stop_mc_server'
                 }).execute()
-            except:
-                pass
-
-            console.info("Servers Stopped")
+                '''
         else:
-            console.info("Server not running")
+            console.warning("Unable to stop server, please complete setup in the web GUI first")
 
     def help_stop(self):
-        console.help("Stops the server if running, Exits the program")
+        console.help("Stops a Server")
+        console.help("Specify the server to stop by ID number")
+        console.help("Example: stop 1 - this will stop server ID 1")
+        console.help("You can get a server id by issuing list_servers")
 
     def do_EOF(self, line):
         """ Exits the main program via Ctrl -D Shortcut """
@@ -75,20 +93,48 @@ class MainPrompt(cmd.Cmd):
         console.help("Stops the server if running, Exits the program")
 
     def do_start(self, line):
+        if line == '':
+            self.help_start()
+            return 0
+
+        try:
+            int(line)
+        except ValueError:
+            console.error("Server ID must be a number")
+            self.help_start()
+            return 0
+
+        try:
+            server = MC_settings.get_by_id(line)
+
+        except Exception as e:
+            console.help("Unable to find a server with that ID: {}".format(e))
+            return 0
+
+        server = int(line)
+
         if helper.is_setup_complete():
-            running_check = self.mc_server_obj.check_running()
-            if running_check:
+
+            srv_obj = multi.get_server_obj(server)
+
+            if srv_obj.check_running():
                 console.warning("Server already running")
             else:
                 console.info("Starting Minecraft Server in background")
+                multi.run_server(server)
+                '''
                 Remote.insert({
                     Remote.command: 'start_mc_server'
                 }).execute()
+                '''
         else:
             console.warning("Unable to start server, please complete setup in the web GUI first")
 
     def help_start(self):
-        console.help("Starts the Minecraft server if not running")
+        console.help("Starts a Server")
+        console.help("Specify the server to start by ID number")
+        console.help("Example: start 1 - this will start server ID 1")
+        console.help("You can get a server id by issuing list_servers")
 
     def do_restart(self, line):
         Remote.insert({
@@ -104,15 +150,8 @@ class MainPrompt(cmd.Cmd):
 
     def do_show_stats(self, line):
         multi.do_host_status()
-        json_file_path = os.path.join(helper.get_web_temp_path(), 'server_data.json')
-
-        try:
-            with open(json_file_path, 'r') as json_file:
-                server_stats = json.load(json_file)
-            json_file.close()
-        except Exception as e:
-            "Unable to read json file: {}".format(e)
-            return False
+        host_stats = multi.get_host_status()
+        server_stats = multi.get_stats_for_servers()
 
         websettings = Webserver.get()
 
@@ -122,31 +161,29 @@ class MainPrompt(cmd.Cmd):
         console.info("#\t\t Crafty Controller Server Stats \t\t\t#")
         console.info("/" * 75)
 
-        console.info("Boot Time:\t {}".format(server_stats['boot_time']))
-        if server_stats['server_running']:
-            console.info("MC Start Time:\t {}".format(server_stats['mc_start_time']))
-        else:
-            console.info("MC Start Time:\t Server NOT running ")
+        console.info("Boot Time:\t {}".format(host_stats['boot_time']))
         console.info("Webconsole at:\t https://{}:{}".format(helper.get_local_ip(), port_number))
         console.info("-" * 75)
 
-        console.info("CPU Usage:\t {}".format(server_stats['cpu_usage']))
-        console.info("CPU Cores:\t {}".format(server_stats['cpu_cores']))
-        console.info("Mem Percent:\t {}".format(server_stats['mem_percent']))
-        console.info("Mem Usage: \t {} / {}".format(server_stats['mem_usage'], server_stats['mem_total']))
-        console.info("Disk Percent:\t {}".format(server_stats['disk_percent']))
-        console.info("Disk Usage: \t {} / {}".format(server_stats['disk_usage'], server_stats['disk_total']))
+        console.info("CPU Usage:\t {}".format(host_stats['cpu_usage']))
+        console.info("CPU Cores:\t {}".format(host_stats['cpu_cores']))
+        console.info("Mem Percent:\t {}".format(host_stats['mem_percent']))
+        console.info("Mem Usage: \t {} / {}".format(host_stats['mem_usage'], host_stats['mem_total']))
+        console.info("Disk Percent:\t {}".format(host_stats['disk_percent']))
+        console.info("Disk Usage: \t {} / {}".format(host_stats['disk_usage'], host_stats['disk_total']))
 
         console.info("-" * 75)
+        console.info(" --- Minecraft Servers --- ")
+        console.info("-" * 75)
 
-        if server_stats['server_running']:
-            console.info("Online Stats:\t {} of {} players online".format(
-                server_stats['online_stats']['online'],
-                server_stats['online_stats']['max']))
-            console.info("Server Version: \t {}".format(server_stats['server_version']))
-            console.info("Server MOTD: \t {}".format(server_stats['server_description']))
-
-        # print(server_stats)
+        s = 1
+        while s <= len(server_stats):
+            data = server_stats[s]
+            console.info("Server ID {}".format(data['server_id']))
+            console.info("Running {}".format(data['server_running']))
+            console.info("Players: {}/{}".format(data['online_players'], data['max_players']))
+            s += 1
+        console.help("Use the list_servers command to get more detailed data")
 
     def do_set_passwd(self, line):
 
@@ -180,7 +217,7 @@ class MainPrompt(cmd.Cmd):
         try:
             int(line)
         except ValueError:
-            console.error("Server ID must be a string")
+            console.error("Server ID must be a number")
             self.help_disable_autostart()
             return 0
 
@@ -277,30 +314,33 @@ class MainPrompt(cmd.Cmd):
         console.help("Shows version information for you and what is in the repos to help you decide if you should "
                      "update or not")
 
-    def help_update_jar(self):
-        console.help("This will automatically update your server jar. If the server is running, it will be restarted "
-                     "after the download is complete.")
-
-    def do_update_jar(self, line):
-        self.mc_server_obj.update_server_jar()
-
-    def help_revert_jar_upgrade(self):
-        console.help("This will automatically revert your server jar from the last backup copy")
-
-    def do_revert_jar_upgrade(self, line):
-        self.mc_server_obj.revert_updated_server_jar()
+    def help_list_servers(self):
+        console.help("Lists Servers Defined in the System")
 
     def do_list_servers(self, line):
         servers = MC_settings.select()
         console.info("Servers Defined:")
         console.info('-'*30)
         for s in servers:
+            srv_obj = multi.get_server_obj(s.id)
+            running = srv_obj.check_running()
+            stats = multi.get_stats_for_server(s.id)
+            #print(stats)
+
             console.info("Server ID: {}".format(s.id))
             console.info("Name:{}".format(s.server_name))
             console.info("Path: {}".format(s.server_path))
             console.info("Memory: {}/{}:".format(s.memory_min, s.memory_max))
             console.info("IP {} / Port: {}".format(s.server_ip, s.server_port))
             console.info("AutoStart: {}".format(s.auto_start_server))
+            console.info("Currently Running: {}".format(running))
+            console.info("Started: {}".format(stats['server_start_time']))
+            console.info("CPU: {}".format(stats['cpu_usage']))
+            console.info("Memory: {}".format(stats['memory_usage']))
+            console.info("Players: {}/{}".format(stats['online_players'], stats['max_players']))
+            console.info("Server: {}".format(stats['server_version']))
+            console.info("MOTD: {}".format(stats['motd']))
+
             console.info('-' * 30)
 
 

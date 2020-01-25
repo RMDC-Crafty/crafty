@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 from app.classes.minecraft_server import Minecraft_Server
-from app.classes.models import MC_settings, Server_Stats, Host_Stats
+from app.classes.models import MC_settings, Server_Stats, Host_Stats, Remote
 from playhouse.shortcuts import *
 from app.classes.helpers import helper
 
@@ -106,23 +106,44 @@ class multi_serve():
             logger.warning("Unable to find server object for server: {}".format(server_id))
 
     def run_server(self, server_id):
-        svr_obj = self.get_server_obj(server_id)
-        svr_obj.run_threaded_server()
-        self.do_stats_for_servers()
+        Remote.insert({
+            Remote.command: 'start_mc_server',
+            Remote.server_id: server_id,
+            Remote.command_source: 'local'
+        }).execute()
 
     def stop_server(self, server_id):
-        svr_obj = self.get_server_obj(server_id)
-        svr_obj.stop_threaded_server()
-        self.do_stats_for_servers()
+        Remote.insert({
+            Remote.command: 'stop_mc_server',
+            Remote.server_id: server_id,
+            Remote.command_source: 'local'
+        }).execute()
 
     def stop_all_servers(self):
+        servers = self.list_running_servers()
+        logger.info("{} servers found running".format(len(servers)))
         logger.info("Stopping All Servers")
-        all_servers = MC_settings.select()
-        if len(all_servers) > 0:
-            for s in all_servers:
-                self.stop_server(s.id)
-                server_name = s.get_mc_server_name()
-                logger.info("Stopping server:{}".format(server_name))
+
+        for s in servers:
+            logger.info("Stopping Server ID: {} - {}".format(s['id'], s['name']))
+
+            # get object
+            svr_obj = self.get_server_obj(s['id'])
+            running = svr_obj.check_running()
+
+            # issue the stop command
+            self.stop_server(s['id'])
+
+            # while it's running, we wait
+            while running:
+                logger.info("Server {} is still running - waiting til it stops".format(s['name']))
+                running = svr_obj.check_running()
+                time.sleep(.5)
+
+
+
+
+        logger.info("All Servers Stopped")
 
     def list_running_servers(self):
         all_servers = MC_settings.select()
@@ -179,6 +200,15 @@ class multi_serve():
                     Server_Stats.server_ip: stats['server_ip'],
                     Server_Stats.server_port: stats['server_port'],
                 }).execute()
+
+    def get_stats_for_server(self,server_id):
+        q = Server_Stats.select().where(Server_Stats.server_id == int(server_id))
+
+        if q.exists():
+            server_stats = Server_Stats.get(Server_Stats.server_id == int(server_id))
+            return model_to_dict(server_stats)
+        else:
+            return False
 
     def get_stats_for_servers(self):
 

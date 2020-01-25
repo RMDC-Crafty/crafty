@@ -146,7 +146,6 @@ class Minecraft_Server():
         else:
             logger.warning("Server PID: {} died right after starting - is this a server config issue?".format(self.PID))
 
-
     def send_command(self, command):
 
         if not self.check_running() and command.lower() != 'start':
