@@ -352,10 +352,12 @@ class Minecraft_Server():
     def backup_server(self, announce=True):
 
         # backup path is saved in the db
+        # Load initial backup config
         backup_list = Backups.get()
         backup_data = model_to_dict(backup_list)
 
-        backup_path = backup_data['storage_location']
+        logger.debug("Using default path defined in database")
+        backup_path = os.path.join(backup_data['storage_location'], self.server_id)
         helper.ensure_dir_exists(backup_path)
 
         logger.info('Starting Backup Process')
@@ -374,7 +376,8 @@ class Minecraft_Server():
                 backup_filename = '{}.zip'.format(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
                 backup_full_path = os.path.join(backup_path, backup_filename)
 
-                logger.info("Backing up server directory to: {}".format(backup_filename))
+                logger.info("Backing up server directory to {}".format(backup_filename))
+                logger.debug("Full path is %s", backup_full_path)
 
                 backup_list = Backups.get()
                 backup_data = model_to_dict(backup_list)
@@ -409,7 +412,7 @@ class Minecraft_Server():
     def list_backups(self):
         backup_list = Backups.get()
         backup_data = model_to_dict(backup_list)
-        backup_path = backup_data['storage_location']
+        backup_path = os.path.join(backup_data['storage_location'], self.server_id)
         helper.ensure_dir_exists(backup_path)
 
         results = []

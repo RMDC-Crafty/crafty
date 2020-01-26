@@ -12,6 +12,7 @@ from app.classes.handlers.base_handler import BaseHandler
 from app.classes.web_sessions import web_session
 from app.classes.multiserv import multi
 from app.classes.ftp import ftp_svr_object
+from app.classes.backupmgr import backupmgr
 
 logger = logging.getLogger(__name__)
 
@@ -306,9 +307,13 @@ class AdminHandler(BaseHandler):
                 next_page = "/admin/files"
 
             elif command == "backup":
-                backup_thread = threading.Thread(name='backup', target=self.mcserver.backup_server, daemon=False)
-                backup_thread.start()
-                time.sleep(5)
+                backupmgr.backup_server(id)
+                time.sleep(4)
+                next_page = '/admin/backups'
+            
+            elif command == "backup_all":
+                backupmgr.backup_all_servers()
+                time.sleep(4)
                 next_page = '/admin/backups'
 
             self.redirect(next_page)
