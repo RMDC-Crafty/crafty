@@ -8,6 +8,7 @@ import logging.config
 from app.classes.models import Roles, Users, check_role_permission, Remote, model_to_dict
 from app.classes.multiserv import multi
 from app.classes.helpers import helper
+from app.classes.backupmgr import backupmgr
 
 logger = logging.getLogger(__name__)
 
