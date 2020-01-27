@@ -5,6 +5,8 @@ import threading
 from time import sleep
 
 from app.classes.multiserv import multi_serve as multisrv
+from app.classes.helpers import helper
+from app.classes.models import Backups
 
 logger = logging.getLogger(__name__)
 
@@ -39,5 +41,32 @@ class MultiBackup():
             
             # Slow down the process creation for older systems
             sleep(1) 
+    
+    def list_backups_for_server(server_id):
+        # Grab our backup path from the DB
+        backup_list = Backups.get()
+        backup_data = model_to_dict(backup_list)
+        
+        # Join into a full path
+        server_backup_dir = os.path.join(backup_data['storage_location'], server_id)
+        
+
+                
+        return file_names, relative_files
+    
+    def list_all_backups():
+        # Grab our backup path from the DB
+        backup_list = Backups.get()
+        backup_data = model_to_dict(backup_list)
+        
+        # List all MC Servers
+        servers = multisrv.list_servers()
+        
+        for server in servers:
+            id = server['id']
+            path = os.path.join
+        
+        
+        
 
 backupmgr = MultiBackup()

@@ -286,7 +286,22 @@ class helpers:
 
 
         zip_handler.close()
-
+        
+    def list_backups(path):
+        # List the directory
+        backup_files = os.listdir(server_backup_dir)
+        relative_files = []
+        file_names = []
+        
+        # Sort through and determine if they are backups or not
+        for file in backup_files:
+            path, extension = os.path.splitext(file)
+            
+            if extension == ".zip":
+                relative_files.append(file)
+                file_names.append(os.path.basename(file))
+        return file_names, relative_files
+                
     # Function to convert the date format 12h to 24 hr
     def convert_time_to_24(self, thetime):
         in_time = datetime.strptime(thetime, "%I:%M%p")
