@@ -92,15 +92,42 @@ class AdminHandler(BaseHandler):
         elif page == "backups":
             if not check_role_permission(user_data['username'], 'backups'):
                 self.redirect('/admin/unauthorized')
-
+                
+            server_id = self.get_argument('id', '')
+            mc_data = MC_settings.get_by_id(server_id)
+            
+            # TODO: Update template to pass server ID
             template = "admin/backups.html"
+            # END
+            
             backup_list = Backups.get()
             backup_data = model_to_dict(backup_list)
             backup_path = backup_data['storage_location']
             backup_dirs = json.loads(backup_data['directories'])
+            
+            context['server_name'] = mc_data.server_name
             context['backup_paths'] = backup_dirs
             context['backup_path'] = backup_path
-            context['current_backups'] = self.mcserver.list_backups()
+            context['current_backups'] = backupmgr.list_backups_for_server(server_id)
+        
+        elif page == "all_backups":
+            if not check_role_permission(user_data['username'], 'backups'):
+                self.redirect('/admin/unauthorized')
+            
+            # TODO: Update template with unique one (not for me :D)
+            template = "admin/backups.html"
+            # END
+            
+            backup_list = Backups.get()
+            backup_data = model_to_dict(backup_list)
+            backup_path = backup_data['storage_location']
+            backup_dirs = json.loads(backup_data['directories'])
+            
+            context['backup_paths'] = backup_dirs
+            context['backup_path'] = backup_path
+            context['current_backups'] = backupmgr.list_all_backups()
+            context['server_name'] = "All Servers"
+            
 
         elif page == "schedules":
             if not check_role_permission(user_data['username'], 'schedules'):
