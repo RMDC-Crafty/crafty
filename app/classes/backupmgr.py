@@ -50,7 +50,7 @@ class MultiBackup():
         # Join into a full path
         server_backup_dir = os.path.join(backup_data['storage_location'], server_id)
         
-
+        file_names, relative_files = helper.list_backups(server_backup_dir)
                 
         return file_names, relative_files
     
@@ -61,11 +61,19 @@ class MultiBackup():
         
         # List all MC Servers
         servers = multisrv.list_servers()
+        backup_files = []
         
+        # Iterate over all the servers
         for server in servers:
-            id = server['id']
-            path = os.path.join
-        
+            server_id = server['id']
+            
+            # Create path
+            path = os.path.join(backup_data['storage_location'], server_id)
+            
+            # Search and concat
+            file_names, relative_files = helper.list_backups(path)
+            backup_files = backup_data + relative_files
+        return backup_files
         
         
 
