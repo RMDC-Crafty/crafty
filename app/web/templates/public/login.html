@@ -76,7 +76,7 @@
                   </tr>
                   </thead>
                   <tbody>
-
+                  {% if data['server_data'] %}
                   {% for s in data['server_data'] %}
                     <tr>
                         <td>{{s['name']}}</td>
@@ -86,6 +86,7 @@
                         <td>{{s['online_players']}} / {{s['max_players']}}</td>
                     </tr>
 
+                  {% end %}
                   {% end %}
 
                   </tbody>

@@ -67,7 +67,15 @@ class PublicHandler(BaseHandler):
 
         template = "public/login.html"
         context = server_data
-        context['login'] = False
+        context = {'login': None}
+
+        server_data = multi.get_stats_for_servers()
+        server_list = []
+
+        for key, value in server_data.items():
+            server_list.append(value)
+
+        context['server_data'] = server_list
 
         self.render(
             template,
