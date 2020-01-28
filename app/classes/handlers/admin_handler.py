@@ -67,7 +67,6 @@ class AdminHandler(BaseHandler):
             self.redirect("/admin/config")
 
         elif page == 'dashboard':
-            multi.do_stats_for_servers()
             errors = self.get_argument('errors', None)
             context['errors'] = errors
             context['host_stats'] = multi.get_host_status()
@@ -127,7 +126,6 @@ class AdminHandler(BaseHandler):
             context['backup_path'] = backup_path
             context['current_backups'] = backupmgr.list_all_backups()
             context['server_name'] = "All Servers"
-            
 
         elif page == "schedules":
             if not check_role_permission(user_data['username'], 'schedules'):
@@ -282,7 +280,6 @@ class AdminHandler(BaseHandler):
             context['server_updating'] = self.mcserver.check_updating()
             context['players'] = context['mc_servers_data'][int(server_id)]['players'].split(',')
             context['players_online'] = context['mc_servers_data'][int(server_id)]['online_players']
-
 
         elif page == 'commands':
             if not check_role_permission(user_data['username'], 'svr_console'):
