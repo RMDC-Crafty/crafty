@@ -63,10 +63,8 @@ class PublicHandler(BaseHandler):
         except:
             pass
 
-        server_data = self.get_server_data()
 
         template = "public/login.html"
-        context = server_data
         context = {'login': None}
 
         server_data = multi.get_stats_for_servers()
@@ -81,22 +79,3 @@ class PublicHandler(BaseHandler):
             template,
             data=context
         )
-
-
-
-    def get_server_data(self):
-
-        server_file = os.path.join( helper.get_web_temp_path(), "server_data.json")
-
-        if helper.check_file_exists(server_file):
-            with open(server_file, 'r') as f:
-                server_data = json.load(f)
-            return server_data
-        else:
-            logger.warning("Unable to find server_data file for dashboard: {}".format(server_file))
-            fake_data = {
-                "server_description": "Unable To Connect",
-                "server_running": False,
-                "server_version": "Unable to Connect",
-            }
-            return fake_data
