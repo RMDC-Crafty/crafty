@@ -147,9 +147,12 @@ class AjaxHandler(BaseHandler):
 
             if new_username:
                 new_pass = helper.random_string_generator()
+                api_token = helper.random_string_generator(32)
+
                 result = Users.insert({
                     Users.username: new_username,
                     Users.role: 'Mod',
+                    Users.api_token: api_token,
                     Users.password: helper.encode_pass(new_pass)
                 }).execute()
 

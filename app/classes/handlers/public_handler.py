@@ -23,12 +23,16 @@ class PublicHandler(BaseHandler):
     def get(self, page=None):
 
         self.clear_cookie("user")
-
-        server_data = self.get_server_data()
-
         template = "public/login.html"
-        context = server_data
-        context['login'] = None
+        context = {'login': None}
+
+        server_data = multi.get_stats_for_servers()
+        server_list = []
+
+        for key, value in server_data.items():
+            server_list.append(value)
+
+        context['server_data'] = server_list
 
         self.render(
             template,

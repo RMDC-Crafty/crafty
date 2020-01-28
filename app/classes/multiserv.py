@@ -223,7 +223,14 @@ class multi_serve():
 
                     if q.exists():
                         server_stats = Server_Stats.get(Server_Stats.server_id == int(server_id))
-                        all_servers_return.update({server_id: model_to_dict(server_stats)})
+                        stats = model_to_dict(server_stats)
+
+                        # let's get the server object - and ask it's name
+                        srv_obj = self.get_server_obj(server_id)
+                        stats['name'] = srv_obj.get_mc_server_name(server_id)
+
+                        # all_servers_return.update({server_id: model_to_dict(server_stats)})
+                        all_servers_return.update({server_id: stats})
         return all_servers_return
 
     def do_host_status(self):
