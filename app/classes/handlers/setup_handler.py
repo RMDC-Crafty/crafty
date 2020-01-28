@@ -103,5 +103,8 @@ class SetupHandler(BaseHandler):
                 # do FTP setup
                 ftp_svr_object.setup_ftp()
 
+                multi.do_stats_for_servers()
+                multi.do_host_status()
+
                 # load the dashboard
                 self.redirect("/admin/dashboard")
