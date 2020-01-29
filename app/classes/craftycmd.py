@@ -284,7 +284,11 @@ class MainPrompt(cmd.Cmd):
         if int(line) > 65535:
             console.error("Invalid Port")
             return False
-        
+
+        if int(line) < 1:
+            console.error("Invalid Port")
+            return False
+
         Webserver.update({
             Webserver.port_number: int(line)
         }).execute()
