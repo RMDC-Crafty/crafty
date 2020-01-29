@@ -281,6 +281,10 @@ class MainPrompt(cmd.Cmd):
         console.help("Reloads the Tornado Webserver, takes 5 seconds to reload")
 
     def do_change_web_port(self, line):
+        if int(line) > 65535:
+            console.error("Invalid Port")
+            return False
+        
         Webserver.update({
             Webserver.port_number: int(line)
         }).execute()
