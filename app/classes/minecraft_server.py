@@ -32,6 +32,7 @@ class Minecraft_Server():
         self.jar_exists = False
         self.server_id = None
         self.name = None
+        self.restart_count = 0
 
     def reload_settings(self):
         logger.info("Reloading MC Settings from the DB")
@@ -146,6 +147,11 @@ class Minecraft_Server():
         else:
             logger.warning("Server PID: {} died right after starting - is this a server config issue?".format(self.PID))
 
+
+        if self.settings.crash_detection:
+            logger.info("Server {} has crash detection enabled - starting watcher daemon".format(self.name))
+            schedule.every(30).seconds.do(self.check_running)
+
     def send_command(self, command):
 
         if not self.check_running() and command.lower() != 'start':
@@ -219,7 +225,16 @@ class Minecraft_Server():
         if not running:
             # did the server crash?
             if not shutting_down:
-                self.crash_detected(self.name)
+                if self.restart_count <= 3:
+                    self.crash_detected(self.name)
+                    self.restart_count = self.restart_count + 1
+                    return False
+
+                # flapping detection
+                else:
+                    logger.warning("Server {} has crashed and been restarted {} times and is considered flapping, "
+                                   "not restarting this server".format(self.name, self.restart_count))
+                    return False
 
             self.process = None
             self.PID = None

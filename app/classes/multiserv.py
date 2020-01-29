@@ -136,11 +136,9 @@ class multi_serve():
 
             # while it's running, we wait
             while running:
-                logger.info("Server {} is still running - waiting til it stops".format(s['name']))
+                logger.info("Server {} is still running - waiting 1s til it stops".format(s['name']))
                 running = svr_obj.check_running()
-                time.sleep(.5)
-
-
+                time.sleep(1)
 
 
         logger.info("All Servers Stopped")

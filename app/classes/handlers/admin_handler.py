@@ -421,11 +421,14 @@ class AdminHandler(BaseHandler):
         name = tornado.escape.json_decode(self.current_user)
         user_data = get_perms_for_user(name)
 
-        server_data = self.get_server_data()
+        #server_data = self.get_server_data()
         context = {
-            'server_data': server_data,
             'user_data': user_data,
-            'version_data': helper.get_version()
+            'version_data': helper.get_version(),
+            'servers_defined': multi.list_servers(),
+            'managed_server': self.session.get_data(self.current_user, 'managed_server'),
+            'servers_running': multi.list_running_servers(),
+            'mc_servers_data': multi.get_stats_for_servers()
         }
 
         if page == 'change_password':
@@ -464,6 +467,7 @@ class AdminHandler(BaseHandler):
         elif page == 'config':
 
             config_type = self.get_argument('config_type')
+            print(config_type)
 
             if config_type == 'mc_settings':
 
@@ -475,6 +479,8 @@ class AdminHandler(BaseHandler):
 
                 # Use pathlib to join specified server path and server JAR file then check if it exists
                 jar_exists = helper.check_file_exists(os.path.join(server_path, server_jar))
+
+                print('crash: {}'.format(self.get_argument('crash_detection')))
 
                 if server_path_exists and jar_exists:
                     q = MC_settings.update({
@@ -489,6 +495,7 @@ class AdminHandler(BaseHandler):
                         MC_settings.server_port: self.get_argument('server_port'),
                         MC_settings.server_ip: self.get_argument('server_ip'),
                         MC_settings.jar_url: self.get_argument('jar_url'),
+                        MC_settings.crash_detection: self.get_argument('crash_detection')
                     }).where(MC_settings.id == 1)
 
                     q.execute()
@@ -554,7 +561,7 @@ class AdminHandler(BaseHandler):
                     MC_settings.auto_start_server: int(self.get_argument('auto_start_server')),
                     MC_settings.auto_start_delay: int(self.get_argument('auto_start_delay')),
                     MC_settings.auto_start_priority: int(self.get_argument('auto_start_priority')),
-                    MC_settings.crash_detection: 0,
+                    MC_settings.crash_detection: self.get_argument('crash_detection'),
                     MC_settings.server_port: self.get_argument('server_port'),
                     MC_settings.server_ip: self.get_argument('server_ip'),
                     MC_settings.jar_url: self.get_argument('jar_url'),
@@ -658,13 +665,3 @@ class AdminHandler(BaseHandler):
             else:
                 self.redirect("/admin/dashboard?errors={}".format(error))
 
-    def get_server_data(self):
-        server_file = os.path.join(helper.get_web_temp_path(), "server_data.json")
-
-        if helper.check_file_exists(server_file):
-            with open(server_file, 'r') as f:
-                server_data = json.load(f)
-            return server_data
-        else:
-            logger.warning("Unable to find server_data file for dashboard: {}".format(server_file))
-            return False
