@@ -84,11 +84,12 @@
                     <div class="col-xs-6 text-center">
                         <a href="/admin/commands?command=ftp_server_start"
                            onclick="delay()"
-                            class="btn btn-app {% if data['ftp_running'] %} disabled {% end %}">
+                            class="btn btn-app disabled=true {% if data['ftp_running'] %} disabled {% end %}">
                             <i class="fa fa-play"></i> Start FTP Server
                         </a>
                         <a  href="/admin/commands?command=ftp_server_stop"
                             onclick="delay()"
+                            disabled=true
                             class="btn btn-app {% if not data['ftp_running'] %} disabled {% end %}">
                             <i class="fa fa-stop"></i> Stop FTP Server
                         </a>

@@ -261,7 +261,14 @@
                         </div>
 
                         <div class="box-footer">
-                            <a class="btn btn-danger" onclick="delete_server( {{ data['mc_settings']['id'] }} , '{{ data['mc_settings']['server_name'] }}' )">Delete Server</a>
+                            {% if data['server_running'] %}
+                                <small>Please stop the server before deleting it.</small><br />
+                                <a class="btn btn-danger disabled">Delete Server</a>
+
+                            {% else %}
+                                <a class="btn btn-danger" onclick="delete_server( {{ data['mc_settings']['id'] }} , '{{ data['mc_settings']['server_name'] }}' )">Delete Server</a>
+                            {% end %}
+
 
                             <button type="submit" class="btn btn-success pull-right">
                                 <i class="fa fa-floppy-o" aria-hidden="true"></i>

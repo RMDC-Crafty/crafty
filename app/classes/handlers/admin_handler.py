@@ -56,12 +56,17 @@ class AdminHandler(BaseHandler):
             )
             # reload web server
             Remote.insert({
-                Remote.command: 'restart_web_server'
+                Remote.command: 'restart_web_server',
+                Remote.server_id: 1,  # this doesn't really matter as we are not tying to a server
+                Remote.command_source: 'local'
             }).execute()
 
         elif page == 'reload_mc_settings':
             Remote.insert({
-                Remote.command: 'reload_mc_settings'
+                Remote.command: 'reload_mc_settings',
+                Remote.server_id: 1, # this doesn't really matter as we are not tying to a server
+                Remote.command_source: 'local'
+
             }).execute()
 
             self.redirect("/admin/config")
@@ -240,6 +245,9 @@ class AdminHandler(BaseHandler):
 
             context['server_root'] = context['mc_settings']['server_path']
 
+            srv_obj = multi.get_server_obj(server_id)
+            context['server_running'] = srv_obj.check_running()
+
         elif page == 'downloadbackup':
             if not check_role_permission(user_data['username'], 'backups'):
                 self.redirect('/admin/unauthorized')
@@ -393,9 +401,11 @@ class AdminHandler(BaseHandler):
 
             template = "admin/files.html"
 
-            mc_data = MC_settings.get()
-            context['mc_settings'] = model_to_dict(mc_data)
-            context['pwd'] = context['mc_settings']['server_path']
+            server_id = self.get_argument('id', None)
+
+            srv_object = multi.get_server_obj(server_id)
+            context['pwd'] = srv_object.server_path
+
             context['listing'] = helper.scan_dirs_in_path(context['pwd'])
             context['parent'] = None
 
@@ -660,7 +670,10 @@ class AdminHandler(BaseHandler):
                     MC_settings.server_ip: "127.0.0.1"
                 }).execute()
 
+                logger.info("Added ServerID: {} - {}".format(new_server_id, server_name))
+
                 multi.setup_new_server_obj(new_server_id)
+                multi.do_stats_for_servers()
                 self.redirect("/admin/dashboard")
             else:
                 self.redirect("/admin/dashboard?errors={}".format(error))

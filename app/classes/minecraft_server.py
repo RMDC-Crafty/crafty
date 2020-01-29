@@ -150,7 +150,7 @@ class Minecraft_Server():
 
         if self.settings.crash_detection:
             logger.info("Server {} has crash detection enabled - starting watcher daemon".format(self.name))
-            schedule.every(30).seconds.do(self.check_running)
+            schedule.every(30).seconds.do(self.check_running).tag(self.name)
 
     def send_command(self, command):
 
@@ -169,6 +169,9 @@ class Minecraft_Server():
         }).execute()
 
     def stop_server(self):
+
+        # remove any scheduled tasks for this server
+        schedule.clear(self.name)
 
         if self.detect_bungee_waterfall():
             logger.info('Waterfall/Bungee Detected: Sending end command to server {}'.format(self.name))
@@ -568,7 +571,7 @@ class Minecraft_Server():
         return mc_ping
 
     def reload_history_settings(self):
-        logger.info("Clearing History Usage Scheduled Jobs")
+        logger.info("Clearing History Usage Scheduled Jobs for ServerID: {} - {} ".format(self.server_id, self.name))
 
         # clear all history jobs
         schedule.clear('history')
@@ -576,7 +579,8 @@ class Minecraft_Server():
         query = Crafty_settings.select(Crafty_settings.history_interval)
         history_interval = query[0].history_interval
 
-        logger.info("Creating New History Usage Scheduled Task for every {} minutes".format(history_interval))
+        logger.info("Creating New History Usage Scheduled Task for every {} minutes for Server ID:{} - {}".format(
+            history_interval, self.server_id, self.name))
 
         schedule.every(history_interval).minutes.do(self.write_usage_history).tag('history')
 

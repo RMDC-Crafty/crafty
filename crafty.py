@@ -12,6 +12,7 @@ import logging.config
 
 from app.classes.console import console
 
+
 def setup_logging(debug=False):
     logging_config_file = os.path.join(os.path.curdir, 'app', 'config', 'logging.json')
 
@@ -26,6 +27,7 @@ def setup_logging(debug=False):
     else:
         logging.basicConfig(level=logging.DEBUG)
         logging.warning("Unable to read logging config from {} - falling to default mode".format(logging_config_file))
+
 
 def do_intro():
     version_data = helper.get_version()
@@ -183,21 +185,10 @@ if __name__ == '__main__':
     multi.init_all_servers()
 
     # do one now...
-    multi.do_stats_for_servers()
-
-    # schedule one for later...
-    schedule.every(10).seconds.do(multi.do_stats_for_servers)
-
-    # for each server that is defined, we set them up in the multi class, so we have them ready for later.
-    multi.init_all_servers()
-
-    # do one now...
-    multi.do_stats_for_servers()
     multi.do_host_status()
 
-    # schedule one for later...
-    schedule.every(10).seconds.do(multi.do_stats_for_servers)
-    schedule.every(10).seconds.do(multi.do_host_status)
+    # do our scheduling
+    multi.reload_scheduling()
 
     # start the remote commands watcher thread
     remote_coms = remote_commands(tornado_srv)

@@ -2,6 +2,7 @@ import time
 import logging
 import psutil
 from datetime import datetime
+import schedule
 
 
 from app.classes.minecraft_server import Minecraft_Server
@@ -20,7 +21,7 @@ class multi_serve():
     def init_all_servers(self):
 
         if len(self.servers_list) > 0:
-            logger.warning("Servers already defined / initiated. Call init_all_servers only once")
+            logger.info("Don't re-init all servers twice")
             return False
 
         all_servers = MC_settings.select()
@@ -44,6 +45,15 @@ class multi_serve():
         else:
             logger.info("No minecraft servers defined in database")
 
+    def reload_scheduling(self):
+        logger.info("Clearing Scheduled Tasks")
+        schedule.clear('all_tasks')
+
+        logger.info("Rebuilding Scheduled Tasks")
+        schedule.every(10).seconds.do(multi.do_stats_for_servers).tag('server_stats', 'all_tasks')
+        schedule.every(10).seconds.do(multi.do_host_status).tag('server_stats', 'all_tasks')
+
+
     def get_server_data(self,server_id):
         if MC_settings.get_by_id(server_id):
             return MC_settings.get_by_id(server_id)
@@ -66,11 +76,26 @@ class multi_serve():
             logger.critical("Server: {} is already defined!".format(server_data.name))
 
     def remove_server_object(self, server_id):
-        server_data = self.get_server_data(server_id)
+
+        svr_obj = self.get_server_obj(server_id)
+        server_name = svr_obj.get_mc_server_name()
+
         try:
-            del self.servers_list[server_data.server_name]
-        except:
+            del self.servers_list[server_name]
+            logger.info("Removed Server Name {} from Multi Server List ".format(server_name))
+
+            # delete the server
+            MC_settings.delete().where(MC_settings.id == int(server_id)).execute()
+
+            logger.info('Deleted Server ID: {}'.format(server_id))
+
+        except Exception as e:
+            logger.error("Unable to remove server ID:{} - {} from Multi Server List due to {}".format(
+                server_id, server_name, e))
             pass
+
+        # print('reloading scheduling')
+        # self.reload_scheduling()
 
     def get_first_server_object(self):
         if len(self.servers_list) > 0:

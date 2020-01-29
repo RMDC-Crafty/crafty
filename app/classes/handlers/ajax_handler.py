@@ -1,5 +1,6 @@
 import tornado.web
 import tornado.escape
+import schedule
 
 from app.classes.console import console
 from app.classes.models import *
@@ -222,6 +223,17 @@ class AjaxHandler(BaseHandler):
 
         elif page == "destroy_server":
             server_id = self.get_body_argument('server_id', default=None, strip=True)
+
             if server_id is not None:
-                MC_settings.delete_by_id(server_id)
+
+
+
+                # remove it from multi
                 multi.remove_server_object(server_id)
+
+                # reschedule the things
+                multi.reload_scheduling()
+
+                self.write("Success")
+
+
