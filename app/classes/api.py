@@ -92,7 +92,9 @@ class GetHostStats(BaseHandler):
         if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'logs'):
             self.access_denied(user)
         
-        self.return_response(200, {}, self.mcserver.get_host_status(), {})
+        stats = multi.get_host_status()
+        stats.pop('time') # We dont need the request time 
+        self.return_response(200, {}, stats, {})
         
 class GetServerStats(BaseHandler):
     
@@ -109,7 +111,15 @@ class GetServerStats(BaseHandler):
         if not check_role_permission(user, 'api_access') and not check_role_permission(user, 'logs'):
             self.access_denied(user)
         
-        self.return_response(200, {}, self.mcserver.get_stats_for_servers(), {})
+        stats = multi.get_stats_for_servers()
+        data = []
+        
+        for server in stats:
+            server = stats[server]
+            server.pop('time') # We dont need the request time 
+            data.append(server)
+            
+        self.return_response(200, {}, data, {})
         
 class SearchMCLogs(BaseHandler):
     
