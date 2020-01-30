@@ -32,6 +32,7 @@ class Minecraft_Server():
         self.jar_exists = False
         self.server_id = None
         self.name = None
+        self.is_crashed = False
         self.restart_count = 0
 
     def reload_settings(self):
@@ -134,7 +135,7 @@ class Minecraft_Server():
             self.process = pexpect.popen_spawn.PopenSpawn('cmd \r\n', timeout=None, encoding=None)
             self.process.send('cd {} \r\n'.format(self.server_path.replace('\\', '/')))
             self.process.send(self.server_command + "\r\n")
-
+            self.is_crashed = False
         else:
             logger.info("Linux Detected - launching Bash")
             self.process = pexpect.popen_spawn.PopenSpawn('/bin/bash \n', timeout=None, encoding=None)
@@ -144,6 +145,7 @@ class Minecraft_Server():
 
             logger.info("Sending Server Command: {}".format(self.server_command))
             self.process.send(self.server_command + '\n')
+            self.is_crashed = False
 
         ts = time.time()
         self.start_time = str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
@@ -155,6 +157,7 @@ class Minecraft_Server():
             for c in children:
                 self.PID = c.pid
                 logger.info("Minecraft Server Running {} with PID: {}".format(self.name, self.PID))
+                self.is_crashed = False
         else:
             logger.warning("Server PID: {} died right after starting - is this a server config issue?".format(self.PID))
 
@@ -248,6 +251,7 @@ class Minecraft_Server():
                 else:
                     logger.warning("Server {} has crashed and been restarted {} times and is considered flapping, "
                                    "not restarting this server".format(self.name, self.restart_count))
+                    self.is_crashed = True
                     return False
 
             self.process = None
@@ -256,7 +260,14 @@ class Minecraft_Server():
             return False
 
         else:
+            self.is_crashed = False
             return True
+    
+    def check_crashed(self):
+        if not self.check_running():
+            return self.is_crashed
+        else:
+            return False
 
     def killpid(self, pid):
         logger.info('Killing Process {} and all child processes'.format(pid))

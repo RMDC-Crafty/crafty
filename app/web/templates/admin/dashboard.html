@@ -190,10 +190,14 @@
           <ul class="nav nav-stacked">
             <li>
               <a href="#">Status
-                {% if s['running'] %}
-                  <span class="pull-right badge bg-green">Running</span>
+                {% if s['crashed'] %}
+                  <span class="pull-right badge bg-red">Crashed - Auto Restart Disabled</span>
                 {% else %}
-                  <span class="pull-right badge bg-red">Stopped</span>
+                  {% if s['running'] %}
+                    <span class="pull-right badge bg-green">Running</span>
+                  {% else %}
+                    <span class="pull-right badge bg-orange">Stopped</span>
+                  {% end %}
                 {% end %}
               </a>
             </li>
