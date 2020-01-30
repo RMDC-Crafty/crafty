@@ -588,7 +588,7 @@ class Minecraft_Server():
         server_port = 25565
         ip = "127.0.0.1"
 
-        settings = MC_settings.get_by_id(1)
+        settings = MC_settings.get_by_id(self.server_id)
         server_port = settings.server_port
         ip = settings.server_ip
 
