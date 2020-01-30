@@ -36,10 +36,11 @@
                             <div class="form-group">
                                 <label>
                                     Server Name <br />
+                                    <small>You can not rename servers at this time</small><br />
                                     <small>What do you call this server? (example: CraftySurvival)</small>
                                 </label>
                                 <input type="text"
-                                       name="server_name" id="server_name"
+                                       name="server_name" id="server_name" readonly
                                        class="form-control" placeholder="Server Name"
                                        value="{{ data['mc_settings']['server_name'] }}"
                                 />
@@ -72,7 +73,8 @@
                             <div class="form-group">
                                 <label>
                                     Server Max Memory <br />
-                                    <small>Maximum Memory To Use in MB? (example: 2048)</small>
+                                    <small>Maximum Memory To Use in MB? (example: 2048) -
+                                        you have {{ data['max_memory'] }} installed</small>
                                 </label>
                                 <input type="number"
                                        name="memory_max" id="memory_max"
@@ -84,7 +86,8 @@
                             <div class="form-group">
                                 <label>
                                     Server Min Memory <br />
-                                    <small>Minimum Memory To Use in MB? (example: 1024)</small>
+                                    <small>Minimum Memory To Use in MB? (example: 1024)-
+                                        you have {{ data['max_memory'] }} installed</small>
                                 </label>
                                 <input type="number"
                                        name="memory_min" id="memory_min"

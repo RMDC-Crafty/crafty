@@ -248,6 +248,10 @@ class AdminHandler(BaseHandler):
             srv_obj = multi.get_server_obj(server_id)
             context['server_running'] = srv_obj.check_running()
 
+            host_data = Host_Stats.get()
+            context['max_memory'] = host_data.mem_total
+
+
         elif page == 'downloadbackup':
             if not check_role_permission(user_data['username'], 'backups'):
                 self.redirect('/admin/unauthorized')
