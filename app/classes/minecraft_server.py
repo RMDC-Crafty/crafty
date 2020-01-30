@@ -1,6 +1,10 @@
+import os
+import re
+import json
 import time
 import psutil
 import schedule
+import datetime
 import threading
 import logging.config
 
@@ -10,10 +14,12 @@ from pexpect.popen_spawn import PopenSpawn
 
 from app.classes.mc_ping import ping
 from app.classes.console import console
-from app.classes.models import *
+from app.classes.models import History, Remote, MC_settings, Crafty_settings, model_to_dict, Backups
 from app.classes.ftp import ftp_svr_object
+from app.classes.helpers import helper
 
 logger = logging.getLogger(__name__)
+
 
 class Minecraft_Server():
 
@@ -50,7 +56,7 @@ class Minecraft_Server():
 
     def run_scheduled_server(self):
         # delay the startup as long as the
-        console.info("Starting Minecraft Server {}".format(self.name))
+        console.info("Starting Minecraft server {}".format(self.name))
         self.run_threaded_server()
 
         # remove the scheduled job since it's ran
@@ -60,7 +66,7 @@ class Minecraft_Server():
         # do we want to auto launch the minecraft server?
         if self.settings.auto_start_server:
             delay = int(self.settings.auto_start_delay)
-            logger.info("Auto Start is Enabled - Waiting {} seconds to start the server".format(delay))
+            logger.info("Auto Start is Enabled - Waiting %s seconds to start the server", delay)
             console.info("Auto Start is Enabled - Waiting {} seconds to start the server".format(delay))
 
             schedule.every(int(delay)).seconds.do(self.run_scheduled_server)
@@ -74,8 +80,8 @@ class Minecraft_Server():
             console.info("Auto Start is Disabled")
 
     def do_init_setup(self, server_id):
-        logger.debug("Loading Minecraft Server Object for Server ID: {}".format(server_id))
-        console.info("Loading Minecraft Server Object for Server ID: {}".format(server_id))
+        logger.debug("Loading Minecraft server object for server %s", server_id)
+        console.info("Loading Minecraft server object for server {}".format(server_id))
 
         if helper.is_setup_complete():
             self.server_id = server_id
@@ -104,11 +110,13 @@ class Minecraft_Server():
 
         server_exec_path = os.path.join(exec_path, server_jar)
 
-        self.server_command = 'java -Xms{}M -Xmx{}M {} -jar {} nogui {}'.format(server_min_mem,
+        self.server_command = 'java -Xms{}M -Xmx{}M {} -jar {} nogui {}'.format(
+                                                                            server_min_mem,
                                                                             server_max_mem,
                                                                             server_pre_args,
                                                                             server_exec_path,
-                                                                            server_args)
+                                                                            server_args
+                                                                            )
         self.server_path = server_path
         self.jar_exists = helper.check_file_exists(os.path.join(server_path, server_jar))
 
@@ -127,7 +135,7 @@ class Minecraft_Server():
             console.warning("Minecraft server JAR does not exist...")
             return False
 
-        logger.info("Launching Minecraft server {} with command: {}".format(self.name, self.server_command))
+        logger.info("Launching Minecraft server %s with command %s", self.name, self.server_command)
 
         if os.name == "nt":
             logger.info("Windows Detected - launching cmd")
@@ -140,10 +148,10 @@ class Minecraft_Server():
             logger.info("Linux Detected - launching Bash")
             self.process = pexpect.popen_spawn.PopenSpawn('/bin/bash \n', timeout=None, encoding=None)
 
-            logger.info("Changing Directories to {}".format(self.server_path))
+            logger.info("Changing directory to %s", self.server_path)
             self.process.send('cd {} \n'.format(self.server_path))
 
-            logger.info("Sending Server Command: {}".format(self.server_command))
+            logger.info("Sending server start command to thread")
             self.process.send(self.server_command + '\n')
             self.is_crashed = False
 
@@ -156,23 +164,22 @@ class Minecraft_Server():
             children = parent.children(recursive=True)
             for c in children:
                 self.PID = c.pid
-                logger.info("Minecraft Server Running {} with PID: {}".format(self.name, self.PID))
+                logger.info("Minecraft server %s running with PID %s", self.name, self.PID)
                 self.is_crashed = False
         else:
-            logger.warning("Server PID: {} died right after starting - is this a server config issue?".format(self.PID))
-
+            logger.warning("Server PID %s died right after starting - is this a server config issue?", self.PID)
 
         if self.settings.crash_detection:
-            logger.info("Server {} has crash detection enabled - starting watcher daemon".format(self.name))
+            logger.info("Server %s has crash detection enabled - starting watcher task", self.name)
             schedule.every(30).seconds.do(self.check_running).tag(self.name)
 
     def send_command(self, command):
 
         if not self.check_running() and command.lower() != 'start':
-            logger.warning("Server not running, unable to send command: {}".format(command))
+            logger.warning("Server not running, unable to send command \"%s\"", command)
             return False
 
-        logger.debug('Sending Command: {} to Server via pexpect'.format(command))
+        logger.debug("Sending command %s to server via pexpect", command)
 
         # send it
         self.process.send(command + '\n')
@@ -188,22 +195,22 @@ class Minecraft_Server():
         schedule.clear(self.name)
 
         if self.detect_bungee_waterfall():
-            logger.info('Waterfall/Bungee Detected: Sending end command to server {}'.format(self.name))
+            logger.info('Waterfall/Bungee Detected: Sending shutdown command to server %s', self.name)
             self.send_command("end")
         else:
-            logger.info('Sending stop command to server {}'.format(self.name))
-            self.send_command('stop')
+            logger.info("Sending stop command to server %s", self.name)
+            self.send_command("stop")
 
         for x in range(6):
             self.PID = None
 
             if self.check_running(True):
-                logger.debug('Polling says Minecraft Server {} is running'.format(self.name))
+                logger.debug("Polling says Minecraft server %s is running", self.name)
                 time.sleep(10)
 
             # now the server is dead, we set process to none
             else:
-                logger.debug('Minecraft Server {} Stopped'.format(self.name))
+                logger.debug("Minecraft server %s has stopped", self.name)
                 self.process = None
                 self.PID = None
                 self.start_time = None
@@ -212,7 +219,7 @@ class Minecraft_Server():
                 return True
 
         # if we got this far, the server isn't responding, and needs to be forced down
-        logger.critical('Unable to stop the server {} - forcing it down {}'.format(self.name, self.PID))
+        logger.critical("Unable to stop the server %s. Terminating it via SIGKILL > %s", self.name, self.PID)
 
         self.killpid(self.PID)
 
@@ -221,13 +228,13 @@ class Minecraft_Server():
         self.reload_settings()
 
         # the server crashed, or isn't found - so let's reset things.
-        logger.warning("The server {} seems to have vanished unexpectedly, did it crash?".format(name))
+        logger.warning("The server %s seems to have vanished unexpectedly, did it crash?", name)
 
         if self.settings.crash_detection:
-            logger.info("The server {} has crashed and will be restarted: Restarting Server ".format(name))
+            logger.info("The server %s has crashed and will be restarted. Restarting server", name)
             self.run_threaded_server()
         else:
-            logger.info("The server {0} has crashed, crash detection is disabled - {0} will not be restarted".format(name))
+            logger.info("The server %s has crashed, crash detection is disabled and it will not be restarted", name)
 
     def check_running(self, shutting_down=False):
         # if process is None, we never tried to start
@@ -249,8 +256,7 @@ class Minecraft_Server():
 
                 # flapping detection
                 else:
-                    logger.warning("Server {} has crashed and been restarted {} times and is considered flapping, "
-                                   "not restarting this server".format(self.name, self.restart_count))
+                    logger.warning("Server %s has been restarted %s times. It has crashed, not restarting.", self.name, self.restart_count)
                     self.is_crashed = True
                     return False
 
@@ -270,16 +276,16 @@ class Minecraft_Server():
             return False
 
     def killpid(self, pid):
-        logger.info('Killing Process {} and all child processes'.format(pid))
+        logger.info("Terminating PID %s and all child processes", pid)
         process = psutil.Process(pid)
 
         # for every sub process...
         for proc in process.children(recursive=True):
-            # kill all the child processes - it sounds too wrong saying kill all the children
-            logger.info('Killing process {}'.format(proc.name))
+            # kill all the child processes - it sounds too wrong saying kill all the children (kevdagoat: lol!)
+            logger.info("Sending SIGKILL to PID %s", proc.name)
             proc.kill()
         # kill the main process we are after
-        logger.info('Killing parent process')
+        logger.info('Sending SIGKILL to parent')
         process.kill()
 
     def get_start_time(self):
@@ -296,7 +302,6 @@ class Minecraft_Server():
             }
         try:
             server_ping = self.ping_server()
-
         except:
             server_ping = False
             pass
@@ -312,10 +317,10 @@ class Minecraft_Server():
             History.server_id: self.server_id,
             History.cpu: server_stats['cpu_usage'],
             History.memory: server_stats['mem_percent'],
-            History.players:online_data['online']
+            History.players: online_data['online']
         }).execute()
 
-        logger.debug("Inserted History Record Number {}".format(insert_result))
+        logger.debug("Inserted history record number %s", insert_result)
 
         query = Crafty_settings.select(Crafty_settings.history_max_age)
         max_days = query[0].history_max_age
@@ -339,7 +344,7 @@ class Minecraft_Server():
             # https://giamptest.readthedocs.io/en/latest/#psutil.Process.cpu_percent
 
             dummy = p.cpu_percent()
-            real_cpu = round( p.cpu_percent(interval=0.5) / psutil.cpu_count(), 2)
+            real_cpu = round(p.cpu_percent(interval=0.5) / psutil.cpu_count(), 2)
 
             # this is a faster way of getting data for a process
             with p.oneshot():
@@ -413,10 +418,10 @@ class Minecraft_Server():
 
             try:
                 # make sure we have a backup for this date
-                backup_filename = '{}.zip'.format(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+                backup_filename = "{}.zip".format(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
                 backup_full_path = os.path.join(backup_path, backup_filename)
 
-                logger.info("Backing up server directory to {}".format(backup_filename))
+                logger.info("Backing up server directory to %s", backup_filename)
                 logger.debug("Full path is %s", backup_full_path)
 
                 backup_list = Backups.get()
@@ -431,8 +436,8 @@ class Minecraft_Server():
                     if self.check_running():
                         self.send_command("say [Crafty Controller] Backup Complete")
 
-            except Exception as e:
-                logger.error('Unable to create backups- Error: {}'.format(e))
+            except:
+                logger.exception("Unable to create backups! Traceback:")
 
                 if announce:
                     if self.check_running():
@@ -440,10 +445,8 @@ class Minecraft_Server():
 
             # remove any extra backups
             max_backups = backup_data['max_backups']
-            logger.info('Checking for backups older than {} days'.format(max_backups))
+            logger.info("Checking for backups older than %s days", max_backups)
             helper.del_files_older_than_x_days(max_backups, backup_path)
-
-
 
         else:
             logger.error("Unable to find or create backup path!")
@@ -506,13 +509,14 @@ class Minecraft_Server():
                             return match_line[1]
 
             # if we got here, we couldn't find it
-            logger.warning('Unable to find string using regex {} in server.properties file'.format(regex))
+            logger.warning("Unable to find string using regex \"%s\" in server.properties file", regex)
             return False
+        
         elif helper.check_file_exists(bungee_waterfall_file):
             return "Bungee/Waterfall Detected"
 
         # if we got here, we can't find server.properties (bigger issues)
-        logger.warning('Unable to find server.properties file')
+        logger.warning("Unable to find server.properties file")
         return False
 
     # because this is a recursive function, we will return bytes, and set human readable later
@@ -528,7 +532,7 @@ class Minecraft_Server():
     def search_for_errors(self):
         log_file = os.path.join(self.server_path, "logs", "latest.log")
 
-        logger.debug("Getting Errors from {}".format(log_file))
+        logger.debug("Getting Errors from %s", log_file)
 
         errors = helper.search_file(log_file, "ERROR]")
         warnings = helper.search_file(log_file, "WARN]")
@@ -555,7 +559,7 @@ class Minecraft_Server():
                     # if the directory name is "region"
                     if name == "region":
                         # log it!
-                        logger.debug("Path {} is called region. Getting directory size".format(os.path.join(root, name)))
+                        logger.debug("Path %s is called region. Getting directory size", os.path.join(root, name))
 
                         # get this directory size, and add it to the total we have running.
                         total_size += self.get_dir_size(os.path.join(root, name))
@@ -588,12 +592,12 @@ class Minecraft_Server():
         server_port = settings.server_port
         ip = settings.server_ip
 
-        logger.debug('Pinging {} on server port: {}'.format(ip, server_port))
+        logger.debug("Pinging %s on port %s", ip, server_port)
         mc_ping = ping(ip, int(server_port))
         return mc_ping
 
     def reload_history_settings(self):
-        logger.info("Clearing History Usage Scheduled Jobs for ServerID: {} - {} ".format(self.server_id, self.name))
+        logger.info("Clearing history usage scheduled jobs for server ID %s (%s)", self.server_id, self.name)
 
         # clear all history jobs
         schedule.clear('history')
@@ -601,8 +605,7 @@ class Minecraft_Server():
         query = Crafty_settings.select(Crafty_settings.history_interval)
         history_interval = query[0].history_interval
 
-        logger.info("Creating New History Usage Scheduled Task for every {} minutes for Server ID:{} - {}".format(
-            history_interval, self.server_id, self.name))
+        logger.info("Creating new history usage scheduled task for every %s minutes for server ID %s (%s)", history_interval, self.server_id, self.name)
 
         schedule.every(history_interval).minutes.do(self.write_usage_history).tag('history')
 
@@ -634,10 +637,10 @@ class Minecraft_Server():
 
         # remove the old_server.jar
         if helper.check_file_exists(backup_jar_name):
-            logger.info("Removing old jar backup: {}".format(backup_jar_name))
+            logger.info("Removing old backup jar %s", backup_jar_name)
 
             if with_console:
-                console.info("Removing old jar backup: {}".format(backup_jar_name))
+                console.info("Removing old backup jar {}".format(backup_jar_name))
 
             os.remove(backup_jar_name)
 
@@ -705,7 +708,7 @@ class Minecraft_Server():
 
         # remove the current_server.jar
         if helper.check_file_exists(backup_jar_name):
-            logger.info("Removing current server jar: {}".format(backup_jar_name))
+            logger.info("Removing current server jar %s", backup_jar_name)
 
             if with_console:
                 console.info("Removing current server jar: {}".format(backup_jar_name))

@@ -14,7 +14,11 @@ from app.classes.console import console
 
 
 def setup_logging(debug=False):
-    logging_config_file = os.path.join(os.path.curdir, 'app', 'config', 'logging.json')
+    logging_config_file = os.path.join(os.path.curdir, 
+                                       'app', 
+                                       'config', 
+                                       'logging.json'
+                                       )
 
     if os.path.exists(logging_config_file):
 
@@ -26,7 +30,7 @@ def setup_logging(debug=False):
             logging.config.dictConfig(logging_config)
     else:
         logging.basicConfig(level=logging.DEBUG)
-        logging.warning("Unable to read logging config from {} - falling to default mode".format(logging_config_file))
+        logging.warning("Unable to read logging config from {}".format(logging_config_file))
 
 
 def do_intro():
@@ -34,7 +38,10 @@ def do_intro():
 
     intro = "/" * 75 + "\n"
     intro += '#\t\tWelcome to Crafty Controller - v.{}.{}.{}\t\t #'.format(
-        version_data['major'], version_data['minor'], version_data['sub']) + "\n"
+        version_data['major'], 
+        version_data['minor'], 
+        version_data['sub']
+        ) + "\n"
     intro += "/" * 75 + "\n"
     intro += '#   \tServer Manager / Web Portal for your Minecraft server\t\t #' + "\n"
     intro += '#   \t\tHomepage: www.craftycontrol.com\t\t\t\t #' + "\n"
@@ -81,10 +88,24 @@ if __name__ == '__main__':
     
     parser = argparse.ArgumentParser("Crafty Web - A Minecraft Server GUI")
     
-    parser.add_argument('-k', '--kill-all', action='store_true', help="Find and terminate all running Crafty instances on the host system.")
-    parser.add_argument('-v', '--verbose', action='store_true', help="Sets Crafty's logging level to debug.")
-    parser.add_argument('-d', '--daemonize', action='store_true', help="Prevent exit of crafty.py and disable console.")
-    parser.add_argument('-c', '--config', help="Specify a config file to tell Crafty where to store it's database, version, etc.")
+    parser.add_argument('-k', '--kill-all', 
+                        action='store_true', 
+                        help="Find and terminate all running Crafty instances on the host system."
+                        )
+    
+    parser.add_argument('-v', '--verbose', 
+                        action='store_true', 
+                        help="Sets Crafty's logging level to debug."
+                        )
+    
+    parser.add_argument('-d', '--daemonize', 
+                        action='store_true', 
+                        help="Prevent exit of crafty.py and disable console."
+                        )
+    
+    parser.add_argument('-c', '--config', 
+                        help="Specify a config file to tell Crafty where to store it's database, version, etc."
+                        )
     
     args = parser.parse_args()
 
@@ -100,13 +121,13 @@ if __name__ == '__main__':
     # make sure our web temp directory is there
     # helper.ensure_dir_exists(os.path.join(os.path.curdir, "app", 'web', 'temp'))
 
-    logger.info("***** Crafty Launched: Verbose mode enabled: {} *****".format(args.verbose))
+    logger.info("***** Crafty Launched: Verbose {} *****".format(args.verbose))
 
     # announce the program
     do_intro()
 
     admin_pass = None
-    
+
     # load config file and reprogram default values
     if args.config:
         config_path = os.path.join(os.curdir, args.config)
@@ -132,7 +153,7 @@ if __name__ == '__main__':
     
     # is this a fresh install?
     fresh_install = helper.is_fresh_install()
-    
+      
     # doing a more focused import here, because * imports can be a little crazy.
     # also import after config and cmd args
     from app.classes.models import peewee, Users, MC_settings, Webserver, Schedules, History, Crafty_settings, Backups, Roles, Remote, Ftp_Srv
@@ -150,8 +171,8 @@ if __name__ == '__main__':
         peewee.default_settings(admin_pass, admin_token)
 
     else:
-        peewee.do_database_migrations()
-
+        peewee.do_database_migrations() 
+        
     # only import / new database tables are created do we load the rest of the things!
     from app.classes.ftp import ftp_svr_object
     # from app.classes.minecraft_server import mc_server

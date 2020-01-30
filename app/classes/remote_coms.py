@@ -33,8 +33,7 @@ class remote_commands():
                 server_data = MC_settings.get_by_id(server_id)
                 server_name = server_data.server_name
 
-                logger.info("Remote Command: {} found for server: {} from source: {}- Executing".format(
-                    command, server_name, source))
+                logger.info("Remote Command \"%s\" found for server \"%s\" from source %s. Executing!", command, server_name, source)
 
                 self.handle_command(command, server_id)
                 self.clear_all_commands()
@@ -62,22 +61,21 @@ class remote_commands():
                     logger.info("Stopping MC Server")
                     srv_obj.stop_threaded_server()
 
-                except Exception as e:
-                    logger.error("Unable to stop Server: {} due to error: {}".format(server_name, e))
-                    pass
+                except:
+                    logger.exception("Unable to stop server %s. Traceback: ", server_name)
 
                 while True:
                     server_up = srv_obj.is_server_pingable()
                     if server_up:
-                        logger.info("{} still pingable, waiting".format(server_name))
+                        logger.info("%s still pingable, waiting...", server_name)
                         time.sleep(.5)
                     else:
-                        logger.info("{} Stopped".format(server_name))
+                        logger.info("Server %s has stopped", server_name)
                         break
 
                 srv_obj.run_threaded_server()
             else:
-                logger.info("{} not running - Starting Server".format(server_name))
+                logger.info("%s not running, starting it now", server_name)
                 srv_obj.run_threaded_server()
 
         elif command == 'start_mc_server':
@@ -88,12 +86,12 @@ class remote_commands():
         elif command == 'stop_mc_server':
 
             if running:
-                logger.info("Stopping MC Server: {}".format(server_name))
+                logger.info("Stopping MC server %s", server_name)
                 srv_obj.stop_threaded_server()
                 time.sleep(2)
                 multi.do_stats_for_servers()
             else:
-                logger.info("Server: {0} Not Running - Skipping stop of MC Server: {0}".format(server_name))
+                logger.info("Stop halted! Server %s is not running!", server_name)
 
         #elif command == 'update_server_jar':
             # srv_obj.update_server_jar(False)

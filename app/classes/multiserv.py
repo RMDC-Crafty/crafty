@@ -89,7 +89,7 @@ class multi_serve():
             srv_obj.reload_settings()
 
             # echo it's now setup to the log
-            logger.info("Loading settings for server:{}".format(s['name']))
+            logger.info("Loading settings for server %s", s['name'])
 
 
     def reload_scheduling(self):
@@ -104,7 +104,7 @@ class multi_serve():
         if MC_settings.get_by_id(server_id):
             return MC_settings.get_by_id(server_id)
         else:
-            logger.critical("Unable to find server id: {}".format(server_id))
+            logger.critical("Unable to find server id %s", server_id)
             return False
 
     def setup_new_server_obj(self, server_id):
@@ -120,7 +120,7 @@ class multi_serve():
             # this kicks off the auto start for this server object
             self.servers_list[server_data.server_name]['server_obj'].do_init_setup(server_id)
         else:
-            logger.critical("Server: {} is already defined!".format(server_data.name))
+            logger.critical("Server %s is already defined!", server_data.name)
 
     def remove_server_object(self, server_id):
 
@@ -129,16 +129,15 @@ class multi_serve():
 
         try:
             del self.servers_list[server_name]
-            logger.info("Removed Server Name {} from Multi Server List ".format(server_name))
+            logger.info("Removed server \"%s\" from multi server list", server_name)
 
             # delete the server
             MC_settings.delete().where(MC_settings.id == int(server_id)).execute()
 
-            logger.info('Deleted Server ID: {}'.format(server_id))
+            logger.info('Deleted Server ID %s', server_id)
 
-        except Exception as e:
-            logger.error("Unable to remove server ID:{} - {} from Multi Server List due to {}".format(
-                server_id, server_name, e))
+        except:
+            logger.exception("Unable to remove server ID %s (%s) from multi server list. Traceback:", server_id, server_name)
             pass
 
         # print('reloading scheduling')
@@ -165,6 +164,7 @@ class multi_serve():
                         'id': srv_obj.server_id,
                         'name': srv_obj.get_mc_server_name(),
                         'running': srv_obj.check_running(),
+                        'crashed': srv_obj.check_crashed(),
                         'auto_start': srv_obj.settings.auto_start_server
                     })
 
@@ -172,10 +172,13 @@ class multi_serve():
 
     def get_server_obj(self, server_id):
         server_data = self.get_server_data(server_id)
-        if self.servers_list[server_data.server_name]:
-            return self.servers_list[server_data.server_name]['server_obj']
-        else:
-            logger.warning("Unable to find server object for server: {}".format(server_id))
+        try: 
+            if self.servers_list[server_data.server_name]:
+                return self.servers_list[server_data.server_name]['server_obj']
+            else:
+                logger.warning("Unable to find server object for server id %s", server_id)
+        except:
+            logger.exception("Exception occured when finding server id %s", server_id)
 
     def run_server(self, server_id):
         Remote.insert({
@@ -193,12 +196,12 @@ class multi_serve():
 
     def stop_all_servers(self):
         servers = self.list_running_servers()
-        logger.info("{} servers found running".format(len(servers)))
+        logger.info("Found %s running server(s)", len(servers))
         logger.info("Stopping All Servers")
 
         for s in servers:
-            logger.info("Stopping Server ID: {} - {}".format(s['id'], s['name']))
-            console.info("Stopping Server ID: {} - {}".format(s['id'], s['name']))
+            logger.info("Stopping Server ID %s (%s)", s['id'], s['name'])
+            console.info("Stopping Server ID %s (%s)", s['id'], s['name'])
 
             # get object
             svr_obj = self.get_server_obj(s['id'])
@@ -209,8 +212,8 @@ class multi_serve():
 
             # while it's running, we wait
             while running:
-                logger.info("Server {} is still running - waiting 2s to see if it stops".format(s['name']))
-                console.info("Server {} is still running - waiting 2s to see if it stops".format(s['name']))
+                logger.info("Server %s is still running - waiting 2s to see if it stops", s['name'])
+                console.info("Server %s is still running - waiting 2s to see if it stops", s['name'])
                 running = svr_obj.check_running()
                 time.sleep(2)
 
@@ -286,7 +289,7 @@ class multi_serve():
             return False
 
     def get_stats_for_servers(self):
-
+        
         all_servers_return = {}
 
         if len(self.servers_list) > 0:
