@@ -226,7 +226,8 @@ class AjaxHandler(BaseHandler):
 
             if server_id is not None:
 
-
+                # stop any server stats going on...
+                schedule.clear('server_stats')
 
                 # remove it from multi
                 multi.remove_server_object(server_id)
