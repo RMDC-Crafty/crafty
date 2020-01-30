@@ -8,6 +8,7 @@ from app.classes.handlers.base_handler import BaseHandler
 from app.classes.web_sessions import web_session
 from app.classes.multiserv import multi
 from app.classes.ftp import ftp_svr_object
+from app.classes.backupmgr import backupmgr
 
 logger = logging.getLogger(__name__)
 
@@ -109,8 +110,22 @@ class AjaxHandler(BaseHandler):
 
         elif page == 'del_file':
             file_to_del = self.get_body_argument('file_name', default=None, strip=True)
-            if file_to_del:
-                helper.del_file(file_to_del)
+            server_id = self.get_argument('server_id', default=None, strip=True)
+            print(server_id)
+
+            # let's make sure this path is in the backup directory and not somewhere else
+            # we don't want someone passing a path like /etc/passwd in the raw, so we are only passing the filename
+            # to this function, and then tacking on the storage location in front of the filename.
+
+            backup_folder = backupmgr.get_backup_folder_for_server(server_id)
+
+            # Grab our backup path from the DB
+            backup_list = Backups.get(Backups.server_id == int(server_id))
+            server_backup_file = os.path.join(backup_list.storage_location, backup_folder, file_to_del)
+
+
+            if server_backup_file and helper.check_file_exists(server_backup_file):
+                helper.del_file(server_backup_file)
 
         elif page == 'del_schedule':
             id_to_del = self.get_body_argument('id', default=None, strip=True)

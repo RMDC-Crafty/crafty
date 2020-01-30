@@ -67,6 +67,7 @@ class Backups(BaseModel):
     directories = CharField()
     storage_location = CharField()
     max_backups = IntegerField()
+    server_id = IntegerField()
 
     class Meta:
         table_name = 'backups'
@@ -264,12 +265,12 @@ class sqlhelper():
             Ftp_Srv.password: helper.random_string_generator(8)
         }).execute()
 
-    # this is our upgrade migration function - any new tables after 2.0 need to have
+    # this is our upgrade migration function
     # default settings created here if they don't already exits
 
     def do_database_migrations(self):
         migrator = SqliteMigrator(database)
-        mc_cols = database.get_columns("MC_settings")
+
 
 
 def get_perms_for_user(user):

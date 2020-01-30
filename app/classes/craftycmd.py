@@ -121,12 +121,13 @@ class MainPrompt(cmd.Cmd):
                 console.warning("Server already running")
             else:
                 console.info("Starting Minecraft Server in background")
-                multi.run_server(server)
-                '''
+
                 Remote.insert({
-                    Remote.command: 'start_mc_server'
+                    Remote.command: 'start_mc_server',
+                    Remote.server_id: server,
+                    Remote.command_source: "localhost"
                 }).execute()
-                '''
+
         else:
             console.warning("Unable to start server, please complete setup in the web GUI first")
 
@@ -137,9 +138,32 @@ class MainPrompt(cmd.Cmd):
         console.help("You can get a server id by issuing list_servers")
 
     def do_restart(self, line):
+        if line == '':
+            self.help_start()
+            return 0
+
+        try:
+            int(line)
+        except ValueError:
+            console.error("Server ID must be a number")
+            self.help_start()
+            return 0
+
+        try:
+            server = MC_settings.get_by_id(line)
+
+        except Exception as e:
+            console.help("Unable to find a server with that ID: {}".format(e))
+            return 0
+
+        server = int(line)
+
         Remote.insert({
-            Remote.command: 'restart_mc_server'
+            Remote.command: 'restart_mc_server',
+            Remote.server_id: server,
+            Remote.command_source: "localhost"
         }).execute()
+
         console.info("Restarting Minecraft Server in background")
 
     def help_restart(self):
@@ -186,7 +210,13 @@ class MainPrompt(cmd.Cmd):
         console.help("Use the list_servers command to get more detailed data")
 
     def do_set_passwd(self, line):
+        if len(line) > 512:
+            console.warning("Password Too Long")
+            return False
 
+        if len(line) < 6:
+            console.warning("Password Too Short")
+            return False
         try:
             user = Users.get(Users.username == line).username
         except Exception as e:
@@ -273,7 +303,9 @@ class MainPrompt(cmd.Cmd):
 
     def do_reload_webserver(self, line):
         Remote.insert({
-            Remote.command: 'restart_web_server'
+            Remote.command: 'restart_web_server',
+            Remote.server_id: 1,
+            Remote.command_source: 'localhost'
         }).execute()
         console.info("Reloading Tornado Webserver, Please wait 5 seconds to reconnect")
 

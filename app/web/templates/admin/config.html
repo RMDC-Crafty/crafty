@@ -23,7 +23,6 @@
           <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
               <li class="active"><a href="#crafty" data-toggle="tab">Crafty Config</a></li>
-              <li><a href="#backup" data-toggle="tab">Backups</a></li>
               <li><a href="#users" data-toggle="tab">Users</a></li>
 
             </ul>
@@ -96,119 +95,6 @@
 
               </div>
               <!-- /.tab-pane -->
-
-                <div class="tab-pane" id="backup">
-                        <h3>Backup Config</h3>
-                      <form method="post">
-                            {% raw xsrf_form_html() %}
-                            <div class="row">
-                                <div class="form-group">
-                                      <label for="max_backups" class="col-xs-3 control-label">Max Age Of Backups In Days</label>
-
-                                      <div class="col-xs-2">
-                                            <select class="form-control" name="max_backups">
-                                                <option value="7" {% if data['backup_config']['max_backups'] == 7 %} selected {% end %}>7</option>
-                                                <option value="14" {% if data['backup_config']['max_backups'] == 14 %} selected {% end %}>14</option>
-                                                <option value="30" {% if data['backup_config']['max_backups'] == 30 %} selected {% end %}>30</option>
-                                                <option value="60" {% if data['backup_config']['max_backups'] == 60 %} selected {% end %}>60</option>
-                                                <option value="90" {% if data['backup_config']['max_backups'] == 90 %} selected {% end %}>90</option>
-                                                <option value="182" {% if data['backup_config']['max_backups'] == 182 %} selected {% end %}>182</option>
-                                                <option value="365" {% if data['backup_config']['max_backups'] == 365 %} selected {% end %}>365</option>
-                                            </select>
-                                      </div>
-                                </div>
-                            </div>
-                            <br />
-                            <div class="row">
-                                  <div class="form-group">
-                                      <label for="storage_location" class="col-xs-3 control-label">Where to Save Backups</label>
-
-                                      <div class="col-sm-9">
-                                            <input type="text"
-                                                   class="form-control"
-                                                   id="storage_location"
-                                                   placeholder="Backup Location"
-                                                   name="storage_location"
-                                                   value="{{ data['backup_config']['storage_location'] }}"
-                                            >
-                                      </div>
-                                    </div>
-                            </div>
-
-                            <hr />
-
-                            <input type="hidden" name="config_type" value="backup_settings"/>
-                            <h4>Backup These Files</h4>
-                            <label>
-                                Backup the whole server:<br />
-                                {% if data['backup_data'][0] == data['server_root'] %}
-                                    <input type="checkbox" id="whole_server" name="backup" value="{{ data['server_root'] }}" checked="true"/> Backup Everything
-                                {% else %}
-                                    <input type="checkbox" id="whole_server" name="backup" value="{{ data['server_root'] }}"/> Backup Everything
-                                {% end %}
-
-                                <span id="everything_hint"> - Uncheck to select individual folders to backup</span>
-                            </label>
-
-                            <hr />
-                            Individual Folder Backup <br />
-
-                            <label>
-                            <input type="checkbox" id="select_all" disabled="true"/> SELECT ALL
-                            </label>
-
-                            <br />
-
-                            {% for item in data['directories'] %}
-
-                                {% if item['type'] == 'dir' %}
-                                    <label>
-                                        <input type="checkbox"
-                                               class="checkBoxClass"
-                                               name="backup"
-                                               value="{{item['name']}}"
-                                               disabled="true"
-                                               {% if item['name'] in data['backup_data']%}
-                                                   checked="true"
-                                                    disabled="false"
-                                               {% else %}
-                                                    disabled="true"
-                                                {% end%}
-                                        />
-                                        <i class="fa fa-folder" aria-hidden="true"></i>
-                                        {{ item['name'] }}
-                                    </label>
-                                    <br />
-                                {% else %}
-                                    <label>
-                                        <input type="checkbox"
-                                               class="checkBoxClass"
-                                               name="backup"
-                                               value="{{item['name']}}"
-
-                                                {% if item['name'] in data['backup_data']%}
-                                                    checked="true"
-                                                    disabled="false"
-                                                {% else %}
-                                                    disabled="true"
-                                                {% end%}
-                                        />
-                                        <i class="fa fa-file" aria-hidden="true"></i>
-                                        {{ item['name'] }}
-                                    </label>
-                                    <br />
-                                {% end %}
-                            {% end %}
-
-                            <button type="submit" class="btn btn-success pull-right">
-                                <i class="fa fa-floppy-o" aria-hidden="true"></i>
-                                Save Backups Settings
-                            </button>
-                            <br class="clear"/>
-                            <br class="clear"/>
-                        </form>
-              </div>
-                  <!-- /.tab-pane -->
 
                 <div class="tab-pane" id="users">
 
@@ -305,20 +191,13 @@
 
                 Historical Data will be captured every <b>{{ data['crafty_settings']['history_interval'] }}</b> minutes
                 and kept for <b>{{ data['crafty_settings']['history_max_age'] }}</b> days
-
                 <hr />
 
-                Your backups are saved in <b>{{ data['backup_config']['storage_location'] }}</b>
-                and kept for <b>{{ data['backup_config']['max_backups'] }}</b> days
-
-                <hr />
                 {% for u in data['users'] %}
                     {% if u.username == data['user_data']['username'] %}
                 Your API Key: <b>{{ u.api_token }}</b>
                     {% end %}
                 {% end %}
-
-
                 <hr />
 
                 You have <b>{{ data['users_count'] }}</b> users defined
@@ -537,9 +416,6 @@
             "order": [[ 0, "asc" ]]
         });
 
-        checkbox_update();
-        enable_disable_all();
-
         //adding quick/dirty padding
         $('input').css("margin-bottom",'10px')
 
@@ -554,56 +430,8 @@
         {% end %}
 
 
-        $("#whole_server").click(function () {
-            enable_disable_all();
-            checkbox_update();
-        });
-
-        $("#select_all").click(function () {
-            $(".checkBoxClass").prop('checked', $(this).prop('checked'));
-            checkbox_update();
-        });
-
-        $(".checkBoxClass").click(function () {
-            if ( $(this).prop('checked') === false ){
-                $("#select_all").prop('checked', false);
-                checkbox_update();
-            }
-        });
-
-        $('.checkBoxClass').change(function(){
-            checkbox_update();
-        });
 
     });
-
-    function checkbox_update(){
-        $( ".checkBoxClass" ).each(function( index ) {
-            if (this.checked) {
-                $(this).parent().addClass('text-green')
-                $(this).parent().removeClass('text-red')
-            }
-            else{
-                $(this).parent().addClass('text-red')
-                $(this).parent().removeClass('text-green')
-            }
-        });
-    }
-
-    function enable_disable_all(){
-        if ( $("#whole_server").prop('checked') === true ){
-                $(".checkBoxClass").prop('checked', false);
-                $(".checkBoxClass").prop('disabled', true);
-                $("#select_all").prop('checked', false);
-                $("#select_all").prop('disabled', true);
-                $("#everything_hint").show();
-            }
-        else{
-            $(".checkBoxClass").prop('disabled', false);
-            $("#select_all").prop('disabled', false);
-            $("#everything_hint").hide();
-        }
-    }
 
 
 </script>

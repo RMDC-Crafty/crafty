@@ -47,7 +47,7 @@
         <label>
           Server Name - <small>Example Survival Server</small>
         </label>
-        <input type="text" class="form-control" placeholder="Server Name" name="server_name" value="MyFirstServer">
+        <input type="text" class="form-control" placeholder="Server Name" name="server_name" value="MyFirstServer" maxlength="55">
         <span class="glyphicon glyphicon-file form-control-feedback"></span>
       </div>
 
@@ -57,13 +57,13 @@
             Server Path - <small>Example c:\minecraft\server</small>
           </label>
           <input type="text" class="form-control" placeholder="Server Path" name="server_path"
-                 value="c:\windows\minecraft">
+                 value="c:\windows\minecraft" maxlength="255">
           <span class="glyphicon glyphicon-folder-open form-control-feedback"></span>
         {% else %}
         <label>
             Server Path - <small>Example /var/opt/minecraft/server</small>
           </label>
-          <input type="text" class="form-control" placeholder="Server Path" name="server_path"
+          <input type="text" class="form-control" placeholder="Server Path" name="server_path" maxlength="255"
                  value="/var/opt/minecraft/server">
           <span class="glyphicon glyphicon-folder-open form-control-feedback"></span>
         {% end %}
@@ -73,7 +73,7 @@
         <label>
           Server Jar - <small>Example paper.jar</small>
         </label>
-        <input type="text" class="form-control" placeholder="Server Jar" name="server_jar" value="paperclip.jar">
+        <input type="text" class="form-control" placeholder="Server Jar" name="server_jar" value="paperclip.jar" maxlength="255">
         <span class="glyphicon glyphicon-file form-control-feedback"></span>
       </div>
 

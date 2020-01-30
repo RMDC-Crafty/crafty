@@ -298,8 +298,11 @@ class helpers:
             path, extension = os.path.splitext(file)
 
             if extension == ".zip":
+
                 relative_files.append(file)
+
                 file_names.append(os.path.basename(file))
+
         return file_names, relative_files
 
     # Function to convert the date format 12h to 24 hr

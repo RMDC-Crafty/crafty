@@ -66,10 +66,12 @@ class Minecraft_Server():
         # do we want to auto launch the minecraft server?
         if self.settings.auto_start_server:
             delay = int(self.settings.auto_start_delay)
-            logger.info("Auto Start is Enabled - Waiting %s seconds to start the server", delay)
-            console.info("Auto Start is Enabled - Waiting {} seconds to start the server".format(delay))
+            logger.info("Auto Start is Enabled - Scheduling start for %s seconds from now", delay)
+            console.info("Auto Start is Enabled - Scheduling start for {} seconds from now".format(delay))
 
             schedule.every(int(delay)).seconds.do(self.run_scheduled_server)
+
+            # TODO : remove this old code after 3.0 Beta
             # time.sleep(int(delay)) # here we need to schedule the delay, as a function that auto kills it's schedule
 
             # delay the startup as long as the
@@ -398,11 +400,12 @@ class Minecraft_Server():
 
         # backup path is saved in the db
         # Load initial backup config
-        backup_list = Backups.get()
+        backup_list = Backups.get_by_id(self.server_id)
         backup_data = model_to_dict(backup_list)
 
         logger.debug("Using default path defined in database")
-        backup_path = os.path.join(backup_data['storage_location'], self.server_id)
+        backup_folder = "{}-{}".format(self.server_id, self.name)
+        backup_path = os.path.join(backup_data['storage_location'], backup_folder)
         helper.ensure_dir_exists(backup_path)
 
         logger.info('Starting Backup Process')
@@ -436,8 +439,8 @@ class Minecraft_Server():
                     if self.check_running():
                         self.send_command("say [Crafty Controller] Backup Complete")
 
-            except:
-                logger.exception("Unable to create backups! Traceback:")
+            except Exception as e:
+                logger.exception("Unable to create backups! Traceback:".format(e))
 
                 if announce:
                     if self.check_running():
@@ -453,9 +456,9 @@ class Minecraft_Server():
             return False
 
     def list_backups(self):
-        backup_list = Backups.get()
-        backup_data = model_to_dict(backup_list)
-        backup_path = os.path.join(backup_data['storage_location'], self.server_id)
+        backup_folder = "{}-{}".format(self.server_id, self.name)
+        backup_list = Backups.get(Backups.server_id == int(self.server_id))
+        backup_path = os.path.join(backup_list.storage_location, backup_folder)
         helper.ensure_dir_exists(backup_path)
 
         results = []
@@ -466,7 +469,7 @@ class Minecraft_Server():
                 # skip if it is symbolic link
                 if not os.path.islink(fp):
                     size = helper.human_readable_file_size(os.path.getsize(fp))
-                    results.append({'path': fp, 'size': size})
+                    results.append({'path': f, 'size': size})
 
         return results
 

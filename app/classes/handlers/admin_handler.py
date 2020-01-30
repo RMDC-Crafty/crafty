@@ -100,25 +100,36 @@ class AdminHandler(BaseHandler):
             server_id = self.get_argument('id', '')
             mc_data = MC_settings.get_by_id(server_id)
             
-            # TODO: Update template to pass server ID
             template = "admin/backups.html"
-            # END
-            
-            backup_list = Backups.get()
-            backup_data = model_to_dict(backup_list)
+
+            backup_data = Backups.get_by_id(server_id)
+
+            backup_data = model_to_dict(backup_data)
+
             backup_path = backup_data['storage_location']
             backup_dirs = json.loads(backup_data['directories'])
-            
+
+            context['backup_data'] = json.loads(backup_data['directories'])
+            context['backup_config'] = backup_data
+
+            # get a listing of directories in the server path.
+            context['directories'] = helper.scan_dirs_in_path(mc_data.server_path)
+
+            context['server_root'] = mc_data.server_path
+
             context['server_name'] = mc_data.server_name
+            context['server_id'] = mc_data.id
             context['backup_paths'] = backup_dirs
             context['backup_path'] = backup_path
             context['current_backups'] = backupmgr.list_backups_for_server(server_id)
-        
+
+            context['saved'] = False
+            context['invalid'] = False
+
         elif page == "all_backups":
             if not check_role_permission(user_data['username'], 'backups'):
                 self.redirect('/admin/unauthorized')
-            
-            # TODO: Update template with unique one (not for me :D)
+
             template = "admin/backups.html"
             # END
             
@@ -195,30 +206,20 @@ class AdminHandler(BaseHandler):
             invalid = self.get_argument('invalid', None)
 
             template = "admin/config.html"
-            mc_data = MC_settings.get()
             crafty_data = Crafty_settings.get()
-            backup_data = Backups.get()
+
             web_data = Webserver.get()
             users = Users.select()
 
             page_data = {}
             context['saved'] = saved
             context['invalid'] = invalid
-            context['mc_settings'] = model_to_dict(mc_data)
+
             context['crafty_settings'] = model_to_dict(crafty_data)
             context['web_settings'] = model_to_dict(web_data)
 
             context['users'] = users
             context['users_count'] = len(users)
-
-            backup_data = model_to_dict(backup_data)
-            context['backup_data'] = json.loads(backup_data['directories'])
-            context['backup_config'] = backup_data
-
-            # get a listing of directories in the server path.
-            context['directories'] = helper.scan_dirs_in_path(context['mc_settings']['server_path'])
-
-            context['server_root'] = context['mc_settings']['server_path']
 
         elif page == 'server_config':
             if not check_role_permission(user_data['username'], 'config'):
@@ -251,26 +252,37 @@ class AdminHandler(BaseHandler):
             host_data = Host_Stats.get()
             context['max_memory'] = host_data.mem_total
 
-
         elif page == 'downloadbackup':
             if not check_role_permission(user_data['username'], 'backups'):
                 self.redirect('/admin/unauthorized')
 
             path = self.get_argument("file", None, True)
+            server_id = self.get_argument("id", None, True)
 
-            if path is not None:
-                file_name = os.path.basename(path)
+            # let's make sure this path is in the backup directory and not somewhere else
+            # we don't want someone passing a path like /etc/passwd in the raw, so we are only passing the filename
+            # to this function, and then tacking on the storage location in front of the filename.
+
+            backup_folder = backupmgr.get_backup_folder_for_server(server_id)
+
+            # Grab our backup path from the DB
+            backup_list = Backups.get(Backups.server_id == int(server_id))
+            server_backup_file = os.path.join(backup_list.storage_location, backup_folder, path)
+
+            if server_backup_file is not None and helper.check_file_exists(server_backup_file):
+                file_name = os.path.basename(server_backup_file)
                 self.set_header('Content-Type', 'application/octet-stream')
                 self.set_header('Content-Disposition', 'attachment; filename=' + file_name)
 
-                with open(path, 'rb') as f:
+                with open(server_backup_file, 'rb') as f:
                     while 1:
                         data = f.read(16384)  # or some other nice-sized chunk
                         if not data:
                             break
                         self.write(data)
                 self.finish()
-            self.redirect("/admin/backups")
+
+            self.redirect("/admin/backups?id={}".format(server_id))
 
         elif page == "server_control":
             if not check_role_permission(user_data['username'], 'svr_control'):
@@ -345,7 +357,7 @@ class AdminHandler(BaseHandler):
             elif command == "backup":
                 backupmgr.backup_server(id)
                 time.sleep(4)
-                next_page = '/admin/backups'
+                next_page = '/admin/backups?id={}'.format(id)
             
             elif command == "backup_all":
                 backupmgr.backup_all_servers()
@@ -481,7 +493,6 @@ class AdminHandler(BaseHandler):
         elif page == 'config':
 
             config_type = self.get_argument('config_type')
-            print(config_type)
 
             if config_type == 'mc_settings':
 
@@ -493,8 +504,6 @@ class AdminHandler(BaseHandler):
 
                 # Use pathlib to join specified server path and server JAR file then check if it exists
                 jar_exists = helper.check_file_exists(os.path.join(server_path, server_jar))
-
-                print('crash: {}'.format(self.get_argument('crash_detection')))
 
                 if server_path_exists and jar_exists:
                     q = MC_settings.update({
@@ -523,28 +532,6 @@ class AdminHandler(BaseHandler):
                 else:
                     logger.error('Minecraft server directory or JAR does not exist')
                     self.redirect("/admin/config?invalid=True")
-
-            elif config_type == 'backup_settings':
-                checked = self.get_arguments('backup', False)
-                max_backups = self.get_argument('max_backups', None)
-                backup_storage = self.get_argument('storage_location', None)
-
-                if len(checked) == 0 or len(max_backups) == 0 or len(backup_storage) == 0:
-                    logger.error('Backup settings Invalid: Checked: {}, max_backups: {}, backup_storage: {}'
-                                 .format(checked, max_backups, backup_storage))
-                    self.redirect("/admin/config?invalid=True")
-
-                else:
-                    logger.info("Backup directories set to: {}".format(checked))
-                    json_dirs = json.dumps(list(checked))
-                    Backups.update(
-                        {
-                            Backups.directories: json_dirs,
-                            Backups.max_backups: max_backups,
-                            Backups.storage_location: backup_storage
-
-                        }
-                    ).where(Backups.id == 1).execute()
 
             self.redirect("/admin/config?saved=True")
 
@@ -634,6 +621,12 @@ class AdminHandler(BaseHandler):
             min_mem = self.get_argument('min_mem', '')
             auto_start = self.get_argument('auto_start', '')
 
+            samename = MC_settings.select().where(MC_settings.server_name == server_name)
+            if samename.exists():
+                logger.error("2 servers can't have the same name - Can't add server")
+                error = "Another server is already called: {}".format(server_name)
+
+
             error = None
 
             # does this server path / jar exist?
@@ -681,4 +674,30 @@ class AdminHandler(BaseHandler):
                 self.redirect("/admin/dashboard")
             else:
                 self.redirect("/admin/dashboard?errors={}".format(error))
+
+        elif page == 'backups':
+            checked = self.get_arguments('backup', False)
+            max_backups = self.get_argument('max_backups', None)
+            backup_storage = self.get_argument('storage_location', None)
+            server_id = self.get_argument('server_id', None)
+
+            if len(checked) == 0 or len(max_backups) == 0 or len(backup_storage) == 0:
+                logger.error('Backup settings Invalid: Checked: {}, max_backups: {}, backup_storage: {}'
+                             .format(checked, max_backups, backup_storage))
+                self.redirect("/admin/config?invalid=True")
+
+            else:
+                logger.info("Backup directories set to: {}".format(checked))
+                json_dirs = json.dumps(list(checked))
+
+                Backups.update(
+                    {
+                        Backups.directories: json_dirs,
+                        Backups.max_backups: max_backups,
+                        Backups.storage_location: backup_storage,
+                        Backups.server_id: int(server_id)
+                    }
+                ).where(Backups.server_id == int(server_id)).execute()
+
+            self.redirect("/admin/backups?id={}".format(server_id))
 

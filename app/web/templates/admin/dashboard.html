@@ -102,7 +102,7 @@
     {% end %}
 
       <div class="box-header with-border">
-        <h3 class="box-title">{{ s['name'] }}</h3>
+        <h3 class="box-title" data-toggle="tooltip" title="Server ID {{ s['id'] }} - {{ s['name'] }}">{{ s['name'] }}</h3>
 
         <div class="box-tools pull-right text-right">
 
@@ -165,7 +165,7 @@
         {% end %}
 
         {% if data['user_data']['backups'] %}
-        <a href="" class="btn btn-default disabled">
+        <a href="/admin/backups?id={{ s['id'] }}" class="btn btn-default">
           <i class="fa fa-save" aria-hidden="true"></i> Backup
         </a>
         {% end %}
@@ -262,7 +262,7 @@
                   <label>
                     Server Name - <small>Example Survival Server</small>
                   </label>
-                  <input type="text" class="form-control" placeholder="Server Name" name="server_name" value="My New Server">
+                  <input type="text" class="form-control" placeholder="Server Name" name="server_name" value="My New Server" maxlength="55">
                   <span class="glyphicon glyphicon-file form-control-feedback"></span>
                 </div>
 
@@ -270,7 +270,7 @@
                   <label>
                       Server Path - <small>Example /var/opt/minecraft/server</small>
                     </label>
-                    <input type="text" class="form-control" placeholder="Server Path" name="server_path"
+                    <input type="text" class="form-control" placeholder="Server Path" name="server_path" maxlength="255"
                            value="/var/opt/minecraft/server">
                     <span class="glyphicon glyphicon-folder-open form-control-feedback"></span>
                 </div>
@@ -279,7 +279,7 @@
                   <label>
                     Server Jar - <small>Example paper.jar</small>
                   </label>
-                  <input type="text" class="form-control" placeholder="Server Jar" name="server_jar" value="paperclip.jar">
+                  <input type="text" class="form-control" placeholder="Server Jar" name="server_jar" value="paperclip.jar" maxlength="255">
                   <span class="glyphicon glyphicon-file form-control-feedback"></span>
                 </div>
 

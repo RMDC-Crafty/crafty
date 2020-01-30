@@ -88,13 +88,14 @@ class SetupHandler(BaseHandler):
                 Backups.insert({
                     Backups.directories: backup_directory,
                     Backups.storage_location: os.path.abspath(os.path.join(helper.crafty_root, 'backups')),
-                    Backups.max_backups: 7
+                    Backups.max_backups: 7,
+                    Backups.server_id: 1
                 }).execute()
 
                 time.sleep(.5)
 
                 # do initial setup
-                multi.init_all_servers
+                multi.init_all_servers()
 
                 # reload the server settings
                 srv_obj = multi.get_first_server_object()
