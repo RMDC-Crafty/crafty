@@ -511,7 +511,7 @@ class Minecraft_Server():
             # if we got here, we couldn't find it
             logger.warning("Unable to find string using regex \"%s\" in server.properties file", regex)
             return False
-        
+
         elif helper.check_file_exists(bungee_waterfall_file):
             return "Bungee/Waterfall Detected"
 

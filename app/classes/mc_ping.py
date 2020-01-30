@@ -10,17 +10,18 @@ import logging.config
 
 logger = logging.getLogger(__name__)
 
+
 class Server:
     def __init__(self, data):
         self.description = data.get('description')
         # print(self.description)
         if isinstance(self.description, dict):
 
-            #cat server
+            # cat server
             if "translate" in self.description:
                 self.description = self.description['translate']
 
-            #waterfall / bungee
+            # waterfall / bungee
             elif 'extra' in self.description:
                 lines = []
 
@@ -33,7 +34,7 @@ class Server:
                 total_text = " ".join(lines)
                 self.description = total_text
 
-            #normal MC
+            # normal MC
             else:
                 self.description = self.description['text']
 
@@ -42,12 +43,13 @@ class Server:
         self.version = data['version']['name']
         self.protocol = data['version']['protocol']
 
-    def __str__(self):
-        return 'Server(description={!r}, icon={!r}, version={!r}, '\
-                'protocol={!r}, players={!r})'.format(
-            self.description, bool(self.icon), self.version,
-            self.protocol, self.players
-        )
+    # def __str__(self):
+    #    return 'Server(description={!r}, icon={!r}, version={!r}, '\
+    #            'protocol={!r}, players={!r})'.format(
+    #        self.description, bool(self.icon), self.version,
+    #        self.protocol, self.players
+    #    )
+
 
 class Players(list):
     def __init__(self, data):
@@ -99,7 +101,7 @@ def ping(ip, port=25565):
     sock = socket.socket()
     try:
         sock.connect((ip, port))
-    except Exception as e:
+    except:
         pass
         return False
 

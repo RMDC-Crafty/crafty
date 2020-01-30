@@ -16,18 +16,13 @@ import tornado.locale
 import tornado.httpserver
 from pathlib import Path
 
-from playhouse.shortcuts import *
-
 from app.classes.console import console
-from app.classes.models import *
+from app.classes.models import Crafty_settings, Webserver
 from app.classes.ftp import ftp_svr_object
 from app.classes.minecraft_server import mc_server
-
-import app.classes.api as api_routes
+from app.classes.helpers import helper
 from app.classes.web_sessions import web_session
-
 from app.classes.multiserv import multi
-
 from app.classes.handlers.base_handler import BaseHandler
 from app.classes.handlers.default404 import My404Handler
 from app.classes.handlers.public_handler import PublicHandler
@@ -35,7 +30,10 @@ from app.classes.handlers.admin_handler import AdminHandler
 from app.classes.handlers.ajax_handler import AjaxHandler
 from app.classes.handlers.setup_handler import SetupHandler
 
+import app.classes.api as api_routes
+
 logger = logging.getLogger(__name__)
+
 
 class webserver():
 
@@ -43,14 +41,14 @@ class webserver():
         self.mc_server = mc_server
         self.ioloop = None
         self.HTTPServer = None
-        
+
     def _asyncio_patch(self):
         """
-        As of Python 3.8 (on Windows), the asyncio default event handler has changed to "proactor", 
+        As of Python 3.8 (on Windows), the asyncio default event handler has changed to "proactor",
         where tornado expects the "selector" handler.
-        
+
         This function checks if the platform is windows and changes the event handler to suit.
-        
+
         (Taken from https://github.com/mkdocs/mkdocs/commit/cf2b136d4257787c0de51eba2d9e30ded5245b31)
         """
         logger.debug("Checking if asyncio patch is required")
@@ -81,7 +79,7 @@ class webserver():
 
         # First, patch asyncio if needed
         self._asyncio_patch()
-        
+
         # let's verify we have an SSL cert
         helper.create_self_signed_cert()
 
@@ -117,11 +115,11 @@ class webserver():
             (r'/setup/(.*)', SetupHandler, dict(mcserver=self.mc_server)),
             (r'/static(.*)', tornado.web.StaticFileHandler, {"path": '/'}),
             (r'/images(.*)', tornado.web.StaticFileHandler, {"path": "/images"}),
-            
+
             # API routes
             (r'/api/v1/host_stats', api_routes.GetHostStats, dict(mcserver=self.mc_server)),
             (r'/api/v1/server_stats', api_routes.GetServerStats, dict(mcserver=self.mc_server)),
-            
+
             # Server related
             (r'/api/v1/server/send_command', api_routes.SendCommand, dict(mcserver=self.mc_server)),
             (r'/api/v1/server/get_logs', api_routes.GetMCLogs, dict(mcserver=self.mc_server)),
@@ -131,14 +129,14 @@ class webserver():
             (r'/api/v1/server/stop', api_routes.StopServer, dict(mcserver=self.mc_server)),
             (r'/api/v1/server/restart', api_routes.RestartServer, dict(mcserver=self.mc_server)),
             (r'/api/v1/list_servers', api_routes.ListServers, dict(mcserver=self.mc_server)),
-            
+
             # Crafty related
             (r'/api/v1/crafty/add_user', api_routes.CreateUser),
             (r'/api/v1/crafty/del_user', api_routes.DeleteUser),
             (r'/api/v1/crafty/get_logs', api_routes.GetCraftyLogs),
-            (r'/api/v1/crafty/search_logs', api_routes.SearchCraftyLogs)            
+            (r'/api/v1/crafty/search_logs', api_routes.SearchCraftyLogs)   
         ]
-    
+
         cert_objects = {
             'certfile': os.path.join(web_root, 'certs', 'crafty.crt'),
             'keyfile': os.path.join(web_root, 'certs', 'crafty.key')
@@ -164,7 +162,7 @@ class webserver():
         self.ioloop.start()
 
     def start_web_server(self, silent=False):
-        thread = threading.Thread(target=self.run_tornado, args=(silent,) , daemon=True, name='tornado_thread')
+        thread = threading.Thread(target=self.run_tornado, args=(silent, ), daemon=True, name='tornado_thread')
         thread.start()
 
     def stop_web_server(self):

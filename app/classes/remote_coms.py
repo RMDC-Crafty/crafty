@@ -1,9 +1,13 @@
+import os
 import time
-from app.classes.models import *
+import logging
+
+from app.classes.models import Remote, model_to_dict, MC_settings
 from app.classes.ftp import ftp_svr_object
 from app.classes.multiserv import multi
 
 logger = logging.getLogger(__name__)
+
 
 class remote_commands():
 
@@ -93,10 +97,10 @@ class remote_commands():
             else:
                 logger.info("Stop halted! Server %s is not running!", server_name)
 
-        #elif command == 'update_server_jar':
+        # elif command == 'update_server_jar':
             # srv_obj.update_server_jar(False)
 
-        #elif command == 'revert_server_jar':
+        # elif command == 'revert_server_jar':
             # srv_obj.revert_updated_server_jar(False)
 
         elif command == "exit_crafty":

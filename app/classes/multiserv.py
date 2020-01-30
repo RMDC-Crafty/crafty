@@ -6,8 +6,7 @@ import schedule
 
 
 from app.classes.minecraft_server import Minecraft_Server
-from app.classes.models import MC_settings, Server_Stats, Host_Stats, Remote
-from playhouse.shortcuts import *
+from app.classes.models import MC_settings, Server_Stats, Host_Stats, Remote, model_to_dict
 from app.classes.helpers import helper
 from app.classes.console import console
 
@@ -91,7 +90,6 @@ class multi_serve():
             # echo it's now setup to the log
             logger.info("Loading settings for server %s", s['name'])
 
-
     def reload_scheduling(self):
         logger.info("Clearing Scheduled Tasks")
         schedule.clear('all_tasks')
@@ -100,7 +98,7 @@ class multi_serve():
         schedule.every(10).seconds.do(multi.do_stats_for_servers).tag('server_stats', 'all_tasks')
         schedule.every(10).seconds.do(multi.do_host_status).tag('server_stats', 'all_tasks')
 
-    def get_server_data(self,server_id):
+    def get_server_data(self, server_id):
         if MC_settings.get_by_id(server_id):
             return MC_settings.get_by_id(server_id)
         else:
@@ -172,7 +170,7 @@ class multi_serve():
 
     def get_server_obj(self, server_id):
         server_data = self.get_server_data(server_id)
-        try: 
+        try:
             if self.servers_list[server_data.server_name]:
                 return self.servers_list[server_data.server_name]['server_obj']
             else:
@@ -201,7 +199,7 @@ class multi_serve():
 
         for s in servers:
             logger.info("Stopping Server ID %s (%s)", s['id'], s['name'])
-            console.info("Stopping Server ID %s (%s)", s['id'], s['name'])
+            console.info("Stopping Server ID {} ({})".format(s['id'], s['name']))
 
             # get object
             svr_obj = self.get_server_obj(s['id'])
@@ -213,13 +211,12 @@ class multi_serve():
             # while it's running, we wait
             while running:
                 logger.info("Server %s is still running - waiting 2s to see if it stops", s['name'])
-                console.info("Server %s is still running - waiting 2s to see if it stops", s['name'])
+                console.info("Server {} is still running - waiting 2s to see if it stops".format(s['name']))
                 running = svr_obj.check_running()
                 time.sleep(2)
 
             # let's wait 2 seconds so the remote commands get cleared and then we can do another loop
             time.sleep(2)
-
 
         logger.info("All Servers Stopped")
 
@@ -279,7 +276,7 @@ class multi_serve():
                     Server_Stats.server_port: stats['server_port'],
                 }).execute()
 
-    def get_stats_for_server(self,server_id):
+    def get_stats_for_server(self, server_id):
         q = Server_Stats.select().where(Server_Stats.server_id == int(server_id))
 
         if q.exists():
@@ -289,7 +286,7 @@ class multi_serve():
             return False
 
     def get_stats_for_servers(self):
-        
+
         all_servers_return = {}
 
         if len(self.servers_list) > 0:

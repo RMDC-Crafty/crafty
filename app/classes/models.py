@@ -1,9 +1,9 @@
 import os
 import json
 import datetime
-from peewee import *
+from peewee import DateTimeField, CharField, FloatField, Model, IntegerField, BooleanField, SqliteDatabase
 from playhouse.shortcuts import model_to_dict, dict_to_model
-from playhouse.migrate import *
+from playhouse.migrate import SqliteMigrator
 from app.classes.helpers import helper
 import logging
 
@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 class BaseModel(Model):
     class Meta:
         database = database
+
 
 class Host_Stats(BaseModel):
     time = DateTimeField(default=datetime.datetime.now)
@@ -166,8 +167,8 @@ class History(BaseModel):
     class Meta:
         table_name = 'history'
 
-class sqlhelper():
 
+class sqlhelper():
 
     def create_tables(self):
         with database:
@@ -203,7 +204,7 @@ class sqlhelper():
             Crafty_settings.history_max_age: 2,
         })
 
-        result = q.execute()
+        q.execute()
 
         # default roles
         perms_insert = [
@@ -267,9 +268,7 @@ class sqlhelper():
     # default settings created here if they don't already exits
 
     def do_database_migrations(self):
-
         migrator = SqliteMigrator(database)
-
         mc_cols = database.get_columns("MC_settings")
 
 
@@ -306,5 +305,6 @@ def check_role_permission(username, section):
         logger.warning('User: {} attempted access to section {} and was denied'.format(username, section))
 
     return access
+
 
 peewee = sqlhelper()
