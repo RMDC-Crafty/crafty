@@ -182,6 +182,7 @@ if __name__ == '__main__':
         console.info("Your Admin token is: {}".format(admin_token))
 
     # for each server that is defined, we set them up in the multi class, so we have them ready for later.
+
     multi.init_all_servers()
 
     # do one now...

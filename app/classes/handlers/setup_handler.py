@@ -94,7 +94,7 @@ class SetupHandler(BaseHandler):
                 time.sleep(.5)
 
                 # do initial setup
-                multi.init_all_servers()
+                multi.init_all_servers
 
                 # reload the server settings
                 srv_obj = multi.get_first_server_object()

@@ -9,6 +9,7 @@ from app.classes.minecraft_server import Minecraft_Server
 from app.classes.models import MC_settings, Server_Stats, Host_Stats, Remote
 from playhouse.shortcuts import *
 from app.classes.helpers import helper
+from app.classes.console import console
 
 logger = logging.getLogger(__name__)
 
@@ -18,32 +19,78 @@ class multi_serve():
     def __init__(self):
         self.servers_list = {}
 
+    def get_auto_start_servers_by_rank(self, priority):
+        # priority is 1 = high, 2 = medium, 3 = low
+        # this returns a list of servers who are setup for auto start, ordered by delay
+
+        if priority == 1:
+            logger.info("Getting High Priority Auto Starting Servers")
+
+        elif priority == 2:
+            logger.info("Getting Medium Priority Auto Starting Servers")
+
+        else:
+            logger.info("Getting Low Priority Auto Starting Servers")
+
+        temp_list = []
+
+        # let's get the priority auto starting servers ordered by delay (lowest delay first)
+        servers = MC_settings.select().order_by(MC_settings.auto_start_delay).where(
+            MC_settings.auto_start_server == 1,
+            MC_settings.auto_start_priority == priority
+        )
+
+        for s in servers:
+            temp_list.append({
+                'id': s.id,
+                'name': s.server_name,
+                'delay': s.auto_start_delay
+            })
+        return temp_list
+
     def init_all_servers(self):
+
+        all_servers = []
 
         if len(self.servers_list) > 0:
             logger.info("Don't re-init all servers twice")
             return False
 
-        all_servers = MC_settings.select()
+        # high priority
+        all_servers = all_servers + self.get_auto_start_servers_by_rank(1)
 
-        if len(all_servers) > 0:
+        # medium
+        all_servers = all_servers + self.get_auto_start_servers_by_rank(2)
 
-            # for each server defined
-            for s in all_servers:
+        # low
+        all_servers = all_servers + self.get_auto_start_servers_by_rank(3)
 
-                # setup the server obj
-                self.setup_new_server_obj(s.id)
+        # let's get the non auto starting servers...
+        other_servers = MC_settings.select().where(MC_settings.auto_start_server == 0)
 
-                # create a server object from this id number
-                srv_obj = self.get_server_obj(s.id)
+        # for each other server not starting, we can just add them whenever
+        for s in other_servers:
+            all_servers.append({
+                'id': s.id,
+                'name': s.server_name,
+                'delay': s.auto_start_delay
+            })
 
-                # reload the server settings
-                srv_obj.reload_settings()
+        # for each auto starting server defined
+        for s in all_servers:
 
-                # echo it's now setup to the log
-                logger.info("Loading settings for server:{}".format(s.server_name))
-        else:
-            logger.info("No minecraft servers defined in database")
+            # setup the server obj - this kicks off the autostart
+            self.setup_new_server_obj(s['id'])
+
+            # create a server object from this id number
+            srv_obj = self.get_server_obj(s['id'])
+
+            # reload the server settings
+            srv_obj.reload_settings()
+
+            # echo it's now setup to the log
+            logger.info("Loading settings for server:{}".format(s['name']))
+
 
     def reload_scheduling(self):
         logger.info("Clearing Scheduled Tasks")
@@ -52,7 +99,6 @@ class multi_serve():
         logger.info("Rebuilding Scheduled Tasks")
         schedule.every(10).seconds.do(multi.do_stats_for_servers).tag('server_stats', 'all_tasks')
         schedule.every(10).seconds.do(multi.do_host_status).tag('server_stats', 'all_tasks')
-
 
     def get_server_data(self,server_id):
         if MC_settings.get_by_id(server_id):
@@ -71,6 +117,7 @@ class multi_serve():
                 'server_obj': Minecraft_Server()
                 }
 
+            # this kicks off the auto start for this server object
             self.servers_list[server_data.server_name]['server_obj'].do_init_setup(server_id)
         else:
             logger.critical("Server: {} is already defined!".format(server_data.name))
@@ -151,6 +198,7 @@ class multi_serve():
 
         for s in servers:
             logger.info("Stopping Server ID: {} - {}".format(s['id'], s['name']))
+            console.info("Stopping Server ID: {} - {}".format(s['id'], s['name']))
 
             # get object
             svr_obj = self.get_server_obj(s['id'])
@@ -161,9 +209,13 @@ class multi_serve():
 
             # while it's running, we wait
             while running:
-                logger.info("Server {} is still running - waiting 1s til it stops".format(s['name']))
+                logger.info("Server {} is still running - waiting 2s to see if it stops".format(s['name']))
+                console.info("Server {} is still running - waiting 2s to see if it stops".format(s['name']))
                 running = svr_obj.check_running()
-                time.sleep(1)
+                time.sleep(2)
+
+            # let's wait 2 seconds so the remote commands get cleared and then we can do another loop
+            time.sleep(2)
 
 
         logger.info("All Servers Stopped")

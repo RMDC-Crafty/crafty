@@ -47,16 +47,27 @@ class Minecraft_Server():
         server_data = MC_settings.get_by_id(server_id)
         return server_data.server_name
 
+    def run_scheduled_server(self):
+        # delay the startup as long as the
+        console.info("Starting Minecraft Server {}".format(self.name))
+        self.run_threaded_server()
+
+        # remove the scheduled job since it's ran
+        return schedule.CancelJob
+
     def do_auto_start(self):
         # do we want to auto launch the minecraft server?
         if self.settings.auto_start_server:
             delay = int(self.settings.auto_start_delay)
             logger.info("Auto Start is Enabled - Waiting {} seconds to start the server".format(delay))
             console.info("Auto Start is Enabled - Waiting {} seconds to start the server".format(delay))
-            time.sleep(int(delay))
+
+            schedule.every(int(delay)).seconds.do(self.run_scheduled_server)
+            # time.sleep(int(delay)) # here we need to schedule the delay, as a function that auto kills it's schedule
+
             # delay the startup as long as the
-            console.info("Starting Minecraft Server {}".format(self.name))
-            self.run_threaded_server()
+            # console.info("Starting Minecraft Server {}".format(self.name))
+            # self.run_threaded_server()
         else:
             logger.info("Auto Start is Disabled")
             console.info("Auto Start is Disabled")
@@ -71,7 +82,7 @@ class Minecraft_Server():
             self.reload_settings()
             self.reload_history_settings()
 
-        # if the db file exists, this isn't a fresh start
+        # if setup is complete, we do an auto start
         if helper.is_setup_complete():
             self.do_auto_start()
 
