@@ -342,17 +342,21 @@ class AdminHandler(BaseHandler):
 
             elif command == "ftp_server_start":
                 Remote.insert({
-                    Remote.command: 'start_ftp'
+                    Remote.command: 'start_ftp',
+                    Remote.server_id: id,
+                    Remote.command_source: 'localhost'
                 }).execute()
                 time.sleep(2)
-                next_page = "/admin/files"
+                next_page = "/admin/files?id={}".format(id)
 
             elif command == 'ftp_server_stop':
                 Remote.insert({
-                    Remote.command: 'stop_ftp'
+                    Remote.command: 'stop_ftp',
+                    Remote.server_id: id,
+                    Remote.command_source: 'localhost'
                 }).execute()
                 time.sleep(2)
-                next_page = "/admin/files"
+                next_page = "/admin/files?id={}".format(id)
 
             elif command == "backup":
                 backupmgr.backup_server(id)
@@ -418,6 +422,7 @@ class AdminHandler(BaseHandler):
             template = "admin/files.html"
 
             server_id = self.get_argument('id', None)
+            context['server_id'] = server_id
 
             srv_object = multi.get_server_obj(server_id)
             context['pwd'] = srv_object.server_path

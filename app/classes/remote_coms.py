@@ -5,6 +5,7 @@ import logging
 from app.classes.models import Remote, model_to_dict, MC_settings
 from app.classes.ftp import ftp_svr_object
 from app.classes.multiserv import multi
+from app.classes.helpers import helper
 
 logger = logging.getLogger(__name__)
 
@@ -97,6 +98,7 @@ class remote_commands():
             else:
                 logger.info("Stop halted! Server %s is not running!", server_name)
 
+        # TODO We need to rebuild this functionality
         # elif command == 'update_server_jar':
             # srv_obj.update_server_jar(False)
 
@@ -118,6 +120,19 @@ class remote_commands():
             os._exit(0)
 
         elif command == 'start_ftp':
+            settings = MC_settings.get_by_id(server_id)
+
+            if ftp_svr_object.check_running():
+                logger.warning("The FTP server is already running - please stop it before starting again")
+                return False
+
+            if helper.check_directory_exist(settings.server_path):
+                logger.info("Setting FTP root path to {}".format(settings.server_path))
+                ftp_svr_object.set_root_dir(settings.server_path)
+            else:
+                logger.error("Path: {} not found!".format(settings.server_path))
+                return False
+
             logger.info("Starting FTP Server")
             ftp_svr_object.run_threaded_ftp_server()
 

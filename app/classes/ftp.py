@@ -25,7 +25,9 @@ class ftp_server():
         self.ftp_server_thread = None
         self.running = False
         self.last_error = None
-        # self.setup_ftp()
+
+    def set_root_dir(self, full_path):
+        self.root_dir = full_path
 
     def setup_ftp(self):
         ftp_settings = None
@@ -61,21 +63,19 @@ class ftp_server():
 
         handler.certfile = certfile
         handler.authorizer = authorizer
-        self.server = ThreadedFTPServer(('', self.port), handler)
-        # self.server = FTPServer(('', self.port), handler)
+        self.server = ThreadedFTPServer(('127.0.0.1', self.port), handler)
         self.running = True
         self.server.serve_forever()
 
 
     def run_threaded_ftp_server(self):
+        self.running = True
         self.ftp_server_thread = threading.Thread(target=self._ftp_serve, daemon=True)
         self.ftp_server_thread.start()
 
     def stop_threaded_ftp_server(self):
         self.running = False
         self.server.close_all()
-
-
 
     def check_running(self):
         return self.running
