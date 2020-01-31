@@ -1,6 +1,8 @@
 <form action="/ajax/save_file" method="post" class="text-align:center">
     {% raw xsrf_form_html() %}
-    <input type="hidden" name="file_path" value="{{data ['file_path']}}"/>
+    <input type="hidden" name="file_path" value="{{ data ['file_path'] }}"/>
+    <input type="hidden" name="server_id" value=" {{ data ['server_id'] }} "/>
+    Server ID:  {{ data ['server_id'] }}
     <textarea name="file_contents" rows="20" cols="120">{{ data['file_data'] }}</textarea><br />
     <div class="row">
         <div class="col-xs-6">
