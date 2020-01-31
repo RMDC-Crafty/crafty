@@ -39,25 +39,50 @@
                             <i class="fa fa-level-up" aria-hidden="true"></i>{{ data['parent'] }}
                         </a>
                         <br />
+                        <br />
                       {% end %}
+                            <table class="table" id="files_table">
+                                <thead>
+                                <th>&nbsp;</th>
+                                <th>Size</th>
+                                <th>File</th>
+                                </thead>
+                                <tbody>
+                                      {% for f in data['listing'] %}
 
-                      {% for f in data['listing'] %}
-                        {% if f['type'] == "file" %}
-                            {% if f['name'][-4:] in data['ext_list'] %}
-                            <a onclick="edit_file('{{ f['name'] }}')">
-                                <span class="text-success"><i class="fa fa-file" aria-hidden="true"></i>{{ f['name'] }}</span>
-                            </a>
-                            {% else %}
-                                <span class="text-danger"><i class="fa fa-file" aria-hidden="true"></i>{{ f['name'] }}</span>
-                            {% end %}
-                            <br />
-                        {% else %}
-                            <a onclick="sub_form('{{ f['name'] }}')">
-                                <i class="fa fa-folder" aria-hidden="true"></i> {{ f['name'] }}
-                            </a>
-                            <br />
-                        {% end %}
-                      {% end %}
+                                      <tr>
+                                          <td width="15px">
+                                              {% if f['type'] == "file" %}
+                                              <span class="text-success"><i class="fa fa-file" aria-hidden="true"></i></span>
+                                              {% else %}
+                                                <i class="text-primary fa fa-folder" aria-hidden="true"></i>
+                                              {% end %}
+                                          </td>
+                                          <td width="30px">
+                                              {% if f['type'] == "file" %}
+                                                {{ f['size'] }}
+                                              {% end %}
+                                          </td>
+                                          <td>
+                                              {% if f['type'] == "file" %}
+                                                  {% if f['name'][-4:] in data['ext_list'] %}
+                                                    <a onclick="edit_file('{{ f['name'] }}')">
+                                                        <span class="text-success">{{ f['name'] }}</span>
+                                                    </a>
+                                                    {% else %}
+                                                        <span class="text-danger">{{ f['name'] }}</span>
+                                                    {% end %}
+                                              {% else %}
+                                              <a onclick="sub_form('{{ f['name'] }}')">
+                                                {{ f['name'] }}
+                                              </a>
+                                              {% end %}
+                                          </td>
+                                      </tr>
+                                      {% end %}
+
+                                </tbody>
+                            </table>
 
 
                   </form>
@@ -125,6 +150,10 @@
 
 {% block js-script %}
 <script>
+    $('#files_table').DataTable({
+            "order": [[ 1, "asc" ]],
+            "pageLength": 25
+        });
 
     //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
     function getCookie(name) {
