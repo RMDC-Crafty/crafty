@@ -212,19 +212,21 @@ class MainPrompt(cmd.Cmd):
         console.help("Use the list_servers command to get more detailed data")
 
     def do_set_passwd(self, line):
-        if len(line) > 512:
-            console.warning("Password Too Long")
-            return False
 
-        if len(line) < 6:
-            console.warning("Password Too Short")
-            return False
         try:
             user = Users.get(Users.username == line).username
         except:
             Console.error("User: {} Not Found".format(line))
             return False
         new_pass = input("NEW password for: {} > ".format(user))
+
+        if len(new_pass) > 512:
+            console.warning("Password Too Long")
+            return False
+
+        if len(new_pass) < 6:
+            console.warning("Password Too Short")
+            return False
 
         Users.update({
             Users.password: helper.encode_pass(new_pass)
