@@ -82,14 +82,15 @@ class Minecraft_Server():
             console.info("Auto Start is Disabled")
 
     def do_init_setup(self, server_id):
-        logger.debug("Loading Minecraft server object for server %s", server_id)
-        console.info("Loading Minecraft server object for server {}".format(server_id))
 
         if helper.is_setup_complete():
             self.server_id = server_id
             self.name = self.get_mc_server_name(self.server_id)
             self.reload_settings()
             self.reload_history_settings()
+
+        logger.debug("Loading Minecraft server object for server %s-%s", server_id, self.name)
+        console.info("Loading Minecraft server object for server {}-{}".format(server_id, self.name))
 
         # if setup is complete, we do an auto start
         if helper.is_setup_complete():
