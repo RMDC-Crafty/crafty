@@ -10,3 +10,15 @@ __pycache__/
 
 #ignore logs folder
 *.log
+
+# ignore VSCODE
+/.vscode/
+
+# ignore db 
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# ignore generated files
+/app/web/certs
+/app/web/temp
