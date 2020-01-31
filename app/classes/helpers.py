@@ -42,6 +42,8 @@ class helpers:
         self.passhasher = PasswordHasher()
 
         self.can_email = False
+        
+        self.methods = ["GET", "POST", "PUT", "DELETE"]
 
     def redefine_paths(self, config_dir, db_dir):
         self.dbpath = os.path.join(db_dir, "crafty.sqlite")
@@ -434,6 +436,26 @@ class helpers:
                 data = yaml.full_load(file)
             return data
         return False
+
+    def validate_url(self, url):
+        # Taken from https://stackoverflow.com/questions/7160737 because I cannot write regexes (kevdagoat)
+        # Modified to fit into a function
+        regex = re.compile(
+                r'^(?:http)s?://' # http:// or https://
+                r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' #domain...
+                r'localhost|' #localhost...
+                r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})' # ...or ip
+                r'(?::\d+)?' # optional port
+                r'(?:/?|[/?]\S+)$', re.IGNORECASE
+                )
+
+        return re.match(regex, url) is not None
+    
+    def validate_method(self, method):
+        if method in self.methods:
+            return True
+        else:
+            return False
 
     def human_readable_file_size(self, num, suffix='B'):
         for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:

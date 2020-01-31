@@ -36,6 +36,13 @@ class Host_Stats(BaseModel):
     disk_total = CharField()
 
 
+class Webhooks(BaseModel):
+    method = CharField(default="POST")
+    url = CharField(unique=True)
+    on_command = CharField()
+    send_data = BooleanField(default=True)
+
+
 class Server_Stats(BaseModel):
     server_id = IntegerField()
     time = DateTimeField(default=datetime.datetime.now)

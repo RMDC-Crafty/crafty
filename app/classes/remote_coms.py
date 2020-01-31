@@ -44,6 +44,20 @@ class remote_commands():
                 self.clear_all_commands()
 
             time.sleep(1)
+    
+    def list_commands(self):
+        # just a quick helper to list commands. will improve in future
+        return {
+            "restart_web_server": "Restart Web Server",
+            "reload_mc_settings": "Restart Minecraft Server",
+            "start_mc_server": "Start Minecraft Server",
+            "stop_mc_server": "Stop Minecraft Server",
+            "exit_crafty": "Stop Crafty",
+            "start_ftp": "Start FTPS Server",
+            "stop_ftp": "Stop FTPS Server"
+        }
+            
+        
 
     def handle_command(self, command, server_id):
         srv_obj = multi.get_server_obj(server_id)
