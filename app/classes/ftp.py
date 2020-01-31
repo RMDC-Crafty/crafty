@@ -26,6 +26,9 @@ class ftp_server():
         self.running = False
         self.last_error = None
 
+    def get_root_dir(self):
+        return self.root_dir
+
     def set_root_dir(self, full_path):
         self.root_dir = full_path
 

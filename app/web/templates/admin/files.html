@@ -74,7 +74,9 @@
                         <span class="text-danger">Down <i class="fa fa-thumbs-down" aria-hidden="true"></i></span></h3>
                 {% else %}
                     <h3 class="box-title">FTP Server Control: Server is currently
-                        <span class="text-success">Up <i class="fa fa-thumbs-up" aria-hidden="true"></i></span></h3>
+                        <span class="text-success">Up <i class="fa fa-thumbs-up" aria-hidden="true"></i></span><br />
+                        Serving Dir: {{ data['ftp_root'] }}
+                    </h3>
                 {% end %}
 
             </div>

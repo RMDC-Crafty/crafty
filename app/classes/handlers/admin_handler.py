@@ -435,6 +435,7 @@ class AdminHandler(BaseHandler):
             ftp_data = Ftp_Srv.get()
             context['ftp_settings'] = model_to_dict(ftp_data)
             context['ftp_running'] = ftp_svr_object.check_running()
+            context['ftp_root'] = ftp_svr_object.get_root_dir()
 
         else:
             # 404
