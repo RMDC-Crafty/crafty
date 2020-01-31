@@ -111,7 +111,6 @@ class AjaxHandler(BaseHandler):
         elif page == 'del_file':
             file_to_del = self.get_body_argument('file_name', default=None, strip=True)
             server_id = self.get_argument('server_id', default=None, strip=True)
-            print(server_id)
 
             # let's make sure this path is in the backup directory and not somewhere else
             # we don't want someone passing a path like /etc/passwd in the raw, so we are only passing the filename

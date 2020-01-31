@@ -268,11 +268,16 @@ class helpers:
         zip_handler = zipfile.ZipFile(backup_filename, 'w')
 
         # split the directories into a list (even if just one)
-        # lst_paths = paths.split()
+        #lst_paths = paths.split()
 
         for p in paths:
             # make sure to remove any brackets
             # backup_path = p.strip('[').strip(']').strip(',').strip('"')
+
+            # if this path is just a file (in the server root for instance)
+            if helper.check_file_exists(p):
+                logger.info("backing up: {}".format(p))
+                zip_handler.write(p)
 
             for root, dirs, files in os.walk(p, topdown=True):
                 dirs[:] = [d for d in dirs if d not in exclude_dirs]
