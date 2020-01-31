@@ -23,6 +23,7 @@
           <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
               <li class="active"><a href="#crafty" data-toggle="tab">Crafty Config</a></li>
+              <li><a href="#ftp" data-toggle="tab">FTPS Config</a></li>
               <li><a href="#users" data-toggle="tab">Users</a></li>
 
             </ul>
@@ -76,6 +77,74 @@
                                            max="65535"
                                            min="1"
                                            value="{{ data['web_settings']['port_number'] }}"
+                                    />
+                                </div>
+
+
+                            </div>
+
+                            <div class="box-footer">
+                                <a href="/admin/config" class="btn btn-danger">Cancel</a>
+                                <button type="submit" class="btn btn-success pull-right">
+                                    <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+
+              </div>
+              <!-- /.tab-pane -->
+
+                <div class="tab-pane" id="ftp">
+                    <form role="form" method="post">
+                        {% raw xsrf_form_html() %}
+                        <input type="hidden" name="config_type" value="ftp_settings"/>
+
+                        <div class="box">
+                            <div class="box-header with-border">
+                              <h3 class="box-title">
+                                  FTP Config
+                              </h3>
+                            </div>
+
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label>
+                                        FTP User<br />
+                                        <small>This can should be unique to the FTP service</small>
+                                    </label>
+                                    <input type="text"
+                                           name="ftp_user" id="ftp_user"
+                                           class="form-control" placeholder="FTP User" maxlength="255"
+                                           value="{{ data['ftp_user'] }}"
+                                    />
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        FTP Password <br />
+                                        <small>This should be at least 8 letters long - maybe 15 characters</small>
+                                    </label>
+                                    <input type="text"
+                                           name="ftp_pass" id="ftp_pass"
+                                           class="form-control" placeholder="FTP Password" maxlength="512"
+                                           value="{{ data['ftp_pass'] }}"
+                                    />
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        FTP Port <br />
+                                        <small>Default of 2121 - 21 and 20 require root on linux</small>
+                                    </label>
+                                    <input type="number"
+                                           name="ftp_port" id="ftp_port"
+                                           class="form-control" placeholder="FTP Port"
+                                           max="65535"
+                                           min="1"
+                                           value="{{ data['ftp_port'] }}"
                                     />
                                 </div>
 
@@ -187,7 +256,6 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-
 
                 Historical Data will be captured every <b>{{ data['crafty_settings']['history_interval'] }}</b> minutes
                 and kept for <b>{{ data['crafty_settings']['history_max_age'] }}</b> days

@@ -207,11 +207,14 @@ class AdminHandler(BaseHandler):
 
             template = "admin/config.html"
             crafty_data = Crafty_settings.get()
-
+            ftp_data = Ftp_Srv.get()
             web_data = Webserver.get()
             users = Users.select()
 
-            page_data = {}
+            context['ftp_user'] = ftp_data.user
+            context['ftp_pass'] = ftp_data.password
+            context['ftp_port'] = ftp_data.port
+
             context['saved'] = saved
             context['invalid'] = invalid
 
@@ -538,6 +541,17 @@ class AdminHandler(BaseHandler):
                 else:
                     logger.error('Minecraft server directory or JAR does not exist')
                     self.redirect("/admin/config?invalid=True")
+
+            elif config_type == 'ftp_settings':
+                ftp_user = self.get_argument('ftp_user')
+                ftp_pass = self.get_argument('ftp_pass')
+                ftp_port = self.get_argument('ftp_port')
+
+                Ftp_Srv.update({
+                    Ftp_Srv.user: ftp_user,
+                    Ftp_Srv.password: ftp_pass,
+                    Ftp_Srv.port: ftp_port,
+                }).execute()
 
             self.redirect("/admin/config?saved=True")
 
