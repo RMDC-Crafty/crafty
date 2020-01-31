@@ -460,7 +460,7 @@ class Minecraft_Server():
         backup_folder = "{}-{}".format(self.server_id, self.name)
         backup_list = Backups.get(Backups.server_id == int(self.server_id))
         backup_path = os.path.join(backup_list.storage_location, backup_folder)
-        helper.ensure_dir_exists(backup_path)
+        #helper.ensure_dir_exists(backup_path)
 
         results = []
 

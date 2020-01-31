@@ -6,7 +6,7 @@ import schedule
 
 
 from app.classes.minecraft_server import Minecraft_Server
-from app.classes.models import MC_settings, Server_Stats, Host_Stats, Remote, model_to_dict
+from app.classes.models import MC_settings, Server_Stats, Host_Stats, Remote, model_to_dict, Backups, History
 from app.classes.helpers import helper
 from app.classes.console import console
 
@@ -129,8 +129,12 @@ class multi_serve():
             del self.servers_list[server_name]
             logger.info("Removed server \"%s\" from multi server list", server_name)
 
-            # delete the server
+            # delete the server - and clean up other areas of the db
             MC_settings.delete().where(MC_settings.id == int(server_id)).execute()
+            Backups.delete().where(Backups.server_id == int(server_id)).execute()
+            History.delete().where(History.server_id == int(server_id)).execute()
+            Server_Stats.delete().where(Server_Stats.server_id == int(server_id)).execute()
+
 
             logger.info('Deleted Server ID %s', server_id)
 

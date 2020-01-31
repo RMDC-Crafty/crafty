@@ -32,6 +32,7 @@
                   <form method="post" id="browser">
                       {% raw xsrf_form_html() %}
                       <input type="hidden" id="next_dir" name="next_dir" value="" />
+                      <input type="hidden" id="server_id" name="server_id" value="{{ data['server_id'] }}" />
 
                       {% if data['parent'] %}
                         <a onclick="sub_form('{{ data['parent'] }}')">
