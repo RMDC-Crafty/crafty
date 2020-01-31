@@ -3,15 +3,17 @@ import cmd
 import sys
 import time
 import json
+import logging
 
 from app.classes.console import Console
 from app.classes.helpers import helpers
-from app.classes.models import *
+from app.classes.models import Remote, MC_settings, Webserver, model_to_dict, Users
 from app.classes.multiserv import multi
 
 helper = helpers()
 console = Console()
 logger = logging.getLogger(__name__)
+
 
 class MainPrompt(cmd.Cmd):
     """ The main command class - loads the other modules/prompts """
@@ -219,7 +221,7 @@ class MainPrompt(cmd.Cmd):
             return False
         try:
             user = Users.get(Users.username == line).username
-        except Exception as e:
+        except:
             Console.error("User: {} Not Found".format(line))
             return False
         new_pass = input("NEW password for: {} > ".format(user))
@@ -365,7 +367,7 @@ class MainPrompt(cmd.Cmd):
             srv_obj = multi.get_server_obj(s.id)
             running = srv_obj.check_running()
             stats = multi.get_stats_for_server(s.id)
-            #print(stats)
+            # print(stats)
 
             console.info("Server ID: {}".format(s.id))
             console.info("Name:{}".format(s.server_name))
@@ -382,5 +384,3 @@ class MainPrompt(cmd.Cmd):
             console.info("MOTD: {}".format(stats['motd']))
 
             console.info('-' * 30)
-
-

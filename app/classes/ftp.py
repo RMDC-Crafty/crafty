@@ -40,7 +40,7 @@ class ftp_server():
             mc_settings = MC_settings.get_by_id(1)
 
         except Exception as e:
-            logging.critical("Error Loading FTP: ".format(e))
+            logging.exception("Error Loading FTP. Traceback:")
             self.last_error = e
             return False
 
@@ -56,7 +56,6 @@ class ftp_server():
             self.port = ftp_settings.port
             self.root_dir = mc_settings.server_path
 
-
     def _ftp_serve(self):
         authorizer = DummyAuthorizer()
         authorizer.add_user(self.user, self.password, self.root_dir, perm='elradfmwMT')
@@ -69,7 +68,6 @@ class ftp_server():
         self.server = ThreadedFTPServer(('127.0.0.1', self.port), handler)
         self.running = True
         self.server.serve_forever()
-
 
     def run_threaded_ftp_server(self):
         self.running = True
