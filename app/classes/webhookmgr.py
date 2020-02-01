@@ -38,7 +38,7 @@ class WebhookMGR():
                     command_name = i
                     logger.debug("Command found by description")
                     break
-                else: 
+                else:
                     # nope, invalid
                     logger.warning("Command passed to add_webhook is invalid")
                     command_name = None
@@ -67,9 +67,9 @@ class WebhookMGR():
                 "name": entry.name,
                 "method": entry.method,
                 "target": entry.url,
-                "send_data": entry.send_data, 
+                "send_data": entry.send_data,
                 "command_name": entry.on_command,
-                "command_desc": self.commands.get(entry.on_command) 
+                "command_desc": self.commands.get(entry.on_command)
             }
         return webhooks
 
@@ -154,5 +154,6 @@ class WebhookMGR():
                 "errors": errors,
                 "messages": messages
                 }
+
 
 webhookmgr = WebhookMGR()

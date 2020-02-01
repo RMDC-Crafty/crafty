@@ -56,10 +56,10 @@ class remote_commands():
                 self.clear_all_commands()
 
             time.sleep(1)
-    
+
     def list_commands(self):
         # just a quick helper to list commands. will improve in future
-        return commands 
+        return commands
 
     def handle_command(self, command, server_id):
         srv_obj = multi.get_server_obj(server_id)
@@ -85,9 +85,9 @@ class remote_commands():
 
                 except:
                     logger.exception("Unable to stop server %s. Traceback: ", server_name)
-                    webhookmgr.run_webhooks(command, webhookmgr.data_formatter(500, 
-                                                                               {"error": "TRACEBACK"}, 
-                                                                               {"server": {"id": server_id, "name": server_name, "running": running}}, 
+                    webhookmgr.run_webhooks(command, webhookmgr.data_formatter(500,
+                                                                               {"error": "TRACEBACK"},
+                                                                               {"server": {"id": server_id, "name": server_name, "running": running}},
                                                                                {"info": "A Traceback occured while restarting the MC server"}))
 
                 while True:
