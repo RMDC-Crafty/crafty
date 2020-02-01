@@ -24,7 +24,7 @@ class SetupHandler(BaseHandler):
         context = {}
         template = ''
 
-        errors = self.get_argument('errors', None)
+        errors = self.get_argument('errors', '')
 
         if page == 'step1':
             context = {
