@@ -56,7 +56,7 @@ class MultiBackup():
         backup_folder = self.get_backup_folder_for_server(server_id)
         server_backup_dir = os.path.join(backup_list.storage_location, backup_folder)
 
-        helper.ensure_dir_exists(server_backup_dir)
+        #helper.ensure_dir_exists(server_backup_dir)
 
         svr_obj = multi.get_server_obj(server_id)
         return svr_obj.list_backups()

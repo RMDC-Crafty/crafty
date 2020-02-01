@@ -66,11 +66,14 @@ class AjaxHandler(BaseHandler):
 
         elif page == 'get_file':
             file_path = self.get_argument('file_name')
+            server_id = self.get_argument('server_id')
+
             f = open(file_path, "r")
             file_data = f.read()
             context = {
                 "file_data": file_data,
-                "file_path":file_path
+                "file_path": file_path,
+                "server_id": server_id
             }
 
             self.render(
@@ -226,6 +229,7 @@ class AjaxHandler(BaseHandler):
         elif page == 'save_file':
             file_data = self.get_argument('file_contents')
             file_path = self.get_argument("file_path")
+            server_id = self.get_argument("server_id")
             try:
                 file = open(file_path, 'w')
                 file.write(file_data)
@@ -233,7 +237,7 @@ class AjaxHandler(BaseHandler):
                 logger.error("File {} saved with new content".format(file_path))
             except Exception as e:
                 logger.error("Unable to save {} due to {} error".format(file_path, e))
-            self.redirect("/admin/files")
+            self.redirect("/admin/files?id={}".format(server_id))
 
         elif page == "destroy_server":
             server_id = self.get_body_argument('server_id', default=None, strip=True)

@@ -207,11 +207,14 @@ class AdminHandler(BaseHandler):
 
             template = "admin/config.html"
             crafty_data = Crafty_settings.get()
-
+            ftp_data = Ftp_Srv.get()
             web_data = Webserver.get()
             users = Users.select()
 
-            page_data = {}
+            context['ftp_user'] = ftp_data.user
+            context['ftp_pass'] = ftp_data.password
+            context['ftp_port'] = ftp_data.port
+
             context['saved'] = saved
             context['invalid'] = invalid
 
@@ -539,6 +542,17 @@ class AdminHandler(BaseHandler):
                     logger.error('Minecraft server directory or JAR does not exist')
                     self.redirect("/admin/config?invalid=True")
 
+            elif config_type == 'ftp_settings':
+                ftp_user = self.get_argument('ftp_user')
+                ftp_pass = self.get_argument('ftp_pass')
+                ftp_port = self.get_argument('ftp_port')
+
+                Ftp_Srv.update({
+                    Ftp_Srv.user: ftp_user,
+                    Ftp_Srv.password: ftp_pass,
+                    Ftp_Srv.port: ftp_port,
+                }).execute()
+
             self.redirect("/admin/config?saved=True")
 
         elif page == "server_config":
@@ -591,14 +605,17 @@ class AdminHandler(BaseHandler):
         elif page == 'files':
 
             next_dir = self.get_argument('next_dir')
+            server_id = self.get_argument('server_id')
             path = Path(next_dir)
 
             template = "admin/files.html"
             context['pwd'] = next_dir
 
+            context['server_id'] = server_id
+
             context['listing'] = helper.scan_dirs_in_path(context['pwd'])
 
-            mc_data = MC_settings.get()
+            mc_data = MC_settings.get_by_id(server_id)
             mc_settings = model_to_dict(mc_data)
 
             ftp_data = Ftp_Srv.get()
@@ -671,6 +688,18 @@ class AdminHandler(BaseHandler):
                     MC_settings.crash_detection: 0,
                     MC_settings.server_port: 25565,
                     MC_settings.server_ip: "127.0.0.1"
+                }).execute()
+
+                #add a backup folder
+                directories = [server_path, ]
+                backup_directory = json.dumps(directories)
+
+                # default backup settings
+                Backups.insert({
+                    Backups.directories: backup_directory,
+                    Backups.storage_location: os.path.abspath(os.path.join(helper.crafty_root, 'backups')),
+                    Backups.max_backups: 7,
+                    Backups.server_id: new_server_id
                 }).execute()
 
                 logger.info("Added ServerID: {} - {}".format(new_server_id, server_name))
