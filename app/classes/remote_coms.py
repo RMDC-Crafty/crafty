@@ -70,7 +70,7 @@ class remote_commands():
             self.tornado_obj.stop_web_server()
             time.sleep(1)
             self.tornado_obj.start_web_server(True)
-            webhookmgr.run_command_webhooks(command, webhookmgr.data_formatter(200, {}, {"code": "WEBSRV_RESTART"}, {"info": "Crafty Web Interface action has completed"}))
+            webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(200, {}, {"code": "WEBSRV_RESTART"}, {"info": "Crafty Web Interface action has completed"}))
             self.clear_all_commands()
 
         elif command == "reload_mc_settings":
@@ -85,7 +85,7 @@ class remote_commands():
 
                 except:
                     logger.exception("Unable to stop server %s. Traceback: ", server_name)
-                    webhookmgr.run_command_webhooks(command, webhookmgr.data_formatter(500,
+                    webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(500,
                                                                                {"error": "TRACEBACK"},
                                                                                {"server": {"id": server_id, "name": server_name, "running": running}},
                                                                                {"info": "A Traceback occured while restarting the MC server"}))
@@ -103,13 +103,13 @@ class remote_commands():
             else:
                 logger.info("%s not running, starting it now", server_name)
                 srv_obj.run_threaded_server()
-                webhookmgr.run_command_webhooks(command, webhookmgr.data_formatter(200, {}, {"code": "SER_RESTART_DONE", "server": {"id": server_id, "name": server_name, "running": running}}, {"info": "Server restart action has completed"}))
+                webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(200, {}, {"code": "SER_RESTART_DONE", "server": {"id": server_id, "name": server_name, "running": running}}, {"info": "Server restart action has completed"}))
 
         elif command == 'start_mc_server':
             srv_obj.run_threaded_server()
             time.sleep(2)
             multi.do_stats_for_servers()
-            webhookmgr.run_command_webhooks(command, webhookmgr.data_formatter(200, {}, {"code": "SER_START_DONE", "server": {"id": server_id, "name": server_name, "running": running}}, {"info": "Server start action has completed"}))
+            webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(200, {}, {"code": "SER_START_DONE", "server": {"id": server_id, "name": server_name, "running": running}}, {"info": "Server start action has completed"}))
 
         elif command == 'stop_mc_server':
             if running:
@@ -117,10 +117,10 @@ class remote_commands():
                 srv_obj.stop_threaded_server()
                 time.sleep(2)
                 multi.do_stats_for_servers()
-                webhookmgr.run_command_webhooks(command, webhookmgr.data_formatter(200, {}, {"code": "SER_STOP_DONE", "server": {"id": server_id, "name": server_name, "running": running}}, {"info": "Server stop action has completed"}))
+                webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(200, {}, {"code": "SER_STOP_DONE", "server": {"id": server_id, "name": server_name, "running": running}}, {"info": "Server stop action has completed"}))
             else:
                 logger.info("Stop halted! Server %s is not running!", server_name)
-                webhookmgr.run_command_webhooks(command, webhookmgr.data_formatter(500, {"error": "SER_NOT_RUNNING"}, {"server": {"id": server_id, "name": server_name, "running": running}}, {"info": "Server is not running"}))
+                webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(500, {"error": "SER_NOT_RUNNING"}, {"server": {"id": server_id, "name": server_name, "running": running}}, {"info": "Server is not running"}))
 
         # TODO We need to rebuild this functionality
         # elif command == 'update_server_jar':
@@ -140,7 +140,7 @@ class remote_commands():
             multi.stop_all_servers()
 
             logger.info("***** Crafty Stopped ***** \n")
-            webhookmgr.run_command_webhooks(command, webhookmgr.data_formatter(200, {}, {"code": "CWEB_STOP"}, {"info": "Crafty is shutting down"}))
+            webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(200, {}, {"code": "CWEB_STOP"}, {"info": "Crafty is shutting down"}))
             os._exit(0)
 
         elif command == 'start_ftp':
@@ -148,7 +148,7 @@ class remote_commands():
 
             if ftp_svr_object.check_running():
                 logger.warning("The FTP server is already running - please stop it before starting again")
-                webhookmgr.run_command_webhooks(command, webhookmgr.data_formatter(500, {"error": "FTP_RUNNING"}, {}, {"info": "FTP is already running"}))
+                webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(500, {"error": "FTP_RUNNING"}, {}, {"info": "FTP is already running"}))
                 return False
 
             if helper.check_directory_exist(settings.server_path):
@@ -156,14 +156,14 @@ class remote_commands():
                 ftp_svr_object.set_root_dir(settings.server_path)
             else:
                 logger.error("Path: {} not found!".format(settings.server_path))
-                webhookmgr.run_command_webhooks(command, webhookmgr.data_formatter(200, {"error": "PATH_NONEXISTANT"}, {"path": settings.server_path}, {"info": "Home path for FTP server not found"}))
+                webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(200, {"error": "PATH_NONEXISTANT"}, {"path": settings.server_path}, {"info": "Home path for FTP server not found"}))
                 return False
 
             logger.info("Starting FTP Server")
             ftp_svr_object.run_threaded_ftp_server()
-            webhookmgr.run_command_webhooks(command, webhookmgr.data_formatter(200, {}, {}, {"info": "FTP server successfully started"}))
+            webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(200, {}, {}, {"info": "FTP server successfully started"}))
 
         elif command == 'stop_ftp':
             ftp_svr_object.stop_threaded_ftp_server()
-            webhookmgr.run_command_webhooks(command, webhookmgr.data_formatter(200, {}, {}, {"info": "FTP server successfully stopped"}))
+            webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(200, {}, {}, {"info": "FTP server successfully stopped"}))
 

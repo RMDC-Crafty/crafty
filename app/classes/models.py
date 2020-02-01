@@ -45,7 +45,7 @@ class Command_Webhooks(BaseModel):
     send_data = BooleanField(default=True)
 
 
-class Status_Webhooks(BaseModel):
+class Event_Webhooks(BaseModel):
     id = AutoField()
     name = CharField(max_length=64, unique=True)
     method = CharField(default="POST")
