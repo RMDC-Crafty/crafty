@@ -1,6 +1,7 @@
 import logging
 import tornado.web
 import tornado.escape
+import bleach
 
 from app.classes.console import console
 from app.classes.models import *
@@ -41,8 +42,8 @@ class PublicHandler(BaseHandler):
 
 
     def post(self):
-        entered_user = self.get_argument('username')
-        entered_password = self.get_argument('password')
+        entered_user = bleach.clean(self.get_argument('username'))
+        entered_password = bleach.clean(self.get_argument('password'))
 
 
         try:

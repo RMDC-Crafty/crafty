@@ -1,6 +1,7 @@
 import tornado.web
 import tornado.escape
 import schedule
+import bleach
 
 from app.classes.console import console
 from app.classes.models import *
@@ -22,10 +23,11 @@ class AjaxHandler(BaseHandler):
     def get(self, page):
 
         if page == 'server_log':
-            server_id = self.get_argument('id')
+            server_id = bleach.clean(self.get_argument('id'))
 
             if server_id is None:
                 logger.warning("Server ID not found in server_log ajax call")
+                return False
 
             server_path = multi.get_server_root_path(server_id)
 
@@ -65,8 +67,8 @@ class AjaxHandler(BaseHandler):
             )
 
         elif page == 'get_file':
-            file_path = self.get_argument('file_name')
-            server_id = self.get_argument('server_id')
+            file_path = bleach.clean(self.get_argument('file_name'))
+            server_id = bleach.clean(self.get_argument('server_id'))
 
             f = open(file_path, "r")
             file_data = f.read()
@@ -99,8 +101,8 @@ class AjaxHandler(BaseHandler):
         user_data = get_perms_for_user(name)
 
         if page == "send_command":
-            command = self.get_body_argument('command', default=None, strip=True)
-            server_id = self.get_argument('id')
+            command = bleach.clean(self.get_body_argument('command', default=None, strip=True))
+            server_id = bleach.clean(self.get_argument('id'))
 
             if server_id is None:
                 logger.warning("Server ID not found in send_command ajax call")
@@ -112,8 +114,8 @@ class AjaxHandler(BaseHandler):
                     srv_obj.send_command(command)
 
         elif page == 'del_file':
-            file_to_del = self.get_body_argument('file_name', default=None, strip=True)
-            server_id = self.get_argument('server_id', default=None, strip=True)
+            file_to_del = bleach.clean(self.get_body_argument('file_name', default=None, strip=True))
+            server_id = bleach.clean(self.get_argument('server_id', default=None, strip=True))
 
             # let's make sure this path is in the backup directory and not somewhere else
             # we don't want someone passing a path like /etc/passwd in the raw, so we are only passing the filename
@@ -125,12 +127,11 @@ class AjaxHandler(BaseHandler):
             backup_list = Backups.get(Backups.server_id == int(server_id))
             server_backup_file = os.path.join(backup_list.storage_location, backup_folder, file_to_del)
 
-
             if server_backup_file and helper.check_file_exists(server_backup_file):
                 helper.del_file(server_backup_file)
 
         elif page == 'del_schedule':
-            id_to_del = self.get_body_argument('id', default=None, strip=True)
+            id_to_del = bleach.clean(self.get_body_argument('id', default=None, strip=True))
 
             if id_to_del:
                 logger.info("Got command to del schedule {}".format(id_to_del))
@@ -138,8 +139,8 @@ class AjaxHandler(BaseHandler):
                 q.execute()
 
         elif page == 'search_logs':
-            search_string = self.get_body_argument('search', default=None, strip=True)
-            server_id = self.get_body_argument('id', default=None, strip=True)
+            search_string = bleach.clean(self.get_body_argument('search', default=None, strip=True))
+            server_id = bleach.clean(self.get_body_argument('id', default=None, strip=True))
 
             data = MC_settings.get_by_id(server_id)
             logfile = os.path.join(data.server_path, 'logs', 'latest.log')
@@ -161,7 +162,7 @@ class AjaxHandler(BaseHandler):
                     user_data['username'], user_data['role_name'], "Add User"))
                 self.redirect('/admin/unauthorized')
 
-            new_username = self.get_argument("username", None, True)
+            new_username = bleach.clean(self.get_argument("username", None, True))
 
             if new_username:
                 new_pass = helper.random_string_generator()
@@ -182,8 +183,8 @@ class AjaxHandler(BaseHandler):
                     user_data['username'], user_data['role_name'], "Delete User"))
                 self.redirect('/admin/unauthorized')
 
-            username = self.get_argument("username", None, True)
-            role = self.get_argument("role", None, True)
+            username = bleach.clean(self.get_argument("username", None, True))
+            role = bleach.clean(self.get_argument("role", None, True))
 
             if username == 'Admin':
                 self.write("Not Allowed")
@@ -201,8 +202,8 @@ class AjaxHandler(BaseHandler):
                     user_data['username'], user_data['role_name'], "Delete User"))
                 self.redirect('/admin/unauthorized')
 
-            username = self.get_argument("username", None, True)
-            newpassword = self.get_argument("password", None, True)
+            username = bleach.clean(self.get_argument("username", None, True))
+            newpassword = bleach.clean(self.get_argument("password", None, True))
 
             if username and newpassword:
                 Users.update({
@@ -217,7 +218,7 @@ class AjaxHandler(BaseHandler):
                     user_data['username'], user_data['role_name'], "Delete User"))
                 self.redirect('/admin/unauthorized')
 
-            username = self.get_argument("username", None, True)
+            username = bleach.clean(self.get_argument("username", None, True))
 
             if username == 'Admin':
                 self.write("Not Allowed")
@@ -227,9 +228,9 @@ class AjaxHandler(BaseHandler):
                     self.write("{} deleted".format(username))
 
         elif page == 'save_file':
-            file_data = self.get_argument('file_contents')
-            file_path = self.get_argument("file_path")
-            server_id = self.get_argument("server_id")
+            file_data = bleach.clean(self.get_argument('file_contents'))
+            file_path = bleach.clean(self.get_argument("file_path"))
+            server_id = bleach.clean(self.get_argument("server_id"))
             try:
                 file = open(file_path, 'w')
                 file.write(file_data)
@@ -240,7 +241,7 @@ class AjaxHandler(BaseHandler):
             self.redirect("/admin/files?id={}".format(server_id))
 
         elif page == "destroy_server":
-            server_id = self.get_body_argument('server_id', default=None, strip=True)
+            server_id = bleach.clean(self.get_body_argument('server_id', default=None, strip=True))
 
             if server_id is not None:
 
