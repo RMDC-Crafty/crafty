@@ -254,7 +254,7 @@ class WebhookMGR():
                 self._execute_webhook(url, data, method, event_name)
 
         else:
-            logger.info("No webhooks to call for command %s", event_name)
+            logger.info("No webhooks to call for event %s", event_name)
 
     def payload_formatter(self, status, errors, data, messages):
         # Define a standardized response
