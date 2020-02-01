@@ -1,7 +1,7 @@
 import logging
 import requests
 
-from app.classes.models import Webhooks, model_to_dict
+from app.classes.models import Command_Webhooks, model_to_dict
 from app.classes.helpers import helper
 
 logger = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ class WebhookMGR():
         self.commands = commands
         logger.info("WebhookMGR initialised!")
 
-    def add_webhook(self, webhook_name, url, command_name, method="POST", send_data=True):
+    def add_command_webhook(self, webhook_name, url, command_name, method="POST", send_data=True):
         logger.info("Adding webhook for command %s to URL %s", command_name, url)
         # make sure command actually exists
         if not self.commands.get(command_name) is None:
@@ -48,7 +48,7 @@ class WebhookMGR():
             if helper.validate_url(url) and helper.validate_method(method):
                 logger.info("Webhook is valid, adding it to DB")
                 try:
-                    Webhooks.insert(
+                    Command_Webhooks.insert(
                             name=webhook_name,
                             method=method,
                             url=url,
@@ -58,8 +58,8 @@ class WebhookMGR():
                 except:
                     logger.exception("Exception occurred while adding webhook. Traceback:")
 
-    def list_webhooks(self):
-        data = Webhooks.select()
+    def list_command_webhooks(self):
+        data = Command_Webhooks.select()
         webhooks = {}
 
         for entry in data:
@@ -69,13 +69,13 @@ class WebhookMGR():
                 "target": entry.url,
                 "send_data": entry.send_data,
                 "command_name": entry.on_command,
-                "command_desc": self.commands.get(entry.on_command)
+                "command_desc": self.commands.get(entry.on_command) 
             }
         return webhooks
 
-    def update_webhook(self, id, name, url, command_name, method, send_data):
+    def update_command_webhook(self, id, name, url, command_name, method, send_data):
         # Grab the specified id from the DB
-        record = Webhooks.select().where(Webhooks.id == id)
+        record = Command_Webhooks.select().where(Command_Webhooks.id == id)
 
         # Check if it exists
         if not record is None:
@@ -84,7 +84,7 @@ class WebhookMGR():
             # Update specified values in DB, if they are the same, nothing will change
             try:
                 res = (
-                    Webhooks
+                    Command_Webhooks
                     .update(
                         name=name,
                         url=url,
@@ -92,7 +92,7 @@ class WebhookMGR():
                         send_data=send_data,
                         on_command=command_name
                     )
-                    .where(Webhooks.id == id)
+                    .where(Command_Webhooks.id == id)
                     .execute()
                 )
             except:
@@ -102,9 +102,9 @@ class WebhookMGR():
         else:
             logger.warning("No result found in DB for webhook ID %s when updating info", id)
 
-    def run_webhooks(self, command_name, data):
+    def run_command_webhooks(self, command_name, data):
         # Grab all hooks from DB
-        results = Webhooks.select().where(Webhooks.on_command == command_name)
+        results = Command_Webhooks.select().where(Command_Webhooks.on_command == command_name)
 
         if results:
             # Iterate over them

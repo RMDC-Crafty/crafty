@@ -36,12 +36,21 @@ class Host_Stats(BaseModel):
     disk_total = CharField()
 
 
-class Webhooks(BaseModel):
+class Command_Webhooks(BaseModel):
     id = AutoField()
     name = CharField(max_length=64, unique=True)
     method = CharField(default="POST")
     url = CharField(unique=True)
     on_command = CharField()
+    send_data = BooleanField(default=True)
+
+
+class Status_Webhooks(BaseModel):
+    id = AutoField()
+    name = CharField(max_length=64, unique=True)
+    method = CharField(default="POST")
+    url = CharField(unique=True)
+    on_event = CharField()
     send_data = BooleanField(default=True)
 
 
