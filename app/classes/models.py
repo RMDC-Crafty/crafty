@@ -1,7 +1,7 @@
 import os
 import json
 import datetime
-from peewee import DateTimeField, CharField, FloatField, Model, IntegerField, BooleanField, SqliteDatabase
+from peewee import DateTimeField, CharField, FloatField, Model, IntegerField, BooleanField, SqliteDatabase, AutoField
 from playhouse.shortcuts import model_to_dict, dict_to_model
 from playhouse.migrate import SqliteMigrator
 from app.classes.helpers import helper
@@ -36,10 +36,21 @@ class Host_Stats(BaseModel):
     disk_total = CharField()
 
 
-class Webhooks(BaseModel):
+class Command_Webhooks(BaseModel):
+    id = AutoField()
+    name = CharField(max_length=64, unique=True)
     method = CharField(default="POST")
     url = CharField(unique=True)
     on_command = CharField()
+    send_data = BooleanField(default=True)
+
+
+class Event_Webhooks(BaseModel):
+    id = AutoField()
+    name = CharField(max_length=64, unique=True)
+    method = CharField(default="POST")
+    url = CharField(unique=True)
+    on_event = CharField()
     send_data = BooleanField(default=True)
 
 
@@ -191,7 +202,9 @@ class sqlhelper():
                                     Remote,
                                     Ftp_Srv,
                                     Server_Stats,
-                                    Host_Stats]
+                                    Host_Stats,
+                                    Event_Webhooks,
+                                    Command_Webhooks]
                                    )
 
     def default_settings(self, admin_pass, admin_token):

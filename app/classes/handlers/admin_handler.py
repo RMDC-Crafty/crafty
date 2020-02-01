@@ -457,7 +457,7 @@ class AdminHandler(BaseHandler):
         name = tornado.escape.json_decode(self.current_user)
         user_data = get_perms_for_user(name)
 
-        #server_data = self.get_server_data()
+        # server_data = self.get_server_data()
         context = {
             'user_data': user_data,
             'version_data': helper.get_version(),
@@ -495,8 +495,8 @@ class AdminHandler(BaseHandler):
                     command=command,
                     comment=comment
                 )
-                    .on_conflict('replace')
-                    .execute()
+                .on_conflict('replace')
+                .execute()
             )
             self.redirect("/admin/schedules?saved=True")
 

@@ -270,7 +270,7 @@ class helpers:
         zip_handler = zipfile.ZipFile(backup_filename, 'w')
 
         # split the directories into a list (even if just one)
-        #lst_paths = paths.split()
+        # lst_paths = paths.split()
 
         for p in paths:
             # make sure to remove any brackets
