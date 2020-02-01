@@ -1,7 +1,7 @@
 import os
 import json
 import datetime
-from peewee import DateTimeField, CharField, FloatField, Model, IntegerField, BooleanField, SqliteDatabase
+from peewee import DateTimeField, CharField, FloatField, Model, IntegerField, BooleanField, SqliteDatabase, AutoField
 from playhouse.shortcuts import model_to_dict, dict_to_model
 from playhouse.migrate import SqliteMigrator
 from app.classes.helpers import helper
@@ -37,6 +37,8 @@ class Host_Stats(BaseModel):
 
 
 class Webhooks(BaseModel):
+    id = AutoField()
+    name = CharField(max_length=64, unique=True)
     method = CharField(default="POST")
     url = CharField(unique=True)
     on_command = CharField()
