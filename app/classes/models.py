@@ -193,7 +193,8 @@ class sqlhelper():
                                     Remote,
                                     Ftp_Srv,
                                     Server_Stats,
-                                    Host_Stats]
+                                    Host_Stats,
+                                    Webhooks]
                                    )
 
     def default_settings(self, admin_pass, admin_token):
