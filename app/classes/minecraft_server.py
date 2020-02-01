@@ -17,6 +17,7 @@ from app.classes.console import console
 from app.classes.models import History, Remote, MC_settings, Crafty_settings, model_to_dict, Backups
 from app.classes.ftp import ftp_svr_object
 from app.classes.helpers import helper
+from app.classes.webhookmgr import webhookmgr
 
 logger = logging.getLogger(__name__)
 
@@ -168,8 +169,10 @@ class Minecraft_Server():
             for c in children:
                 self.PID = c.pid
                 logger.info("Minecraft server %s running with PID %s", self.name, self.PID)
+                webhookmgr.run_event_webhooks("mc_start", webhookmgr.payload_formatter(200, {}, {"server": {"name": self.get_mc_server_name(), "id": self.server_id, "running": not self.PID is None , "PID": self.PID, "restart_count": self.restart_count}}, {"info": "Minecraft Server has started"}))
                 self.is_crashed = False
         else:
+            webhookmgr.run_event_webhooks("mc_start", webhookmgr.payload_formatter(500, {"error": "SER_DIED"}, {"server": {"name": self.get_mc_server_name(), "id": self.server_id, "running": not self.PID is None , "PID": self.PID, "restart_count": self.restart_count}}, {"info": "Minecraft Server died right after startup! Config issue?"}))
             logger.warning("Server PID %s died right after starting - is this a server config issue?", self.PID)
 
         if self.settings.crash_detection:
@@ -219,10 +222,12 @@ class Minecraft_Server():
                 self.start_time = None
                 self.name = None
                 # return true as the server is down
+                webhookmgr.run_event_webhooks("mc_stop", webhookmgr.payload_formatter(200, {}, {"server": {"name": self.get_mc_server_name(), "id": self.server_id, "running": not self.PID is None, "PID": self.PID, "restart_count": self.restart_count}}, {"info": "Minecraft Server has stopped"}))
                 return True
 
         # if we got this far, the server isn't responding, and needs to be forced down
         logger.critical("Unable to stop the server %s. Terminating it via SIGKILL > %s", self.name, self.PID)
+        webhookmgr.run_event_webhooks("mc_stop", webhookmgr.payload_formatter(500, {"error": "SER_STOP_FAIL"}, {"server": {"name": self.get_mc_server_name(), "id": self.server_id, "running": not self.PID is None, "PID": self.PID, "restart_count": self.restart_count}}, {"info": "Minecraft Server has not gracefully stopped. Terminating."}))
 
         self.killpid(self.PID)
 
@@ -235,8 +240,10 @@ class Minecraft_Server():
 
         if self.settings.crash_detection:
             logger.info("The server %s has crashed and will be restarted. Restarting server", name)
+            webhookmgr.run_event_webhooks("mc_crashed", webhookmgr.payload_formatter(200, {}, {"server": {"name": self.get_mc_server_name(), "id": self.server_id, "running": not self.PID is None, "PID": self.PID, "restart_count": self.restart_count}}, {"info": "Minecraft Server has crashed"}))
             self.run_threaded_server()
         else:
+            webhookmgr.run_event_webhooks("mc_crashed_no_restart", webhookmgr.payload_formatter(200, {}, {"server": {"name": self.get_mc_server_name(), "id": self.server_id, "running": not self.PID is None, "PID": self.PID, "restart_count": self.restart_count}}, {"info": "Minecraft Server has crashed too much, auto restart disabled"}))
             logger.info("The server %s has crashed, crash detection is disabled and it will not be restarted", name)
 
     def check_running(self, shutting_down=False):

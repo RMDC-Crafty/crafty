@@ -18,9 +18,10 @@ commands = {
 }
 
 events = {
-    "mc_start": "Minecraft Server Started",
-    "mc_stop": "Minecraft Server Stopped",
-    "mc_crashed": "Minecraft Server Crashed"
+    "mc_start": "Minecraft Server started",
+    "mc_stop": "Minecraft Server stopped",
+    "mc_crashed": "Minecraft Server crashed",
+    "mc_crashed_no_restart": "Minecraft Server crashed beyond restart"
 }
 
 
@@ -83,12 +84,12 @@ class WebhookMGR():
                 logger.info("Webhook is valid, adding it to DB")
                 try:
                     Command_Webhooks.insert(
-                            name=webhook_name,
-                            method=method,
-                            url=url,
-                            on_command=command_name,
-                            send_data=send_data
-                        ).execute()
+                        name=webhook_name,
+                        method=method,
+                        url=url,
+                        on_command=command_name,
+                        send_data=send_data
+                    ).execute()
                 except:
                     logger.exception("Exception occurred while adding webhook. Traceback:")
 
@@ -118,12 +119,12 @@ class WebhookMGR():
                 logger.info("Webhook is valid, adding it to DB")
                 try:
                     Event_Webhooks.insert(
-                            name=webhook_name,
-                            method=method,
-                            url=url,
-                            on_event=command_name,
-                            send_data=send_data
-                        ).execute()
+                        name=webhook_name,
+                        method=method,
+                        url=url,
+                        on_event=command_name,
+                        send_data=send_data
+                    ).execute()
                 except:
                     logger.exception("Exception occurred while adding webhook. Traceback:")
 
@@ -258,11 +259,11 @@ class WebhookMGR():
     def payload_formatter(self, status, errors, data, messages):
         # Define a standardized response
         return {
-                "status": status,
-                "data": data,
-                "errors": errors,
-                "messages": messages
-                }
+            "status": status,
+            "data": data,
+            "errors": errors,
+            "messages": messages
+            }
 
 
 webhookmgr = WebhookMGR()

@@ -203,7 +203,8 @@ class sqlhelper():
                                     Ftp_Srv,
                                     Server_Stats,
                                     Host_Stats,
-                                    Webhooks]
+                                    Event_Webhooks,
+                                    Command_Webhooks]
                                    )
 
     def default_settings(self, admin_pass, admin_token):
