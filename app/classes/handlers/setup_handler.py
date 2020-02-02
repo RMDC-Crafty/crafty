@@ -1,6 +1,7 @@
 import time
 import tornado.web
 import tornado.escape
+import bleach
 from pathlib import Path
 
 from app.classes.console import console
@@ -23,7 +24,7 @@ class SetupHandler(BaseHandler):
         context = {}
         template = ''
 
-        errors = self.get_argument('errors', None)
+        errors = self.get_argument('errors', '')
 
         if page == 'step1':
             context = {
@@ -47,12 +48,12 @@ class SetupHandler(BaseHandler):
 
     def post(self, page):
         if page == 'step1':
-            server_name = self.get_argument('server_name', '')
-            server_path = self.get_argument('server_path', '')
-            server_jar = self.get_argument('server_jar', '')
-            max_mem = self.get_argument('max_mem', '')
-            min_mem = self.get_argument('min_mem', '')
-            auto_start = self.get_argument('auto_start', '')
+            server_name = bleach.clean(self.get_argument('server_name', ''))
+            server_path = bleach.clean(self.get_argument('server_path', ''))
+            server_jar = bleach.clean(self.get_argument('server_jar', ''))
+            max_mem = bleach.clean(self.get_argument('max_mem', ''))
+            min_mem = bleach.clean(self.get_argument('min_mem', ''))
+            auto_start = bleach.clean(self.get_argument('auto_start', ''))
 
             server_path_exists = helper.check_directory_exist(server_path)
 

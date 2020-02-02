@@ -1,6 +1,7 @@
 import time
 import logging
 import schedule
+import bleach
 import threading
 import tornado.web
 import tornado.escape
@@ -72,7 +73,7 @@ class AdminHandler(BaseHandler):
             self.redirect("/admin/config")
 
         elif page == 'dashboard':
-            errors = self.get_argument('errors', None)
+            errors = bleach.clean(self.get_argument('errors', ''))
             context['errors'] = errors
             context['host_stats'] = multi.get_host_status()
 
@@ -85,7 +86,7 @@ class AdminHandler(BaseHandler):
             if not check_role_permission(user_data['username'], 'svr_console'):
                 self.redirect('/admin/unauthorized')
 
-            context['server_id'] = self.get_argument('id', '')
+            context['server_id'] = bleach.clean(self.get_argument('id', ''))
 
             mc_data = MC_settings.get_by_id(context['server_id'])
 
@@ -97,7 +98,7 @@ class AdminHandler(BaseHandler):
             if not check_role_permission(user_data['username'], 'backups'):
                 self.redirect('/admin/unauthorized')
                 
-            server_id = self.get_argument('id', '')
+            server_id = bleach.clean(self.get_argument('id', ''))
             mc_data = MC_settings.get_by_id(server_id)
             
             template = "admin/backups.html"
@@ -147,7 +148,7 @@ class AdminHandler(BaseHandler):
             if not check_role_permission(user_data['username'], 'schedules'):
                 self.redirect('/admin/unauthorized')
 
-            saved = self.get_argument('saved', None)
+            saved = bleach.clean(self.get_argument('saved', ''))
 
             db_data = Schedules.select()
 
@@ -182,7 +183,7 @@ class AdminHandler(BaseHandler):
             if not check_role_permission(user_data['username'], 'schedules'):
                 self.redirect('/admin/unauthorized')
 
-            schedule_id = self.get_argument('id', None)
+            schedule_id = self.get_argument('id', 1)
             q = Schedules.update(enabled=0).where(Schedules.id == schedule_id)
             q.execute()
 
@@ -192,7 +193,7 @@ class AdminHandler(BaseHandler):
             if not check_role_permission(user_data['username'], 'schedules'):
                 self.redirect('/admin/unauthorized')
 
-            schedule_id = self.get_argument('id', None)
+            schedule_id = self.get_argument('id', 1)
             q = Schedules.update(enabled=1).where(Schedules.id == schedule_id)
             q.execute()
 
@@ -202,8 +203,8 @@ class AdminHandler(BaseHandler):
             if not check_role_permission(user_data['username'], 'config'):
                 self.redirect('/admin/unauthorized')
 
-            saved = self.get_argument('saved', None)
-            invalid = self.get_argument('invalid', None)
+            saved = bleach.clean(self.get_argument('saved', ''))
+            invalid = bleach.clean(self.get_argument('invalid', ''))
 
             template = "admin/config.html"
             crafty_data = Crafty_settings.get()
@@ -228,10 +229,10 @@ class AdminHandler(BaseHandler):
             if not check_role_permission(user_data['username'], 'config'):
                 self.redirect('/admin/unauthorized')
 
-            saved = self.get_argument('saved', None)
-            invalid = self.get_argument('invalid', None)
-            server_id = self.get_argument('id', None)
-            errors = self.get_argument('errors', None)
+            saved = bleach.clean(self.get_argument('saved', ''))
+            invalid = bleach.clean(self.get_argument('invalid', ''))
+            server_id = bleach.clean(self.get_argument('id', 1))
+            errors = bleach.clean(self.get_argument('errors', ''))
 
             context['errors'] = errors
 
@@ -259,8 +260,8 @@ class AdminHandler(BaseHandler):
             if not check_role_permission(user_data['username'], 'backups'):
                 self.redirect('/admin/unauthorized')
 
-            path = self.get_argument("file", None, True)
-            server_id = self.get_argument("id", None, True)
+            path = bleach.clean(self.get_argument("file", None, True))
+            server_id = bleach.clean(self.get_argument("id", None, True))
 
             # let's make sure this path is in the backup directory and not somewhere else
             # we don't want someone passing a path like /etc/passwd in the raw, so we are only passing the filename
@@ -291,7 +292,7 @@ class AdminHandler(BaseHandler):
             if not check_role_permission(user_data['username'], 'svr_control'):
                 self.redirect('/admin/unauthorized')
 
-            server_id = self.get_argument('id', None)
+            server_id = bleach.clean(self.get_argument('id', 1))
 
             if server_id is None:
                 self.redirect("/admin/dashboard")
@@ -312,7 +313,7 @@ class AdminHandler(BaseHandler):
             if not check_role_permission(user_data['username'], 'svr_console'):
                 self.redirect('/admin/unauthorized')
 
-            command = self.get_argument("command", None, True)
+            command = bleach.clean(self.get_argument("command", None, True))
             id = self.get_argument("id", None, True)
 
             # grab any defined server object and reload the settings
@@ -377,7 +378,7 @@ class AdminHandler(BaseHandler):
             if not check_role_permission(user_data['username'], 'logs'):
                 self.redirect('/admin/unauthorized')
 
-            server_id = self.get_argument('id', None)
+            server_id = bleach.clean(self.get_argument('id', None))
             mc_data = MC_settings.get_by_id(server_id)
 
             context['server_name'] = mc_data.server_name
@@ -424,7 +425,7 @@ class AdminHandler(BaseHandler):
 
             template = "admin/files.html"
 
-            server_id = self.get_argument('id', None)
+            server_id = bleach.clean(self.get_argument('id', 1))
             context['server_id'] = server_id
 
             srv_object = multi.get_server_obj(server_id)
@@ -467,7 +468,7 @@ class AdminHandler(BaseHandler):
         }
 
         if page == 'change_password':
-            entered_password = self.get_argument('password')
+            entered_password = bleach.clean(self.get_argument('password'))
             encoded_pass = helper.encode_pass(entered_password)
 
             q = Users.update({Users.password: encoded_pass}).where(Users.username == user_data['username'])
@@ -477,12 +478,12 @@ class AdminHandler(BaseHandler):
             self.redirect("/")
 
         elif page == 'schedules':
-            action = self.get_argument('action', '')
-            interval = self.get_argument('interval', '')
-            interval_type = self.get_argument('type', '')
-            sched_time = self.get_argument('time', '')
-            command = self.get_argument('command', '')
-            comment = self.get_argument('comment', '')
+            action = bleach.clean(self.get_argument('action', ''))
+            interval = bleach.clean(self.get_argument('interval', ''))
+            interval_type = bleach.clean(self.get_argument('type', ''))
+            sched_time = bleach.clean(self.get_argument('time', ''))
+            command = bleach.clean(self.get_argument('command', ''))
+            comment = bleach.clean(self.get_argument('comment', ''))
 
             result = (
                 Schedules.insert(
@@ -501,7 +502,7 @@ class AdminHandler(BaseHandler):
 
         elif page == 'config':
 
-            config_type = self.get_argument('config_type')
+            config_type = bleach.clean(self.get_argument('config_type'))
 
             if config_type == 'mc_settings':
 
@@ -557,11 +558,11 @@ class AdminHandler(BaseHandler):
 
         elif page == "server_config":
             # Define as variables to eliminate multiple function calls, slowing the processing down
-            server_path = self.get_argument('server_path')
-            server_jar = self.get_argument('server_jar')
-            server_id = self.get_argument('server_id')
-            server_name = self.get_argument('server_name')
-            errors = self.get_argument('errors', None)
+            server_path = bleach.clean(self.get_argument('server_path'))
+            server_jar = bleach.clean(self.get_argument('server_jar'))
+            server_id = bleach.clean(self.get_argument('server_id'))
+            server_name = bleach.clean(self.get_argument('server_name'))
+            errors = bleach.clean(self.get_argument('errors', ''))
 
             context['errors'] = errors
 
@@ -604,8 +605,8 @@ class AdminHandler(BaseHandler):
 
         elif page == 'files':
 
-            next_dir = self.get_argument('next_dir')
-            server_id = self.get_argument('server_id')
+            next_dir = bleach.clean(self.get_argument('next_dir'))
+            server_id = bleach.clean(self.get_argument('server_id'))
             path = Path(next_dir)
 
             template = "admin/files.html"
@@ -637,12 +638,12 @@ class AdminHandler(BaseHandler):
             )
 
         elif page == 'add_server':
-            server_name = self.get_argument('server_name', '')
-            server_path = self.get_argument('server_path', '')
-            server_jar = self.get_argument('server_jar', '')
-            max_mem = self.get_argument('max_mem', '')
-            min_mem = self.get_argument('min_mem', '')
-            auto_start = self.get_argument('auto_start', '')
+            server_name = bleach.clean(self.get_argument('server_name', ''))
+            server_path = bleach.clean(self.get_argument('server_path', ''))
+            server_jar = bleach.clean(self.get_argument('server_jar', ''))
+            max_mem = bleach.clean(self.get_argument('max_mem', ''))
+            min_mem = bleach.clean(self.get_argument('min_mem', ''))
+            auto_start = bleach.clean(self.get_argument('auto_start', ''))
 
             samename = MC_settings.select().where(MC_settings.server_name == server_name)
             if samename.exists():
@@ -711,10 +712,10 @@ class AdminHandler(BaseHandler):
                 self.redirect("/admin/dashboard?errors={}".format(error))
 
         elif page == 'backups':
-            checked = self.get_arguments('backup', False)
-            max_backups = self.get_argument('max_backups', None)
-            backup_storage = self.get_argument('storage_location', None)
-            server_id = self.get_argument('server_id', None)
+            checked = bleach.clean(self.get_arguments('backup', ''))
+            max_backups = bleach.clean(self.get_argument('max_backups', 1))
+            backup_storage = bleach.clean(self.get_argument('storage_location', ''))
+            server_id = bleach.clean(self.get_argument('server_id', ''))
 
             if len(checked) == 0 or len(max_backups) == 0 or len(backup_storage) == 0:
                 logger.error('Backup settings Invalid: Checked: {}, max_backups: {}, backup_storage: {}'
