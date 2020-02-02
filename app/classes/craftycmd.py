@@ -5,13 +5,13 @@ import time
 import json
 import logging
 
-from app.classes.console import Console
+from app.classes.console import console
 from app.classes.helpers import helpers
 from app.classes.models import Remote, MC_settings, Webserver, model_to_dict, Users
 from app.classes.multiserv import multi
 
 helper = helpers()
-console = Console()
+
 logger = logging.getLogger(__name__)
 
 
@@ -33,7 +33,7 @@ class MainPrompt(cmd.Cmd):
         logger.info("***** Crafty Stopped ***** \n")
 
     def stop_all_children(self):
-        Console.info("Stopping any server daemons")
+        console.info("Stopping any server daemons")
         multi.stop_all_servers()
         self.print_crafty_end()
 
@@ -216,7 +216,7 @@ class MainPrompt(cmd.Cmd):
         try:
             user = Users.get(Users.username == line).username
         except:
-            Console.error("User: {} Not Found".format(line))
+            console.error("User: {} Not Found".format(line))
             return False
         new_pass = input("NEW password for: {} > ".format(user))
 
@@ -269,7 +269,7 @@ class MainPrompt(cmd.Cmd):
         }).where(MC_settings.id == server).execute()
 
         logger.info("Disabled Autostart for Server {} via the console".format(server))
-        Console.info("Disabled Autostart for Server {} ".format(server))
+        console.info("Disabled Autostart for Server {} ".format(server))
 
     def help_enable_autostart(self):
         console.help("Enables Server Autostarting on Crafty Launch")
@@ -303,7 +303,7 @@ class MainPrompt(cmd.Cmd):
         }).where(MC_settings.id == server).execute()
 
         logger.info("Enabled Autostart for Server {} via the console".format(server))
-        Console.info("Enabled Autostart for Server {} ".format(server))
+        console.info("Enabled Autostart for Server {} ".format(server))
 
     def do_reload_webserver(self, line):
         Remote.insert({

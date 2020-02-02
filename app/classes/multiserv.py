@@ -1,12 +1,12 @@
 import time
 import logging
 import psutil
-from datetime import datetime
+import datetime
 import schedule
 
 
 from app.classes.minecraft_server import Minecraft_Server
-from app.classes.models import MC_settings, Server_Stats, Host_Stats, Remote, model_to_dict, Backups, History
+from app.classes.models import *
 from app.classes.helpers import helper
 from app.classes.console import console
 
@@ -77,7 +77,6 @@ class multi_serve():
 
         # for each auto starting server defined
         for s in all_servers:
-
             # setup the server obj - this kicks off the autostart
             self.setup_new_server_obj(s['id'])
 
@@ -97,6 +96,27 @@ class multi_serve():
         logger.info("Rebuilding Scheduled Tasks")
         schedule.every(10).seconds.do(multi.do_stats_for_servers).tag('server_stats', 'all_tasks')
         schedule.every(10).seconds.do(multi.do_host_status).tag('server_stats', 'all_tasks')
+        self.reload_history_settings()
+
+    def do_server_history(self):
+        running = self.list_running_servers()
+        for s in running:
+            srv_obj = self.get_server_obj(s['id'])
+            srv_obj.write_usage_history()
+
+
+    def reload_history_settings(self):
+        logger.info("Clearing history usage scheduled jobs")
+
+        # clear all history jobs
+        schedule.clear('history')
+
+        query = Crafty_settings.select(Crafty_settings.history_interval)
+        history_interval = query[0].history_interval
+
+        logger.info("Creating new history usage scheduled task for every %s minutes", history_interval)
+
+        schedule.every(history_interval).minutes.do(self.do_server_history).tag('history')
 
     def get_server_data(self, server_id):
         if MC_settings.get_by_id(server_id):
@@ -313,7 +333,7 @@ class multi_serve():
         return all_servers_return
 
     def do_host_status(self):
-        boot_time = datetime.fromtimestamp(psutil.boot_time())
+        boot_time = datetime.datetime.fromtimestamp(psutil.boot_time())
 
         insert_id = Host_Stats.insert({
             Host_Stats.boot_time: str(boot_time),

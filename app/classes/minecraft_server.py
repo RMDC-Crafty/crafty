@@ -88,7 +88,6 @@ class Minecraft_Server():
             self.server_id = server_id
             self.name = self.get_mc_server_name(self.server_id)
             self.reload_settings()
-            self.reload_history_settings()
 
         logger.debug("Loading Minecraft server object for server %s-%s", server_id, self.name)
         console.info("Loading Minecraft server object for server {}-{}".format(server_id, self.name))
@@ -305,7 +304,6 @@ class Minecraft_Server():
             return False
 
     def write_usage_history(self):
-
         server_stats = {
             'cpu_usage': psutil.cpu_percent(interval=0.5) / psutil.cpu_count(),
             'mem_percent': psutil.virtual_memory()[2]
@@ -606,19 +604,6 @@ class Minecraft_Server():
         logger.debug("Pinging %s on port %s", ip, server_port)
         mc_ping = ping(ip, int(server_port))
         return mc_ping
-
-    def reload_history_settings(self):
-        logger.info("Clearing history usage scheduled jobs for server ID %s (%s)", self.server_id, self.name)
-
-        # clear all history jobs
-        schedule.clear('history')
-
-        query = Crafty_settings.select(Crafty_settings.history_interval)
-        history_interval = query[0].history_interval
-
-        logger.info("Creating new history usage scheduled task for every %s minutes for server ID %s (%s)", history_interval, self.server_id, self.name)
-
-        schedule.every(history_interval).minutes.do(self.write_usage_history).tag('history')
 
     def update_server_jar(self, with_console=True):
 

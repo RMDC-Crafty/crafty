@@ -17,6 +17,63 @@
 
 
 <section class="content">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                  <h3 class="box-title"><i class="fa fa-id-card-o" aria-hidden="true"></i>
+                      Server Data</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="" style="">
+                        <table class="table table-striped">
+                            <tr>
+                                <td width="20%">Server</td>
+                                <td>ID: {{ data['mc_settings']['id'] }} - {{ data['mc_settings']['server_name'] }}</td>
+                            </tr>
+
+                            <tr>
+                                <td>Auto Start Details</td>
+                                <td>
+                                    Auto Start On: {{ data['mc_settings']['auto_start_server'] }}<br />
+                                    Auto Start Delay: {{ data['mc_settings']['auto_start_delay'] }}<br />
+                                    Auto Start Priority: {{ data['mc_settings']['auto_start_priority'] }}<br />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>World Name</td>
+                                <td>{{ data['world_info']['world_name'] }} </td>
+                            </tr>
+                            <tr>
+                                <td>World Size</td>
+                                <td>{{ data['world_info']['world_size'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Update Jar</td>
+                                <td>{{ data['mc_settings']['jar_url'] }}</td>
+                            </tr>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                  <h3 class="box-title"><i class="fa fa-bolt" aria-hidden="true"></i>
+                      Server Actions</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="asdf" style="height: 250px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div class="row">
         <div class="col-md-6">

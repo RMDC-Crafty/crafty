@@ -308,6 +308,7 @@ class AdminHandler(BaseHandler):
             context['server_updating'] = self.mcserver.check_updating()
             context['players'] = context['mc_servers_data'][int(server_id)]['players'].split(',')
             context['players_online'] = context['mc_servers_data'][int(server_id)]['online_players']
+            context['world_info'] = srv_obj.get_world_info()
 
         elif page == 'commands':
             if not check_role_permission(user_data['username'], 'svr_console'):
@@ -544,15 +545,33 @@ class AdminHandler(BaseHandler):
                     self.redirect("/admin/config?invalid=True")
 
             elif config_type == 'ftp_settings':
-                ftp_user = self.get_argument('ftp_user')
-                ftp_pass = self.get_argument('ftp_pass')
-                ftp_port = self.get_argument('ftp_port')
+                ftp_user = bleach.clean(self.get_argument('ftp_user'))
+                ftp_pass = bleach.clean(self.get_argument('ftp_pass'))
+                ftp_port = bleach.clean(self.get_argument('ftp_port'))
 
                 Ftp_Srv.update({
                     Ftp_Srv.user: ftp_user,
                     Ftp_Srv.password: ftp_pass,
                     Ftp_Srv.port: ftp_port,
                 }).execute()
+
+            elif config_type == 'crafty_settings':
+                interval = bleach.clean(self.get_argument('historical_interval'))
+                max_age = bleach.clean(self.get_argument('history_max_age'))
+                web_port = bleach.clean(self.get_argument('port_number'))
+
+                q = Crafty_settings.update({
+                    Crafty_settings.history_interval: interval,
+                    Crafty_settings.history_max_age: max_age,
+                }).where(Crafty_settings.id == 1).execute()
+
+                q = Webserver.update({
+                    Webserver.port_number: web_port
+                }).execute()
+
+                # reload the history settings
+                multi.reload_history_settings()
+
 
             self.redirect("/admin/config?saved=True")
 
