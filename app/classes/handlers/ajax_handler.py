@@ -38,7 +38,9 @@ class AjaxHandler(BaseHandler):
                 self.write(d.encode("utf-8"))
 
         elif page == 'history':
-            db_data = History.select()
+            server_id = bleach.clean(self.get_argument("server_id",''))
+
+            db_data = History.select().where(History.server_id == server_id)
             return_data = []
             for d in db_data:
                 row_data = {

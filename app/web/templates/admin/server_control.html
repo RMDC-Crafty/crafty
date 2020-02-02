@@ -125,12 +125,6 @@
 
 </section>
 
-<!--
-{{ data }}
--->
-
-
-
 
 {% end %}
 
@@ -187,7 +181,7 @@
         console.log( "ready!" );
 
         $.ajax({
-            url: "/ajax/history",
+            url: "/ajax/history?server_id={{ data['mc_settings']['id'] }}",
             method: "get",
             dataType: "json",
             success: function(data) {
