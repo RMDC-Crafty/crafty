@@ -143,9 +143,13 @@ class Minecraft_Server():
         if os.name == "nt":
             logger.info("Windows Detected - launching cmd")
             self.server_command = self.server_command.replace('\\', '/')
+            logging.info("Opening CMD prompt")
             self.process = pexpect.popen_spawn.PopenSpawn('cmd \r\n', timeout=None, encoding=None)
+            logging.info("changing directories to {}".format(self.server_path.replace('\\', '/')))
             self.process.send('cd {} \r\n'.format(self.server_path.replace('\\', '/')))
+            logging.info("Sending command {} to CMD".format(self.server_command))
             self.process.send(self.server_command + "\r\n")
+
             self.is_crashed = False
         else:
             logger.info("Linux Detected - launching Bash")
@@ -154,7 +158,7 @@ class Minecraft_Server():
             logger.info("Changing directory to %s", self.server_path)
             self.process.send('cd {} \n'.format(self.server_path))
 
-            logger.info("Sending server start command to thread")
+            logger.info("Sending server start command: {} to shell".format(self.server_command))
             self.process.send(self.server_command + '\n')
             self.is_crashed = False
 
