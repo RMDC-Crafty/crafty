@@ -558,7 +558,7 @@ class AdminHandler(BaseHandler):
             elif config_type == 'crafty_settings':
                 interval = bleach.clean(self.get_argument('historical_interval'))
                 max_age = bleach.clean(self.get_argument('history_max_age'))
-                web_port = bleach.clean(self.get_argument('port_number'))
+                web_port = int(self.get_argument('port_number'))
 
                 q = Crafty_settings.update({
                     Crafty_settings.history_interval: interval,
@@ -731,8 +731,8 @@ class AdminHandler(BaseHandler):
                 self.redirect("/admin/dashboard?errors={}".format(error))
 
         elif page == 'backups':
-            checked = bleach.clean(self.get_arguments('backup', ''))
-            max_backups = bleach.clean(self.get_argument('max_backups', 1))
+            checked = self.get_arguments('backup')
+            max_backups = int(self.get_argument('max_backups', 1))
             backup_storage = bleach.clean(self.get_argument('storage_location', ''))
             server_id = bleach.clean(self.get_argument('server_id', ''))
 
