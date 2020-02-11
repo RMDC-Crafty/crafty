@@ -736,7 +736,7 @@ class AdminHandler(BaseHandler):
             backup_storage = bleach.clean(self.get_argument('storage_location', ''))
             server_id = bleach.clean(self.get_argument('server_id', ''))
 
-            if len(checked) == 0 or len(max_backups) == 0 or len(backup_storage) == 0:
+            if len(checked) == 0 or len(backup_storage) == 0:
                 logger.error('Backup settings Invalid: Checked: {}, max_backups: {}, backup_storage: {}'
                              .format(checked, max_backups, backup_storage))
                 self.redirect("/admin/config?invalid=True")
