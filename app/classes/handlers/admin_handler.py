@@ -46,10 +46,8 @@ class AdminHandler(BaseHandler):
             template = "admin/reload_web_settings.html"
 
             web_data = Webserver.get()
-            page_data = {}
-            page_data['user_data'] = user_data
-            page_data['web_settings'] = model_to_dict(web_data)
-            context = page_data
+            context['user_data'] = user_data
+            context['web_settings'] = model_to_dict(web_data)
 
             self.render(
                 template,
