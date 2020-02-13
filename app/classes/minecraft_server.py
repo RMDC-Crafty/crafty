@@ -258,9 +258,11 @@ class Minecraft_Server():
             logger.info("The server %s has crashed and will be restarted. Restarting server", name)
             webhookmgr.run_event_webhooks("mc_crashed", webhookmgr.payload_formatter(200, {}, {"server": {"name": self.get_mc_server_name(), "id": self.server_id, "running": not self.PID is None, "PID": self.PID, "restart_count": self.restart_count}}, {"info": "Minecraft Server has crashed"}))
             self.run_threaded_server()
+            return True
         else:
             webhookmgr.run_event_webhooks("mc_crashed_no_restart", webhookmgr.payload_formatter(200, {}, {"server": {"name": self.get_mc_server_name(), "id": self.server_id, "running": not self.PID is None, "PID": self.PID, "restart_count": self.restart_count}}, {"info": "Minecraft Server has crashed too much, auto restart disabled"}))
             logger.info("The server %s has crashed, crash detection is disabled and it will not be restarted", name)
+            return False
 
     def check_running(self, shutting_down=False):
         # if process is None, we never tried to start
@@ -273,18 +275,38 @@ class Minecraft_Server():
         running = psutil.pid_exists(self.PID)
 
         if not running:
+
             # did the server crash?
             if not shutting_down:
-                if self.restart_count <= 3:
-                    self.crash_detected(self.name)
-                    self.restart_count = self.restart_count + 1
-                    return False
 
-                # flapping detection
-                else:
-                    logger.warning("Server %s has been restarted %s times. It has crashed, not restarting.", self.name, self.restart_count)
-                    self.is_crashed = True
-                    return False
+                # do we have crash detection turned on?
+                if self.settings.crash_detection:
+
+                    # if we haven't tried to restart more 3 or more times
+                    if self.restart_count <= 3:
+
+                        # start the server if needed
+                        server_restarted = self.crash_detected(self.name)
+
+                        if server_restarted:
+                            # add to the restart count
+                            self.restart_count = self.restart_count + 1
+                            return False
+
+                    # we have tried to restart 4 times...
+                    elif self.restart_count == 4:
+                        logger.warning("Server %s has been restarted %s times. It has crashed, not restarting.",
+                                       self.name, self.restart_count)
+
+                        # set to 99 restart attempts so this elif is skipped next time. (no double logging)
+                        self.restart_count = 99
+                        self.is_crashed = True
+                        return False
+                    else:
+                        self.is_crashed = True
+                        return False
+
+                return False
 
             self.process = None
             self.PID = None
