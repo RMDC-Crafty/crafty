@@ -30,7 +30,7 @@
                 </div>
                 <div class="box-body">
                   <form method="post">
-                      <input class="input-lg form-control" type="text" name="password" placeholder="Type your new password" autocomplete="off"/>
+                      <input class="input-lg form-control" type="text" name="password" placeholder="Type your new password" autocomplete="off" minlength="8" maxlength="512"/>
                       <br />
                       <input type="submit" class="col-xs-12 btn btn-primary btn-load btn-lg" value="Change Password">
                       {% raw xsrf_form_html() %}
