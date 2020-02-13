@@ -556,7 +556,7 @@ class AdminHandler(BaseHandler):
             elif config_type == 'crafty_settings':
                 interval = bleach.clean(self.get_argument('historical_interval'))
                 max_age = bleach.clean(self.get_argument('history_max_age'))
-                web_port = int(self.get_argument('port_number'))
+                web_port = int(float(self.get_argument('port_number')))
 
                 q = Crafty_settings.update({
                     Crafty_settings.history_interval: interval,
