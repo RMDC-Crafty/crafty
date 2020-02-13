@@ -155,8 +155,8 @@ class Minecraft_Server():
             drive_letter = self.server_path[:1]
 
             if drive_letter.lower() != "c":
-                logger.info("Server is not on the C drive, changing drive letter to :".format(drive_letter))
-                self.process.send("{}:".format(drive_letter))
+                logger.info("Server is not on the C drive, changing drive letter to :{}".format(drive_letter))
+                self.process.send("{}:\r\n".format(drive_letter))
 
             logging.info("changing directories to {}".format(self.server_path.replace('\\', '/')))
             self.process.send('cd {} \r\n'.format(self.server_path.replace('\\', '/')))
