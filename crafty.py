@@ -2,16 +2,31 @@ import os
 import sys
 import time
 import json
-import yaml
-import secrets
 import logging
-import schedule
 import argparse
 import threading
 import logging.config
 
-from app.classes.console import console
+try:
+    import yaml
+    import secrets
+    import schedule
+    from app.classes.console import console
 
+except Exception as e:
+    print("/" * 75 + "\n")
+    print("\t\t\tWTF!!! \n \t\t(What a terrible failure) \n")
+    print("/" * 75 + "\n")
+    print(" Crafty is unable to find required modules")
+    print(" Some common causes of this issue include:")
+    print("\t * Not in a virtual environment: are you in the virtual environment?")
+    print("\t * Modules didn't install: Did pip -r requirements.txt run correctly?")
+    print("\n Need Help? We are here to help! - https://discord.gg/XR5x3ZM \n")
+    sys.exit(1)
+
+
+def is_venv():
+    return hasattr(sys, 'real_prefix') or sys.base_prefix != sys.prefix
 
 def setup_logging(debug=False):
     logging_config_file = os.path.join(os.path.curdir,
@@ -82,7 +97,11 @@ if __name__ == '__main__':
         pass
 
     # ensure the log file is there
-    open(log_file, 'a').close()
+    try:
+        open(log_file, 'a').close()
+    except Exception as e:
+        console.critical("Unable to open log file!")
+        sys.exit(1)
 
     daemon_mode = False
 
@@ -118,8 +137,10 @@ if __name__ == '__main__':
     # now that logging is setup - let's import the rest of the things we need to run
     from app.classes.helpers import helper
 
-    # make sure our web temp directory is there
-    # helper.ensure_dir_exists(os.path.join(os.path.curdir, "app", 'web', 'temp'))
+    if not is_venv:
+        logger.critical("Not in a virtual environment! Exiting")
+        console.critical("Not in a virtual environment! Exiting")
+        sys.exit(1)
 
     logger.info("***** Crafty Launched: Verbose {} *****".format(args.verbose))
 
@@ -150,6 +171,11 @@ if __name__ == '__main__':
     # prioritize command line flags
     if args.daemonize:
         daemon_mode = args.daemonize
+
+    # do we have access to write to our folder?
+    if not helper.check_writeable(os.curdir):
+        logger.info("***** Crafty Stopped ***** \n")
+        sys.exit(1)
 
     # is this a fresh install?
     fresh_install = helper.is_fresh_install()

@@ -136,6 +136,12 @@ class Minecraft_Server():
 
         if not self.jar_exists:
             console.warning("Minecraft server JAR does not exist...")
+            logger.critical("Minecraft server JAR does not exists...")
+            return False
+
+        if not helper.check_writeable(self.server_path):
+            console.warning("Unable to write/access {}".format(self.server_path))
+            logger.critical("Unable to write/access {}".format(self.server_path))
             return False
 
         logger.info("Launching Minecraft server %s with command %s", self.name, self.server_command)

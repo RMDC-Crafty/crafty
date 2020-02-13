@@ -528,6 +528,19 @@ class helpers:
         else:
             return None
 
+    def check_writeable(self, path):
+        filename = os.path.join(path, "tempfile.txt")
+        try:
+            fp = open(filename, "w").close()
+            os.remove(filename)
+
+            logger.info("{} is writable".format(filename))
+            return True
+
+        except Exception as e:
+            logger.critical("Unable to write to {} - Error: {}".format(path, e))
+            return False
+
     def scheduler(self, task, mc_server_obj):
         logger.info("Parsing Tasks To Add")
         # legend for tasks:

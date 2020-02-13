@@ -49,7 +49,7 @@
                                     </label>
                                     <input type="number"
                                            name="historical_interval" id="historical_interval"
-                                           class="form-control" placeholder="90"
+                                           class="form-control" placeholder="90" max="500" min="1" step="1"
                                            value="{{ data['crafty_settings']['history_interval'] }}"
                                     />
                                 </div>
@@ -61,7 +61,7 @@
                                     </label>
                                     <input type="number"
                                            name="history_max_age" id="history_max_age"
-                                           class="form-control" placeholder="2"
+                                           class="form-control" placeholder="2" max="30" min="1" step="1"
                                            value="{{ data['crafty_settings']['history_max_age'] }}"
                                     />
                                 </div>
@@ -76,6 +76,7 @@
                                            class="form-control" placeholder="8000"
                                            max="65535"
                                            min="1"
+                                           step="1"
                                            value="{{ data['web_settings']['port_number'] }}"
                                     />
                                 </div>
