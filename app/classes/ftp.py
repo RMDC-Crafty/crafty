@@ -32,12 +32,12 @@ class ftp_server():
     def set_root_dir(self, full_path):
         self.root_dir = full_path
 
-    def setup_ftp(self):
+    def setup_ftp(self, server_id=1):
         ftp_settings = None
         mc_settings = None
         try:
             ftp_settings = Ftp_Srv.get_by_id(1)
-            mc_settings = MC_settings.get_by_id(1)
+            mc_settings = MC_settings.get_by_id(server_id)
 
         except Exception as e:
             logging.exception("Error Loading FTP. Traceback:")
@@ -56,8 +56,10 @@ class ftp_server():
             self.port = ftp_settings.port
             self.root_dir = mc_settings.server_path
 
-    def _ftp_serve(self):
-        self.setup_ftp()
+            logger.info("FTP server is now setup - Port: {}, Dir: {}".format(self.port, self.root_dir))
+
+    def _ftp_serve(self, server_id=1):
+        self.setup_ftp(server_id)
 
         authorizer = DummyAuthorizer()
         authorizer.add_user(self.user, self.password, self.root_dir, perm='elradfmwMT')
@@ -71,9 +73,10 @@ class ftp_server():
         self.running = True
         self.server.serve_forever()
 
-    def run_threaded_ftp_server(self):
+    def run_threaded_ftp_server(self, server_id=1):
         self.running = True
-        self.ftp_server_thread = threading.Thread(target=self._ftp_serve, daemon=True)
+        logger.info("Ftp Server Started for server ID: {}".format(server_id))
+        self.ftp_server_thread = threading.Thread(target=self._ftp_serve, args=[server_id], daemon=True)
         self.ftp_server_thread.start()
 
     def stop_threaded_ftp_server(self):

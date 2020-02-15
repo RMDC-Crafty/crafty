@@ -160,7 +160,7 @@ class remote_commands():
                 return False
 
             logger.info("Starting FTP Server")
-            ftp_svr_object.run_threaded_ftp_server()
+            ftp_svr_object.run_threaded_ftp_server(server_id)
             webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(200, {}, {}, {"info": "FTP server successfully started"}))
 
         elif command == 'stop_ftp':
