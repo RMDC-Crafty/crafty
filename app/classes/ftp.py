@@ -57,6 +57,8 @@ class ftp_server():
             self.root_dir = mc_settings.server_path
 
     def _ftp_serve(self):
+        self.setup_ftp()
+
         authorizer = DummyAuthorizer()
         authorizer.add_user(self.user, self.password, self.root_dir, perm='elradfmwMT')
         handler = TLS_FTPHandler
