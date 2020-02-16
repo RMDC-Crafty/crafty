@@ -298,7 +298,7 @@ class AdminHandler(BaseHandler):
             template = "admin/server_control.html"
             logfile = helper.get_crafty_log_file()
 
-            mc_data = MC_settings.get()
+            mc_data = MC_settings.get_by_id(server_id)
 
             srv_obj = multi.get_server_obj(server_id)
             context['server_running'] = srv_obj.check_running()
