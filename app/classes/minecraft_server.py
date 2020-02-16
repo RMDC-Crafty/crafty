@@ -130,9 +130,15 @@ class Minecraft_Server():
 
     def stop_threaded_server(self):
         self.stop_server()
-        self.server_thread.join()
+
+        if self.server_thread:
+            self.server_thread.join()
 
     def start_server(self):
+
+        # fail safe in case we try to start something already running
+        if self.check_running():
+            return False
 
         if not self.jar_exists:
             console.warning("Minecraft server JAR does not exist...")
