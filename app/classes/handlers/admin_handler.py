@@ -147,55 +147,42 @@ class AdminHandler(BaseHandler):
                 self.redirect('/admin/unauthorized')
 
             saved = bleach.clean(self.get_argument('saved', ''))
+            server_id = int(bleach.clean(self.get_argument('id', 1)))
 
-            db_data = Schedules.select()
+            db_data = Schedules.select().where(Schedules.server_id == server_id)
 
             template = "admin/schedules.html"
             context['db_data'] = db_data
             context['saved'] = saved
-
-        elif page == "reloadschedules":
-            if not check_role_permission(user_data['username'], 'schedules'):
-                self.redirect('/admin/unauthorized')
-
-            logger.info("Reloading Scheduled Tasks")
-
-            db_data = Schedules.select()
-
-            # clear all user jobs
-            schedule.clear('user')
-
-            logger.info("Deleting all old tasks")
-
-            logger.info("There are {} scheduled jobs to parse:".format(len(db_data)))
-
-            # loop through the tasks in the db
-            for task in db_data:
-                helper.scheduler(task, self.mcserver)
-
-            template = "admin/schedules.html"
-            context['db_data'] = db_data
-            context['saved'] = None
+            context['server_id'] = server_id
 
         elif page == "schedule_disable":
             if not check_role_permission(user_data['username'], 'schedules'):
                 self.redirect('/admin/unauthorized')
 
-            schedule_id = self.get_argument('id', 1)
+            schedule_id = self.get_argument('taskid', 1)
+            server_id = self.get_argument('id', 1)
+
             q = Schedules.update(enabled=0).where(Schedules.id == schedule_id)
             q.execute()
 
-            self.redirect("/admin/reloadschedules")
+            self._reload_schedules()
+
+            self.redirect("/admin/schedules?id={}".format(server_id))
 
         elif page == "schedule_enable":
             if not check_role_permission(user_data['username'], 'schedules'):
                 self.redirect('/admin/unauthorized')
 
-            schedule_id = self.get_argument('id', 1)
+            schedule_id = self.get_argument('taskid', 1)
+            server_id = self.get_argument('id', 1)
+
             q = Schedules.update(enabled=1).where(Schedules.id == schedule_id)
             q.execute()
 
-            self.redirect("/admin/reloadschedules")
+            self._reload_schedules()
+
+            self.redirect("/admin/schedules?id={}".format(server_id))
 
         elif page == 'config':
             if not check_role_permission(user_data['username'], 'config'):
@@ -502,6 +489,7 @@ class AdminHandler(BaseHandler):
             sched_time = bleach.clean(self.get_argument('time', ''))
             command = bleach.clean(self.get_argument('command', ''))
             comment = bleach.clean(self.get_argument('comment', ''))
+            server_id = int(self.get_argument('server_id', ''))
 
             result = (
                 Schedules.insert(
@@ -511,12 +499,16 @@ class AdminHandler(BaseHandler):
                     interval_type=interval_type,
                     start_time=sched_time,
                     command=command,
-                    comment=comment
+                    comment=comment,
+                    server_id=server_id
                 )
                 .on_conflict('replace')
                 .execute()
             )
-            self.redirect("/admin/schedules?saved=True")
+
+            self._reload_schedules()
+
+            self.redirect("/admin/schedules?id={}".format(server_id))
 
         elif page == 'config':
 
@@ -773,3 +765,18 @@ class AdminHandler(BaseHandler):
 
             self.redirect("/admin/backups?id={}".format(server_id))
 
+    def _reload_schedules(self):
+        logger.info("Reloading Scheduled Tasks")
+
+        db_data = Schedules.select()
+
+        # clear all user jobs
+        schedule.clear('user')
+
+        logger.info("Deleting all old tasks")
+
+        logger.info("There are {} scheduled jobs to parse:".format(len(db_data)))
+
+        # loop through the tasks in the db
+        for task in db_data:
+            helper.scheduler(task, self.mcserver)

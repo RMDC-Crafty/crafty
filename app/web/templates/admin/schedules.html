@@ -24,6 +24,7 @@
         <div class="col-xs-6">
             <form role="form" method="post">
                 {% raw xsrf_form_html() %}
+                <input type="hidden" name="server_id" value="{{ data['server_id'] }}" />
                 <div class="box">
 
                     <div class="box-header with-border">
@@ -134,11 +135,11 @@
                                     <tr>
                                         <td>
                                             {% if task.enabled %}
-                                                <a href="/admin/schedule_disable?id={{ task.id }}">
+                                                <a href="/admin/schedule_disable?id={{ data['server_id'] }}&taskid={{ task.id }}">
                                                     <i class="fa fa-thumbs-up fa-lg text-green" aria-hidden="true"></i>
                                                 </a>
                                             {% else %}
-                                                <a href="/admin/schedule_enable?id={{ task.id }}">
+                                                <a href="/admin/schedule_enable?id={{ data['server_id'] }}&taskid={{ task.id }}">
                                                     <i class="fa fa-thumbs-down fa-lg  text-red" aria-hidden="true"></i>
                                                 </a>
                                             {% end %}
@@ -190,13 +191,7 @@
                     </div>
 
                     <div class="box-footer">
-                        <span class="text-red">*</span> Reload is used to apply your changed schedules
-
-                        <a href="/admin/reloadschedules" class="btn btn-success pull-right">
-                            <i class="fa fa-refresh" aria-hidden="true"></i>
-                            Reload Crafty Scheduler
-                        </a>
-
+                        &nbsp;
                     </div>
 
     </div>
@@ -306,7 +301,7 @@
           url: '/ajax/del_schedule',
           data: data_to_send,
           success: function(data){
-            window.location.href = "/admin/reloadschedules"
+            window.location.reload()
           },
         });
     }
