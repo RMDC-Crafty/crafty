@@ -138,6 +138,7 @@ class Minecraft_Server():
 
         # fail safe in case we try to start something already running
         if self.check_running():
+            logger.error("Server is already running - Cancelling Startup")
             return False
 
         if not self.jar_exists:

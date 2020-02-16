@@ -691,6 +691,10 @@ class AdminHandler(BaseHandler):
                 logger.error("2 servers can't have the same name - Can't add server")
                 error = "Another server is already called: {}".format(server_name)
 
+            samepath = MC_settings.select().where(MC_settings.server_path == server_path)
+            if samepath.exists():
+                logger.error("2 servers can't have the same path - Can't add server")
+                error = "Another server is already using: {}".format(server_path)
 
             error = None
 

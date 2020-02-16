@@ -51,7 +51,14 @@
                             </tr>
                             <tr>
                                 <td>Update Jar</td>
-                                <td>{{ data['mc_settings']['jar_url'] }}</td>
+                                <td>
+                                    {% if (data['mc_settings']['jar_url'] == "") %}
+                                        No update jar URL specified. <br />
+                                        Please add in <a href="server_config?id={{ data['mc_settings']['id'] }}">server config</a>
+                                    {% else %}
+                                        {{ data['mc_settings']['jar_url'] }}
+                                    {% end %}
+                                </td>
                             </tr>
 
                         </table>
@@ -76,13 +83,13 @@
                         >
                             <i class="fa fa-cloud-download" aria-hidden="true"></i>
                             Update Server Jar
-
                         </a>
-                        {% if (data['mc_settings']['jar_url'] == "") %}
-                            <br /> No update jar URL specified. <br />
 
-                        Please add in <a href="server_config?id={{ data['mc_settings']['id'] }}">server config</a>
-                        {% end %}
+                        <a href="commands?command=destroyworld&id={{ data['mc_settings']['id'] }}" class="btn btn-app">
+                            <i class="fa fa-bomb" aria-hidden="true"></i>
+                            Start New World
+                        </a>
+
                     </div>
                 </div>
             </div>
@@ -95,7 +102,10 @@
             <div class="box box-info">
                 <div class="box-header with-border">
                   <h3 class="box-title"><i class="fa fa-clock-o" aria-hidden="true"></i>
-                      Historical Data</h3>
+                      Historical Data
+                  </h3>
+                    <br />
+                    <small>Missind Data below? <a href="config">Check your history interval config</a> </small>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
