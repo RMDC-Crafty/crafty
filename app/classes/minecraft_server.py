@@ -646,6 +646,8 @@ class Minecraft_Server():
 
     def update_server_jar(self, with_console=True):
 
+        self.reload_settings()
+
         self.updating = True
 
         logger.info("Starting Jar Update Process")
@@ -712,6 +714,9 @@ class Minecraft_Server():
         console.info("Server Jar Update Completed - press enter to get the prompt back")
 
     def revert_updated_server_jar(self, with_console=True):
+
+        self.reload_settings()
+
         self.updating = True
 
         logger.info("Starting Jar Revert Process")
