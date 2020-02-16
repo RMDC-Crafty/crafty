@@ -68,12 +68,21 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <div id="asdf" style="height: 250px;">
-                        <a href="commands?command=update_jar&id={{ data['mc_settings']['id'] }}" class="btn btn-app">
+                    <div id="server_update">
+                        <a href="commands?command=update_jar&id={{ data['mc_settings']['id'] }}" class="btn btn-app"
+                        {% if (data['mc_settings']['jar_url'] == "") %}
+                            disabled='true'
+                        {% end %}
+                        >
                             <i class="fa fa-cloud-download" aria-hidden="true"></i>
                             Update Server Jar
 
                         </a>
+                        {% if (data['mc_settings']['jar_url'] == "") %}
+                            <br /> No update jar URL specified. <br />
+
+                        Please add in <a href="server_config?id={{ data['mc_settings']['id'] }}">server config</a>
+                        {% end %}
                     </div>
                 </div>
             </div>

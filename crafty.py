@@ -238,6 +238,8 @@ if __name__ == '__main__':
     # do our scheduling
     multi.reload_scheduling()
 
+    multi.reload_user_schedules()
+
     # start the remote commands watcher thread
     remote_coms = remote_commands(tornado_srv)
     remote_coms_thread = threading.Thread(target=remote_coms.start_watcher, daemon=True, name="Remote_Coms")

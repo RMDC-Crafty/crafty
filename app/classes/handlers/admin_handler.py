@@ -766,6 +766,7 @@ class AdminHandler(BaseHandler):
             self.redirect("/admin/backups?id={}".format(server_id))
 
     def _reload_schedules(self):
+        '''
         logger.info("Reloading Scheduled Tasks")
 
         db_data = Schedules.select()
@@ -780,3 +781,5 @@ class AdminHandler(BaseHandler):
         # loop through the tasks in the db
         for task in db_data:
             helper.scheduler(task, self.mcserver)
+        '''
+        multi.reload_user_schedules()
