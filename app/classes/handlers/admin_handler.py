@@ -1,4 +1,5 @@
 import time
+import glob
 import logging
 import schedule
 import bleach
@@ -248,28 +249,40 @@ class AdminHandler(BaseHandler):
             path = bleach.clean(self.get_argument("file", None, True))
             server_id = bleach.clean(self.get_argument("id", None, True))
 
-            # let's make sure this path is in the backup directory and not somewhere else
-            # we don't want someone passing a path like /etc/passwd in the raw, so we are only passing the filename
-            # to this function, and then tacking on the storage location in front of the filename.
+            # only allow zip files
+            if path[-3:] != "zip":
+                self.redirect("/admin/backups?id={}".format(server_id))
 
             backup_folder = backupmgr.get_backup_folder_for_server(server_id)
 
             # Grab our backup path from the DB
             backup_list = Backups.get(Backups.server_id == int(server_id))
-            server_backup_file = os.path.join(backup_list.storage_location, backup_folder, path)
+            base_folder = backup_list.storage_location
 
-            if server_backup_file is not None and helper.check_file_exists(server_backup_file):
-                file_name = os.path.basename(server_backup_file)
-                self.set_header('Content-Type', 'application/octet-stream')
-                self.set_header('Content-Disposition', 'attachment; filename=' + file_name)
+            # get full path of our backups
+            server_backup_folder = os.path.join(base_folder, backup_folder)
+            server_backup_file = os.path.join(server_backup_folder, path)
 
-                with open(server_backup_file, 'rb') as f:
-                    while 1:
-                        data = f.read(16384)  # or some other nice-sized chunk
-                        if not data:
-                            break
-                        self.write(data)
-                self.finish()
+            # get list of zip files in the backup directory
+            files = [f for f in glob.glob(server_backup_folder + "**/*.zip")]
+
+            # for each file, see if it matches the file we are trying to download
+            for f in files:
+
+                # if we find a match
+                if f == server_backup_file and helper.check_file_exists(server_backup_file):
+
+                    file_name = os.path.basename(server_backup_file)
+                    self.set_header('Content-Type', 'application/octet-stream')
+                    self.set_header('Content-Disposition', 'attachment; filename=' + file_name)
+
+                    with open(server_backup_file, 'rb') as f:
+                        while 1:
+                            data = f.read(16384)  # or some other nice-sized chunk
+                            if not data:
+                                break
+                            self.write(data)
+                    self.finish()
 
             self.redirect("/admin/backups?id={}".format(server_id))
 
