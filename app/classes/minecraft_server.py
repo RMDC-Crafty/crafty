@@ -789,5 +789,44 @@ class Minecraft_Server():
             return False
             # return True
 
+    def destroy_world(self):
+
+        was_running = False
+        currently_running = self.check_running()
+
+        if currently_running:
+            logger.info("Server {} is running, shutting down".format(self.name))
+            was_running = True
+            self.stop_threaded_server()
+
+            while currently_running:
+                logger.info("Server %s is still running - waiting 2s to see if it stops", self.name)
+                currently_running = self.check_running()
+                time.sleep(2)
+
+        # get world name and server path
+        world_name = self.get_world_name()
+        server_path = self.server_path
+
+        # build directory names
+        world_path = os.path.join(server_path, world_name)
+        world_end = "{}_the_end".format(world_path)
+        world_nether = "{}_nether".format(world_path)
+
+        # delete the directories
+        helper.delete_directory(world_path)
+        helper.delete_directory(world_nether)
+        helper.delete_directory(world_end)
+        time.sleep(2)
+
+        # restart server if it was running
+        if was_running:
+            logger.info("Restarting server: {}".format(self.name))
+            self.run_threaded_server()
+
+
+
+
+
 
 mc_server = Minecraft_Server()

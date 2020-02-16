@@ -172,3 +172,7 @@ class remote_commands():
             ftp_svr_object.stop_threaded_ftp_server()
             webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(200, {}, {}, {"info": "FTP server successfully stopped"}))
 
+        elif command == 'destroy_world':
+            logger.info("Destroying World for Server: {} - {}".format(server_id, server_name))
+            srv_obj.destroy_world()
+

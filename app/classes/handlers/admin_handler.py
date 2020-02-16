@@ -389,6 +389,13 @@ class AdminHandler(BaseHandler):
                 time.sleep(2)
                 next_page = "/admin/server_control?id={}".format(id)
 
+            elif command == 'destroy_world':
+                Remote.insert({
+                    Remote.command: 'destroy_world',
+                    Remote.server_id: id,
+                    Remote.command_source: "localhost"
+                }).execute()
+                next_page = "/admin/virtual_console?id={}".format(id)
 
             self.redirect(next_page)
 

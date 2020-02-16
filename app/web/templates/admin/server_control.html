@@ -76,7 +76,7 @@
                 <!-- /.box-header -->
                 <div class="box-body">
                     <div id="server_update">
-                        <a href="commands?command=update_jar&id={{ data['mc_settings']['id'] }}" class="btn btn-app"
+                        <a class="btn btn-app" onclick="update()"
                         {% if (data['mc_settings']['jar_url'] == "") %}
                             disabled='true'
                         {% end %}
@@ -85,7 +85,16 @@
                             Update Server Jar
                         </a>
 
-                        <a href="commands?command=destroyworld&id={{ data['mc_settings']['id'] }}" class="btn btn-app">
+                        <a class="btn btn-app" onclick="update()"
+                        {% if (data['mc_settings']['jar_url'] == "") %}
+                            disabled='true'
+                        {% end %}
+                        >
+                            <i class="fa fa-undo" aria-hidden="true"></i>
+                            Revert Jar Update
+                        </a>
+
+                        <a class="btn btn-app" onclick="destroy_world()">
                             <i class="fa fa-bomb" aria-hidden="true"></i>
                             Start New World
                         </a>
@@ -105,7 +114,7 @@
                       Historical Data
                   </h3>
                     <br />
-                    <small>Missind Data below? <a href="config">Check your history interval config</a> </small>
+                    <small>Missing Data below? <a href="config">Check your history interval config</a> </small>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
@@ -132,8 +141,6 @@
                     {% else %}
                         No Players Online
                     {% end %}
-
-
                 </ul>
               </div>
               <!-- /.table-responsive -->
@@ -182,10 +189,31 @@
         setTimeout(function(){ hide_modals(); }, 3000);
     }
 
+    function destroy_world(){
+        bootbox.confirm({
+            message: "Do you really want to destroy this world and start over?!",
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-success'
+                }
+            },
+            callback: function (result) {
+                if (result){
+                    send_destroy_command()
+                }
+            }
+        });
+    }
+
     function send_update_command(){
         $.ajax({
             type: 'GET',
-            url: '/ajax/update_jar',
+            url: '/admin/commands?command=update_jar&id={{ data['mc_settings']['id'] }}',
             dataType: 'text',
         });
     }
@@ -193,7 +221,15 @@
     function send_revert_command(){
         $.ajax({
             type: 'GET',
-            url: '/ajax/revert_jar',
+            url: '/admin/commands?command=revert_jar&id={{ data['mc_settings']['id'] }}',
+            dataType: 'text',
+        });
+    }
+
+    function send_destroy_command(){
+        $.ajax({
+            type: 'GET',
+            url: '/admin/commands?command=destroy_world&id={{ data['mc_settings']['id'] }}',
             dataType: 'text',
         });
     }
