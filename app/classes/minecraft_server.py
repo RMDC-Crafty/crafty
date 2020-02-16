@@ -709,6 +709,7 @@ class Minecraft_Server():
             self.run_threaded_server()
 
         self.updating = False
+        console.info("Server Jar Update Completed - press enter to get the prompt back")
 
     def revert_updated_server_jar(self, with_console=True):
         self.updating = True
@@ -767,6 +768,7 @@ class Minecraft_Server():
             self.run_threaded_server()
 
         self.updating = False
+        console.info("Server Jar Revert Completed - press enter to get the prompt back")
 
     def check_updating(self):
         if self.updating:

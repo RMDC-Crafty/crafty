@@ -128,6 +128,12 @@ class remote_commands():
         elif command == 'revert_server_jar':
             srv_obj.revert_updated_server_jar(False)
 
+        elif command == 'update_server_jar_console':
+            srv_obj.update_server_jar(True)
+
+        elif command == 'revert_server_jar_console':
+            srv_obj.revert_updated_server_jar(True)
+
         elif command == "exit_crafty":
             logger.info("Sending Stop Command To Crafty")
 
