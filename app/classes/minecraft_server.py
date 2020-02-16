@@ -685,6 +685,7 @@ class Minecraft_Server():
             console.info("Starting Server Jar Download")
 
         # backup the server jar file
+        logger.info("Backing up Current Jar")
         helper.copy_file(current_jar, backup_jar_name)
 
         # download the new server jar file

@@ -371,6 +371,25 @@ class AdminHandler(BaseHandler):
                 time.sleep(4)
                 next_page = '/admin/backups'
 
+            elif command == 'update_jar':
+                Remote.insert({
+                    Remote.command: 'update_server_jar',
+                    Remote.server_id: id,
+                    Remote.command_source: 'localhost'
+                }).execute()
+                time.sleep(2)
+                next_page = "/admin/server_control?id={}".format(id)
+
+            elif command == 'revert_jar':
+                Remote.insert({
+                    Remote.command: 'revert_server_jar',
+                    Remote.server_id: id,
+                    Remote.command_source: 'localhost'
+                }).execute()
+                time.sleep(2)
+                next_page = "/admin/server_control?id={}".format(id)
+
+
             self.redirect(next_page)
 
         elif page == 'get_logs':

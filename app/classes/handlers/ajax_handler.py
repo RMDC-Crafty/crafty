@@ -86,16 +86,6 @@ class AjaxHandler(BaseHandler):
 
             )
 
-        elif page == 'update_jar':
-            Remote.insert({
-                Remote.command: 'update_server_jar'
-            }).execute()
-
-        elif page == 'revert_jar':
-            Remote.insert({
-                Remote.command: 'revert_server_jar'
-            }).execute()
-
 
     def post(self, page):
 

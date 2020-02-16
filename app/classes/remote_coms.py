@@ -122,12 +122,11 @@ class remote_commands():
                 logger.info("Stop halted! Server %s is not running!", server_name)
                 webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(500, {"error": "SER_NOT_RUNNING"}, {"server": {"id": server_id, "name": server_name, "running": running}}, {"info": "Server is not running"}))
 
-        # TODO We need to rebuild this functionality
-        # elif command == 'update_server_jar':
-            # srv_obj.update_server_jar(False)
+        elif command == 'update_server_jar':
+            srv_obj.update_server_jar(False)
 
-        # elif command == 'revert_server_jar':
-            # srv_obj.revert_updated_server_jar(False)
+        elif command == 'revert_server_jar':
+            srv_obj.revert_updated_server_jar(False)
 
         elif command == "exit_crafty":
             logger.info("Sending Stop Command To Crafty")
