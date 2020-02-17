@@ -250,9 +250,18 @@
         });
     }
 
+
     function show_invalid(){
         var dialog = bootbox.dialog({
-            message: "Invalid Settings Detected",
+            message: "Invalid Settings",
+            className: 'modal modal-danger fade-in',
+            okButton: false
+        });
+    }
+
+    function show_loop_protection(){
+        var dialog = bootbox.dialog({
+            message: "Please set the backup folder to a path outside of the server path",
             className: 'modal modal-danger fade-in',
             okButton: false
         });
@@ -338,12 +347,17 @@
 
         {% if data['saved'] %}
             show_saved()
-            setTimeout(hide_modal, 1000);
+            setTimeout(hide_modal, 3000);
         {% end %}
 
         {% if data['invalid'] %}
-            show_invalid()
-            setTimeout(hide_modal, 1000);
+            {% if data['invalid'] == "loop_protection" %}
+                show_loop_protection()
+                setTimeout(hide_modal, 5000);
+            {% else %}
+                show_invalid()
+                setTimeout(hide_modal, 3000);
+            {% end %}
         {% end %}
 
 
