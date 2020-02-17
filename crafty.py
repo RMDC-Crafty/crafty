@@ -20,7 +20,7 @@ except Exception as e:
     print(" Crafty is unable to find required modules")
     print(" Some common causes of this issue include:")
     print("\t * Not in a virtual environment: are you in the virtual environment?")
-    print("\t * Modules didn't install: Did pip -r requirements.txt run correctly?")
+    print("\t * Modules didn't install: Did pip install -r requirements.txt run correctly?")
     print("\n Need Help? We are here to help! - https://discord.gg/XR5x3ZM \n")
     sys.exit(1)
 
