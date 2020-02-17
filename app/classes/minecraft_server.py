@@ -130,9 +130,16 @@ class Minecraft_Server():
 
     def stop_threaded_server(self):
         self.stop_server()
-        self.server_thread.join()
+
+        if self.server_thread:
+            self.server_thread.join()
 
     def start_server(self):
+
+        # fail safe in case we try to start something already running
+        if self.check_running():
+            logger.error("Server is already running - Cancelling Startup")
+            return False
 
         if not self.jar_exists:
             console.warning("Minecraft server JAR does not exist...")
@@ -646,6 +653,8 @@ class Minecraft_Server():
 
     def update_server_jar(self, with_console=True):
 
+        self.reload_settings()
+
         self.updating = True
 
         logger.info("Starting Jar Update Process")
@@ -685,6 +694,7 @@ class Minecraft_Server():
             console.info("Starting Server Jar Download")
 
         # backup the server jar file
+        logger.info("Backing up Current Jar")
         helper.copy_file(current_jar, backup_jar_name)
 
         # download the new server jar file
@@ -708,8 +718,12 @@ class Minecraft_Server():
             self.run_threaded_server()
 
         self.updating = False
+        console.info("Server Jar Update Completed - press enter to get the prompt back")
 
     def revert_updated_server_jar(self, with_console=True):
+
+        self.reload_settings()
+
         self.updating = True
 
         logger.info("Starting Jar Revert Process")
@@ -766,6 +780,7 @@ class Minecraft_Server():
             self.run_threaded_server()
 
         self.updating = False
+        console.info("Server Jar Revert Completed - press enter to get the prompt back")
 
     def check_updating(self):
         if self.updating:
@@ -773,6 +788,45 @@ class Minecraft_Server():
         else:
             return False
             # return True
+
+    def destroy_world(self):
+
+        was_running = False
+        currently_running = self.check_running()
+
+        if currently_running:
+            logger.info("Server {} is running, shutting down".format(self.name))
+            was_running = True
+            self.stop_threaded_server()
+
+            while currently_running:
+                logger.info("Server %s is still running - waiting 2s to see if it stops", self.name)
+                currently_running = self.check_running()
+                time.sleep(2)
+
+        # get world name and server path
+        world_name = self.get_world_name()
+        server_path = self.server_path
+
+        # build directory names
+        world_path = os.path.join(server_path, world_name)
+        world_end = "{}_the_end".format(world_path)
+        world_nether = "{}_nether".format(world_path)
+
+        # delete the directories
+        helper.delete_directory(world_path)
+        helper.delete_directory(world_nether)
+        helper.delete_directory(world_end)
+        time.sleep(2)
+
+        # restart server if it was running
+        if was_running:
+            logger.info("Restarting server: {}".format(self.name))
+            self.run_threaded_server()
+
+
+
+
 
 
 mc_server = Minecraft_Server()

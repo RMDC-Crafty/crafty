@@ -86,17 +86,6 @@ class AjaxHandler(BaseHandler):
 
             )
 
-        elif page == 'update_jar':
-            Remote.insert({
-                Remote.command: 'update_server_jar'
-            }).execute()
-
-        elif page == 'revert_jar':
-            Remote.insert({
-                Remote.command: 'revert_server_jar'
-            }).execute()
-
-
     def post(self, page):
 
         name = tornado.escape.json_decode(self.current_user)
@@ -139,6 +128,8 @@ class AjaxHandler(BaseHandler):
                 logger.info("Got command to del schedule {}".format(id_to_del))
                 q = Schedules.delete().where(Schedules.id == id_to_del)
                 q.execute()
+
+            multi.reload_user_schedules()
 
         elif page == 'search_logs':
             search_string = bleach.clean(self.get_body_argument('search', default=None, strip=True))

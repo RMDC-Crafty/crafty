@@ -26,7 +26,7 @@
 
         <div class="info-box-content">
           <span class="info-box-text">Host Total CPU Usage</span>
-          <span class="info-box-number"> {{ round( data['host_stats']['cpu_usage'], 2) }} <small>%</small> across {{ data['host_stats']['cpu_cores'] }} <small>Cores</small>
+          <span class="info-box-number"> {{ round( data['host_stats']['cpu_usage'], 2) }} <small>%</small> across {{ data['host_stats']['cpu_cores'] }} <small>threads</small>
           <span class="info-box-number"> {{ round( data['host_stats']['cpu_cur_freq'] / 1000, 2) }} Ghz / {{ round( data['host_stats']['cpu_max_freq'] / 1000, 1) }} Ghz
           </span>
         </div>
@@ -171,7 +171,7 @@
         {% end %}
 
         {% if data['user_data']['schedules'] %}
-        <a href="" class="btn btn-default disabled">
+        <a href="/admin/schedules?id={{ s['id'] }}" class="btn btn-default">
           <i class="fa fa-clock-o" aria-hidden="true"></i> Tasks
         </a>
         {% end %}

@@ -386,3 +386,86 @@ class MainPrompt(cmd.Cmd):
             console.info("MOTD: {}".format(stats['motd']))
 
             console.info('-' * 30)
+
+    def help_update_server_jar(self):
+        console.help("Updates a Server Jar")
+        console.help("Specify the server to update by ID number")
+        console.help("Example: update_server_jar 1 - this will update server ID 1")
+        console.help("You can get a server id by issuing list_servers")
+
+    def do_update_server_jar(self, line):
+        if line == '':
+            self.help_update_server_jar()
+            return 0
+
+        try:
+            int(line)
+        except ValueError:
+            console.error("Server ID must be a number")
+            self.help_update_server_jar()
+            return 0
+
+        try:
+            server = MC_settings.get_by_id(line)
+
+        except Exception as e:
+            console.help("Unable to find a server with that ID: {}".format(e))
+            return 0
+
+        server = int(line)
+
+        if helper.is_setup_complete():
+
+            srv_obj = multi.get_server_obj(server)
+
+            console.info("Updating Server Jar in background")
+
+            Remote.insert({
+                Remote.command: 'update_server_jar_console',
+                Remote.server_id: server,
+                Remote.command_source: "localhost"
+            }).execute()
+        else:
+            console.warning("Unable to update server jar, please complete setup in the web GUI first")
+
+    def help_revert_server_jar(self):
+        console.help("Reverts a Server Jar Update")
+        console.help("Specify the server to revert by ID number")
+        console.help("Example: revert_server_jar 1 - this will revert the update for server ID 1")
+        console.help("You can get a server id by issuing list_servers")
+
+    def do_revert_server_jar(self, line):
+        if line == '':
+            self.help_update_server_jar()
+            return 0
+
+        try:
+            int(line)
+        except ValueError:
+            console.error("Server ID must be a number")
+            self.help_update_server_jar()
+            return 0
+
+        try:
+            server = MC_settings.get_by_id(line)
+
+        except Exception as e:
+            console.help("Unable to find a server with that ID: {}".format(e))
+            return 0
+
+        server = int(line)
+
+        if helper.is_setup_complete():
+
+            srv_obj = multi.get_server_obj(server)
+
+            console.info("Reverting updated Server Jar in background")
+
+            Remote.insert({
+                Remote.command: 'revert_server_jar_console',
+                Remote.server_id: server,
+                Remote.command_source: "localhost"
+            }).execute()
+        else:
+            console.warning("Unable to update server jar, please complete setup in the web GUI first")
+

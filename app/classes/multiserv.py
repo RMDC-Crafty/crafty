@@ -98,12 +98,28 @@ class multi_serve():
         schedule.every(10).seconds.do(multi.do_host_status).tag('server_stats', 'all_tasks')
         self.reload_history_settings()
 
+    def reload_user_schedules(self):
+        logger.info("Reloading Scheduled Tasks")
+
+        db_data = Schedules.select()
+
+        # clear all user jobs
+        schedule.clear('user')
+
+        logger.info("Deleting all old tasks")
+
+        logger.info("There are {} scheduled jobs to parse:".format(len(db_data)))
+
+        # loop through the tasks in the db
+        for task in db_data:
+            svr_obj = multi.get_server_obj(task.server_id)
+            helper.scheduler(task, svr_obj)
+
     def do_server_history(self):
         running = self.list_running_servers()
         for s in running:
             srv_obj = self.get_server_obj(s['id'])
             srv_obj.write_usage_history()
-
 
     def reload_history_settings(self):
         logger.info("Clearing history usage scheduled jobs")

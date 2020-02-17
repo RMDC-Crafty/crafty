@@ -122,12 +122,17 @@ class remote_commands():
                 logger.info("Stop halted! Server %s is not running!", server_name)
                 webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(500, {"error": "SER_NOT_RUNNING"}, {"server": {"id": server_id, "name": server_name, "running": running}}, {"info": "Server is not running"}))
 
-        # TODO We need to rebuild this functionality
-        # elif command == 'update_server_jar':
-            # srv_obj.update_server_jar(False)
+        elif command == 'update_server_jar':
+            srv_obj.update_server_jar(False)
 
-        # elif command == 'revert_server_jar':
-            # srv_obj.revert_updated_server_jar(False)
+        elif command == 'revert_server_jar':
+            srv_obj.revert_updated_server_jar(False)
+
+        elif command == 'update_server_jar_console':
+            srv_obj.update_server_jar(True)
+
+        elif command == 'revert_server_jar_console':
+            srv_obj.revert_updated_server_jar(True)
 
         elif command == "exit_crafty":
             logger.info("Sending Stop Command To Crafty")
@@ -160,10 +165,14 @@ class remote_commands():
                 return False
 
             logger.info("Starting FTP Server")
-            ftp_svr_object.run_threaded_ftp_server()
+            ftp_svr_object.run_threaded_ftp_server(server_id)
             webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(200, {}, {}, {"info": "FTP server successfully started"}))
 
         elif command == 'stop_ftp':
             ftp_svr_object.stop_threaded_ftp_server()
             webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(200, {}, {}, {"info": "FTP server successfully stopped"}))
+
+        elif command == 'destroy_world':
+            logger.info("Destroying World for Server: {} - {}".format(server_id, server_name))
+            srv_obj.destroy_world()
 

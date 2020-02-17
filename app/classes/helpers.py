@@ -541,6 +541,11 @@ class helpers:
             logger.critical("Unable to write to {} - Error: {}".format(path, e))
             return False
 
+    def delete_directory(self, path):
+        if self.check_directory_exist(path):
+            logger.info("{} exists - deleting path".format(path))
+            shutil.rmtree(path)
+
     def scheduler(self, task, mc_server_obj):
         logger.info("Parsing Tasks To Add")
         # legend for tasks:

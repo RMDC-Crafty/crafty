@@ -7,6 +7,11 @@ import argparse
 import threading
 import logging.config
 
+# This Is A Test
+
+def is_venv():
+    return hasattr(sys, 'real_prefix') or sys.base_prefix != sys.prefix
+
 try:
     import yaml
     import secrets
@@ -19,14 +24,47 @@ except Exception as e:
     print("/" * 75 + "\n")
     print(" Crafty is unable to find required modules")
     print(" Some common causes of this issue include:")
-    print("\t * Not in a virtual environment: are you in the virtual environment?")
     print("\t * Modules didn't install: Did pip install -r requirements.txt run correctly?")
+    print("\t * You haven't activated your virtual environment, maybe try activating it?")
     print("\n Need Help? We are here to help! - https://discord.gg/XR5x3ZM \n")
-    sys.exit(1)
+    if is_venv:
+        pipinstall = str(input("A virtual environment has been detected, would you like to try reinstalling the modules? [yes/no]: "))
+        pipinstall = pipinstall.lower()
+        print(pipinstall)
+        if pipinstall == str("yes"):
+            import subprocess
+            file = open("requirements.txt" , "r")
 
+            for line in file:
+                req = line.split("/n")
+                command_list = [sys.executable, "-m", "pip", "install", req]
+                with subprocess.Popen(command_list, stdout=subprocess.PIPE) as proc:
+                    print(proc.stdout.read())
+            print("Please Run Crafty Again!")
+            sys.exit(1)
+        else:
+            print("Not reinstalling modules, join the discord for further assistance!")
+            sys.exit(1)
+    else:
+        print("It has been detected that you are not in a virtual environment, maybe try activating it?")
+        print("If you are not sure how to do this, ask for help in our discord!")
+        pipinstall = str(input("If you have chosen to not use a virtual environment, would you like to try reinstalling the modules? [yes/no]: "))
+        pipinstall = pipinstall.lower()
+        print(pipinstall)
+        if pipinstall == str("yes"):
+            import subprocess
+            file = open("requirements.txt" , "r")
 
-def is_venv():
-    return hasattr(sys, 'real_prefix') or sys.base_prefix != sys.prefix
+            for line in file:
+                req = line.split("/n")
+                command_list = [sys.executable, "-m", "pip", "install", req]
+                with subprocess.Popen(command_list, stdout=subprocess.PIPE) as proc:
+                    print(proc.stdout.read())
+            print("Please Run Crafty Again!")
+            sys.exit(1)
+        else:
+            print("Not reinstalling modules, join the discord for further assistance!")
+            sys.exit(1)
 
 def setup_logging(debug=False):
     logging_config_file = os.path.join(os.path.curdir,
@@ -238,13 +276,15 @@ if __name__ == '__main__':
     # do our scheduling
     multi.reload_scheduling()
 
+    multi.reload_user_schedules()
+
     # start the remote commands watcher thread
     remote_coms = remote_commands(tornado_srv)
     remote_coms_thread = threading.Thread(target=remote_coms.start_watcher, daemon=True, name="Remote_Coms")
     remote_coms_thread.start()
 
     console.info("Crafty Startup Procedure Complete")
-    console.help("Type 'stop' or 'exit' to shutdown the system")
+    console.help("Type 'stop' or 'exit' to shutdown Crafty")
 
     if not daemon_mode:
         Crafty = MainPrompt(mc_server)

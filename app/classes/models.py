@@ -163,6 +163,7 @@ class Webserver(BaseModel):
 
 class Schedules(BaseModel):
     id = IntegerField(unique=True, primary_key=True)
+    server_id = IntegerField()
     enabled = BooleanField()
     action = CharField()
     interval = IntegerField()

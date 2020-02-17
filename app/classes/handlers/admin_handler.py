@@ -1,4 +1,5 @@
 import time
+import glob
 import logging
 import schedule
 import bleach
@@ -147,55 +148,42 @@ class AdminHandler(BaseHandler):
                 self.redirect('/admin/unauthorized')
 
             saved = bleach.clean(self.get_argument('saved', ''))
+            server_id = int(bleach.clean(self.get_argument('id', 1)))
 
-            db_data = Schedules.select()
+            db_data = Schedules.select().where(Schedules.server_id == server_id)
 
             template = "admin/schedules.html"
             context['db_data'] = db_data
             context['saved'] = saved
-
-        elif page == "reloadschedules":
-            if not check_role_permission(user_data['username'], 'schedules'):
-                self.redirect('/admin/unauthorized')
-
-            logger.info("Reloading Scheduled Tasks")
-
-            db_data = Schedules.select()
-
-            # clear all user jobs
-            schedule.clear('user')
-
-            logger.info("Deleting all old tasks")
-
-            logger.info("There are {} scheduled jobs to parse:".format(len(db_data)))
-
-            # loop through the tasks in the db
-            for task in db_data:
-                helper.scheduler(task, self.mcserver)
-
-            template = "admin/schedules.html"
-            context['db_data'] = db_data
-            context['saved'] = None
+            context['server_id'] = server_id
 
         elif page == "schedule_disable":
             if not check_role_permission(user_data['username'], 'schedules'):
                 self.redirect('/admin/unauthorized')
 
-            schedule_id = self.get_argument('id', 1)
+            schedule_id = self.get_argument('taskid', 1)
+            server_id = self.get_argument('id', 1)
+
             q = Schedules.update(enabled=0).where(Schedules.id == schedule_id)
             q.execute()
 
-            self.redirect("/admin/reloadschedules")
+            self._reload_schedules()
+
+            self.redirect("/admin/schedules?id={}".format(server_id))
 
         elif page == "schedule_enable":
             if not check_role_permission(user_data['username'], 'schedules'):
                 self.redirect('/admin/unauthorized')
 
-            schedule_id = self.get_argument('id', 1)
+            schedule_id = self.get_argument('taskid', 1)
+            server_id = self.get_argument('id', 1)
+
             q = Schedules.update(enabled=1).where(Schedules.id == schedule_id)
             q.execute()
 
-            self.redirect("/admin/reloadschedules")
+            self._reload_schedules()
+
+            self.redirect("/admin/schedules?id={}".format(server_id))
 
         elif page == 'config':
             if not check_role_permission(user_data['username'], 'config'):
@@ -261,28 +249,40 @@ class AdminHandler(BaseHandler):
             path = bleach.clean(self.get_argument("file", None, True))
             server_id = bleach.clean(self.get_argument("id", None, True))
 
-            # let's make sure this path is in the backup directory and not somewhere else
-            # we don't want someone passing a path like /etc/passwd in the raw, so we are only passing the filename
-            # to this function, and then tacking on the storage location in front of the filename.
+            # only allow zip files
+            if path[-3:] != "zip":
+                self.redirect("/admin/backups?id={}".format(server_id))
 
             backup_folder = backupmgr.get_backup_folder_for_server(server_id)
 
             # Grab our backup path from the DB
             backup_list = Backups.get(Backups.server_id == int(server_id))
-            server_backup_file = os.path.join(backup_list.storage_location, backup_folder, path)
+            base_folder = backup_list.storage_location
 
-            if server_backup_file is not None and helper.check_file_exists(server_backup_file):
-                file_name = os.path.basename(server_backup_file)
-                self.set_header('Content-Type', 'application/octet-stream')
-                self.set_header('Content-Disposition', 'attachment; filename=' + file_name)
+            # get full path of our backups
+            server_backup_folder = os.path.join(base_folder, backup_folder)
+            server_backup_file = os.path.join(server_backup_folder, path)
 
-                with open(server_backup_file, 'rb') as f:
-                    while 1:
-                        data = f.read(16384)  # or some other nice-sized chunk
-                        if not data:
-                            break
-                        self.write(data)
-                self.finish()
+            # get list of zip files in the backup directory
+            files = [f for f in glob.glob(server_backup_folder + "**/*.zip")]
+
+            # for each file, see if it matches the file we are trying to download
+            for f in files:
+
+                # if we find a match
+                if f == server_backup_file and helper.check_file_exists(server_backup_file):
+
+                    file_name = os.path.basename(server_backup_file)
+                    self.set_header('Content-Type', 'application/octet-stream')
+                    self.set_header('Content-Disposition', 'attachment; filename=' + file_name)
+
+                    with open(server_backup_file, 'rb') as f:
+                        while 1:
+                            data = f.read(16384)  # or some other nice-sized chunk
+                            if not data:
+                                break
+                            self.write(data)
+                    self.finish()
 
             self.redirect("/admin/backups?id={}".format(server_id))
 
@@ -298,7 +298,7 @@ class AdminHandler(BaseHandler):
             template = "admin/server_control.html"
             logfile = helper.get_crafty_log_file()
 
-            mc_data = MC_settings.get()
+            mc_data = MC_settings.get_by_id(server_id)
 
             srv_obj = multi.get_server_obj(server_id)
             context['server_running'] = srv_obj.check_running()
@@ -370,6 +370,32 @@ class AdminHandler(BaseHandler):
                 backupmgr.backup_all_servers()
                 time.sleep(4)
                 next_page = '/admin/backups'
+
+            elif command == 'update_jar':
+                Remote.insert({
+                    Remote.command: 'update_server_jar',
+                    Remote.server_id: id,
+                    Remote.command_source: 'localhost'
+                }).execute()
+                time.sleep(2)
+                next_page = "/admin/server_control?id={}".format(id)
+
+            elif command == 'revert_jar':
+                Remote.insert({
+                    Remote.command: 'revert_server_jar',
+                    Remote.server_id: id,
+                    Remote.command_source: 'localhost'
+                }).execute()
+                time.sleep(2)
+                next_page = "/admin/server_control?id={}".format(id)
+
+            elif command == 'destroy_world':
+                Remote.insert({
+                    Remote.command: 'destroy_world',
+                    Remote.server_id: id,
+                    Remote.command_source: "localhost"
+                }).execute()
+                next_page = "/admin/virtual_console?id={}".format(id)
 
             self.redirect(next_page)
 
@@ -483,6 +509,7 @@ class AdminHandler(BaseHandler):
             sched_time = bleach.clean(self.get_argument('time', ''))
             command = bleach.clean(self.get_argument('command', ''))
             comment = bleach.clean(self.get_argument('comment', ''))
+            server_id = int(self.get_argument('server_id', ''))
 
             result = (
                 Schedules.insert(
@@ -492,12 +519,16 @@ class AdminHandler(BaseHandler):
                     interval_type=interval_type,
                     start_time=sched_time,
                     command=command,
-                    comment=comment
+                    comment=comment,
+                    server_id=server_id
                 )
                 .on_conflict('replace')
                 .execute()
             )
-            self.redirect("/admin/schedules?saved=True")
+
+            self._reload_schedules()
+
+            self.redirect("/admin/schedules?id={}".format(server_id))
 
         elif page == 'config':
 
@@ -667,6 +698,10 @@ class AdminHandler(BaseHandler):
                 logger.error("2 servers can't have the same name - Can't add server")
                 error = "Another server is already called: {}".format(server_name)
 
+            samepath = MC_settings.select().where(MC_settings.server_path == server_path)
+            if samepath.exists():
+                logger.error("2 servers can't have the same path - Can't add server")
+                error = "Another server is already using: {}".format(server_path)
 
             error = None
 
@@ -754,3 +789,21 @@ class AdminHandler(BaseHandler):
 
             self.redirect("/admin/backups?id={}".format(server_id))
 
+    def _reload_schedules(self):
+        '''
+        logger.info("Reloading Scheduled Tasks")
+
+        db_data = Schedules.select()
+
+        # clear all user jobs
+        schedule.clear('user')
+
+        logger.info("Deleting all old tasks")
+
+        logger.info("There are {} scheduled jobs to parse:".format(len(db_data)))
+
+        # loop through the tasks in the db
+        for task in db_data:
+            helper.scheduler(task, self.mcserver)
+        '''
+        multi.reload_user_schedules()
