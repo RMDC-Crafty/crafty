@@ -8,6 +8,8 @@ import logging.config
 # credit to https://gist.github.com/Lonami - https://gist.github.com/Lonami/b09fc1abb471fd0b8b5483d54f737ea0
 # slightly modified for Crafty
 
+logger = logging.getLogger(__name__)
+
 
 class Server:
     def __init__(self, data):
@@ -15,11 +17,11 @@ class Server:
         # print(self.description)
         if isinstance(self.description, dict):
 
-            #cat server
+            # cat server
             if "translate" in self.description:
                 self.description = self.description['translate']
 
-            #waterfall / bungee
+            # waterfall / bungee
             elif 'extra' in self.description:
                 lines = []
 
@@ -32,7 +34,7 @@ class Server:
                 total_text = " ".join(lines)
                 self.description = total_text
 
-            #normal MC
+            # normal MC
             else:
                 self.description = self.description['text']
 
@@ -41,12 +43,13 @@ class Server:
         self.version = data['version']['name']
         self.protocol = data['version']['protocol']
 
-    def __str__(self):
-        return 'Server(description={!r}, icon={!r}, version={!r}, '\
-                'protocol={!r}, players={!r})'.format(
-            self.description, bool(self.icon), self.version,
-            self.protocol, self.players
-        )
+    # def __str__(self):
+    #    return 'Server(description={!r}, icon={!r}, version={!r}, '\
+    #            'protocol={!r}, players={!r})'.format(
+    #        self.description, bool(self.icon), self.version,
+    #        self.protocol, self.players
+    #    )
+
 
 class Players(list):
     def __init__(self, data):
@@ -96,7 +99,12 @@ def ping(ip, port=25565):
                 return i
 
     sock = socket.socket()
-    sock.connect((ip, port))
+    try:
+        sock.connect((ip, port))
+    except:
+        pass
+        return False
+
     try:
         host = ip.encode('utf-8')
         data = b''  # wiki.vg/Server_List_Ping
@@ -110,9 +118,9 @@ def ping(ip, port=25565):
         length = read_var_int()  # full packet length
         if length < 10:
             if length < 0:
-                raise ValueError('negative length read')
+                return False
             else:
-                raise ValueError('invalid response %s' % sock.read(length))
+                return False
 
         sock.recv(1)  # packet type, 0 for pings
         length = read_var_int()  # string length
@@ -120,10 +128,10 @@ def ping(ip, port=25565):
         while len(data) != length:
             chunk = sock.recv(length - len(data))
             if not chunk:
-                raise ValueError('connection aborted')
+                return False
 
             data += chunk
-        logging.debug("Server reports this data on ping: {}".format(data))
+        logger.debug("Server reports this data on ping: {}".format(data))
         return Server(json.loads(data))
     finally:
         sock.close()

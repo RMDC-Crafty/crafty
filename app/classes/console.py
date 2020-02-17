@@ -37,3 +37,6 @@ class Console:
     def help(message):
         currentDT = datetime.datetime.now().strftime("%Y-%m-%d %I:%M:%S %p")
         print(colored("[+] Crafty: {} - HELP:\t{}".format(currentDT, message), 'green'))
+
+
+console = Console()

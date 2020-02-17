@@ -6,7 +6,7 @@
 
 <section class="content-header">
   <h1>
-    Server Logs
+    Logs for Server: {{ data['server_name'] }}
     <small>I don't know, have you checked the logs?</small>
   </h1>
   <ol class="breadcrumb">
@@ -23,17 +23,18 @@
             <div class="box">
                 <div class="box-header with-border">
                     <h3 class="box-title">
-                        Logs <small>Note, this page doesn't auto-refresh</small>
+                        {{ data['server_name'] }} Logs <small>Note, this page doesn't auto-refresh</small>
                     </h3>
                 </div>
 
-                <div class="nav-tabs-custom">
+                <div id="#rowTab" class="nav-tabs-custom">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#tab_1" data-toggle="tab">Latest.log</a></li>
+                        <li class="active"><a href="#tab_1" data-toggle="tab">{{ data['server_name'] }} Latest.log</a></li>
                         <li><a href="#tab_2" data-toggle="tab">Crafty.log</a></li>
                         <li><a href="#tab_3" data-toggle="tab">Schedule.log</a></li>
                         <li><a href="#tab_4" data-toggle="tab">Access.log</a></li>
-                        <li><a href="#tab_5" id="search_tab" data-toggle="tab">Search Results</a></li>
+                        <li><a href="#tab_5" data-toggle="tab">FTP.log</a></li>
+                        <li><a href="#tab_6" id="search_tab" data-toggle="tab">Search Results</a></li>
                         <li><a> Click Box Below To Scroll To Bottom</a></li>
                         <li class="pull-right"><a id="search_box" href="#" class="text-muted"><i class="fa fa-search" aria-hidden="true"></i>  Search Latest.log </a></li>
                     </ul>
@@ -54,8 +55,13 @@
                         <div class="tab-pane" id="tab_4">
                         <textarea id="access_logs" rows="25" readonly class="form-control">{% for d in data['access'] %}{{ d }}{% end %}</textarea>
                       </div>
-                      <!-- /.tab-pane -->
+
                         <div class="tab-pane" id="tab_5">
+                        <textarea id="ftp_logs" rows="25" readonly class="form-control">{% for d in data['ftp'] %}{{ d }}{% end %}</textarea>
+                      </div>
+
+                      <!-- /.tab-pane -->
+                        <div class="tab-pane" id="tab_6">
                         <textarea id="search_results" rows="25" readonly class="form-control"></textarea>
                       </div>
                       <!-- /.tab-pane -->
@@ -126,12 +132,6 @@
 
 </section>
 
-<!--
-{{ data }}
--->
-
-
-
 
 {% end %}
 
@@ -187,7 +187,7 @@
     function get_search_results(search_string){
         var token = getCookie("_xsrf")
 
-        data_to_send = { search : search_string, }
+        data_to_send = { search : search_string, id: {{ data['server_id'] }}}
 
         console.log('Sending search: ' + search_string)
         $.ajax({

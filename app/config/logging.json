@@ -3,7 +3,7 @@
   "disable_existing_loggers": false,
   "formatters": {
     "crafty": {
-      "format": "%(asctime)s - [Crafty] - %(levelname)s - %(message)s"
+      "format": "%(asctime)s - [Crafty] - %(levelname)-8s - %(name)s - %(message)s"
     },
     "tornado_access": {
       "format": "%(asctime)s - [Tornado] - [Access] - %(levelname)s - %(message)s"
@@ -13,20 +13,21 @@
     },
     "schedule": {
       "format": "%(asctime)s - [Schedules] - %(levelname)s - %(message)s"
+    },
+    "ftp": {
+      "format": "%(asctime)s - [FTP] - %(levelname)s - %(message)s"
     }
   },
 
   "handlers": {
     "console": {
       "class": "logging.StreamHandler",
-      "level": "DEBUG",
       "formatter": "crafty",
       "stream": "ext://sys.stdout"
     },
 
     "crafty_file_handler": {
       "class": "logging.handlers.RotatingFileHandler",
-      "level": "INFO",
       "formatter": "crafty",
       "filename": "logs/crafty.log",
       "maxBytes": 10485760,
@@ -36,7 +37,6 @@
 
     "tornado_access_file_handler": {
       "class": "logging.handlers.RotatingFileHandler",
-      "level": "INFO",
       "formatter": "tornado_access",
       "filename": "logs/tornado-access.log",
       "maxBytes": 10485760,
@@ -46,7 +46,6 @@
 
     "tornado_app_general_file_handler": {
       "class": "logging.handlers.RotatingFileHandler",
-      "level": "INFO",
       "formatter": "tornado_other",
       "filename": "logs/tornado-other.log",
       "maxBytes": 10485760,
@@ -56,9 +55,16 @@
 
     "schedule_file_handler": {
       "class": "logging.handlers.RotatingFileHandler",
-      "level": "INFO",
       "formatter": "schedule",
       "filename": "logs/schedule.log",
+      "maxBytes": 10485760,
+      "backupCount": 20,
+      "encoding": "utf8"
+    },
+    "ftp_file_handler": {
+      "class": "logging.handlers.RotatingFileHandler",
+      "formatter": "ftp",
+      "filename": "logs/ftp.log",
       "maxBytes": 10485760,
       "backupCount": 20,
       "encoding": "utf8"
@@ -89,6 +95,11 @@
     "schedule": {
       "level": "INFO",
       "handlers": ["schedule_file_handler"],
+      "propagate": false
+    },
+    "pyftpdlib": {
+      "level": "INFO",
+      "handlers": ["ftp_file_handler"],
       "propagate": false
     }
   }
