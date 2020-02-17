@@ -123,8 +123,8 @@ class AdminHandler(BaseHandler):
             context['backup_path'] = backup_path
             context['current_backups'] = backupmgr.list_backups_for_server(server_id)
 
-            context['saved'] = False
-            context['invalid'] = False
+            context['saved'] = self.get_argument('saved', False)
+            context['invalid'] = self.get_argument('invalid', False)
 
         elif page == "all_backups":
             if not check_role_permission(user_data['username'], 'backups'):
@@ -769,10 +769,23 @@ class AdminHandler(BaseHandler):
             backup_storage = bleach.clean(self.get_argument('storage_location', ''))
             server_id = bleach.clean(self.get_argument('server_id', ''))
 
+            svr_object = multi.get_server_obj(server_id)
+            server_path = svr_object.server_path
+
+
+            prefix = os.path.commonpath([server_path, backup_storage])
+
+            if prefix == server_path:
+                logger.error('Backup settings Invalid: Backup Loop Condition Detected. Save your backups outside of '
+                             'the server path!')
+                self.redirect("/admin/backups?id={}&invalid=loop_protection".format(server_id))
+                return False
+
             if len(checked) == 0 or len(backup_storage) == 0:
                 logger.error('Backup settings Invalid: Checked: {}, max_backups: {}, backup_storage: {}'
                              .format(checked, max_backups, backup_storage))
-                self.redirect("/admin/config?invalid=True")
+                self.redirect("/admin/backups?id={}&invalid=True".format(server_id))
+                return False
 
             else:
                 logger.info("Backup directories set to: {}".format(checked))
@@ -787,7 +800,7 @@ class AdminHandler(BaseHandler):
                     }
                 ).where(Backups.server_id == int(server_id)).execute()
 
-            self.redirect("/admin/backups?id={}".format(server_id))
+            self.redirect("/admin/backups?id={}&saved=True".format(server_id))
 
     def _reload_schedules(self):
         '''
