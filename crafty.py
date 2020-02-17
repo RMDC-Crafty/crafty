@@ -7,6 +7,8 @@ import argparse
 import threading
 import logging.config
 
+# This Is A Test
+
 def is_venv():
     return hasattr(sys, 'real_prefix') or sys.base_prefix != sys.prefix
 
@@ -31,7 +33,11 @@ except Exception as e:
         print(pipinstall)
         if pipinstall == str("yes"):
             import subprocess
-                command_list = [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
+            file = open("requirements.txt" , "r")
+
+            for line in file:
+                req = line.split("/n")
+                command_list = [sys.executable, "-m", "pip", "install", req]
                 with subprocess.Popen(command_list, stdout=subprocess.PIPE) as proc:
                     print(proc.stdout.read())
             print("Please Run Crafty Again!")
@@ -47,7 +53,11 @@ except Exception as e:
         print(pipinstall)
         if pipinstall == str("yes"):
             import subprocess
-                command_list = [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
+            file = open("requirements.txt" , "r")
+
+            for line in file:
+                req = line.split("/n")
+                command_list = [sys.executable, "-m", "pip", "install", req]
                 with subprocess.Popen(command_list, stdout=subprocess.PIPE) as proc:
                     print(proc.stdout.read())
             print("Please Run Crafty Again!")
