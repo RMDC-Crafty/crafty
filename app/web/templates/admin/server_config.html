@@ -211,7 +211,7 @@
 
                             <!-- radio -->
                             <div class="form-group">
-                                <b>Turn On Crash Detection?<br /><small>If the server stops, it will automatically be restarted</small></b>
+                                <b>Turn On Crash Detection?<br /><small>This will detect server crashes and restart them</small></b>
                                 <div class="radio">
                                     <label>
                                         <input type="radio"
@@ -219,7 +219,7 @@
                                                value="1"
                                                 {% if data['mc_settings']['crash_detection'] %} checked {% end %}
                                                 />
-                                        Yes - Start the Minecraft Server on program launch.
+                                        Yes - If the server stops, I want crafty to automatically restart the server
                                     </label>
                                 </div>
 
@@ -230,7 +230,7 @@
                                                value="0"
                                                 {% if data['mc_settings']['crash_detection'] == False %} checked {% end %}
                                                 />
-                                        No - I will start the server myself.
+                                        No - I will start the server myself if it crashes.
                                     </label>
                                 </div>
                             </div>
