@@ -20,14 +20,17 @@
 <section class="content">
 <!-- Info boxes -->
   <div class="row">
-    <div class="col-md-3 col-sm-6 col-xs-12">
+      <div class="col-md-3 col-sm-6 col-xs-12">
       <div class="info-box">
-        <span class="info-box-icon bg-aqua"><i class="fa fa-cog" aria-hidden="true"></i></span>
+        <span class="info-box-icon bg-aqua"><i class="fa fa-heartbeat" aria-hidden="true"></i></span>
 
         <div class="info-box-content">
-          <span class="info-box-text">Host Total CPU Usage</span>
-          <span class="info-box-number"> {{ round( data['host_stats']['cpu_usage'], 2) }} <small>%</small> across {{ data['host_stats']['cpu_cores'] }} <small>threads</small>
-          <span class="info-box-number"> {{ round( data['host_stats']['cpu_cur_freq'] / 1000, 2) }} Ghz / {{ round( data['host_stats']['cpu_max_freq'] / 1000, 1) }} Ghz
+          <span class="info-box-text">Host CPU</span>
+          <span class="info-box-number"> {{ round( data['host_stats']['cpu_usage'], 2) }} % </span>
+
+          <span class="progress-description">
+            {{ round( data['host_stats']['cpu_cur_freq'] / 1000, 2) }} Ghz / {{ round( data['host_stats']['cpu_max_freq'] / 1000, 1) }} Ghz<br />
+            <small>{{ data['host_stats']['cpu_cores'] }} threads</small>
           </span>
         </div>
         <!-- /.info-box-content -->
@@ -37,12 +40,18 @@
     <!-- /.col -->
     <div class="col-md-3 col-sm-6 col-xs-12">
       <div class="info-box">
-        <span class="info-box-icon bg-red"><i class="fa fa-line-chart" aria-hidden="true"></i></span>
+        <span class="info-box-icon bg-red">
+          <i class="fa fa-microchip" aria-hidden="true"></i>
+        </span>
 
         <div class="info-box-content">
-          <span class="info-box-text">Host Total RAM Usage</span>
-          <span class="info-box-number"> {{ data['host_stats']['mem_percent'] }}<small>%</small></span>
-          <span class="info-box-number"> {{ data['host_stats']['mem_usage'] }} / {{ data['host_stats']['mem_total'] }}</span>
+          <span class="info-box-text">Host RAM</span>
+          <span class="info-box-number"> {{ data['host_stats']['mem_percent'] }}%</span>
+
+
+          <span class="progress-description">
+            {{ data['host_stats']['mem_usage'] }} / {{ data['host_stats']['mem_total'] }}
+          </span>
         </div>
         <!-- /.info-box-content -->
       </div>
@@ -58,11 +67,12 @@
         <span class="info-box-icon bg-green"><i class="fa fa-hdd-o" aria-hidden="true"></i></span>
 
         <div class="info-box-content">
-          <span class="info-box-text">Host Total Disk Usage</span>
+          <span class="info-box-text">Host Root Disk</span>
           <span class="info-box-number">
-             {{ data['host_stats']['disk_percent'] }}<small>%</small>
-              <br />
-             {{ data['host_stats']['disk_usage'] }} / {{ data['host_stats']['disk_total'] }}
+             {{ data['host_stats']['disk_percent'] }} %
+          </span>
+          <span class="progress-description">
+            {{ data['host_stats']['disk_usage'] }} / {{ data['host_stats']['disk_total'] }}
           </span>
         </div>
         <!-- /.info-box-content -->
@@ -93,8 +103,7 @@
 <div class="row">
   {% for s in data['servers_defined'] %}
 
-  <div class="col-xs-6 col-md-4">
-
+    <div class="col-xs-6 col-md-6 col-lg-4">
     {% if s['running'] %}
     <div class="box box-success box-solid">
     {% else %}

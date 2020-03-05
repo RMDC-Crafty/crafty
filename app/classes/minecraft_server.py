@@ -215,7 +215,9 @@ class Minecraft_Server():
 
     def restart_threaded_server(self):
         Remote.insert({
-            Remote.command: 'restart_mc_server'
+            Remote.command: 'restart_mc_server',
+            Remote.server_id: self.server_id,
+            Remote.command_source: 'local'
         }).execute()
 
     def stop_server(self):
@@ -224,10 +226,12 @@ class Minecraft_Server():
         schedule.clear(self.name)
 
         if self.detect_bungee_waterfall():
-            logger.info('Waterfall/Bungee Detected: Sending shutdown command to server %s', self.name)
+            logger.info('Waterfall/Bungee Detected: Sending shutdown command "end" to server ID:{} - {}'.format(
+                self.server_id, self.name))
+
             self.send_command("end")
         else:
-            logger.info("Sending stop command to server %s", self.name)
+            logger.info('Sending shutdown command "stop" to server ID:{} - {}'.format(self.server_id, self.name))
             self.send_command("stop")
 
         for x in range(6):
