@@ -69,7 +69,7 @@ class ftp_server():
 
         handler.certfile = certfile
         handler.authorizer = authorizer
-        self.server = ThreadedFTPServer(('127.0.0.1', self.port), handler)
+        self.server = ThreadedFTPServer(('0.0.0.0', self.port), handler)
         self.running = True
         self.server.serve_forever()
 
