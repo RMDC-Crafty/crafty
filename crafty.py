@@ -1,26 +1,101 @@
 import os
 import sys
 import time
+import json
 import logging
-import schedule
+import argparse
 import threading
+import logging.config
 
-from app.classes.logger import custom_loggers
-from app.classes.helpers import helpers
-from app.classes.console import Console
-from app.classes.craftycmd import MainPrompt
-from app.classes.models import *
-from app.classes.install import installer
+# This Is A Test
 
-from app.classes.minecraft_server import Minecraft_Server
-from app.classes.http import webserver
+def is_venv():
+    return hasattr(sys, 'real_prefix') or sys.base_prefix != sys.prefix
 
-helper = helpers()
-console = Console()
+try:
+    import yaml
+    import secrets
+    import schedule
+    from app.classes.console import console
+
+except Exception as e:
+    print("/" * 75 + "\n")
+    print("\t\t\tWTF!!! \n \t\t(What a terrible failure) \n")
+    print("/" * 75 + "\n")
+    print(" Crafty is unable to find required modules")
+    print(" Some common causes of this issue include:")
+    print("\t * Modules didn't install: Did pip install -r requirements.txt run correctly?")
+    print("\t * You haven't activated your virtual environment, maybe try activating it?")
+    print("\n Need Help? We are here to help! - https://discord.gg/XR5x3ZM \n")
+    if is_venv:
+        pipinstall = str(input("A virtual environment has been detected, would you like to try reinstalling the modules? [yes/no]: "))
+        pipinstall = pipinstall.lower()
+        print(pipinstall)
+        if pipinstall == str("yes"):
+            import subprocess
+            file = open("requirements.txt" , "r")
+
+            for line in file:
+                req = line.split("/n")
+                command_list = [sys.executable, "-m", "pip", "install", req]
+                with subprocess.Popen(command_list, stdout=subprocess.PIPE) as proc:
+                    print(proc.stdout.read())
+            print("Please Run Crafty Again!")
+            sys.exit(1)
+        else:
+            print("Not reinstalling modules, join the discord for further assistance!")
+            sys.exit(1)
+    else:
+        print("It has been detected that you are not in a virtual environment, maybe try activating it?")
+        print("If you are not sure how to do this, ask for help in our discord!")
+        pipinstall = str(input("If you have chosen to not use a virtual environment, would you like to try reinstalling the modules? [yes/no]: "))
+        pipinstall = pipinstall.lower()
+        print(pipinstall)
+        if pipinstall == str("yes"):
+            import subprocess
+            file = open("requirements.txt" , "r")
+
+            for line in file:
+                req = line.split("/n")
+                command_list = [sys.executable, "-m", "pip", "install", req]
+                with subprocess.Popen(command_list, stdout=subprocess.PIPE) as proc:
+                    print(proc.stdout.read())
+            print("Please Run Crafty Again!")
+            sys.exit(1)
+        else:
+            print("Not reinstalling modules, join the discord for further assistance!")
+            sys.exit(1)
+
+
+def setup_logging(debug=False):
+    logging_config_file = os.path.join(os.path.curdir,
+                                       'app',
+                                       'config',
+                                       'logging.json'
+                                       )
+
+    if os.path.exists(logging_config_file):
+
+        # open our logging config file
+        with open(logging_config_file, 'rt') as f:
+            logging_config = json.load(f)
+            if debug:
+                logging_config['loggers']['']['level'] = 'DEBUG'
+            logging.config.dictConfig(logging_config)
+    else:
+        logging.basicConfig(level=logging.DEBUG)
+        logging.warning("Unable to read logging config from {}".format(logging_config_file))
+
 
 def do_intro():
+    version_data = helper.get_version()
+
     intro = "/" * 75 + "\n"
-    intro += '#\t\tWelcome to Crafty Controller - v.{}\t\t #'.format("2.0.0") + "\n"
+    intro += '#\t\tWelcome to Crafty Controller - v.{}.{}.{}\t\t #'.format(
+        version_data['major'],
+        version_data['minor'],
+        version_data['sub']
+        ) + "\n"
     intro += "/" * 75 + "\n"
     intro += '#   \tServer Manager / Web Portal for your Minecraft server\t\t #' + "\n"
     intro += '#   \t\tHomepage: www.craftycontrol.com\t\t\t\t #' + "\n"
@@ -28,49 +103,11 @@ def do_intro():
     print(intro)
 
 
-def check_for_sql_db():
-    logging.info("Checking for existing DB")
-
-    dbpath = helper.get_db_path()
-
-    if helper.check_file_exists(dbpath):
-
-        # here we update the database with new tables if needed
-        try:
-            create_tables()
-
-        except Exception as e:
-            logging.critical("Unable to create db - Exiting - {}".format(e))
-            console.critical("Unable to create db - Exiting - {}".format(e))
-            sys.exit(1)
-        return True
-    else:
-        logging.info("Unable to find: {} - Launching Creation script".format(dbpath))
-
-        # create the db
-        try:
-            create_tables()
-
-        except Exception as e:
-            logging.critical("Unable to create db - Exiting - {}".format(e))
-            console.critical("Unable to create db - Exiting - {}".format(e))
-            sys.exit(1)
-
-        return False
-
-
-def run_installer():
-    setup = installer()
-    setup.do_install()
-
-
-def setup_admin():
-    setup = installer()
-    admin_password = setup.create_admin()
-    if admin_password is not None:
-        console.info("Your Admin Username is: Admin")
-        console.info("Your Admin password is: {}".format(admin_password))
-        console.info("Please login to the web portal and change this ASAP")
+def show_help():
+    console.help("-h: shows this message")
+    console.help("-k: stops all crafty processes")
+    console.help("--no-console: don't start the console")
+    sys.exit(0)
 
 
 def start_scheduler():
@@ -78,78 +115,186 @@ def start_scheduler():
         schedule.run_pending()
         time.sleep(.5)
 
-def main():
 
-    # if we don't have a sql_db, we create one, and run the installers
-    if not check_for_sql_db():
-        run_installer()
-        default_settings()
-
-        do_intro()
-
-        mc_server = Minecraft_Server()
-
-        tornado = webserver(mc_server)
-
-        # startup Tornado -
-        tornado.start_web_server()
-        time.sleep(.5)
-
-        # setup the new admin password (random)
-        setup_admin()
-
-    else:
-
-        mc_server = Minecraft_Server()
-
-        # startup Tornado -
-        do_intro()
-
-        tornado = webserver(mc_server)
-
-        tornado.start_web_server()
-        time.sleep(.5)
-
-    time.sleep(.5)
-
-    mc_server.do_init_setup()
-
-    time.sleep(.5)
-
-    # fire off a write_html_status now, and schedule one for every 10 seconds
-    mc_server.write_html_server_status()
-    schedule.every(10).seconds.do(mc_server.write_html_server_status)
-
-    # fire off a history write now, and schedule one for later.
-    mc_server.write_usage_history()
-    mc_server.reload_history_settings()
-
-    logging.info("Starting Scheduler Daemon")
-    Console.info("Starting Scheduler Daemon")
-
-    scheduler = threading.Thread(name='Scheduler', target=start_scheduler, daemon=True)
-    scheduler.start()
-
-    time.sleep(5)
-    Console.info("Crafty Startup Procedure Complete")
-    Console.help("Type 'stop' or 'exit' to shutdown the system")
-
-    Crafty = MainPrompt(mc_server)
-    Crafty.cmdloop()
+def send_kill_command():
+    Remote.insert({
+        Remote.command: 'exit_crafty'
+    }).execute()
+    time.sleep(2)
+    sys.exit(0)
 
 
 if __name__ == '__main__':
     """ Our Main Starter """
     log_file = os.path.join(os.path.curdir, 'logs', 'crafty.log')
-    if not helper.check_file_exists(log_file):
-        helper.ensure_dir_exists(os.path.join(os.path.curdir, 'logs'))
+
+    # ensure the log directory is there
+    try:
+        os.makedirs(os.path.join(os.path.curdir, 'logs'))
+
+    except Exception as e:
+        pass
+
+    # ensure the log file is there
+    try:
         open(log_file, 'a').close()
+    except Exception as e:
+        console.critical("Unable to open log file!")
+        sys.exit(1)
 
-    # make sure our web temp directory is there
-    helper.ensure_dir_exists(os.path.join(os.path.curdir, "app", 'web', 'temp'))
+    daemon_mode = False
 
-    custom_loggers.setup_logging()
-    logging.info("***** Crafty Launched *****")
+    parser = argparse.ArgumentParser("Crafty Web - A Minecraft Server GUI")
 
-    main()
+    parser.add_argument('-k', '--kill-all',
+                        action='store_true',
+                        help="Find and terminate all running Crafty instances on the host system."
+    )
 
+    parser.add_argument('-v', '--verbose',
+                        action='store_true',
+                        help="Sets Crafty's logging level to debug."
+                        )
+
+    parser.add_argument('-d', '--daemonize',
+                        action='store_true',
+                        help="Prevent exit of crafty.py and disable console."
+                        )
+
+    parser.add_argument('-c', '--config',
+                        help="Specify a config file to tell Crafty where to store it's database, version, etc."
+                        )
+
+    args = parser.parse_args()
+
+    # sets up our logger
+    setup_logging(args.verbose)
+
+    # setting up the logger object
+    logger = logging.getLogger(__name__)
+
+    # now that logging is setup - let's import the rest of the things we need to run
+    from app.classes.helpers import helper
+
+    if not is_venv:
+        logger.critical("Not in a virtual environment! Exiting")
+        console.critical("Not in a virtual environment! Exiting")
+        sys.exit(1)
+
+    logger.info("***** Crafty Launched: Verbose {} *****".format(args.verbose))
+
+    # announce the program
+    do_intro()
+
+    admin_pass = None
+
+    # load config file and reprogram default values
+    if args.config:
+        config_path = os.path.join(os.curdir, args.config)
+        logger.info("Loading config from file {}".format(config_path))
+        try:
+            with open(config_path) as f:
+                cfg = yaml.safe_load(f)
+                f.close()
+        except:
+            logger.exception("Specified config has invalid syntax/cannot be read. Traceback:")
+        else:
+            logger.info("Setting config and db paths")
+            helper.redefine_paths(cfg['config_dir'], cfg['db_dir'])
+
+            if not args.daemonize:
+                daemon_mode = cfg['daemon_mode']
+    else:
+        logger.warning("No config specified")
+
+    # prioritize command line flags
+    if args.daemonize:
+        daemon_mode = args.daemonize
+
+    # do we have access to write to our folder?
+    if not helper.check_writeable(os.curdir):
+        logger.info("***** Crafty Stopped ***** \n")
+        sys.exit(1)
+
+    # is this a fresh install?
+    fresh_install = helper.is_fresh_install()
+
+    # doing a more focused import here, because * imports can be a little crazy.
+    # also import after config and cmd args
+    from app.classes.models import peewee, Users, MC_settings, Webserver, Schedules, History, Crafty_settings, Backups, Roles, Remote, Ftp_Srv
+
+    # creates the database tables / sqlite database file
+    peewee.create_tables()
+
+    if fresh_install:
+        # save a file in app/config/new_install so we know this is a new install
+        helper.make_new_install_file()
+
+        admin_pass = helper.random_string_generator()
+        admin_token = secrets.token_urlsafe(32)
+
+        peewee.default_settings(admin_pass, admin_token)
+
+    else:
+        peewee.do_database_migrations()
+
+    # only import / new database tables are created do we load the rest of the things!
+    from app.classes.ftp import ftp_svr_object
+    # from app.classes.minecraft_server import mc_server
+    from app.classes.http import tornado_srv
+    from app.classes.craftycmd import MainPrompt
+    from app.classes.minecraft_server import mc_server
+
+    from app.classes.remote_coms import remote_commands
+    from app.classes.multiserv import multi
+
+    logger.info("Starting Scheduler Daemon")
+    console.info("Starting Scheduler Daemon")
+
+    scheduler = threading.Thread(name='Scheduler', target=start_scheduler, daemon=True)
+    scheduler.start()
+
+    # startup Tornado
+    tornado_srv.start_web_server(True)
+    websettings = Webserver.get()
+    port_number = websettings.port_number
+
+    console.info("Starting Tornado HTTPS Server https://{}:{}".format(helper.get_local_ip(), port_number))
+    if fresh_install:
+        console.info("Please connect to https://{}:{} to continue the install:".format(
+            helper.get_local_ip(), port_number))
+        console.info("Your Username is: Admin")
+        console.info("Your Password is: {}".format(admin_pass))
+        console.info("Your Admin token is: {}".format(admin_token))
+
+    # for each server that is defined, we set them up in the multi class, so we have them ready for later.
+
+    multi.init_all_servers()
+
+    # do one now...
+    multi.do_host_status()
+
+    # do our scheduling
+    multi.reload_scheduling()
+
+    multi.reload_user_schedules()
+
+    # start the remote commands watcher thread
+    remote_coms = remote_commands(tornado_srv)
+    remote_coms_thread = threading.Thread(target=remote_coms.start_watcher, daemon=True, name="Remote_Coms")
+    remote_coms_thread.start()
+
+    console.info("Crafty Startup Procedure Complete")
+    console.help("Type 'stop' or 'exit' to shutdown Crafty")
+
+    if not daemon_mode:
+        Crafty = MainPrompt(mc_server)
+        Crafty.cmdloop()
+    else:
+        logger.info("Not starting crafty console due to daemonize mode")
+
+    if daemon_mode:
+        # Freeze the program in a loop
+        logger.info("Freezing program due to daemonize mode")
+        while True:
+            pass

@@ -6,8 +6,8 @@
 
 <section class="content-header">
   <h1>
-    Server Control
-    <small>Start / Stop / Restart</small>
+    Server Details
+    <small>I demand to see the things!</small>
   </h1>
   <ol class="breadcrumb">
     <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -17,55 +17,145 @@
 
 
 <section class="content">
-
     <div class="row">
-        <div class="col-xs-6">
-            <div class="box">
+        <div class="col-md-6">
+            <div class="box box-info">
                 <div class="box-header with-border">
-                  <h3 class="box-title">
-                      Server Actions
-                        {% if data['server_data']['server_running'] %}
-                            <span class="text-green">
-                        Server Running &nbsp;
-                            <i class="fa fa-thumbs-up" aria-hidden="true"></i>
-                            </span>
-                        {% else %}
-                        <span class="text-red">
-                            Server Down &nbsp;
-                            <i class="fa fa-thumbs-down" aria-hidden="true"></i>
-                        </span>
-                        {% end %}
-                  </h3>
+                  <h3 class="box-title"><i class="fa fa-id-card-o" aria-hidden="true"></i>
+                      Server Data</h3>
                 </div>
+                <!-- /.box-header -->
                 <div class="box-body">
-                    <a href="/admin/commands?command=server_start"
-                       onclick="delay()"
-                        class="btn btn-app {% if data['server_data']['server_running'] %} disabled {% end %}">
-                        <i class="fa fa-play"></i> Start Server
-                    </a>
-                    <a  href="/admin/commands?command=server_stop"
-                        onclick="delay()"
-                        class="btn btn-app {% if not data['server_data']['server_running'] %} disabled {% end %}">
-                        <i class="fa fa-stop"></i> Stop Server
-                    </a>
-                    <a  href="/admin/commands?command=server_restart"
-                        onclick="delay('15-20')"
-                        class="btn btn-app {% if not data['server_data']['server_running'] %} disabled {% end %}">
-                        <i class="fa fa-refresh"></i> Restart Server
-                    </a>
+                    <div id="" style="">
+                        <table class="table table-striped">
+                            <tr>
+                                <td width="20%">Server</td>
+                                <td>ID: {{ data['mc_settings']['id'] }} - {{ data['mc_settings']['server_name'] }}</td>
+                            </tr>
+
+                            <tr>
+                                <td>Auto Start Details</td>
+                                <td>
+                                    Auto Start On: {{ data['mc_settings']['auto_start_server'] }}<br />
+                                    Auto Start Delay: {{ data['mc_settings']['auto_start_delay'] }}<br />
+                                    Auto Start Priority: {{ data['mc_settings']['auto_start_priority'] }}<br />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>World Name</td>
+                                <td>{{ data['world_info']['world_name'] }} </td>
+                            </tr>
+                            <tr>
+                                <td>World Size</td>
+                                <td>{{ data['world_info']['world_size'] }}</td>
+                            </tr>
+                            <tr>
+                                <td>Update Jar</td>
+                                <td>
+                                    {% if (data['mc_settings']['jar_url'] == "") %}
+                                        No update jar URL specified. <br />
+                                        Please add in <a href="server_config?id={{ data['mc_settings']['id'] }}">server config</a>
+                                    {% else %}
+                                        {{ data['mc_settings']['jar_url'] }}
+                                    {% end %}
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
                 </div>
-              </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                  <h3 class="box-title"><i class="fa fa-bolt" aria-hidden="true"></i>
+                      Server Actions</h3>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="server_update">
+                        <a class="btn btn-app" onclick="update()"
+                        {% if (data['mc_settings']['jar_url'] == "") %}
+                            disabled='true'
+                        {% end %}
+                        >
+                            <i class="fa fa-cloud-download" aria-hidden="true"></i>
+                            Update Server Jar
+                        </a>
+
+                        <a class="btn btn-app" onclick="update()"
+                        {% if (data['mc_settings']['jar_url'] == "") %}
+                            disabled='true'
+                        {% end %}
+                        >
+                            <i class="fa fa-undo" aria-hidden="true"></i>
+                            Revert Jar Update
+                        </a>
+
+                        <a class="btn btn-app" onclick="destroy_world()">
+                            <i class="fa fa-bomb" aria-hidden="true"></i>
+                            Start New World
+                        </a>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
 
+    <div class="row">
+        <div class="col-md-6">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                  <h3 class="box-title"><i class="fa fa-clock-o" aria-hidden="true"></i>
+                      Historical Data
+                  </h3>
+                    <br />
+                    <small>Missing Data below? <a href="config">Check your history interval config</a> </small>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div id="cpu_history" style="height: 250px;"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6">
+            <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title"><i class="fa fa-users" aria-hidden="true"></i>
+                  Current Players</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="table-responsive">
+                <ul>
+                    {% if data['players_online'] > 0 %}
+                        {% for p in list(data['players']) %}
+                            <li>{{ p }}</li>
+                        {% end %}
+                    {% else %}
+                        No Players Online
+                    {% end %}
+                </ul>
+              </div>
+              <!-- /.table-responsive -->
+            </div>
+            <!-- /.box-body -->
+
+          </div>
+        </div>
+
+    </div>
+
+
+
+
 </section>
-
-<!--
-{{ data }}
--->
-
-
 
 
 {% end %}
@@ -74,11 +164,114 @@
 
 <script>
     function delay(time='5-10'){
-            bootbox.alert({
+        bootbox.alert({
             message: "Please give the server " + time + " seconds to respond to your command",
             backdrop: true
         });
     }
+
+    function update(){
+        send_update_command()
+        bootbox.alert({
+            message: "The update process has started in the background. Feel free to watch the process on the logs page.",
+            backdrop: true
+        });
+        setTimeout(function(){ hide_modals(); }, 3000);
+
+    }
+
+    function revert(){
+        send_revert_command()
+        bootbox.alert({
+            message: "The revert process has started in the background. Feel free to watch the process on the logs page.",
+            backdrop: true
+        });
+        setTimeout(function(){ hide_modals(); }, 3000);
+    }
+
+    function destroy_world(){
+        bootbox.confirm({
+            message: "Do you really want to destroy this world and start over?!",
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-success'
+                }
+            },
+            callback: function (result) {
+                if (result){
+                    send_destroy_command()
+                }
+            }
+        });
+    }
+
+    function send_update_command(){
+        $.ajax({
+            type: 'GET',
+            url: '/admin/commands?command=update_jar&id={{ data['mc_settings']['id'] }}',
+            dataType: 'text',
+        });
+    }
+
+    function send_revert_command(){
+        $.ajax({
+            type: 'GET',
+            url: '/admin/commands?command=revert_jar&id={{ data['mc_settings']['id'] }}',
+            dataType: 'text',
+        });
+    }
+
+    function send_destroy_command(){
+        $.ajax({
+            type: 'GET',
+            url: '/admin/commands?command=destroy_world&id={{ data['mc_settings']['id'] }}',
+            dataType: 'text',
+        });
+    }
+
+    function hide_modals(){
+        bootbox.hideAll()
+    }
+
+    $( document ).ready(function() {
+        console.log( "ready!" );
+
+        $.ajax({
+            url: "/ajax/history?server_id={{ data['mc_settings']['id'] }}",
+            method: "get",
+            dataType: "json",
+            success: function(data) {
+                console.log(data)
+                do_history(data)
+            }
+        });
+    });
+
+    function do_history(data){
+        new Morris.Line({
+          // ID of the element in which to draw the chart.
+          element: 'cpu_history',
+          // Chart data records -- each entry in this array corresponds to a point on
+          // the chart.
+          data: data,
+          // The name of the data record attribute that contains x-values.
+          xkey: 'time',
+          // A list of names of data record attributes that contain y-values.
+          ykeys: ['cpu','mem','players'],
+          // Labels for the ykeys -- will be displayed when you hover over the
+          // chart.
+          labels: ['CPU', 'MEM','Players'],
+          parseTime: false
+        });
+    }
+
+
+
 </script>
 
 {% end %}

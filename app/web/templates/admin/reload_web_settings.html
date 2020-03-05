@@ -1,0 +1,72 @@
+{% extends ../base.html %}
+
+{% block title %}Crafty Controller - Dashboard{% end %}
+
+{% block content %}
+
+
+<section class="content-header">
+  <h1>
+    Reloading Web Server
+    <small>Hold on to your butts</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Server Control</li>
+  </ol>
+</section>
+
+
+<section class="content">
+
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">
+                      Reloading Web Services
+                  </h3>
+                </div>
+                <div class="box-body">
+                    This could take several seconds<br />
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="">
+                          <span class="sr-only">40% Complete (success)</span>
+                        </div>
+                      </div>
+                </div>
+              </div>
+        </div>
+    </div>
+
+
+</section>
+
+{% end %}
+
+{% block js-script %}
+
+<script type="text/javascript">
+var i = 0;
+
+function makeProgress(){
+    if(i < 100){
+        i = i + 1;
+        $(".progress-bar").css("width", i + "%").text(i + " %");
+    }
+    // Wait for sometime before running this script again
+    setTimeout("makeProgress()", 100);
+
+}
+makeProgress();
+
+setTimeout("do_redirect()", 10000);
+
+function do_redirect(){
+    window.location.href = "https://127.0.0.1:{{ data['web_settings']['port_number'] }}";
+}
+
+
+
+</script>
+{% end %}

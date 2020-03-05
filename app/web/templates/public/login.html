@@ -40,11 +40,11 @@
 
     <form action="/" method="post">
       <div class="form-group has-feedback">
-        <input type="text" class="form-control" placeholder="{{ _('Username') }}" name="username">
+        <input type="text" class="form-control" placeholder="{{ _('Username') }}" name="username" maxlength="55">
         <span class="glyphicon glyphicon-user form-control-feedback"></span>
       </div>
       <div class="form-group has-feedback">
-        <input type="password" class="form-control" placeholder="{{ _('Password') }}" name="password">
+        <input type="password" class="form-control" placeholder="{{ _('Password') }}" name="password" maxlength="512">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="row">
@@ -64,39 +64,35 @@
       <div class="row">
           <div class="col-xs-12 text-left">
 
-              {% if data['server_running'] %}
-                    <table class="table">
-                      <tr>
-                          <td>Server Status:</td>
-                          <td>
-                            <span class="text-green">
-                                Server Running &nbsp;
-                            </span>
-                          </td>
-                      </tr>
-                      <tr>
-                          <td>Server Version:</td>
-                          <td>{{ data['server_version'] }}</td>
-                      </tr>
-                      <tr>
-                          <td>Server Description:</td>
-                          <td>{{ data['server_description'] }}</td>
-                      </tr>
-                      <tr>
-                          <td>Server World Name:</td>
-                          <td>
-                              {% if data['world_data'] %}
-                                {{ data['world_data']['world_name'] }}
-                              {% end %}
-                          </td>
-                      </tr>
-                  </table>
 
-                {% else %}
-                    <span class="text-red">
-                        {{ _('Server Down') }} &nbsp;
-                    </span>
-                {% end %}
+              <table class="table">
+                  <thead>
+                  <tr>
+                      <th>Server</th>
+                      <th>Running</th>
+                      <th>CPU</th>
+                      <th>Memory</th>
+                      <th>Players</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {% if data['server_data'] %}
+                  {% for s in data['server_data'] %}
+                    <tr>
+                        <td>{{s['name']}}</td>
+                        <td>{{s['server_running']}}</td>
+                        <td>{{s['cpu_usage']}}</td>
+                        <td>{{s['memory_usage']}}</td>
+                        <td>{{s['online_players']}} / {{s['max_players']}}</td>
+                    </tr>
+
+                  {% end %}
+                  {% end %}
+
+                  </tbody>
+
+              </table>
+
           </div>
       </div>
 

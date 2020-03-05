@@ -57,13 +57,18 @@
         <span class="icon-bar"></span>
       </a>
 
+
       <div class="navbar-custom-menu">
+
         <ul class="nav navbar-nav">
           <!-- Messages: style can be found in dropdown.less-->
 
-          <!-- Notifications: style can be found in dropdown.less -->
-
           <!-- Tasks: style can be found in dropdown.less -->
+          <li class="">
+            <a href="#" id="update_check" aria-expanded="true">
+              <i class="fa fa-refresh"></i> Check For Updates
+            </a>
+          </li>
 
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
@@ -149,6 +154,19 @@
                     Server Config
                   </div>
 
+                  <div class="col-xs-1">
+                    {% if data['user_data']['api_access'] %}
+                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+                      {% else %}
+                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+                      {% end %}
+                  </div>
+                  <div class="col-xs-10">
+                    API Access
+                  </div>
+
+
+
                 </div>
 
 
@@ -184,32 +202,16 @@
         <li class="header">MAIN NAVIGATION</li>
 
         <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
-        {% if data['user_data']['svr_control'] %}
-          <li><a href="/admin/server_control"><i class="fa fa-power-off" aria-hidden="true"></i> Server Control</a></li>
-        {% end %}
-
-        {% if data['user_data']['svr_control'] %}
-          <li><a href="/admin/virtual_console"><i class="fa fa-terminal" aria-hidden="true"></i> Server Console</a></li>
-        {% end %}
-
-        {% if data['user_data']['logs'] %}
-          <li><a href="/admin/get_logs"><i class="fa fa-list" aria-hidden="true"></i> Logs </a></li>
-        {% end %}
-
-        {% if data['user_data']['backups'] %}
-          <li><a href="/admin/backups"><i class="fa fa-floppy-o" aria-hidden="true"></i> Backups</a></li>
-        {% end %}
-
-        {% if data['user_data']['schedules'] %}
-          <li><a href="/admin/schedules"><i class="fa fa-clock-o" aria-hidden="true"></i> Scheduled Tasks</a></li>
-        {% end %}
 
         {% if data['user_data']['config'] %}
-          <li><a href="/admin/config"><i class="fa fa-cog" aria-hidden="true"></i> Config</a></li>
+        <li><a href="/admin/config"><i class="fa fa-cog" aria-hidden="true"></i> <span> Config</span> </a></li>
         {% end %}
 
-        <li><a href="/admin/change_password"><i class="fa fa-key" aria-hidden="true"></i> Change Password</a></li>
-        <li><a href="https://craftycontrol.com/docs" target="_blank"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
+        <li><a href="/admin/change_password"><i class="fa fa-key" aria-hidden="true"></i><span> Change Password</span></a></li>
+
+        <li><a href="https://gitlab.com/crafty-controller/crafty-web/-/wikis/home" target="_blank"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
+
+        <li><a href="https://discord.gg/XR5x3ZM" target="_blank"><i class="fa fa-comment"></i> <span>Join The Discord</span></a></li>
 
       </ul>
     </section>
@@ -227,9 +229,15 @@
 
   <footer class="main-footer">
     <div class="pull-right hidden-xs">
-      <b>Crafty Controller Version: </b> {% block version %} 2.0.RC2 {% end %}
+      <b>Crafty Controller Version: </b>
+      {% block version %}
+        {{ data['version_data']['major'] }}.
+        {{ data['version_data']['minor'] }}.
+        {{ data['version_data']['sub'] }}
+
+      {% end %}
     </div>
-    <strong>Copyright &copy; 2019 <a href="https://craftycontrol.com">Crafty Controller</a>.</strong> All rights
+    <strong>Copyright &copy; 2019 - 2020 <a href="https://craftycontrol.com">Crafty Controller</a>.</strong> All rights
     reserved.
   </footer>
 
@@ -265,7 +273,36 @@
 <script>
   $(document).ready(function () {
     $('.sidebar-menu').tree()
+
+    $('#update_check').click(function(){
+      update_check();
+    });
   })
+
+  //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
+  function update_check(){
+        bootbox.alert("Getting Version Data");
+
+        $.ajax({
+            type: 'GET',
+            url: '/ajax/update_check',
+            dataType: 'text',
+            success: function (data) {
+                bootbox.hideAll();
+                console.log('Got Version Info From Server')
+                bootbox.alert({
+                    message: data,
+                    backdrop: true,
+                });
+             },
+        });
+    }
+
 </script>
 
 {% block js-script %}
