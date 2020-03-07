@@ -297,4 +297,6 @@ if __name__ == '__main__':
         # Freeze the program in a loop
         logger.info("Freezing program due to daemonize mode")
         while True:
-            pass
+            # fixes a 100% CPU usage issue in daemonized mode - thanks ImMeta for finding this.
+            time.sleep(1)
+
