@@ -677,7 +677,7 @@ class AdminHandler(BaseHandler):
                 context['parent'] = path.parent
                 context['parent'] = str(context['parent']).replace("\\", '/')
 
-            context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf']
+            context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf', '.cfg']
             context['ftp_running'] = ftp_svr_object.check_running()
 
             self.render(
