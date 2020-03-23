@@ -16,6 +16,7 @@ try:
     import yaml
     import secrets
     import schedule
+    from termcolor import colored
     from app.classes.console import console
 
 except Exception as e:
