@@ -6,6 +6,7 @@ import logging
 import argparse
 import threading
 import logging.config
+import subprocess
 
 # This Is A Test
 
@@ -33,7 +34,6 @@ except Exception as e:
         pipinstall = pipinstall.lower()
         print(pipinstall)
         if pipinstall == str("yes"):
-            import subprocess
             file = open("requirements.txt" , "r")
 
             for line in file:
@@ -53,7 +53,6 @@ except Exception as e:
         pipinstall = pipinstall.lower()
         print(pipinstall)
         if pipinstall == str("yes"):
-            import subprocess
             file = open("requirements.txt" , "r")
 
             for line in file:
