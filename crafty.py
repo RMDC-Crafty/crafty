@@ -6,6 +6,7 @@ import logging
 import argparse
 import threading
 import logging.config
+import subprocess
 
 # This Is A Test
 
@@ -33,7 +34,6 @@ except Exception as e:
         pipinstall = pipinstall.lower()
         print(pipinstall)
         if pipinstall == str("yes"):
-            import subprocess
             file = open("requirements.txt" , "r")
 
             for line in file:
@@ -53,7 +53,6 @@ except Exception as e:
         pipinstall = pipinstall.lower()
         print(pipinstall)
         if pipinstall == str("yes"):
-            import subprocess
             file = open("requirements.txt" , "r")
 
             for line in file:
@@ -66,6 +65,7 @@ except Exception as e:
         else:
             print("Not reinstalling modules, join the discord for further assistance!")
             sys.exit(1)
+
 
 def setup_logging(debug=False):
     logging_config_file = os.path.join(os.path.curdir,
