@@ -1,0 +1,29 @@
+#ignore virtual environment
+/venv/
+
+#ignore .idea from pycharm
+/.idea/
+
+#ignore pycache
+__pycache__/
+*.py[cod]
+
+#ignore logs 
+*.log
+
+#ignore backups
+*.zip
+
+#ignore certs
+app/web/certs/
+
+#ignore temp folders
+app/web/temp/
+
+#ignore generated databases 
+app/config/crafty.*
+app/config/new_install.temp
+
+# kevdagoat custom patterns :)
+.vscode/*
+custom_scripts/

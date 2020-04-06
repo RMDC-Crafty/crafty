@@ -1,0 +1,582 @@
+{% extends ../base.html %}
+
+{% block title %}{{ _('Crafty Controller - Configuration') }}{% end %}
+
+{% block content %}
+
+<section class="content-header">
+  <h1>
+    {{ _('Server Config') }}
+    <small>{{ _('Configure Your Server') }}</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> {{ _('Home') }}</a></li>
+    <li class="active">{{ _('Configuration') }}</li>
+  </ol>
+</section>
+
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-6">
+          <!-- Custom Tabs -->
+          <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#crafty" data-toggle="tab">{{ _('Crafty Config') }}</a></li>
+              <li><a href="#ftp" data-toggle="tab">{{ _('FTPS Config') }}</a></li>
+              <li><a href="#users" data-toggle="tab">{{ _('Users') }}</a></li>
+
+            </ul>
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="crafty">
+                    <form role="form" method="post">
+                        {% raw xsrf_form_html() %}
+                        <input type="hidden" name="config_type" value="crafty_settings"/>
+
+                        <div class="box">
+                            <div class="box-header with-border">
+                              <h3 class="box-title">
+                                  {{ _('Crafty Config') }}
+                              </h3>
+                            </div>
+
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label>
+                                        {{ _('Historical Data Capture Interval') }} <br />
+                                        <small>{{ _('How many minutes between historical data capture') }}</small>
+                                    </label>
+                                    <input type="number"
+                                           name="historical_interval" id="historical_interval"
+                                           class="form-control" placeholder="90" max="500" min="1" step="1"
+                                           value="{{ data['crafty_settings']['history_interval'] }}"
+                                    />
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        {{ _('Historical Data Length') }} <br />
+                                        <small>{{ _('How many days should we keep historical data') }}</small>
+                                    </label>
+                                    <input type="number"
+                                           name="history_max_age" id="history_max_age"
+                                           class="form-control" placeholder="2" max="30" min="1" step="1"
+                                           value="{{ data['crafty_settings']['history_max_age'] }}"
+                                    />
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        {{ _('Webserver Port') }} <br />
+                                        <small>{{ _('Default of 8000 - 443 and 80 require root on linux') }}</small>
+                                    </label>
+                                    <input type="number"
+                                           name="port_number" id="port_number"
+                                           class="form-control" placeholder="8000"
+                                           max="65535"
+                                           min="1"
+                                           step="1"
+                                           value="{{ data['web_settings']['port_number'] }}"
+                                    />
+                                </div>
+
+                                <div class="form-group">
+                                    <b>{{ _('Language') }}</b>
+                                    Currently: {{ data['crafty_settings']['language'] }}
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio"
+                                                   name="language"
+                                                   value="en_EN"
+                                                    {% if data['crafty_settings']['language'] == "en_EN" %} checked {% end %}
+                                                    />
+                                            English
+                                        </label>
+                                    </div>
+
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio"
+                                                   name="language"
+                                                   value="es_ES"
+                                                    {% if data['crafty_settings']['language'] == "es_ES" %} checked {% end %}
+                                                    />
+                                            Español
+                                        </label>
+                                    </div>
+
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio"
+                                                   name="language"
+                                                   value="fr_FR"
+                                                    {% if data['crafty_settings']['language'] == "fr_FR" %} checked {% end %}
+                                                    />
+                                            Français
+                                        </label>
+                                    </div>
+
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio"
+                                                   name="language"
+                                                   value="it_IT"
+                                                    {% if data['crafty_settings']['language'] == "it_IT" %} checked {% end %}
+                                                    />
+                                            Italiano
+                                        </label>
+                                    </div>
+
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio"
+                                                   name="language"
+                                                   value="nl_NL"
+                                                    {% if data['crafty_settings']['language'] == "nl_NL" %} checked {% end %}
+                                                    />
+                                            Nederlands
+                                        </label>
+                                    </div>
+
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio"
+                                                   name="language"
+                                                   value="ro_MO"
+                                                    {% if data['crafty_settings']['language'] == "ro_MO" %} checked {% end %}
+                                                    />
+                                            Română
+                                        </label>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="box-footer">
+                                <a href="/admin/config" class="btn btn-danger">{{ _('Cancel') }}</a>
+                                <button type="submit" class="btn btn-success pull-right">
+                                    <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                    {{ _('Save') }}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+
+              </div>
+              <!-- /.tab-pane -->
+
+                <div class="tab-pane" id="ftp">
+                    <form role="form" method="post">
+                        {% raw xsrf_form_html() %}
+                        <input type="hidden" name="config_type" value="ftp_settings"/>
+
+                        <div class="box">
+                            <div class="box-header with-border">
+                              <h3 class="box-title">
+                                  {{ _('FTP Config') }}
+                              </h3>
+                            </div>
+
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label>
+                                        {{ _('FTP User') }}<br />
+                                        <small>{{ _('This can should be unique to the FTP service') }}</small>
+                                    </label>
+                                    <input type="text"
+                                           name="ftp_user" id="ftp_user"
+                                           class="form-control" placeholder="{{ _('FTP User') }}" maxlength="255"
+                                           value="{{ data['ftp_user'] }}"
+                                    />
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        {{ _('FTP Password') }} <br />
+                                        <small>{{ _('This should be at least 8 letters long - maybe 15 characters') }}</small>
+                                    </label>
+                                    <input type="text"
+                                           name="ftp_pass" id="ftp_pass"
+                                           class="form-control" placeholder="{{ _('FTP Password') }}" maxlength="512"
+                                           value="{{ data['ftp_pass'] }}"
+                                    />
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        {{ _('FTP Port') }} <br />
+                                        <small>{{ _('Default of 2121 - 21 and 20 require root on linux') }}</small>
+                                    </label>
+                                    <input type="number"
+                                           name="ftp_port" id="ftp_port"
+                                           class="form-control" placeholder="{{ _('FTP Port') }}"
+                                           max="65535"
+                                           min="1"
+                                           value="{{ data['ftp_port'] }}"
+                                    />
+                                </div>
+
+
+                            </div>
+
+                            <div class="box-footer">
+                                <a href="/admin/config" class="btn btn-danger">{{ _('Cancel') }}</a>
+                                <button type="submit" class="btn btn-success pull-right">
+                                    <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                    {{ _('Save') }}
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+
+              </div>
+              <!-- /.tab-pane -->
+
+                <div class="tab-pane" id="users">
+
+                        <input type="hidden" name="config_type" value="users"/>
+
+                        <div class="box">
+                            <div class="box-header with-border">
+                              <h3 class="box-title">
+                                  {{ _('Users') }} <br />
+                                  <small>{{ _('Note the Admin can not be deleted or changed') }}</small>
+                              </h3>
+                            </div>
+
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <table class="table table-responsive" id="users_table">
+                                        <thead>
+                                        <tr>
+                                            <th>{{ _('Username') }}</th>
+                                            <th>{{ _('Role') }}</th>
+                                            <th>{{ _('Actions') }}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for user in data['users'] %}
+                                            <tr>
+                                                <td>{{ user.username }}</td>
+                                                <td>{{ user.role }}</td>
+                                                <td>
+
+                                                    <a class="btn btn-sm btn-primary"
+                                                       onclick="change_role('{{user.username}}')"
+                                                       {% if user.username =="Admin" %} disabled="true" {% end %}
+                                                    >
+                                                        {{ _('Change Role') }}
+                                                    </a>
+
+                                                    <a class="btn btn-sm btn-warning"
+                                                       onclick="change_user_password('{{user.username}}')"
+                                                    >
+                                                        {{ _('Set Password') }}
+                                                    </a>
+                                                    <a class="btn btn-sm btn-danger"
+                                                       {% if user.username =="Admin" %} disabled {% end %}
+                                                        onclick="del_user('{{ user.username }}')"
+                                                    >
+
+                                                        {{ _('Delete') }}
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% end %}
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </div>
+
+                            <div class="box-footer">
+
+                                <a class="btn btn-success pull-right" onclick="add_user()">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                    {{ _('Add User') }}
+                                </a>
+                            </div>
+                        </div>
+
+
+              </div>
+              <!-- /.tab-pane -->
+
+            </div>
+            <!-- /.tab-content -->
+          </div>
+          <!-- nav-tabs-custom -->
+        </div>
+
+        <div class="col-md-6">
+          <div class="box box-solid">
+            <div class="box-header with-border">
+              <i class="fa fa-cog"></i>
+
+                <h3 class="box-title">{{ _('Your Current Config') }}</h3>
+                <h3 class="box-title pull-right">
+                    <a href="/admin/reload_mc_settings" class="btn btn-sm btn-default">{{ _('Reload MC Settings') }}</a>
+                    <a href="/admin/reload_web" class="btn btn-sm btn-default">{{ _('Reload Web Server') }}</a>
+                </h3>
+
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+
+                {{ _('Historical Data will be captured every') }} <b>{{ data['crafty_settings']['history_interval'] }}</b> {{ _('minutes') }}
+                {{ _('and kept for') }} <b>{{ data['crafty_settings']['history_max_age'] }}</b> {{ _('days') }}
+                <hr />
+
+                {% for u in data['users'] %}
+                    {% if u.username == data['user_data']['username'] %}
+                {{ _('Your API Key:') }} <b>{{ u.api_token }}</b>
+                    {% end %}
+                {% end %}
+                <hr />
+
+                {{ _('You have') }} <b>{{ data['users_count'] }}</b> {{ _('users defined') }}
+
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+    </div>
+
+</section>
+
+
+
+<!--
+{{ data }}
+-->
+
+
+
+
+{% end %}
+
+{% block js-script %}
+
+<script>
+    function show_saved(){
+        var dialog = bootbox.dialog({
+            message: "Settings Saved",
+            className: 'modal modal-success fade-in',
+            okButton: false
+        });
+    }
+
+    function show_invalid(){
+        var dialog = bootbox.dialog({
+            message: "Invalid Settings Detected",
+            className: 'modal modal-danger fade-in',
+            okButton: false
+        });
+    }
+
+    function hide_modal(){
+        bootbox.hideAll()
+    }
+
+    //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
+    function del_user(username){
+
+        var token = getCookie("_xsrf")
+
+        if (username == "Admin") return False;
+
+        bootbox.confirm({
+            message: "Are you sure you wish to delete user: " + username + "?",
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function(result){
+                if (result){
+                    console.log('deleting user ' + username);
+
+                    data_to_send = { username : username };
+
+                    $.ajax({
+                      type: "POST",
+                      headers: {'X-XSRFToken': token},
+                      url: '/ajax/del_user',
+                      data: data_to_send,
+                      success: function(data){
+                        console.log("got response:");
+                        console.log(data);
+                        location.reload();
+                      },
+                    });
+                }
+
+            }
+        });
+    }
+
+    function add_user() {
+
+        var token = getCookie("_xsrf")
+
+        bootbox.prompt({
+            title: "Enter the New Users Username",
+            callback: function(result){
+                if (result){
+                    console.log('adding user ' + result);
+
+                    data_to_send = { username : result };
+
+                    $.ajax({
+                      type: "POST",
+                      headers: {'X-XSRFToken': token},
+                      url: '/ajax/add_user',
+                      data: data_to_send,
+                      success: function(data){
+                        console.log("got response:");
+                        console.log(data);
+                        bootbox.alert({
+                            message: "The users new password is: " + data,
+                            callback: function () {
+                                location.reload();
+                            }
+                        })
+                      },
+                    });
+                }
+
+            }
+        });
+    }
+
+    function change_user_password(user) {
+
+        var token = getCookie("_xsrf")
+
+        bootbox.prompt({
+            title: "Enter the New Password for " + user,
+            callback: function(result){
+                if (result){
+                    console.log('changing users password to' + result);
+
+                    data_to_send = { username : user, password: result };
+
+                    $.ajax({
+                      type: "POST",
+                      headers: {'X-XSRFToken': token},
+                      url: '/ajax/change_password',
+                      data: data_to_send,
+                      success: function(data){
+                        console.log("got response:");
+                        console.log(data);
+                        bootbox.alert({
+                            message: "The users new password is: " + data,
+                            callback: function () {
+                                location.reload();
+                            }
+                        })
+                      },
+                    });
+                }
+
+            }
+        });
+    }
+
+    function change_role(user){
+        var token = getCookie("_xsrf")
+
+        if (user == "Admin") return False;
+
+        bootbox.prompt({
+            title: "Select the new role for " + user,
+            inputType: 'select',
+            inputOptions: [
+            {
+                text: 'Admin',
+                value: 'Admin',
+            },
+            {
+                text: 'Staff',
+                value: 'Staff',
+            },
+            {
+                text: 'Backup',
+                value: 'Backup',
+            },
+            {
+                text: 'Mod',
+                value: 'Mod',
+            },
+            {
+                text: 'Testing',
+                value: 'Testing',
+            }
+            ],
+            callback: function (result) {
+                if (result){
+                    console.log('changing ' + user + " to role " + result );
+
+                    data_to_send = { username : user, role: result };
+
+                    $.ajax({
+                      type: "POST",
+                      headers: {'X-XSRFToken': token},
+                      url: '/ajax/edit_role',
+                      data: data_to_send,
+                      success: function(data){
+                        console.log("got response:");
+                        console.log(data);
+                        location.reload();
+                      },
+                    });
+                }
+            }
+        });
+    }
+
+    $( document ).ready(function() {
+        console.log( "ready!" );
+
+
+        $('#users_table').DataTable({
+            "order": [[ 0, "asc" ]]
+        });
+
+        //adding quick/dirty padding
+        $('input').css("margin-bottom",'10px')
+
+        {% if data['saved'] %}
+            show_saved()
+            setTimeout(hide_modal, 1000);
+        {% end %}
+
+        {% if data['invalid'] %}
+            show_invalid()
+            setTimeout(hide_modal, 1000);
+        {% end %}
+
+
+
+    });
+
+
+</script>
+
+{% end %}

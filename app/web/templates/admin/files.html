@@ -1,0 +1,346 @@
+{% extends ../base.html %}
+
+{% block title %}{{ _('Crafty Controller - File Management') }}{% end %}
+
+{% block content %}
+
+<section class="content-header">
+  <h1>
+    {{ _('File Management') }}
+    <small>
+       {{ _('Be careful here.') }}
+    </small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> {{ _('Home') }}</a></li>
+    <li class="active">{{ _('File Management') }}</li>
+  </ol>
+</section>
+
+
+<section class="content">
+
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">
+                      {{ _('Current Directory:') }} {{ data['pwd'] }}
+                  </h3>
+                </div>
+                <div class="box-body table-responsive ">
+                    <form method="post" id="browser" action="files">
+                        {% raw xsrf_form_html() %}
+                        <input type="hidden" id="next_dir" name="next_dir" value="" />
+                        <input type="hidden" id="server_id" name="server_id" value="{{ data['server_id'] }}" />
+
+                        {% if data['parent'] %}
+                        <a onclick="sub_form('{{ data['parent'] }}')">
+                            <i class="fa fa-level-up" aria-hidden="true"></i>{{ data['parent'] }}
+                        </a>
+                        <br />
+                        <br />
+                        {% end %}
+                            <div class="">
+                            <table class="table table-striped table-bordered table-hover " id="files_table">
+                            <thead>
+                            <th>&nbsp;</th>
+                            <th>{{ _('Size') }}</th>
+                            <th>{{ _('File') }}</th>
+                            <th>{{ _('Delete') }}</th>
+                            </thead>
+                            <tbody>
+                                  {% for f in data['listing'] %}
+
+                                  <tr>
+                                      <td width="15px">
+                                          {% if f['type'] == "file" %}
+                                          <span class="text-success"><i class="fa fa-file" aria-hidden="true"></i></span>
+                                          {% else %}
+                                            <i class="text-primary fa fa-folder" aria-hidden="true"></i>
+                                          {% end %}
+                                      </td>
+
+                                      <td width="30px">
+                                          {% if f['type'] == "file" %}
+                                              {{ f['size'] }}
+                                          {% end %}
+                                      </td>
+
+                                      <td>
+                                          {% if f['type'] == "file" %}
+                                                {% if f['name'][-4:] in data['ext_list'] %}
+                                                    <a onclick="edit_file('{{ f['name'] }}')">
+                                                        <span class="text-success">{{ f['name'] }}</span>
+                                                    </a>
+
+                                                {% elif f['name'][-4:] == '.zip' %}
+                                                    <a onclick="extract_file('{{ f['name'] }}')">
+                                                        <span class="text-info">{{ f['name'] }}</span>
+                                                    </a>
+                                                {% else %}
+                                                    <span class="text-danger">{{ f['name'] }}</span>
+                                                {% end %}
+                                          {% else %}
+                                          <a onclick="sub_form('{{ f['name'] }}')">
+                                            {{ f['name'] }}
+                                          </a>
+                                          {% end %}
+                                      </td>
+
+                                      <td width="30px">
+                                          <a onclick="del_file('{{ f['name'] }}')" class="btn btn-sm btn-danger">
+                                              <i class="fa fa-trash" aria-hidden="true"></i> Delete
+                                          </a>
+
+                                      </td>
+                                  </tr>
+                                  {% end %}
+
+                            </tbody>
+                        </table>
+                            </div>
+                    </form>
+                </div>
+              </div>
+        </div>
+
+
+        <div class="col-xs-6">
+
+            <div class="box box-solid">
+            <div class="box-header with-border">
+              <i class="fa fa-server" aria-hidden="true"></i>
+                    <h3 class="box-title">{{ _('Upload File to Dir:') }} {{ data['pwd'] }}</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-xs-6 ">
+                        <a class="btn btn-info" id="new_folder" onclick="new_file_folder('folder')">New Folder</a>
+                        <a class="btn btn-info" id="new_file" onclick="new_file_folder('file')">New File</a>
+                    </div>
+
+                    <div class="col-xs-6 ">
+                        <div class="form-group">
+                            <form enctype="multipart/form-data" action="/admin/upload" method="post">
+                                {% raw xsrf_form_html() %}
+                                <input type="hidden" name="pwd" value="{{ data['pwd'] }}"/>
+                                <input type="hidden" name="server_id" value="{{ data['server_id'] }}" />
+
+                                <label for="file1">Upload A File Here</label>
+                                <input type="file" name="file1">
+                                <input type="submit" value="Upload File" class="btn btn-success"/>
+                                <p class="help-block">Upload a file to {{ data['pwd'] }}</p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+
+    </div>
+
+
+</section>
+
+<!--
+{{ data }}
+-->
+
+
+
+
+{% end %}
+
+{% block js-script %}
+<script>
+    $('#files_table').DataTable({
+            "order": [[ 1, "asc" ]],
+            "pageLength": 25,
+            responsive: true
+        });
+
+    //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
+    function show_saved(){
+        var dialog = bootbox.dialog({
+            message: "{{ _('File Saved') }}",
+            className: 'modal modal-success fade-in',
+            okButton: false
+        });
+    }
+
+    function sub_form(dir){
+        $('#next_dir').val(dir);
+        document.getElementById('browser').submit();
+    }
+
+    function edit_file(file_path){
+        $.ajax({
+            type: 'GET',
+            url: '/ajax/get_file',
+            data: {
+                'file_name': file_path,
+                'server_id': {{ data['server_id'] }},
+            },
+            success: function (data) {
+                console.log('Got file data from server')
+                //console.log(data)
+
+                var dialog = bootbox.dialog({
+                    title: "<h3>Editing: " + file_path + "</h3>",
+                    message: data,
+                    size:"large",
+                    closeButton: true
+                });
+
+             },
+        });
+    }
+
+    function del_file(file_path){
+
+        var token = getCookie("_xsrf")
+
+        bootbox.confirm({
+            title: "Delete File: "+file_path,
+            message: "Are you sure you want to delete this? <b>There is no 'undo'</b><br />",
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-success'
+                }
+            },
+            callback: function (result) {
+                if (result){
+                    $.ajax({
+                        type: 'POST',
+                        headers: {'X-XSRFToken': token},
+                        url: '/ajax/del_server_file',
+                        data: {
+                            'file_name': file_path,
+                            'server_id': {{ data['server_id'] }},
+                        },
+                        success: function (data) {
+                            location.reload();
+                         },
+                    });
+                }
+            }
+        });
+
+    }
+
+    function new_file_folder(type){
+        var token = getCookie("_xsrf")
+
+        bootbox.prompt({
+            title: "What is the name of this new " + type + "?",
+            callback: function(result){
+                console.log(result);
+                if (result){
+                    $.ajax({
+                        type: 'POST',
+                        headers: {'X-XSRFToken': token},
+                        url: '/ajax/new_file_folder',
+                        data: {
+                            'name': result,
+                            'type': type,
+                            'server_id': {{ data['server_id'] }},
+                            'pwd': '{{ data['pwd'] }}',
+                        },
+                        success: function (data) {
+                            location.reload();
+                         },
+                    });
+                }
+            }
+        });
+
+    }
+
+    function extract_file(file_path){
+
+        var token = getCookie("_xsrf")
+
+        bootbox.confirm({
+            title: "Unzip File: "+file_path,
+            message: "Are you sure you want to unzip the file here?<br />",
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-danger'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-success'
+                }
+            },
+            callback: function (result) {
+                $.ajax({
+                    type: 'POST',
+                    headers: {'X-XSRFToken': token},
+                    url: '/ajax/unzip_server_file',
+                    data: {
+                        'file_name': file_path,
+                        'server_id': {{ data['server_id'] }},
+                        'pwd': '{{ data['pwd'] }}',
+                    },
+                    success: function (data) {
+                        location.reload();
+                     },
+                });
+            }
+        });
+
+    }
+
+
+
+    function delay(time='1-2'){
+            bootbox.alert({
+            message: "Please give the server " + time + " seconds to respond to your command",
+            backdrop: true
+        });
+    }
+
+    function hide_modal(){
+        bootbox.hideAll()
+    }
+
+    $( document ).ready(function() {
+        console.log( "ready!" );
+
+        //adding quick/dirty padding
+        $('input').css("margin-bottom",'10px')
+
+        {% try %}
+            {% if data['upload_success'] %}
+                show_saved()
+                setTimeout(hide_modal, 1000);
+            {% end %}
+        {% except %}
+        {% end %}
+
+
+
+
+    });
+
+
+</script>
+
+
+{% end %}

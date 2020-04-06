@@ -1,0 +1,311 @@
+{% extends ../base.html %}
+
+{% block title %}{{ _('Crafty Controller - Server Schedules') }}{% end %}
+
+{% block content %}
+
+<section class="content-header">
+  <h1>
+    {{ _('Scheduled Tasks') }}
+    <small>
+       {{ _("It's like a bot") }}, {{ _("only better") }}
+    </small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> {{ _('Home') }}</a></li>
+    <li class="active">{{ _('Schedules') }}</li>
+  </ol>
+</section>
+
+
+<section class="content">
+
+    <div class="row">
+        <div class="col-xs-6">
+            <form role="form" method="post">
+                {% raw xsrf_form_html() %}
+                <input type="hidden" name="server_id" value="{{ data['server_id'] }}" />
+                <div class="box">
+
+                    <div class="box-header with-border">
+                      <h3 class="box-title">
+                          {{ _('New Scheduled Action') }}
+                      </h3>
+                    </div>
+
+                    <div class="box-body">
+
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label>{{ _('Select Your Action') }}</label>
+                                <select class="form-control" name="action" id="action">
+                                    <option value="backup">{{ _('Backup Worlds') }}</option>
+                                    <option value="start">{{ _('Start Server') }}</option>
+                                    <option value="stop">{{ _('Stop Server') }}</option>
+                                    <option value="restart">{{ _('Restart Server') }}</option>
+                                    <option value="command">{{ _('Issue Command') }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ _('How Often') }} </label>
+                            <input type="number" class="form-control" placeholder="10"
+                                   name="interval" id="interval" value="1">
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label>{{ _('Interval Type') }}</label>
+                                <select class="form-control" name="type" id="type">
+                                    <option value="m">{{ _('Minutes') }}</option>
+                                    <option value="h">{{ _('Hours') }}</option>
+                                    <option value="d">{{ _('Days') }}</option>
+                                    <option value="monday">{{ _('Monday') }}</option>
+                                    <option value="tuesday">{{ _('Tuesday') }}</option>
+                                    <option value="wednesday">{{ _('Wednesday') }}</option>
+                                    <option value="thursday">{{ _('Thursday') }}</option>
+                                    <option value="friday">{{ _('Friday') }}</option>
+                                    <option value="saturday">{{ _('Saturday') }}</option>
+                                    <option value="sunday">{{ _('Sunday') }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ _('Time') }} </label><br />
+                            <small>{{ _('Time is disabled for minute and hour values') }}</small><br />
+                            <small>{{ _('An empty value means "every". For instance: Backup every 1 hour') }}</small><br />
+                            <input type="text" class="form-control" name="time" disabled="disabled"
+                                   id="time" class="time ui-timepicker-input" autocomplete="off">
+                        </div>
+
+                        <div class="form-group" id="command_input" hidden="true">
+                            <label>{{ _('Command') }} </label>
+                            <input type="text" class="form-control" placeholder="Enter the command you wish to schedule"
+                                   name="command" id="command" value="">
+                        </div>
+
+                        <div class="form-group">
+                            <label>{{ _('Comment') }} </label>
+                            <input type="text" class="form-control" placeholder="10"
+                                   name="comment" id="comment" value="{{ _('A scheduled task') }}">
+                        </div>
+
+                    </div>
+
+
+                    <div class="box-footer">
+                        <a href="/admin/schedules" class="btn btn-danger">{{ _('Cancel') }}</a>
+                        <button type="submit" class="btn btn-success pull-right">
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                            {{ _('Save') }}
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+        <div class="col-xs-6">
+            <form role="form" method="post">
+                {% raw xsrf_form_html() %}
+                <div class="box">
+
+                    <div class="box-header with-border">
+                      <h3 class="box-title">
+                          {{ _('Scheduled Actions') }}
+                      </h3>
+                    </div>
+
+                    <div class="box-body">
+                        <table id="tasks" class="table table-responsive">
+                            <thead>
+                                <th>
+                                    {{ _('Enabled') }}<br />
+                                    <small>{{ _('Click thumb to toggle') }}</small>
+                                </th>
+                                <th>{{ _('Action') }}</th>
+                                <th>{{ _('Comment') }}</th>
+                                <th>{{ _('Delete') }}</th>
+
+                            </thead>
+                            <tbody>
+                                {% for task in data['db_data'] %}
+                                    <tr>
+                                        <td>
+                                            {% if task.enabled %}
+                                                <a href="/admin/schedule_disable?id={{ data['server_id'] }}&taskid={{ task.id }}">
+                                                    <i class="fa fa-thumbs-up fa-lg text-green" aria-hidden="true"></i>
+                                                </a>
+                                            {% else %}
+                                                <a href="/admin/schedule_enable?id={{ data['server_id'] }}&taskid={{ task.id }}">
+                                                    <i class="fa fa-thumbs-down fa-lg  text-red" aria-hidden="true"></i>
+                                                </a>
+                                            {% end %}
+                                        </td>
+
+                                        <td>
+                                            {% if task.action == 'command' %}
+                                                {{ _('Send Command') }}
+                                            {% else %}
+                                                {{ task.action.title() }}
+                                            {% end %}
+
+                                            {{ _('every') }} {{ task.interval }}
+
+                                            {% if task.interval_type == 'd' %}
+                                                {{ _('day(s)') }}
+                                            {% elif task.interval_type == 'm' %}
+                                                {{ _('minute(s)') }}
+                                            {% elif task.interval_type == 'h' %}
+                                                {{ _('hour(s)') }}
+                                            {% else %}
+                                                {{ task.interval_type.title() }}
+                                            {% end %}
+
+                                            {% if task.start_time %}
+                                                {{ _('at') }} {{ task.start_time }}
+                                            {% end %}
+
+                                            {% if task.command %}
+                                                <br />{{ _('Command:') }} {{ task.command }}
+                                            {% end %}
+                                        </td>
+
+                                        <td>
+                                            {{ task.comment }}
+                                        </td>
+                                        <td>
+                                            <a data-id="{{ task.id }}" class="btn btn-sm btn-danger del_schedule">
+                                                <i class="fa fa-trash" aria-hidden="true"></i> {{ _('Delete') }}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% end %}
+                            </tbody>
+                        </table>
+
+
+
+                    </div>
+
+                    <div class="box-footer">
+                        &nbsp;
+                    </div>
+
+    </div>
+
+
+</section>
+
+<!--
+{{ data }}
+-->
+
+
+
+
+{% end %}
+
+{% block js-script %}
+<script>
+     //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
+    function show_saved(){
+        var dialog = bootbox.dialog({
+            message: "Settings Saved",
+            className: 'modal modal-success fade-in',
+            okButton: false
+        });
+    }
+
+    function hide_modal(){
+        bootbox.hideAll()
+    }
+
+    $( document ).ready(function() {
+        console.log( "ready!" );
+
+        $("#tasks").DataTable();
+
+        $('#time').timepicker();
+
+        $("#type").change(function(){
+            $("#time").prop('disabled', $(this).val() == 'm');
+            $("#time").prop('disabled', $(this).val() == 'h');
+        });
+
+        $("#action").change(function() {
+            var val = $(this).val();
+            if(val === "command") {
+                $('#command_input').show();
+                $('#command').val(null);
+            }
+            else {
+                $('#command_input').hide()
+                $('#command').val(null);
+            }
+          });
+
+        //adding quick/dirty padding
+        $('input').css("margin-bottom",'10px')
+
+        {% if data['saved'] %}
+            show_saved()
+            setTimeout(hide_modal, 1500);
+        {% end %}
+
+        $( ".del_schedule" ).click(function() {
+            var id_to_del = $(this).data("id");
+
+            console.log("schedule to delete is" + id_to_del);
+
+            bootbox.confirm({
+                title: "Destroy Scheduled Task " + id_to_del + "?",
+                message: "Do you want to delete this task? This cannot be undone.",
+                buttons: {
+                    cancel: {
+                        label: '<i class="fa fa-times"></i> Cancel'
+                    },
+                    confirm: {
+                        label: '<i class="fa fa-check"></i> Confirm'
+                    }
+                },
+                callback: function (result) {
+                    console.log(result);
+                    if (result == true) {
+                        del_schedule(id_to_del)
+                    }
+                }
+            });
+        });
+
+
+    });
+
+
+    function del_schedule(id){
+        var token = getCookie("_xsrf")
+
+        data_to_send = { id : id, }
+
+        console.log('Sending Command to delete schedule: ' + id)
+        $.ajax({
+          type: "POST",
+          headers: {'X-XSRFToken': token},
+          url: '/ajax/del_schedule',
+          data: data_to_send,
+          success: function(data){
+            window.location.reload()
+          },
+        });
+    }
+
+</script>
+
+{% end %}

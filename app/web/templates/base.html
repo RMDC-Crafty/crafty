@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="ISO-8859-1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{% block title %}{{ _('Default') }}{% end %}</title>
+  {% block meta %} {% end %}
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- Bootstrap 3.3.7 -->
+  <link rel="stylesheet" href="/static/vendors/bootstrap/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="/static/vendors/font-awesome/css/font-awesome.min.css">
+  <!-- Datatables -->
+  <link rel="stylesheet" href="/static/vendors/datatables/datatables.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="/static/vendors/ionicons/css/ionicons.min.css">
+  <!-- morris charts -->
+  <link rel="stylesheet" href="/static/vendors/morrisjs/morris.css">
+  <!-- timepicker -->
+  <link rel="stylesheet" href="/static/vendors/jonthornton-timepicker/jquery.timepicker.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="/static/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="/static/css/skins/skin-blue.min.css">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  <!-- Google Font -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+  <header class="main-header">
+    <!-- Logo -->
+    <a href="/" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><img src="https://assets.gitlab-static.net/uploads/-/system/project/avatar/14984440/Crafty_Logo.png?width=64"></span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg"><img src="https://assets.gitlab-static.net/uploads/-/system/project/avatar/14984440/Crafty_Logo.png?width=64"></span>
+    </a>
+    <!-- Header Navbar: style can be found in header.less -->
+    <nav class="navbar navbar-static-top">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <span class="sr-only">{{ _('Toggle navigation') }}</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+
+
+      <div class="navbar-custom-menu">
+
+        <ul class="nav navbar-nav">
+          <!-- Messages: style can be found in dropdown.less-->
+
+          <!-- Tasks: style can be found in dropdown.less -->
+          <li class="">
+            <a href="#" id="update_check" aria-expanded="true">
+              <i class="fa fa-refresh"></i> {{ _('Check For Updates') }}
+            </a>
+          </li>
+
+          <!-- User Account: style can be found in dropdown.less -->
+          <li class="dropdown user user-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-user-circle" aria-hidden="true"></i>
+              <span class="hidden-xs">{{ data['user_data']['username'] }}</span>
+            </a>
+            <ul class="dropdown-menu">
+              <!-- User image -->
+              <li class="user-header">
+                <p>
+                  {{ _('Role:') }} {{ _(data['user_data']['role_name']) }}
+                </p>
+              </li>
+              <!-- Menu Body -->
+              <li class="user-body">
+                &nbsp;<b>{{ _('Permissions') }}</b><br />
+                <div class="row">
+
+                  <div class="col-xs-1">
+                    {% if data['user_data']['svr_control'] %}
+                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+                      {% else %}
+                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+                      {% end %}
+                  </div>
+                  <div class="col-xs-10">
+                    {{ _('Server Control') }}
+                  </div>
+
+                  <div class="col-xs-1">
+                    {% if data['user_data']['svr_console'] %}
+                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+                      {% else %}
+                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+                      {% end %}
+                  </div>
+                  <div class="col-xs-10">
+                    {{ _('Server Console') }}
+                  </div>
+
+                  <div class="col-xs-1">
+                    {% if data['user_data']['logs'] %}
+                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+                      {% else %}
+                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+                      {% end %}
+                  </div>
+                  <div class="col-xs-10">
+                    {{ _('Server Logs') }}
+                  </div>
+
+                  <div class="col-xs-1">
+                    {% if data['user_data']['backups'] %}
+                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+                      {% else %}
+                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+                      {% end %}
+                  </div>
+                  <div class="col-xs-10">
+                    {{ _('Server Backups') }}
+                  </div>
+
+                  <div class="col-xs-1">
+                    {% if data['user_data']['schedules'] %}
+                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+                      {% else %}
+                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+                      {% end %}
+                  </div>
+                  <div class="col-xs-10">
+                    {{ _('Server Schedule') }}
+                  </div>
+
+                  <div class="col-xs-1">
+                    {% if data['user_data']['config'] %}
+                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+                      {% else %}
+                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+                      {% end %}
+                  </div>
+                  <div class="col-xs-10">
+                    {{ _('Server Config') }}
+                  </div>
+
+                  <div class="col-xs-1">
+                    {% if data['user_data']['api_access'] %}
+                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+                      {% else %}
+                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+                      {% end %}
+                  </div>
+                  <div class="col-xs-10">
+                    {{ _('API Access') }}
+                  </div>
+
+
+
+                </div>
+
+
+                <!-- /.row -->
+              </li>
+              <!-- Menu Footer-->
+              <li class="user-footer">
+
+                <div class="pull-right">
+                  <a href="/" class="btn btn-default btn-flat">{{ _('Sign out') }}</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+          <!-- Control Sidebar Toggle Button -->
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <!-- =============================================== -->
+
+  <!-- Left side column. contains the sidebar -->
+  <aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+      <!-- Sidebar user panel -->
+
+      <!-- search form -->
+
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu" data-widget="tree">
+        <li class="header">{{ _('MAIN NAVIGATION') }}</li>
+
+        <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> <span>{{ _('Dashboard') }}</span></a></li>
+
+        {% if data['user_data']['config'] %}
+        <li><a href="/admin/config"><i class="fa fa-cog" aria-hidden="true"></i> <span> {{ _('Config') }}</span> </a></li>
+        {% end %}
+
+        <li><a href="/admin/change_password"><i class="fa fa-key" aria-hidden="true"></i><span> {{ _('Change Password') }}</span></a></li>
+
+        <li><a href="https://gitlab.com/crafty-controller/crafty-web/-/wikis/home" target="_blank"><i class="fa fa-book"></i> <span>{{ _('Documentation') }}</span></a></li>
+
+        <li><a href="https://discord.gg/XR5x3ZM" target="_blank"><i class="fa fa-comment"></i> <span>{{ _('Join The Discord') }}</span></a></li>
+
+      </ul>
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+
+  <!-- =============================================== -->
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    {% block content %}
+    {% end %}
+  </div>
+  <!-- /.content-wrapper -->
+
+  <footer class="main-footer">
+    <div class="pull-right hidden-xs">
+      <b>{{ _('Crafty Controller Version:') }} </b>
+      {% block version %}
+        {{ data['version_data']['major'] }}.
+        {{ data['version_data']['minor'] }}.
+        {{ data['version_data']['sub'] }}
+
+      {% end %}
+    </div>
+    <strong>Copyright &copy; 2019 - 2020 <a href="https://craftycontrol.com">{{ _('Crafty Controller') }}</a>.</strong> {{ _('All rights reserved.') }}
+  </footer>
+
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 3 -->
+<script src="/static/vendors/jquery/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="/static/vendors/bootstrap/js/bootstrap.min.js"></script>
+<!-- SlimScroll -->
+<script src="/static/vendors/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+<script src="/static/vendors/fastclick/lib/fastclick.js"></script>
+<!-- AdminLTE App -->
+<script src="/static/js/adminlte.min.js"></script>
+
+<!-- bootbox -->
+<script src="/static/vendors/bootbox/bootbox.min.js"></script>
+
+<!-- datatables -->
+<script src="/static/vendors/datatables/datatables.min.js"></script>
+
+<!-- timepicker -->
+<script src="/static/vendors/jonthornton-timepicker/jquery.timepicker.min.js"></script>
+
+<!-- raphael -->
+<script src="/static/vendors/raphael/raphael.min.js"></script>
+
+<!-- morris -->
+<script src="/static/vendors/morrisjs/morris.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    $('.sidebar-menu').tree()
+
+    $('#update_check').click(function(){
+      update_check();
+    });
+  })
+
+  //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
+  function update_check(){
+        bootbox.alert("{{ _('Getting Version Data') }}");
+
+        $.ajax({
+            type: 'GET',
+            url: '/ajax/update_check',
+            dataType: 'text',
+            success: function (data) {
+                bootbox.hideAll();
+                console.log('Got Version Info From Server')
+                bootbox.alert({
+                    message: data,
+                    backdrop: true,
+                });
+             },
+        });
+    }
+
+</script>
+
+{% block js-script %}
+{% end %}
+</body>
+</html>

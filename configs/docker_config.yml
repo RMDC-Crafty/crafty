@@ -1,0 +1,11 @@
+#  --- Crafty Web Config file ---
+#  More config files are located in the root directory of this project.
+
+# Tells crafty if it should activate the console and not loop forever
+daemon_mode: true
+
+# Tells crafty where your logging.json and version.json files are
+config_dir: "app/config"
+
+# Tells crafty where to store the database it creates
+db_dir: "/crafty_db"
