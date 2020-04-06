@@ -20,6 +20,7 @@ class AjaxHandler(BaseHandler):
     def initialize(self, mcserver):
         self.mcserver = mcserver
         self.console = console
+        self.session = web_session(self.current_user)
 
     @tornado.web.authenticated
     def get(self, page):
@@ -67,7 +68,114 @@ class AjaxHandler(BaseHandler):
             self.render(
                 'ajax/version.html',
                 data=context
+            )
 
+        elif page == 'host_cpu_infos':  
+
+            name = tornado.escape.json_decode(self.current_user)
+            user_data = get_perms_for_user(name)
+
+            context = {
+                'host_stats': multi.get_host_status()
+            }                 
+                    
+            self.render(
+                'ajax/host_cpu_infos.html',
+                data=context
+            )
+
+        elif page == 'host_ram_infos':  
+
+            name = tornado.escape.json_decode(self.current_user)
+            user_data = get_perms_for_user(name)
+
+            context = {
+                'host_stats': multi.get_host_status()
+            }                 
+                    
+            self.render(
+                'ajax/host_ram_infos.html',
+                data=context
+            )
+
+        elif page == 'host_disk_infos':  
+
+            name = tornado.escape.json_decode(self.current_user)
+            user_data = get_perms_for_user(name)
+
+            context = {
+                'host_stats': multi.get_host_status()
+            }                 
+                    
+            self.render(
+                'ajax/host_disk_infos.html',
+                data=context
+            )
+
+        elif page == 'host_running_servers':  
+
+            name = tornado.escape.json_decode(self.current_user)
+            user_data = get_perms_for_user(name)
+
+            context = {
+                'host_stats': multi.get_host_status()
+            }                 
+                    
+            self.render(
+                'ajax/host_running_servers.html',
+                data=context
+            )
+
+        elif page == 'server_status':  
+
+            name = tornado.escape.json_decode(self.current_user)
+            user_data = get_perms_for_user(name)
+
+            context = {
+                'user_data': user_data,
+                'mc_servers_data': multi.get_stats_for_servers()
+            }     
+
+            server_id = bleach.clean(self.get_argument('id'))
+            srv_obj = multi.get_server_obj(server_id)
+            
+            context['srv'] = {
+                        'id': srv_obj.server_id,
+                        'name': srv_obj.get_mc_server_name(),
+                        'running': srv_obj.check_running(),
+                        'crashed': srv_obj.check_crashed(),
+                        'auto_start': srv_obj.settings.auto_start_server
+                    }
+                    
+            self.render(
+                'ajax/server_status.html',
+                data=context
+            )
+
+        elif page == 'server_infos':  
+
+            name = tornado.escape.json_decode(self.current_user)
+            user_data = get_perms_for_user(name)
+
+            context = {
+                'user_data': user_data,
+                'mc_servers_data': multi.get_stats_for_servers()
+            }     
+
+            server_id = bleach.clean(self.get_argument('id', 1))
+            srv_obj = multi.get_server_obj(server_id)
+            
+            context['srv'] = {
+                        'id': srv_obj.server_id,
+                        'name': srv_obj.get_mc_server_name(),
+                        'running': srv_obj.check_running(),
+                        'crashed': srv_obj.check_crashed(),
+                        'auto_start': srv_obj.settings.auto_start_server
+                    }
+                    
+            self.render(
+                'ajax/server_infos.html',
+                data=context
             )
 
         elif page == 'get_file':

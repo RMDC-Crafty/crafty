@@ -299,7 +299,7 @@ class multi_serve():
                 # delete the old history stats for this server
                 # Server_Stats.delete().where(Server_Stats.server_id == int(s[1]['server_id'])).execute()
 
-                exists = Server_Stats.select(Server_Stats.server_id == int(s[1]['server_id'])).exists()
+                exists = Server_Stats.select().where(Server_Stats.server_id == int(s[1]['server_id'])).exists()
 
                 if exists:
                     Server_Stats.update({

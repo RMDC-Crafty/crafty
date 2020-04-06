@@ -81,6 +81,7 @@ class AdminHandler(BaseHandler):
         elif page == 'change_password':
             template = "admin/change_pass.html"
 
+
         elif page == 'virtual_console':
             if not check_role_permission(user_data['username'], 'svr_console'):
                 self.redirect('/admin/unauthorized')

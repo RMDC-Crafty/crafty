@@ -2,7 +2,7 @@
 
 {% block title %}Crafty Controller - Dashboard{% end %}
 
-{% block meta %} <meta http-equiv="Refresh" content="60">  {% end %}
+<!-- {% block meta %} <meta http-equiv="Refresh" content="60">  {% end %} -->
 
 {% block content %}
 
@@ -24,7 +24,7 @@
       <div class="info-box">
         <span class="info-box-icon bg-aqua"><i class="fa fa-heartbeat" aria-hidden="true"></i></span>
 
-        <div class="info-box-content">
+        <div id="host_cpu" class="info-box-content">
           <span class="info-box-text">{{ _('Host CPU') }}</span>
           <span class="info-box-number"> {{ round( data['host_stats']['cpu_usage'], 2) }} % </span>
 
@@ -44,7 +44,7 @@
           <i class="fa fa-microchip" aria-hidden="true"></i>
         </span>
 
-        <div class="info-box-content">
+        <div id="host_ram" class="info-box-content">
           <span class="info-box-text">{{ _('Host RAM') }}</span>
           <span class="info-box-number"> {{ data['host_stats']['mem_percent'] }}%</span>
 
@@ -66,7 +66,7 @@
       <div class="info-box">
         <span class="info-box-icon bg-green"><i class="fa fa-hdd-o" aria-hidden="true"></i></span>
 
-        <div class="info-box-content">
+        <div id="host_disk" class="info-box-content">
           <span class="info-box-text">{{ _('Host Root Disk') }}</span>
           <span class="info-box-number">
              {{ data['host_stats']['disk_percent'] }} %
@@ -84,7 +84,7 @@
       <div class="info-box">
         <span class="info-box-icon bg-default"><i class="fa fa-server" aria-hidden="true"></i></span>
 
-        <div class="info-box-content">
+        <div id="host_run" class="info-box-content">
           <span class="info-box-text">{{ _('Server Defined') }}</span>
           <span class="info-box-number">
               {{ len(data['servers_running'] ) }} / {{ len(data['servers_defined']) }} {{ _('Running') }}
@@ -142,16 +142,7 @@
 
           <br />
 
-          <b>{{ _('Players:') }}</b>
-          {% try %}
-            {{ data['mc_servers_data'][s['id']]['online_players'] }}
-            /
-            {{ data['mc_servers_data'][s['id']]['max_players'] }} |
-          {% except %}
-          ?/?
-          {% end %}
-          <b>{{ _('CPU') }}:</b> {{ data['mc_servers_data'][s['id']]['cpu_usage'] }} % |
-          <b>{{ _('Mem') }}:</b> {{ data['mc_servers_data'][s['id']]['memory_usage'] }}
+          <span id="server-status-{{ s['id'] }}">Server Status</span>
 
         </div>
 
@@ -199,61 +190,16 @@
 
       </div>
 
-      <div class="box-footer no-padding">
-          <ul class="nav nav-stacked">
-            <li>
-              <a href="#">{{ _('Status') }}
-                {% if s['crashed'] %}
-                  <span class="pull-right badge bg-red">{{ _('Crashed - Auto Restart Disabled') }}</span>
-                {% else %}
-                  {% if s['running'] %}
-                    <span class="pull-right badge bg-green">{{ _('Running') }}</span>
-                  {% else %}
-                    <span class="pull-right badge bg-orange">{{ _('Stopped') }}</span>
-                  {% end %}
-                {% end %}
-              </a>
-            </li>
-            <li>
-              <a href="#">{{ _('Autostart') }}
-                {% if s['auto_start'] %}
-                  <span class="pull-right badge bg-green">{{ _('Enabled') }}</span>
-                {% else %}
-                  <span class="pull-right badge bg-red">{{ _('Disabled') }}</span>
-                {% end %}
-              </a>
-            </li>
-              <li><a href="#">{{ _('Server Start Time') }} <span class="pull-right">
-                {{ data['mc_servers_data'][s['id']]['server_start_time'] }}
-              </span></a></li>
-
-            <li><a href="#">{{ _('Server Type') }} <span class="pull-right">
-              {{ data['mc_servers_data'][s['id']]['server_version'] }}
-            </span></a></li>
-
-            <li><a href="#">{{ _('Server Description') }} <span class="pull-right">
-            {{ data['mc_servers_data'][s['id']]['motd'] }}
-            </span></a></li>
-
-            <li><a href="#">{{ _('Server IP : Server Port') }}<span class="pull-right">
-            {{ data['mc_servers_data'][s['id']]['server_ip'] }}
-              : {{ data['mc_servers_data'][s['id']]['server_port'] }}
-            </span></a></li>
-
-
-
-          </ul>
+      <div id="info-server-{{ s['id'] }}" class="box-footer no-padding">
+          
         </div>
       <!-- /.box-body -->
     </div>
     <!-- /.box -->
-
-  </div>
-  <!-- /.block -->
-
+    </div>
+    <!-- /.block -->
 
   {% end %}
-
 
   <div class="col-xs-3">
     <div class="box box-info collapsed-box box-solid">
@@ -352,6 +298,33 @@
 {% block js-script %}
 
 <script>
+  $(document).ready(function () {
+    refreshServerInfos();
+    ServerStatusRefresh();
+    HostStatusRefresh();
+  });
+
+  function HostStatusRefresh() {
+    refreshId = setInterval(refreshHostInfos, 3000);
+  }
+
+  function refreshHostInfos() {
+    refreshCpuInfos();
+    refreshRamInfos();
+    refreshDiskInfos();
+    refreshRunningServers();
+  }
+
+  function ServerStatusRefresh() {
+    refreshId = setInterval(refreshServerInfos, 60000);
+  }
+
+  function refreshServerInfos() {
+    {% for s in data['servers_defined'] %}
+      loadServerStatus({{ s['id'] }});
+      loadServerInfos({{ s['id'] }});
+    {% end %}
+  }
 
   function delay(time='5-10'){
         bootbox.alert({
@@ -362,7 +335,7 @@
 
   function show_invalid(){
       var dialog = bootbox.dialog({
-          message: Invalid Settings Detected: {{ data['errors'] }}",
+          message: "Invalid Settings Detected: {{ data['errors'] }}",
           className: 'modal modal-danger fade-in',
           okButton: true
       });
@@ -370,7 +343,49 @@
 
   function hide_modal(){
         bootbox.hideAll()
+    }  
+
+    function refreshCpuInfos() {
+      $("#host_cpu").load("/ajax/host_cpu_infos", function(responseTxt, statusTxt, xhr){
+        if (statusTxt == "error")
+          console.log("CPU Status Error : "+statusTxt+" -> "+responseTxt);
+      });
     }
+    
+    function refreshRamInfos() {
+      $("#host_ram").load("/ajax/host_ram_infos", function(responseTxt, statusTxt, xhr){
+        if (statusTxt == "error")
+          console.log("RAM Status Error : "+statusTxt+" -> "+responseTxt);
+      });
+    }
+    
+    function refreshDiskInfos() {
+      $("#host_disk").load("/ajax/host_disk_infos", function(responseTxt, statusTxt, xhr){
+        if (statusTxt == "error")
+          console.log("Disk Status Error : "+statusTxt+" -> "+responseTxt);
+      });
+    }
+    
+    function refreshRunningServers() {
+      $("#host_run").load("/ajax/host_running_servers", function(responseTxt, statusTxt, xhr){
+        if (statusTxt == "error")
+          console.log("Run Status Error : "+statusTxt+" -> "+responseTxt);
+      });
+    }
+    
+  function loadServerStatus(srv_id) {
+      $("#server-status-"+srv_id).load("/ajax/server_status?id="+srv_id, function(responseTxt, statusTxt, xhr){
+        if (statusTxt == "error")
+          console.log("Status Error : "+statusTxt+" -> "+responseTxt);
+      });
+  }
+
+  function loadServerInfos(srv_id) {
+      $("#info-server-"+srv_id).load("/ajax/server_infos?id="+srv_id, function(responseTxt, statusTxt, xhr){
+        if (statusTxt == "error")
+          console.log("Infos Error : "+statusTxt+" -> "+responseTxt);
+      });
+  }
 
    {% if data['errors'] %}
       show_invalid()
