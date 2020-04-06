@@ -491,8 +491,6 @@ class Minecraft_Server():
                 logger.info("Backing up server directory to %s", backup_filename)
                 logger.debug("Full path is %s", backup_full_path)
 
-                backup_list = Backups.get()
-                backup_data = model_to_dict(backup_list)
                 backup_dirs = json.loads(backup_data['directories'])
 
                 helper.zippath(backup_dirs, backup_full_path, ['crafty_backups'])
