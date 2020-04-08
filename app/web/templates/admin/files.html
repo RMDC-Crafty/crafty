@@ -17,7 +17,7 @@
       </div>
       <div class="col-md-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fa fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
+          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
           <li class="active breadcrumb-item">{{ _('File Management') }}</li>
         </ol>
       </div>
@@ -44,7 +44,7 @@
 
                         {% if data['parent'] %}
                         <a onclick="sub_form('{{ data['parent'] }}')">
-                            <i class="fa fa-level-up" aria-hidden="true"></i>{{ data['parent'] }}
+                            <i class="fas fa-level-up" aria-hidden="true"></i>{{ data['parent'] }}
                         </a>
                         <br />
                         <br />
@@ -63,7 +63,7 @@
                                   <tr>
                                       <td width="15px">
                                           {% if f['type'] == "file" %}
-                                          <span class="text-success"><i class="fa fa-file" aria-hidden="true"></i></span>
+                                          <span class="text-success"><i class="fas fa-file" aria-hidden="true"></i></span>
                                           {% else %}
                                             <i class="text-primary fa fa-folder" aria-hidden="true"></i>
                                           {% end %}
@@ -98,7 +98,7 @@
 
                                       <td width="30px">
                                           <a onclick="del_file('{{ f['name'] }}')" class="btn btn-sm btn-danger">
-                                              <i class="fa fa-trash" aria-hidden="true"></i> Delete
+                                              <i class="fas fa-trash" aria-hidden="true"></i> Delete
                                           </a>
 
                                       </td>
@@ -118,8 +118,7 @@
 
             <div class="card card-secondary card-outline">
             <div class="card-header">
-              <i class="fa fa-server" aria-hidden="true"></i>
-                    <h3 class="card-title">{{ _('Upload File to Dir:') }} {{ data['pwd'] }}</h3>
+                <h3 class="card-title"><i class="fas fa-server" aria-hidden="true"></i> {{ _('Upload File to Dir:') }} {{ data['pwd'] }}</h3>
             </div>
             <!-- /.card-header -->
             <div class="card-body">

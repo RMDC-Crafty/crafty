@@ -15,7 +15,7 @@
       </div>
       <div class="col-md-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fa fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
+          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
           <li class="active breadcrumb-item">{{ _('Configuration') }}</li>
         </ol>
       </div>
@@ -278,19 +278,19 @@
                                                 <td>{{ user.role }}</td>
                                                 <td>
 
-                                                    <a class="btn btn-sm btn-primary"
+                                                    <a href="#" class="btn btn-sm btn-primary"
                                                        onclick="change_role('{{user.username}}')"
                                                        {% if user.username =="Admin" %} disabled="true" {% end %}
                                                     >
                                                         {{ _('Change Role') }}
                                                     </a>
 
-                                                    <a class="btn btn-sm btn-warning"
+                                                    <a href="#" class="btn btn-sm btn-warning"
                                                        onclick="change_user_password('{{user.username}}')"
                                                     >
                                                         {{ _('Set Password') }}
                                                     </a>
-                                                    <a class="btn btn-sm btn-danger"
+                                                    <a href="#" class="btn btn-sm btn-danger"
                                                        {% if user.username =="Admin" %} disabled="true" {% end %}
                                                         onclick="del_user('{{ user.username }}')"
                                                     >
@@ -302,15 +302,12 @@
                                         {% end %}
                                         </tbody>
                                     </table>
-
-
                                 </div>
                             </div>
 
                             <div class="card-footer">
-
-                                <a class="btn btn-success float-right" onclick="add_user()">
-                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                <a href="#" class="btn btn-success float-right" onclick="add_user()">
+                                    <i class="fas fa-plus" aria-hidden="true"></i>
                                     {{ _('Add User') }}
                                 </a>
                             </div>
@@ -348,28 +345,28 @@
                                         {% for role in data['roles'] %}
                                             <tr>
                                                 <td>{{ role.name }}</td>
-                                                <td>{% if role.svr_control == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
-                                                <td>{% if role.svr_console == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
-                                                <td>{% if role.logs == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
-                                                <td>{% if role.backups == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
-                                                <td>{% if role.schedules == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
-                                                <td>{% if role.config == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
-                                                <td>{% if role.files == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
-                                                <td>{% if role.api_access == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
+                                                <td>{% if role.svr_control == True %} <i class="fas fa-check-circle text-success"></i> {% else %} <i class="fas fa-times-circle text-danger"></i> {% end %}</td>
+                                                <td>{% if role.svr_console == True %} <i class="fas fa-check-circle text-success"></i> {% else %} <i class="fas fa-times-circle text-danger"></i> {% end %}</td>
+                                                <td>{% if role.logs == True %} <i class="fas fa-check-circle text-success"></i> {% else %} <i class="fas fa-times-circle text-danger"></i> {% end %}</td>
+                                                <td>{% if role.backups == True %} <i class="fas fa-check-circle text-success"></i> {% else %} <i class="fas fa-times-circle text-danger"></i> {% end %}</td>
+                                                <td>{% if role.schedules == True %} <i class="fas fa-check-circle text-success"></i> {% else %} <i class="fas fa-times-circle text-danger"></i> {% end %}</td>
+                                                <td>{% if role.config == True %} <i class="fas fa-check-circle text-success"></i> {% else %} <i class="fas fa-times-circle text-danger"></i> {% end %}</td>
+                                                <td>{% if role.files == True %} <i class="fas fa-check-circle text-success"></i> {% else %} <i class="fas fa-times-circle text-danger"></i> {% end %}</td>
+                                                <td>{% if role.api_access == True %} <i class="fas fa-check-circle text-success"></i> {% else %} <i class="fas fa-times-circle text-danger"></i> {% end %}</td>
                                                 <td>
-                                                    <a class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Edit {{ role.name }}"
+                                                    <a href="#" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Edit {{ role.name }}"
                                                        {% if not user.role =="Admin" %} {% if role.name =="Admin" %} disabled="true" {% end %} {% end %}
                                                        onclick="edit_role('{{role.name}}')"
                                                     >
                                                         <!--{{ _('Edit') }}-->
-                                                        <i class="fa fa-edit"></i>
+                                                        <i class="fas fa-edit"></i>
                                                     </a>
-                                                    <a class="btn btn-sm btn-danger"  data-toggle="tooltip" data-placement="top" title="Delete {{ role.name }}"
+                                                    <a href="#" class="btn btn-sm btn-danger"  data-toggle="tooltip" data-placement="top" title="Delete {{ role.name }}"
                                                        {% if not user.role =="Admin" %} {% if role.name =="Admin" %} disabled="true" {% end %} {% end %}
                                                         onclick="del_role('{{ role.name }}')"
                                                     >
                                                         <!--{{ _('Delete') }}-->
-                                                        <i class="fa fa-trash"></i>
+                                                        <i class="fas fa-trash"></i>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -383,8 +380,8 @@
 
                             <div class="card-footer">
 
-                                <a class="btn btn-success float-right" onclick="add_role()">
-                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                <a href="#" class="btn btn-success float-right" onclick="add_role()">
+                                    <i class="fas fa-plus" aria-hidden="true"></i>
                                     {{ _('Add Role') }}
                                 </a>
                             </div>
@@ -400,7 +397,7 @@
         <div class="col col-lg-12 col-xl-12">
           <div class="card card-secondary card-outline">
             <div class="card-header">
-                <i class="fa fa-cog float-left"></i>
+                <i class="fas fa-cog float-left"></i>
                 <h3 class="card-title">{{ _('Your Current Config') }}</h3>
                 <h3 class="card-title float-right">
                     <a href="/admin/reload_mc_settings" class="btn btn-sm btn-default">{{ _('Reload MC Settings') }}</a>

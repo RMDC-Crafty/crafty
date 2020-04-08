@@ -8,7 +8,7 @@
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 4.4.1 -->
-  <link rel="stylesheet" href="/static/vendors/bootstrap/css/bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="/static/vendors/bootstrap/css/bootstrap.min.css"> -->
   <!-- Font Awesome -->
   <link rel="stylesheet" href="/static/vendors/font-awesome/css/font-awesome.min.css">
   <!-- Datatables -->
@@ -51,7 +51,7 @@
 
         <!-- Tasks: style can be found in dropdown.less -->
         <li class="nav-item">
-          <a href="#" id="update_check" class="nav-link" aria-expanded="true">
+          <a href="#" id="update_check" class="nav-link" aria-expanded="true" onclick=update_check()>
             <i class="nav-icon fa fa-sync-alt"></i> {{ _('Check For Updates') }}
           </a>
         </li>
@@ -70,89 +70,54 @@
             <!-- Menu Body -->
             <div class="dropdown-item">
               &nbsp;<b>{{ _('Permissions') }}</b><br />
-              <div class="row">
-                <div class="col-xs-1">
+              <div>
                   {% if data['user_data']['svr_control'] %}
-                    <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                    {% else %}
-                    <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                    {% end %}
-                </div>
-                <div class="col-xs-10">
-                  {{ _('Server Control') }}
-                </div>
+                  <span class="text-green"><i class="fas fa-thumbs-up" aria-hidden="true"></i></span> {{ _('Server Control') }}
+                  {% else %}
+                  <span class="text-red"><i class="fas fa-thumbs-down" aria-hidden="true"></i></span>
+                  {% end %}                  
               </div>
-              <div class="row">
-                <div class="col-xs-1">
+              <div>
                   {% if data['user_data']['svr_console'] %}
-                    <span class="text-green"> <i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                    {% else %}
-                    <span class="text-red"> <i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                    {% end %}
-                </div>
-                <div class="col-xs-10">
-                  {{ _('Server Console') }}
-                </div>
+                  <span class="text-green"> <i class="fas fa-thumbs-up" aria-hidden="true"></i></span> {{ _('Server Console') }}
+                  {% else %}
+                  <span class="text-red"> <i class="fas fa-thumbs-down" aria-hidden="true"></i></span> {{ _('Server Console') }}
+                  {% end %}
               </div>
-              <div class="row">
-                <div class="col-xs-1">
+              <div>
                   {% if data['user_data']['logs'] %}
-                    <span class="text-green"> <i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                    {% else %}
-                    <span class="text-red"> <i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                    {% end %}
-                </div>
-                <div class="col-xs-10">
-                  {{ _('Server Logs') }}
-                </div>
+                  <span class="text-green"> <i class="fas fa-thumbs-up" aria-hidden="true"></i></span> {{ _('Server Logs') }}
+                  {% else %}
+                  <span class="text-red"> <i class="fas fa-thumbs-down" aria-hidden="true"></i></span> {{ _('Server Logs') }}
+                  {% end %}
               </div>
-              <div class="row">
-                <div class="col-xs-1">
+              <div>
                   {% if data['user_data']['backups'] %}
-                    <span class="text-green"> <i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                    {% else %}
-                    <span class="text-red"> <i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                    {% end %}
-                </div>
-                <div class="col-xs-10">
-                  {{ _('Server Backups') }}
-                </div>
+                  <span class="text-green"> <i class="fas fa-thumbs-up" aria-hidden="true"></i></span> {{ _('Server Backups') }}
+                  {% else %}
+                  <span class="text-red"> <i class="fas fa-thumbs-down" aria-hidden="true"></i></span> {{ _('Server Backups') }}
+                  {% end %}
               </div>
-              <div class="row">
-                <div class="col-xs-1">
+              <div>
                   {% if data['user_data']['schedules'] %}
-                    <span class="text-green"> <i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                    {% else %}
-                    <span class="text-red"> <i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                    {% end %}
-                </div>
-                <div class="col-xs-10">
-                  {{ _('Server Schedule') }}
-                </div>
+                  <span class="text-green"> <i class="fas fa-thumbs-up" aria-hidden="true"></i></span> {{ _('Server Schedule') }}
+                  {% else %}
+                  <span class="text-red"> <i class="fas fa-thumbs-down" aria-hidden="true"></i></span> {{ _('Server Schedule') }}
+                  {% end %}
               </div>
-              <div class="row">
-                <div class="col-xs-1">
+              <div>
                   {% if data['user_data']['config'] %}
-                    <span class="text-green"> <i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+                    <span class="text-green"> <i class="fas fa-thumbs-up" aria-hidden="true"></i></span> {{ _('Server Config') }}
                     {% else %}
-                    <span class="text-red"> <i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+                    <span class="text-red"> <i class="fas fa-thumbs-down" aria-hidden="true"></i></span> {{ _('Server Config') }}
                     {% end %}
-                </div>
-                <div class="col-xs-10">
-                  {{ _('Server Config') }}
-                </div>
               </div>
-              <div class="row">
-                <div class="col-xs-1">
+              <div>
                   {% if data['user_data']['api_access'] %}
-                    <span class="text-green"> <i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                    {% else %}
-                    <span class="text-red"> <i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                    {% end %}
-                </div>
-                <div class="col-xs-10">
-                  {{ _('API Access') }}
-                </div>
+                  <span class="text-green"> <i class="fas fa-thumbs-up" aria-hidden="true"></i></span> {{ _('API Access') }}
+                  {% else %}
+                  <span class="text-red"> <i class="fas fa-thumbs-down" aria-hidden="true"></i></span> {{ _('API Access') }}
+                  {% end %}
               </div>
               <!-- /.row -->
             </div>
@@ -230,6 +195,8 @@
 <script src="/static/vendors/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4.4.1 -->
 <script src="/static/vendors/bootstrap/js/bootstrap.min.js"></script>
+<!-- Popper 4.4.1 -->
+<script src="/static/vendors/popperjs/popper.min.js"></script>
 <!-- SlimScroll -->
 <script src="/static/vendors/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->

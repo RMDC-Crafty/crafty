@@ -15,7 +15,7 @@
       </div>
       <div class="col-md-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fa fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
+          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
           <li class="active breadcrumb-item">{{ _('Server Configuration') }}</li>
         </ol>
       </div>
@@ -293,7 +293,7 @@
         <div class="col-lg-6">
           <div class="card card-secondary card-outline">
             <div class="card-header">
-                <h3 class="card-title"><i class="fa fa-cog"></i> {{ _('Your Current Config') }}</h3>
+                <h3 class="card-title"><i class="fas fa-cog"></i> {{ _('Your Current Config') }}</h3>
                 <h3 class="card-title float-right">
                     <a href="/admin/reload_mc_settings" class="btn btn-sm btn-default">{{ _('Reload MC Settings') }}</a>
                     <a href="/admin/reload_web" class="btn btn-sm btn-default">{{ _('Reload Web Server') }}</a>
@@ -350,10 +350,10 @@
             message: "Do you want to delete the server? This cannot be undone.",
             buttons: {
                 cancel: {
-                    label: '<i class="fa fa-times"></i> Cancel'
+                    label: '<i class="fas fa-times"></i> Cancel'
                 },
                 confirm: {
-                    label: '<i class="fa fa-check"></i> Confirm'
+                    label: '<i class="fas fa-check"></i> Confirm'
                 }
             },
             callback: function (result) {

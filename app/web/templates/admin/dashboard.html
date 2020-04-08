@@ -17,7 +17,7 @@
       </div>
       <div class="col-md-6">
         <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fa fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
+          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
           <li class="active breadcrumb-item">{{ _('Dashboard') }}</li>
         </ol>
       </div>
@@ -29,9 +29,9 @@
   <div class="container-fluid">
     <!-- Info boxes -->
       <div class="row">
-          <div class="col-lg-3 col-md-6 col-12">
+          <div class="col-md-3 col-sm-6 col-12">
             <div class="info-box">
-              <span class="info-box-icon bg-info"><i class="fa fa-heartbeat" aria-hidden="true"></i></span>
+              <span class="info-box-icon bg-info"><i class="fas fa-heartbeat" aria-hidden="true"></i></span>
 
               <div id="host_cpu" class="info-box-content">
                 <span class="info-box-text">{{ _('Host CPU') }}</span>
@@ -47,10 +47,10 @@
             <!-- /.info-card -->
         </div>
         <!-- /.col -->
-        <div class="col-lg-3 col-md-6 col-12">
+        <div class="col-md-3 col-sm-6 col-12">
           <div class="info-box">
             <span class="info-box-icon bg-red">
-              <i class="fa fa-microchip" aria-hidden="true"></i>
+              <i class="fas fa-microchip" aria-hidden="true"></i>
             </span>
 
             <div id="host_ram" class="info-box-content">
@@ -71,7 +71,7 @@
         <!-- fix for small devices only -->
         <div class="clearfix visible-sm-block"></div>
 
-        <div class="col-lg-3 col-md-6 col-12">
+        <div class="col-md-3 col-sm-6 col-12">
           <div class="info-box">
             <span class="info-box-icon bg-green"><i class="far fa-hdd" aria-hidden="true"></i></span>
 
@@ -89,9 +89,9 @@
           <!-- /.info-card -->
         </div>
         <!-- /.col -->
-        <div class="col-lg-3 col-md-6 col-12">
+        <div class="col-md-3 col-sm-6 col-12">
           <div class="info-box">
-            <span class="info-box-icon bg-secondary"><i class="fa fa-server" aria-hidden="true"></i></span>
+            <span class="info-box-icon bg-secondary"><i class="fas fa-server" aria-hidden="true"></i></span>
 
             <div id="host_run" class="info-box-content">
               <span class="info-box-text">{{ _('Server Defined') }}</span>
@@ -126,27 +126,27 @@
 
               {% if data['user_data']['svr_control'] %}
               <a class="btn btn-tool {% if s['running'] %} disabled {% end %}" href="/admin/commands?command=server_start&id={{ s['id'] }}" >
-                <i class="fa fa-play"></i>
+                <i class="fas fa-play"></i>
               </a>
 
               <a class="btn btn-tool {% if not s['running'] %} disabled {% end %} " href="/admin/commands?command=server_stop&id={{ s['id'] }}">
-                <i class="fa fa-stop"></i>
+                <i class="fas fa-stop"></i>
               </a>
 
               <a class="btn btn-tool" href="/admin/commands?command=server_restart&id={{ s['id'] }}">
-                <i class="fa fa-sync-alt" aria-hidden="true"></i>
+                <i class="fas fa-sync-alt" aria-hidden="true"></i>
               </a>
 
               {% end %}
 
               {% if data['user_data']['config'] %}
               <a class="btn btn-tool" href="/admin/server_config?id={{ s['id'] }}">
-                <i class="fa fa-cogs"></i> {{ _('Edit') }}
+                <i class="fas fa-cogs"></i> {{ _('Edit') }}
               </a>
               {% end %}
 
               <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                <i class="fa fa-minus"></i>
+                <i class="fas fa-minus"></i>
               </button>
 
               <br/>
@@ -166,13 +166,13 @@
             </a>
 
             <a href="/admin/virtual_console?id={{ s['id'] }}" class="btn  btn-default">
-              <i class="fa fa-terminal" aria-hidden="true"></i> {{ _('Terminal') }}
+              <i class="fas fa-terminal" aria-hidden="true"></i> {{ _('Terminal') }}
             </a>
             {% end %}
 
             {% if data['user_data']['logs'] %}
             <a href="/admin/get_logs?id={{ s['id'] }}" class="btn btn-default">
-              <i class="fa fa-list" aria-hidden="true"></i> {{ _('Logs') }}
+              <i class="fas fa-list" aria-hidden="true"></i> {{ _('Logs') }}
             </a>
             {% end %}
 
@@ -209,12 +209,12 @@
       {% end %}
 
       <div class="col-3">
-        <div class="card card-info collapsed-box">
+        <div class="card card-info collapsed-card">
                 <div class="card-header">
                   <h3 class="card-title">{{ _('Create New Server') }}</h3>
 
                   <div class="card-tools float-right">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i>
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
                     </button>
                   </div>
                   <!-- /.card-tools -->

@@ -38,7 +38,8 @@
 
   </div>
   <!-- /.login-logo -->
-  <div class="login-card-body-tall">
+  <div class="card">
+    <div class="card-body login-card-body">
     <p class="login-box-msg"> {{ _('Sign in to manage your server') }}</p>
 
     <form action="/" method="post">
@@ -55,7 +56,7 @@
 
         </div>
         <!-- /.col -->
-        <div class="col-12" align="center">
+        <div class="col-12 float-center">
           <button type="submit" class="btn btn-primary btn-block btn-flat"> {{ _('Sign In') }}</button>
         </div>
         <!-- /.col -->
@@ -64,13 +65,11 @@
     </form>
     <br />
       <h3> {{ _('Server Status') }}</h3>
-      <div class="row" align="center">
-          <div class="col-12 text-left" align="center">
-
-
-              <table class="table" align="center">
-                  <thead align="center">
-                  <tr align="center">
+      <div class="row float-center">
+          <div class="col-sm-12 float-center">
+              <table class="table table-sm ">
+                  <thead>
+                  <tr>
                       <th>{{ _('Server') }}</th>
                       <th>{{ _('Running') }}</th>
                       <th>{{ _('CPU') }}</th>
@@ -81,14 +80,13 @@
                   <tbody>
                   {% if data['server_data'] %}
                   {% for s in data['server_data'] %}
-                    <tr align="center">
+                    <tr>
                         <td>{{s['name']}}</td>
                         <td>{{s['server_running']}}</td>
                         <td>{{s['cpu_usage']}}</td>
                         <td>{{s['memory_usage']}}</td>
                         <td>{{s['online_players']}} / {{s['max_players']}}</td>
                     </tr>
-
                   {% end %}
                   {% end %}
 
@@ -99,6 +97,7 @@
           </div>
       </div>
 
+  </div>
   </div>
   <!-- /.login-card-body -->
 </div>
