@@ -366,7 +366,7 @@ class AjaxHandler(BaseHandler):
                     Roles.api_access: False,
                 }).execute()
 
-                self.write("{} added".format(username))
+                self.write("{}".format(new_rolename))
 
                         
         elif page == 'edit_role':

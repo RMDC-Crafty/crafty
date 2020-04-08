@@ -633,15 +633,9 @@
                       headers: {'X-XSRFToken': token},
                       url: '/ajax/add_role',
                       data: data_to_send,
-                      success: function(data){
-                        console.log("got response:");
-                        console.log(data);
-                        bootbox.alert({
-                            message: data,
-                            callback: function () {
-                                location.reload();
-                            }
-                        })
+                      success: function(new_rolename){
+                        console.log("got response: "+new_rolename+" added");
+                        edit_role(new_rolename);
                       },
                     });
                 }
@@ -657,7 +651,7 @@
         if (rolename == "Admin") return False;
 
         bootbox.prompt({
-            title: "This is a prompt with a set of checkbox inputs!",
+            title: "You're editing the role "+rolename,
             inputType: 'checkbox',
             inputOptions: [{
                 text: 'Server Control',
@@ -765,9 +759,6 @@
                                     location.reload();
                                 }
                             })
-                        },
-                        error: function(data, status, error){
-                            console.log(status+': '+error);
                         },
                     });               
                 }
