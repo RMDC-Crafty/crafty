@@ -4,36 +4,43 @@
 
 {% block content %}
 
-<section class="content-header">
-  <h1>
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-md-6">      
+        <h1 class="m-0 text-dark">
     {{ _('Scheduled Tasks') }}
     <small>
        {{ _("It's like a bot") }}, {{ _("only better") }}
     </small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> {{ _('Home') }}</a></li>
-    <li class="active">{{ _('Schedules') }}</li>
-  </ol>
-</section>
-
+        </h1>
+      </div>
+      <div class="col-md-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fa fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
+          <li class="active breadcrumb-item">{{ _('Schedules') }}</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
 
 <section class="content">
 
     <div class="row">
-        <div class="col-xs-6">
+        <div class="col-6">
             <form role="form" method="post">
                 {% raw xsrf_form_html() %}
                 <input type="hidden" name="server_id" value="{{ data['server_id'] }}" />
-                <div class="box">
+                <div class="card card-secondary card-outline">
 
-                    <div class="box-header with-border">
-                      <h3 class="box-title">
+                    <div class="card-header">
+                      <h3 class="card-title">
                           {{ _('New Scheduled Action') }}
                       </h3>
                     </div>
 
-                    <div class="box-body">
+                    <div class="card-body">
 
                         <div class="form-group">
                             <div class="form-group">
@@ -95,10 +102,10 @@
                     </div>
 
 
-                    <div class="box-footer">
+                    <div class="card-footer">
                         <a href="/admin/schedules" class="btn btn-danger">{{ _('Cancel') }}</a>
-                        <button type="submit" class="btn btn-success pull-right">
-                            <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                        <button type="submit" class="btn btn-success float-right">
+                            <i class="far fa-save" aria-hidden="true"></i>
                             {{ _('Save') }}
                         </button>
                     </div>
@@ -107,18 +114,18 @@
             </form>
         </div>
 
-        <div class="col-xs-6">
+        <div class="col-6">
             <form role="form" method="post">
                 {% raw xsrf_form_html() %}
-                <div class="box">
+                <div class="card card-secondary card-outline">
 
-                    <div class="box-header with-border">
-                      <h3 class="box-title">
+                    <div class="card-header">
+                      <h3 class="card-title">
                           {{ _('Scheduled Actions') }}
                       </h3>
                     </div>
 
-                    <div class="box-body">
+                    <div class="card-body">
                         <table id="tasks" class="table table-responsive">
                             <thead>
                                 <th>
@@ -190,7 +197,7 @@
 
                     </div>
 
-                    <div class="box-footer">
+                    <div class="card-footer">
                         &nbsp;
                     </div>
 

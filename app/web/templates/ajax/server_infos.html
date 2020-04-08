@@ -1,40 +1,41 @@
-<ul class="nav nav-stacked">
-  <li>
-    <a href="#">{{ _('Status') }}
+<ul class="list-group">
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <a href="#">{{ _('Status') }}</a>
       {% if data['srv']['crashed'] %}
-        <span class="pull-right badge bg-red">{{ _('Crashed - Auto Restart Disabled') }}</span>
+        <span class="float-right badge badge-pill badge-danger float-right">{{ _('Crashed - Auto Restart Disabled') }}</span>
       {% else %}
         {% if data['srv']['running'] %}
-          <span class="pull-right badge bg-green">{{ _('Running') }}</span>
+          <span class="float-right badge badge-pill badge-success float-right">{{ _('Running') }}</span>
         {% else %}
-          <span class="pull-right badge bg-orange">{{ _('Stopped') }}</span>
+          <span class="float-right badge badge-pill badge-warning float-right">{{ _('Stopped') }}</span>
         {% end %}
       {% end %}
-    </a>
   </li>
-  <li>
-    <a href="#">{{ _('Autostart') }}
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <a href="#">{{ _('Autostart') }}</a>
       {% if data['srv']['auto_start'] %}
-        <span class="pull-right badge bg-green">{{ _('Enabled') }}</span>
+        <span class="float-right badge badge-pill badge-success float-right">{{ _('Enabled') }}</span>
       {% else %}
-        <span class="pull-right badge bg-red">{{ _('Disabled') }}</span>
+        <span class="float-right badge badge-pill badge-danger float-right">{{ _('Disabled') }}</span>
       {% end %}
-    </a>
-  </li>
-    <li><a href="#">{{ _('Server Start Time') }} <span class="pull-right">
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    <a href="#">{{ _('Server Start Time') }}</a> <span class="float-right">
       {{ data['mc_servers_data'][data['srv']['id']]['server_start_time'] }}
-    </span></a></li>
-
-  <li><a href="#">{{ _('Server Type') }} <span class="pull-right">
+    </span>
+    </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+  <a href="#">{{ _('Server Type') }} </a><span class="float-right">
     {{ data['mc_servers_data'][data['srv']['id']]['server_version'] }}
-  </span></a></li>
+  </span></li>
 
-  <li><a href="#">{{ _('Server Description') }} <span class="pull-right">
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+  <a href="#">{{ _('Server Description') }} </a><span class="float-right">
   {{ data['mc_servers_data'][data['srv']['id']]['motd'] }}
-  </span></a></li>
+  </span></li>
 
-  <li><a href="#">{{ _('Server IP : Server Port') }}<span class="pull-right">
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+  <a href="#">{{ _('Server IP : Server Port') }}</a><span class="float-right">
   {{ data['mc_servers_data'][data['srv']['id']]['server_ip'] }}
     : {{ data['mc_servers_data'][data['srv']['id']]['server_port'] }}
-  </span></a></li>
+  </span></li>
 </ul>

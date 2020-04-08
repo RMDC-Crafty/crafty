@@ -6,289 +6,296 @@
 
 {% block content %}
 
-<section class="content-header">
-  <h1>
-    {{ _('Dashboard') }}
-    <small>{{ _('Server Status') }}</small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> {{ _('Home') }}</a></li>
-    <li class="active">{{ _('Dashboard') }}</li>
-  </ol>
-</section>
-
-<section class="content">
-<!-- Info boxes -->
-  <div class="row">
-      <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box">
-        <span class="info-box-icon bg-aqua"><i class="fa fa-heartbeat" aria-hidden="true"></i></span>
-
-        <div id="host_cpu" class="info-box-content">
-          <span class="info-box-text">{{ _('Host CPU') }}</span>
-          <span class="info-box-number"> {{ round( data['host_stats']['cpu_usage'], 2) }} % </span>
-
-          <span class="progress-description">
-            {{ round( data['host_stats']['cpu_cur_freq'] / 1000, 2) }} Ghz / {{ round( data['host_stats']['cpu_max_freq'] / 1000, 1) }} Ghz<br />
-            <small>{{ data['host_stats']['cpu_cores'] }} {{ _('threads') }}</small>
-          </span>
-        </div>
-        <!-- /.info-box-content -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-md-6">      
+        <h1 class="m-0 text-dark">
+          {{ _('Dashboard') }}
+          <small>{{ _('Server Status') }}</small>
+        </h1>
       </div>
-      <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-    <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box">
-        <span class="info-box-icon bg-red">
-          <i class="fa fa-microchip" aria-hidden="true"></i>
-        </span>
-
-        <div id="host_ram" class="info-box-content">
-          <span class="info-box-text">{{ _('Host RAM') }}</span>
-          <span class="info-box-number"> {{ data['host_stats']['mem_percent'] }}%</span>
-
-
-          <span class="progress-description">
-            {{ data['host_stats']['mem_usage'] }} / {{ data['host_stats']['mem_total'] }}
-          </span>
-        </div>
-        <!-- /.info-box-content -->
+      <div class="col-md-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fa fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
+          <li class="active breadcrumb-item">{{ _('Dashboard') }}</li>
+        </ol>
       </div>
-      <!-- /.info-box -->
     </div>
-    <!-- /.col -->
-
-    <!-- fix for small devices only -->
-    <div class="clearfix visible-sm-block"></div>
-
-    <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box">
-        <span class="info-box-icon bg-green"><i class="fa fa-hdd-o" aria-hidden="true"></i></span>
-
-        <div id="host_disk" class="info-box-content">
-          <span class="info-box-text">{{ _('Host Root Disk') }}</span>
-          <span class="info-box-number">
-             {{ data['host_stats']['disk_percent'] }} %
-          </span>
-          <span class="progress-description">
-            {{ data['host_stats']['disk_usage'] }} / {{ data['host_stats']['disk_total'] }}
-          </span>
-        </div>
-        <!-- /.info-box-content -->
-      </div>
-      <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-    <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box">
-        <span class="info-box-icon bg-default"><i class="fa fa-server" aria-hidden="true"></i></span>
-
-        <div id="host_run" class="info-box-content">
-          <span class="info-box-text">{{ _('Server Defined') }}</span>
-          <span class="info-box-number">
-              {{ len(data['servers_running'] ) }} / {{ len(data['servers_defined']) }} {{ _('Running') }}
-          </span>
-        </div>
-        <!-- /.info-box-content -->
-      </div>
-      <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
   </div>
-  <!-- /.row -->
-
-
-
-<div class="row">
-  {% for s in data['servers_defined'] %}
-
-    <div class="col-xs-6 col-md-6 col-lg-4">
-    {% if s['running'] %}
-    <div class="box box-success box-solid">
-    {% else %}
-    <div class="box box-danger box-solid">
-    {% end %}
-
-      <div class="box-header with-border">
-        <h3 class="box-title" data-toggle="tooltip" title="Server ID {{ s['id'] }} - {{ s['name'] }}">{{ s['name'] }}</h3>
-
-        <div class="box-tools pull-right text-right">
-
-          {% if data['user_data']['svr_control'] %}
-          <a class="btn btn-box-tool {% if s['running'] %} disabled {% end %}" href="/admin/commands?command=server_start&id={{ s['id'] }}" >
-            <i class="fa fa-play"></i>
-          </a>
-
-          <a class="btn btn-box-tool {% if not s['running'] %} disabled {% end %} " href="/admin/commands?command=server_stop&id={{ s['id'] }}">
-            <i class="fa fa-stop"></i>
-          </a>
-
-          <a class="btn btn-box-tool" href="/admin/commands?command=server_restart&id={{ s['id'] }}">
-            <i class="fa fa-refresh" aria-hidden="true"></i>
-          </a>
-
-          {% end %}
-
-          {% if data['user_data']['config'] %}
-          <a class="btn btn-box-tool" href="/admin/server_config?id={{ s['id'] }}">
-            <i class="fa fa-cogs"></i> {{ _('Edit') }}
-          </a>
-          {% end %}
-
-          <button type="button" class="btn btn-box-tool" data-widget="collapse">
-            <i class="fa fa-minus"></i>
-          </button>
-
-          <br />
-
-          <span id="server-status-{{ s['id'] }}">Server Status</span>
-
-        </div>
-
-
-      </div>
-      <!-- /.box-header -->
-
-      <div class="box-body text-center">
-
-        {% if data['user_data']['svr_control'] %}
-        <a href="/admin/server_control?id={{ s['id'] }}" class="btn  btn-default">
-          <i class="fa fa-eye" aria-hidden="true"></i> {{ _('Details') }}
-        </a>
-
-        <a href="/admin/virtual_console?id={{ s['id'] }}" class="btn  btn-default">
-          <i class="fa fa-terminal" aria-hidden="true"></i> {{ _('Terminal') }}
-        </a>
-        {% end %}
-
-        {% if data['user_data']['logs'] %}
-        <a href="/admin/get_logs?id={{ s['id'] }}" class="btn btn-default">
-          <i class="fa fa-list" aria-hidden="true"></i> {{ _('Logs') }}
-        </a>
-        {% end %}
-
-        {% if data['user_data']['backups'] %}
-        <a href="/admin/backups?id={{ s['id'] }}" class="btn btn-default">
-          <i class="fa fa-save" aria-hidden="true"></i> {{ _('Backup') }}
-        </a>
-        {% end %}
-
-        {% if data['user_data']['schedules'] %}
-        <a href="/admin/schedules?id={{ s['id'] }}" class="btn btn-default">
-          <i class="fa fa-clock-o" aria-hidden="true"></i> {{ _('Tasks') }}
-        </a>
-        {% end %}
-
-        {% if data['user_data']['files'] %}
-        <a href="/admin/files?id={{ s['id'] }}" class="btn btn-default">
-          <i class="fa fa-folder-o" aria-hidden="true"></i> {{ _('Files') }}
-        </a>
-        {% end %}
-
-
-
-      </div>
-
-      <div id="info-server-{{ s['id'] }}" class="box-footer no-padding">
-          
-        </div>
-      <!-- /.box-body -->
-    </div>
-    <!-- /.box -->
-    </div>
-    <!-- /.block -->
-
-  {% end %}
-
-  <div class="col-xs-3">
-    <div class="box box-info collapsed-box box-solid">
-            <div class="box-header with-border">
-              <h3 class="box-title">{{ _('Create New Server') }}</h3>
-
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
-                </button>
-              </div>
-              <!-- /.box-tools -->
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-              <form action="/admin/add_server" method="post">
-
-                <div class="form-group has-feedback">
-                  <label>
-                    {{ _('Server Name') }} - <small>{{ _('Example Survival Server') }}</small>
-                  </label>
-                  <input type="text" class="form-control" placeholder="{{ _('Server Name') }}" name="server_name" value="{{ _('My New Server') }}" maxlength="55">
-                  <span class="glyphicon glyphicon-file form-control-feedback"></span>
-                </div>
-
-                <div class="form-group has-feedback">
-                  <label>
-                      {{ _('Server Path') }} - <small>{{ _('Example /var/opt/minecraft/server') }}</small>
-                    </label>
-                    <input type="text" class="form-control" placeholder="{{ _('Server Path') }}" name="server_path" maxlength="255"
-                           value="/var/opt/minecraft/server">
-                    <span class="glyphicon glyphicon-folder-open form-control-feedback"></span>
-                </div>
-
-                <div class="form-group has-feedback">
-                  <label>
-                    {{ _('Server Jar') }} - <small>{{ _('Example paper.jar') }}</small>
-                  </label>
-                  <input type="text" class="form-control" placeholder="{{ _('Server Jar') }}" name="server_jar" value="paperclip.jar" maxlength="255">
-                  <span class="glyphicon glyphicon-file form-control-feedback"></span>
-                </div>
-
-                <div class="form-group has-feedback">
-                  <label>
-                    {{ _('Server Max Memory in MB') }} <br /><small>{{ _('Example: 2048') }} </small>
-                  </label>
-                  <input type="number" class="form-control" placeholder="{{ _('Max Memory') }}" name="max_mem" value="2048">
-                </div>
-
-                <div class="form-group has-feedback">
-                  <label>
-                    {{ _('Server Min Memory in MB') }} <br /><small>{{ _('Example: 1024') }} </small>
-                  </label>
-                  <input type="number" class="form-control" placeholder="{{ _('Min Memory') }}" name="min_mem" value="1024">
-                </div>
-
-                <div class="form-group has-feedback">
-                  <label>
-                    {{ _('Auto Start Server after 10 Seconds') }}:
-                    <input type="checkbox"  name="auto_start" id="auto_start" >
-
-                  </label>
-
-                </div>
-
-                <div class="row">
-                  <div class="col-xs-6">
-
-                  </div>
-                  <!-- /.col -->
-                  <div class="col-xs-6">
-                    <button type="submit" onclick="delay()" class="btn btn-success btn-block btn-flat"> {{ _('Create New Server') }}</button>
-                  </div>
-                  <!-- /.col -->
-                </div>
-                  {% raw xsrf_form_html() %}
-
-              </form>
-            </div>
-            <!-- /.box-body -->
-          </div>
-
-
-  </div>
-
-
-
 </div>
 
+<section class="content">
+  <div class="container-fluid">
+    <!-- Info boxes -->
+      <div class="row">
+          <div class="col-lg-3 col-md-6 col-12">
+            <div class="info-box">
+              <span class="info-box-icon bg-info"><i class="fa fa-heartbeat" aria-hidden="true"></i></span>
 
+              <div id="host_cpu" class="info-box-content">
+                <span class="info-box-text">{{ _('Host CPU') }}</span>
+                <span class="info-box-number"> {{ round( data['host_stats']['cpu_usage'], 2) }} % </span>
+
+                <span class="progress-description">
+                  {{ round( data['host_stats']['cpu_cur_freq'] / 1000, 2) }} Ghz / {{ round( data['host_stats']['cpu_max_freq'] / 1000, 1) }} Ghz <br/>
+                  <!-- <small>{{ data['host_stats']['cpu_cores'] }} {{ _('threads') }}</small> -->
+                </span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-card -->
+        </div>
+        <!-- /.col -->
+        <div class="col-lg-3 col-md-6 col-12">
+          <div class="info-box">
+            <span class="info-box-icon bg-red">
+              <i class="fa fa-microchip" aria-hidden="true"></i>
+            </span>
+
+            <div id="host_ram" class="info-box-content">
+              <span class="info-box-text">{{ _('Host RAM') }}</span>
+              <span class="info-box-number"> {{ data['host_stats']['mem_percent'] }}%</span>
+
+
+              <span class="progress-description">
+                {{ data['host_stats']['mem_usage'] }} / {{ data['host_stats']['mem_total'] }}
+              </span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-card -->
+        </div>
+        <!-- /.col -->
+
+        <!-- fix for small devices only -->
+        <div class="clearfix visible-sm-block"></div>
+
+        <div class="col-lg-3 col-md-6 col-12">
+          <div class="info-box">
+            <span class="info-box-icon bg-green"><i class="far fa-hdd" aria-hidden="true"></i></span>
+
+            <div id="host_disk" class="info-box-content">
+              <span class="info-box-text">{{ _('Host Root Disk') }}</span>
+              <span class="info-box-number">
+                {{ data['host_stats']['disk_percent'] }} %
+              </span>
+              <span class="progress-description">
+                {{ data['host_stats']['disk_usage'] }} / {{ data['host_stats']['disk_total'] }}
+              </span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-card -->
+        </div>
+        <!-- /.col -->
+        <div class="col-lg-3 col-md-6 col-12">
+          <div class="info-box">
+            <span class="info-box-icon bg-secondary"><i class="fa fa-server" aria-hidden="true"></i></span>
+
+            <div id="host_run" class="info-box-content">
+              <span class="info-box-text">{{ _('Server Defined') }}</span>
+              <span class="info-box-number">
+                  {{ len(data['servers_running'] ) }} / {{ len(data['servers_defined']) }} {{ _('Running') }}
+              </span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-card -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+
+
+
+    <div class="row">
+      {% for s in data['servers_defined'] %}
+
+        <div class="col-6 col-lg-6 col-xl-4">
+        {% if s['running'] %}
+        <div class="card card-success">
+        {% else %}
+        <div class="card card-danger">
+        {% end %}
+
+          <div class="card-header">
+            <h3 class="card-title" data-toggle="tooltip" title="Server ID {{ s['id'] }} - {{ s['name'] }}">{{ s['name'] }}</h3>
+
+            <div class="card-tools float-right text-right">
+
+              {% if data['user_data']['svr_control'] %}
+              <a class="btn btn-tool {% if s['running'] %} disabled {% end %}" href="/admin/commands?command=server_start&id={{ s['id'] }}" >
+                <i class="fa fa-play"></i>
+              </a>
+
+              <a class="btn btn-tool {% if not s['running'] %} disabled {% end %} " href="/admin/commands?command=server_stop&id={{ s['id'] }}">
+                <i class="fa fa-stop"></i>
+              </a>
+
+              <a class="btn btn-tool" href="/admin/commands?command=server_restart&id={{ s['id'] }}">
+                <i class="fa fa-sync-alt" aria-hidden="true"></i>
+              </a>
+
+              {% end %}
+
+              {% if data['user_data']['config'] %}
+              <a class="btn btn-tool" href="/admin/server_config?id={{ s['id'] }}">
+                <i class="fa fa-cogs"></i> {{ _('Edit') }}
+              </a>
+              {% end %}
+
+              <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fa fa-minus"></i>
+              </button>
+
+              <br/>
+
+              <span id="server-status-{{ s['id'] }}">Server Status</span>
+
+            </div>
+
+          </div>
+          <!-- /.card-header -->
+
+          <div class="card-body text-center">
+
+            {% if data['user_data']['svr_control'] %}
+            <a href="/admin/server_control?id={{ s['id'] }}" class="btn  btn-default">
+              <i class="far fa-eye" aria-hidden="true"></i> {{ _('Details') }}
+            </a>
+
+            <a href="/admin/virtual_console?id={{ s['id'] }}" class="btn  btn-default">
+              <i class="fa fa-terminal" aria-hidden="true"></i> {{ _('Terminal') }}
+            </a>
+            {% end %}
+
+            {% if data['user_data']['logs'] %}
+            <a href="/admin/get_logs?id={{ s['id'] }}" class="btn btn-default">
+              <i class="fa fa-list" aria-hidden="true"></i> {{ _('Logs') }}
+            </a>
+            {% end %}
+
+            {% if data['user_data']['backups'] %}
+            <a href="/admin/backups?id={{ s['id'] }}" class="btn btn-default">
+              <i class="far fa-save" aria-hidden="true"></i> {{ _('Backup') }}
+            </a>
+            {% end %}
+
+            {% if data['user_data']['schedules'] %}
+            <a href="/admin/schedules?id={{ s['id'] }}" class="btn btn-default">
+              <i class="far fa-clock" aria-hidden="true"></i> {{ _('Tasks') }}
+            </a>
+            {% end %}
+
+            {% if data['user_data']['files'] %}
+            <a href="/admin/files?id={{ s['id'] }}" class="btn btn-default">
+              <i class="far fa-folder" aria-hidden="true"></i> {{ _('Files') }}
+            </a>
+            {% end %}
+          </div>
+          
+          <div id="info-server-{{ s['id'] }}" class="card-footer">
+            <small class="text-muted">Last updated 3 mins ago</small>
+          </div>
+
+              
+          <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+        </div>
+        <!-- /.block -->
+
+      {% end %}
+
+      <div class="col-3">
+        <div class="card card-info collapsed-box">
+                <div class="card-header">
+                  <h3 class="card-title">{{ _('Create New Server') }}</h3>
+
+                  <div class="card-tools float-right">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fa fa-plus"></i>
+                    </button>
+                  </div>
+                  <!-- /.card-tools -->
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                  <form action="/admin/add_server" method="post">
+
+                    <div class="form-group has-feedback">
+                      <label>
+                        {{ _('Server Name') }} - <small>{{ _('Example Survival Server') }}</small>
+                      </label>
+                      <input type="text" class="form-control" placeholder="{{ _('Server Name') }}" name="server_name" value="{{ _('My New Server') }}" maxlength="55">
+                      <span class="glyphicon glyphicon-file form-control-feedback"></span>
+                    </div>
+
+                    <div class="form-group has-feedback">
+                      <label>
+                          {{ _('Server Path') }} - <small>{{ _('Example /var/opt/minecraft/server') }}</small>
+                        </label>
+                        <input type="text" class="form-control" placeholder="{{ _('Server Path') }}" name="server_path" maxlength="255"
+                              value="/var/opt/minecraft/server">
+                        <span class="glyphicon glyphicon-folder-open form-control-feedback"></span>
+                    </div>
+
+                    <div class="form-group has-feedback">
+                      <label>
+                        {{ _('Server Jar') }} - <small>{{ _('Example paper.jar') }}</small>
+                      </label>
+                      <input type="text" class="form-control" placeholder="{{ _('Server Jar') }}" name="server_jar" value="paperclip.jar" maxlength="255">
+                      <span class="glyphicon glyphicon-file form-control-feedback"></span>
+                    </div>
+
+                    <div class="form-group has-feedback">
+                      <label>
+                        {{ _('Server Max Memory in MB') }} <br /><small>{{ _('Example: 2048') }} </small>
+                      </label>
+                      <input type="number" class="form-control" placeholder="{{ _('Max Memory') }}" name="max_mem" value="2048">
+                    </div>
+
+                    <div class="form-group has-feedback">
+                      <label>
+                        {{ _('Server Min Memory in MB') }} <br /><small>{{ _('Example: 1024') }} </small>
+                      </label>
+                      <input type="number" class="form-control" placeholder="{{ _('Min Memory') }}" name="min_mem" value="1024">
+                    </div>
+
+                    <div class="form-group has-feedback">
+                      <label>
+                        {{ _('Auto Start Server after 10 Seconds') }}:
+                        <input type="checkbox"  name="auto_start" id="auto_start" >
+
+                      </label>
+
+                    </div>
+
+                    <div class="row">
+                      <div class="col-6">
+
+                      </div>
+                      <!-- /.col -->
+                      <div class="col-6">
+                        <button type="submit" onclick="delay()" class="btn btn-success btn-block btn-flat"> {{ _('Create New Server') }}</button>
+                      </div>
+                      <!-- /.col -->
+                    </div>
+                      {% raw xsrf_form_html() %}
+
+                  </form>
+                </div>
+                <!-- /.card-body -->
+              </div>
+
+
+      </div>
+
+
+
+    </div>
+
+  </div>
 
 </section>
 

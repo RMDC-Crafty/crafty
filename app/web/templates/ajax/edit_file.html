@@ -5,12 +5,12 @@
     {{ _('Server ID:') }}  {{ data ['server_id'] }}
     <textarea name="file_contents" rows="20" cols="120">{{ data['file_data'] }}</textarea><br />
     <div class="row">
-        <div class="col-xs-6">
+        <div class="col-6">
             <a class="btn-danger btn" onclick="bootbox.hideAll()">{{ _('Cancel') }}</a>
         </div>
-        <div class="col-xs-6 pull-right text-right">
+        <div class="col-6 float-right text-right">
             <button type="submit" class="btn btn-success">
-        <i class="fa fa-floppy-o" aria-hidden="true"></i> {{ _('Save File') }}
+        <i class="far fa-save" aria-hidden="true"></i> {{ _('Save File') }}
     </button>
         </div>
     </div>

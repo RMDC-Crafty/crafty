@@ -4,28 +4,35 @@
 
 {% block content %}
 
-<section class="content-header">
-  <h1>
-    {{ _('Server Details') }}
-    <small>{{ _('I demand to see the things!') }}</small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> {{ _('Home') }}</a></li>
-    <li class="active">{{ _('Server Control') }}</li>
-  </ol>
-</section>
-
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-md-6">      
+        <h1 class="m-0 text-dark">
+            {{ _('Server Details') }}
+            <small>{{ _('I demand to see the things!') }}</small>
+        </h1>
+      </div>
+      <div class="col-md-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fa fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
+          <li class="active breadcrumb-item">{{ _('Server Control') }}</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
 
 <section class="content">
     <div class="row">
-        <div class="col-md-6">
-            <div class="box box-info">
-                <div class="box-header with-border">
-                  <h3 class="box-title"><i class="fa fa-id-card-o" aria-hidden="true"></i>
+        <div class="col-lg-6">
+            <div class="card card-info card-outline">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="far fa-id-card" aria-hidden="true"></i>
                       {{ _('Server Data') }}</h3>
                 </div>
-                <!-- /.box-header -->
-                <div class="box-body">
+                <!-- /.card-header -->
+                <div class="card-body">
                     <div id="" style="">
                         <table class="table table-striped">
                             <tr>
@@ -67,21 +74,21 @@
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div class="box box-info">
-                <div class="box-header with-border">
-                  <h3 class="box-title"><i class="fa fa-bolt" aria-hidden="true"></i>
+        <div class="col-lg-6">
+            <div class="card card-info card-outline">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="fa fa-bolt" aria-hidden="true"></i>
                       {{ _('Server Actions') }}</h3>
                 </div>
-                <!-- /.box-header -->
-                <div class="box-body">
+                <!-- /.card-header -->
+                <div class="card-body">
                     <div id="server_update">
                         <a class="btn btn-app" onclick="update()"
                         {% if (data['mc_settings']['jar_url'] == "") %}
                             disabled='true'
                         {% end %}
                         >
-                            <i class="fa fa-cloud-download" aria-hidden="true"></i>
+                            <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
                             {{ _('Update Server Jar') }}
                         </a>
 
@@ -107,31 +114,31 @@
 
 
     <div class="row">
-        <div class="col-md-6">
-            <div class="box box-info">
-                <div class="box-header with-border">
-                  <h3 class="box-title"><i class="fa fa-clock-o" aria-hidden="true"></i>
+        <div class="col-lg-6">
+            <div class="card card-info card-outline">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="fa fa-history" aria-hidden="true"></i>
                       {{ _('Historical Data') }}
                   </h3>
                     <br />
                     <small>{{ _('Missing Data below?') }} <a href="config">{{ _('Check your history interval config') }}</a> </small>
                 </div>
-                <!-- /.box-header -->
-                <div class="box-body">
+                <!-- /.card-header -->
+                <div class="card-body">
                     <div id="cpu_history" style="height: 250px;"></div>
                 </div>
             </div>
         </div>
 
 
-        <div class="col-md-6">
-            <div class="box box-info">
-            <div class="box-header with-border">
-              <h3 class="box-title"><i class="fa fa-users" aria-hidden="true"></i>
+        <div class="col-lg-6">
+            <div class="card card-info card-outline">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fa fa-users" aria-hidden="true"></i>
                   {{ _('Current Players') }}</h3>
             </div>
-            <!-- /.box-header -->
-            <div class="box-body">
+            <!-- /.card-header -->
+            <div class="card-body">
               <div class="table-responsive">
                 <ul>
                     {% if data['players_online'] > 0 %}
@@ -145,7 +152,7 @@
               </div>
               <!-- /.table-responsive -->
             </div>
-            <!-- /.box-body -->
+            <!-- /.card-body -->
 
           </div>
         </div>

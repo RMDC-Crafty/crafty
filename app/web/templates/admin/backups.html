@@ -4,34 +4,42 @@
 
 {% block content %}
 
-<section class="content-header">
-  <h1>
+<div class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <h1 class="m-0 text-dark">
     {{ _('Server Backups') }}
     <small>{{ _("Because the NSA won't send their copy") }}</small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> {{ _('Home') }}</a></li>
-    <li class="active">{{ _('Server Backup') }}</li>
-  </ol>
-</section>
+                </h1>
+            </div>
+            <div class="col-md-6">
+                <ol class="breadcrumb">
+                    <li><a href="/admin/dashboard"><i class="fa fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
+                    <li class="active">{{ _('Server Backup') }}</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <section class="content">
 
     <div class="row">
-        <div class="col-xs-6">
-            <div class="box">
-                <div class="box-header with-border">
-                  <h3 class="box-title">
+        <div class="col-6">
+            <div class="card card-secondary card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">
                       {{ _('Backups for Server ID') }}: {{ data['server_id'] }} - {{ data['server_name'] }}
                   </h3>
                 </div>
-                <div class="box-body">
+                <div class="card-body">
                     <a  id="backup_button"
                         href="/admin/commands?command=backup&id={{ data['server_id'] }}"
                         onclick="backup_started()"
                         class="btn btn-app">
-                        <i class="fa fa-floppy-o"></i> {{ _('Backup Server Now') }}
+                        <i class="fas fa-save"></i> {{ _('Backup Server Now') }}
                     </a>
                     <a id="show_config" class="btn btn-app">
                         <i class="fa fa-cogs"></i>
@@ -57,21 +65,21 @@
                 </div>
               </div>
 
-            <div class="box" id="backup_config_box" >
-                <div class="box-header with-border">
-                  <h3 class="box-title">
+            <div class="card card-secondary card-outline" id="backup_config_box" >
+                <div class="card-header">
+                  <h3 class="card-title">
                       {{ _('Backup Config for Server ID:') }} {{ data['server_id'] }} - {{ data['server_name'] }}
                   </h3>
                 </div>
-                <div class="box-body">
+                <div class="card-body">
                     <form method="post">
                     {% raw xsrf_form_html() %}
                         <input type="hidden" name="server_id" value="{{ data['server_id'] }}"/>
                     <div class="row">
                         <div class="form-group">
-                              <label for="max_backups" class="col-xs-3 control-label">{{ _('Max Age Of Backups In Days') }}</label>
+                              <label for="max_backups" class="col-3 col-form-label">{{ _('Max Age Of Backups In Days') }}</label>
 
-                              <div class="col-sm-9">
+                              <div class="col-md-9">
                                   <input type="number" class="form-control" name="max_backups" placeholder="Max Age Of Backups" value="{{ data['backup_config']['max_backups'] }}" min="1" max="365">
                               </div>
                         </div>
@@ -79,9 +87,9 @@
                     <br />
                     <div class="row">
                           <div class="form-group">
-                              <label for="storage_location" class="col-xs-3 control-label">{{ _('Where to Save Backups') }}</label>
+                              <label for="storage_location" class="col-3 col-form-label">{{ _('Where to Save Backups') }}</label>
 
-                              <div class="col-sm-9">
+                              <div class="col-md-9">
                                     <input type="text"
                                            class="form-control"
                                            id="storage_location"
@@ -161,8 +169,8 @@
                         {{ _('Cancel') }}
                     </a>
 
-                    <button type="submit" class="btn btn-success pull-right">
-                        <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                    <button type="submit" class="btn btn-success float-right">
+                        <i class="far fa-save" aria-hidden="true"></i>
                         {{ _('Save Backup Settings') }}
                     </button>
                     <br class="clear"/>
@@ -172,14 +180,14 @@
             </div>
         </div>
 
-        <div class="col-xs-6">
-            <div class="box">
-                <div class="box-header with-border">
-                  <h3 class="box-title">
+        <div class="col-6">
+            <div class="card card-secondary card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">
                       {{ _('Existing Backups') }}
                   </h3>
                 </div>
-                <div class="box-body">
+                <div class="card-body">
                     <table class="table table-responsive" id="backup_table">
                         <thead>
                         <tr>

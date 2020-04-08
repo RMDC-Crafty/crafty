@@ -4,34 +4,41 @@
 
 {% block content %}
 
-<section class="content-header">
-  <h1>
-    {{ _('Server Config') }}
-    <small>{{ _('Configure Your Server') }}</small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> {{ _('Home') }}</a></li>
-    <li class="active">{{ _('Server Configuration') }}</li>
-  </ol>
-</section>
-
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-md-6">      
+        <h1 class="m-0 text-dark">
+            {{ _('Server Config') }}
+            <small>{{ _('Configure Your Server') }}</small>
+        </h1>
+      </div>
+      <div class="col-md-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fa fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
+          <li class="active breadcrumb-item">{{ _('Server Configuration') }}</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
 
 <section class="content">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-lg-6">
             <div class="" id="mcserver">
                 <form role="form" method="post">
                     {% raw xsrf_form_html() %}
                     <input type="hidden" name="server_id" value="{{ data['mc_settings']['id'] }}"/>
 
-                    <div class="box">
-                        <div class="box-header with-border">
-                          <h3 class="box-title">
+                    <div class="card card-secondary card-outline">
+                        <div class="card-header">
+                          <h3 class="card-title">
                               {{ _('Minecraft Server Config') }}
                           </h3>
                         </div>
 
-                        <div class="box-body">
+                        <div class="card-body">
 
                             <div class="form-group">
                                 <label>
@@ -137,7 +144,7 @@
                             <!-- radio -->
                             <div class="form-group">
                                 <b>{{ _('Auto Start Server On Program Launch?') }}</b>
-                                <div class="radio">
+                                <div class="form-check">
                                     <label>
                                         <input type="radio"
                                                name="auto_start_server"
@@ -148,7 +155,7 @@
                                     </label>
                                 </div>
 
-                                <div class="radio">
+                                <div class="form-check">
                                     <label>
                                         <input type="radio"
                                                name="auto_start_server"
@@ -175,7 +182,7 @@
                             <!-- radio -->
                             <div class="form-group">
                                 <b>{{ _('Auto Start Priority') }}<br /><small>{{ _('No effect if auto start is not enabled') }}</small></b>
-                                <div class="radio">
+                                <div class="form-check">
                                     <label>
                                         <input type="radio"
                                                name="auto_start_priority"
@@ -186,7 +193,7 @@
                                     </label>
                                 </div>
 
-                                <div class="radio">
+                                <div class="form-check">
                                     <label>
                                         <input type="radio"
                                                name="auto_start_priority"
@@ -197,7 +204,7 @@
                                     </label>
                                 </div>
 
-                                <div class="radio">
+                                <div class="form-check">
                                     <label>
                                         <input type="radio"
                                                name="auto_start_priority"
@@ -212,7 +219,7 @@
                             <!-- radio -->
                             <div class="form-group">
                                 <b>{{ _('Turn On Crash Detection?') }}<br /><small>{{ _('This will detect server crashes and restart them') }}</small></b>
-                                <div class="radio">
+                                <div class="form-check">
                                     <label>
                                         <input type="radio"
                                                name="crash_detection"
@@ -223,7 +230,7 @@
                                     </label>
                                 </div>
 
-                                <div class="radio">
+                                <div class="form-check">
                                     <label>
                                         <input type="radio"
                                                name="crash_detection"
@@ -263,7 +270,7 @@
 
                         </div>
 
-                        <div class="box-footer">
+                        <div class="card-footer">
                             {% if data['server_running'] %}
                                 <small>{{ _('Please stop the server before deleting it.') }}</small><br />
                                 <a class="btn btn-danger disabled">Delete Server</a>
@@ -273,8 +280,8 @@
                             {% end %}
 
 
-                            <button type="submit" class="btn btn-success pull-right">
-                                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                            <button type="submit" class="btn btn-success float-right">
+                                <i class="far fa-save" aria-hidden="true"></i>
                                 {{ _('Save') }}
                             </button>
                         </div>
@@ -283,20 +290,18 @@
               </div>
         </div>
 
-        <div class="col-md-6">
-          <div class="box box-solid">
-            <div class="box-header with-border">
-              <i class="fa fa-cog"></i>
-
-                <h3 class="box-title">{{ _('Your Current Config') }}</h3>
-                <h3 class="box-title pull-right">
+        <div class="col-lg-6">
+          <div class="card card-secondary card-outline">
+            <div class="card-header">
+                <h3 class="card-title"><i class="fa fa-cog"></i> {{ _('Your Current Config') }}</h3>
+                <h3 class="card-title float-right">
                     <a href="/admin/reload_mc_settings" class="btn btn-sm btn-default">{{ _('Reload MC Settings') }}</a>
                     <a href="/admin/reload_web" class="btn btn-sm btn-default">{{ _('Reload Web Server') }}</a>
                 </h3>
 
             </div>
-            <!-- /.box-header -->
-            <div class="box-body">
+            <!-- /.card-header -->
+            <div class="card-body">
                 {{ _('The server will be launched using this string:') }}<br />
                 <b>
                 java -Xms{{ data['mc_settings']['memory_min'] }}M
@@ -318,9 +323,9 @@
                 {{ _('Crafty will try to connect to') }} <b>{{ data['mc_settings']['server_ip'] }}</b>  {{ _('on port') }} <b>{{ data['mc_settings']['server_port'] }}</b> {{ _('to get server status') }}
 
             </div>
-            <!-- /.box-body -->
+            <!-- /.card-body -->
           </div>
-          <!-- /.box -->
+          <!-- /.card -->
         </div>
     </div>
 

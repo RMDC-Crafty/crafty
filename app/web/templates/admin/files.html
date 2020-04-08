@@ -4,31 +4,39 @@
 
 {% block content %}
 
-<section class="content-header">
-  <h1>
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-md-6">      
+        <h1 class="m-0 text-dark">
     {{ _('File Management') }}
     <small>
        {{ _('Be careful here.') }}
     </small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> {{ _('Home') }}</a></li>
-    <li class="active">{{ _('File Management') }}</li>
-  </ol>
-</section>
+        </h1>
+      </div>
+      <div class="col-md-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fa fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
+          <li class="active breadcrumb-item">{{ _('File Management') }}</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 <section class="content">
 
     <div class="row">
-        <div class="col-xs-6">
-            <div class="box">
-                <div class="box-header with-border">
-                  <h3 class="box-title">
+        <div class="col-6">
+            <div class="card card-secondary card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">
                       {{ _('Current Directory:') }} {{ data['pwd'] }}
                   </h3>
                 </div>
-                <div class="box-body table-responsive ">
+                <div class="card-body table-responsive ">
                     <form method="post" id="browser" action="files">
                         {% raw xsrf_form_html() %}
                         <input type="hidden" id="next_dir" name="next_dir" value="" />
@@ -106,22 +114,22 @@
         </div>
 
 
-        <div class="col-xs-6">
+        <div class="col-6">
 
-            <div class="box box-solid">
-            <div class="box-header with-border">
+            <div class="card card-secondary card-outline">
+            <div class="card-header">
               <i class="fa fa-server" aria-hidden="true"></i>
-                    <h3 class="box-title">{{ _('Upload File to Dir:') }} {{ data['pwd'] }}</h3>
+                    <h3 class="card-title">{{ _('Upload File to Dir:') }} {{ data['pwd'] }}</h3>
             </div>
-            <!-- /.box-header -->
-            <div class="box-body">
+            <!-- /.card-header -->
+            <div class="card-body">
                 <div class="row">
-                    <div class="col-xs-6 ">
+                    <div class="col-6 ">
                         <a class="btn btn-info" id="new_folder" onclick="new_file_folder('folder')">New Folder</a>
                         <a class="btn btn-info" id="new_file" onclick="new_file_folder('file')">New File</a>
                     </div>
 
-                    <div class="col-xs-6 ">
+                    <div class="col-6 ">
                         <div class="form-group">
                             <form enctype="multipart/form-data" action="/admin/upload" method="post">
                                 {% raw xsrf_form_html() %}
@@ -131,15 +139,15 @@
                                 <label for="file1">Upload A File Here</label>
                                 <input type="file" name="file1">
                                 <input type="submit" value="Upload File" class="btn btn-success"/>
-                                <p class="help-block">Upload a file to {{ data['pwd'] }}</p>
+                                <p class="form-text">Upload a file to {{ data['pwd'] }}</p>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- /.box-body -->
+            <!-- /.card-body -->
           </div>
-          <!-- /.box -->
+          <!-- /.card -->
         </div>
 
     </div>
