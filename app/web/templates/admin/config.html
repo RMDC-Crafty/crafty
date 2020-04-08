@@ -351,14 +351,14 @@
                                                 <td>{% if role.api_access == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
                                                 <td>
                                                     <a class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Edit {{ role.name }}"
-                                                       {% if not user.role =="Admin" %} {% if role.name =="Admin" %} disabled {% end %} {% end %}
+                                                       {% if not user.role =="Admin" %} {% if role.name =="Admin" %} disabled="true" {% end %} {% end %}
                                                        onclick="edit_role('{{role.name}}')"
                                                     >
                                                         <!--{{ _('Edit') }}-->
                                                         <i class="fa fa-edit"></i>
                                                     </a>
                                                     <a class="btn btn-sm btn-danger"  data-toggle="tooltip" data-placement="top" title="Delete {{ role.name }}"
-                                                       {% if not user.role =="Admin" %} {% if role.name =="Admin" %} disabled {% end %} {% end %}
+                                                       {% if not user.role =="Admin" %} {% if role.name =="Admin" %} disabled="true" {% end %} {% end %}
                                                         onclick="del_role('{{ role.name }}')"
                                                     >
                                                         <!--{{ _('Delete') }}-->
