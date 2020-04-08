@@ -25,6 +25,7 @@
               <li class="active"><a href="#crafty" data-toggle="tab">{{ _('Crafty Config') }}</a></li>
               <li><a href="#ftp" data-toggle="tab">{{ _('FTPS Config') }}</a></li>
               <li><a href="#users" data-toggle="tab">{{ _('Users') }}</a></li>
+              <li><a href="#roles" data-toggle="tab">{{ _('Roles') }}</a></li>
 
             </ul>
             <div class="tab-content">
@@ -304,6 +305,81 @@
                         </div>
 
 
+                </div>
+              <!-- /.tab-pane -->
+
+                <div class="tab-pane" id="roles">
+
+                        <input type="hidden" name="config_type" value="roles"/>
+
+                        <div class="box">
+                            <div class="box-header with-border">
+                              <h3 class="box-title">
+                                  {{ _('Roles') }} <br />
+                                  <small>{{ _('You can create or edit roles') }}</small>
+                              </h3>
+                            </div>
+
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <table class="table table-responsive" id="roles_table">
+                                        <thead>
+                                        <tr>
+                                            <th>{{ _('Role') }}</th>
+                                            <th>{{ _('Controls') }}</th>
+                                            <th>{{ _('Console') }}</th>
+                                            <th>{{ _('Logs') }}</th>
+                                            <th>{{ _('Backups') }}</th>
+                                            <th>{{ _('Schedules') }}</th>
+                                            <th>{{ _('Config') }}</th>
+                                            <th>{{ _('Files') }}</th>
+                                            <th>{{ _('API access') }}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for role in data['roles'] %}
+                                            <tr>
+                                                <td>{{ role.name }}</td>
+                                                <td>{{ role.svr_control }}</td>
+                                                <td>{{ role.svr_console }}</td>
+                                                <td>{{ role.logs }}</td>
+                                                <td>{{ role.backups }}</td>
+                                                <td>{{ role.schedules }}</td>
+                                                <td>{{ role.config }}</td>
+                                                <td>{{ role.files }}</td>
+                                                <td>{{ role.api_access }}</td>
+                                                <td>
+                                                    <a class="btn btn-sm btn-warning"
+                                                       onclick="edit_role('{{role.name}}')"
+                                                    >
+                                                        {{ _('Edit') }}
+                                                    </a>
+                                                    <a class="btn btn-sm btn-danger"
+                                                       {% if not user.role =="Admin" %} {% if role.name =="Admin" %} disabled {% end %} {% end %}
+                                                        onclick="del_role('{{ role.name }}')"
+                                                    >
+                                                        {{ _('Delete') }}
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% end %}
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </div>
+
+                            <div class="box-footer">
+
+                                <a class="btn btn-success pull-right" onclick="add_role()">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                    {{ _('Add Role') }}
+                                </a>
+                            </div>
+                        </div>
+
+
               </div>
               <!-- /.tab-pane -->
 
@@ -538,7 +614,7 @@
                     $.ajax({
                       type: "POST",
                       headers: {'X-XSRFToken': token},
-                      url: '/ajax/edit_role',
+                      url: '/ajax/edit_user_role',
                       data: data_to_send,
                       success: function(data){
                         console.log("got response:");
@@ -547,6 +623,206 @@
                       },
                     });
                 }
+            }
+        });
+    }
+
+    function add_role() {
+
+        var token = getCookie("_xsrf")
+
+        bootbox.prompt({
+            title: "Enter the New Role Name",
+            callback: function(result){
+                if (result){
+                    console.log('adding user ' + result);
+
+                    data_to_send = { rolename : result };
+
+                    $.ajax({
+                      type: "POST",
+                      headers: {'X-XSRFToken': token},
+                      url: '/ajax/add_role',
+                      data: data_to_send,
+                      success: function(data){
+                        console.log("got response:");
+                        console.log(data);
+                        bootbox.alert({
+                            message: data,
+                            callback: function () {
+                                location.reload();
+                            }
+                        })
+                      },
+                    });
+                }
+
+            }
+        });
+    }
+    
+    function edit_role(rolename) {
+        
+        var token = getCookie("_xsrf")
+        
+        if (rolename == "Admin") return False;
+
+        bootbox.prompt({
+            title: "This is a prompt with a set of checkbox inputs!",
+            inputType: 'checkbox',
+            inputOptions: [{
+                text: 'Server Control',
+                value: 'svr_control',
+            },
+            {
+                text: 'Server Console',
+                value: 'svr_console',
+            },
+            {
+                text: 'Logs',
+                value: 'logs',
+            },
+            {
+                text: 'Server Backups',
+                value: 'backups',
+            },
+            {
+                text: 'Schedules',
+                value: 'schedules',
+            },
+            {
+                text: 'Crafty Configuration',
+                value: 'config',
+            },
+            {
+                text: 'Files',
+                value: 'files',
+            },
+            {
+                text: 'Crafty API Access',
+                value: 'api_access',
+            }],
+            callback: function(result){
+                if (result){
+
+                    var selectedRoles = { rolename : rolename, result : result };
+                    selectedRoles = selectedRoles.result;
+                    console.log('editing role : '+rolename + ' with ');
+                    console.log(selectedRoles);
+
+                    var new_svr_control = "False";
+                    var new_svr_console = "False";
+                    var new_logs = "False";
+                    var new_backups = "False";
+                    var new_schedules = "False";
+                    var new_config = "False";
+                    var new_files = "False";
+                    var new_api_access = "False";
+
+                    var arrayLength = selectedRoles.length;
+
+                    console.log("selectedrole length = "+ arrayLength);
+
+                    for (var i = 0; i < arrayLength; i++) {
+                        if (selectedRoles[i] == "svr_control")
+                        {
+                            new_svr_control = "True";
+                        } 
+                        else if (selectedRoles[i] == "svr_console")
+                        {
+                            new_svr_console = "True";
+                        } 
+                        else if (selectedRoles[i] == "logs")
+                        {
+                            new_logs = "True";
+                        } 
+                        else if (selectedRoles[i] == "backups")
+                        {
+                            new_backups = "True";
+                        }
+                        else if (selectedRoles[i] == "schedules")
+                        {
+                            new_schedules = "True";
+                        }
+                        else if (selectedRoles[i] == "config")
+                        {
+                            new_config = "True";
+                        }
+                        else if (selectedRoles[i] == "files")
+                        {
+                            new_files = "True";
+                        }
+                        else if (selectedRoles[i] == "api_access")
+                        {
+                            new_api_access = "True";
+                        }
+                    }
+
+                    data_to_send = { rolename : rolename, svr_control : new_svr_control, svr_console : new_svr_console, logs : new_logs, backups : new_backups, schedules : new_schedules, config : new_config, files : new_files, api_access : new_api_access };
+                    console.log('data_to_send:');
+                    console.log(data_to_send);
+
+                    $.ajax({
+                        type: "POST",
+                        headers: {'X-XSRFToken': token},
+                        url: '/ajax/edit_role',
+                        data: data_to_send,
+                        success: function(data){
+                            console.log("got response:");
+                            console.log(data);
+                            bootbox.alert({
+                                message: data,
+                                callback: function () {
+                                    location.reload();
+                                }
+                            })
+                        },
+                        error: function(data, status, error){
+                            console.log(status+': '+error);
+                        },
+                    });               
+                }
+            }
+        });
+    }
+    
+    function del_role(rolename){
+
+        var token = getCookie("_xsrf")
+
+        if (rolename == "Admin") return False;
+
+        bootbox.confirm({
+            message: "Are you sure you wish to delete role: " + rolename + "?",
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function(result){
+                if (result){
+                    console.log('deleting role ' + rolename);
+
+                    data_to_send = { rolename : rolename };
+
+                    $.ajax({
+                      type: "POST",
+                      headers: {'X-XSRFToken': token},
+                      url: '/ajax/del_role',
+                      data: data_to_send,
+                      success: function(data){
+                        console.log("got response:");
+                        console.log(data);
+                        location.reload();
+                      },
+                    });
+                }
+
             }
         });
     }

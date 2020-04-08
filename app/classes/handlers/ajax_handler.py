@@ -294,7 +294,7 @@ class AjaxHandler(BaseHandler):
 
                 self.write(new_pass)
 
-        elif page == "edit_role":
+        elif page == "edit_user_role":
             if not user_data['config']:
                 logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
                     user_data['username'], user_data['role_name'], "Delete User"))
@@ -343,6 +343,77 @@ class AjaxHandler(BaseHandler):
                 if username:
                     Users.delete().where(Users.username == username).execute()
                     self.write("{} deleted".format(username))
+
+        elif page == 'add_role':
+            if not user_data['config']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Add Role"))
+                self.redirect('/admin/unauthorized')
+
+            new_rolename = bleach.clean(self.get_argument("rolename", None, True))
+
+            if new_rolename:
+
+                result = Roles.insert({
+                    Roles.name: new_rolename,
+                    Roles.svr_control: False,
+                    Roles.svr_console: False,
+                    Roles.logs: False,
+                    Roles.backups: False,
+                    Roles.schedules: False,
+                    Roles.config: False,
+                    Roles.files: False,
+                    Roles.api_access: False,
+                }).execute()
+
+                self.write("{} added".format(username))
+
+                        
+        elif page == 'edit_role':
+            if not user_data['config']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Add Role"))
+                self.redirect('/admin/unauthorized')
+
+            rolename = bleach.clean(self.get_argument("rolename", None, True))
+            
+            new_svr_control = 'True' == bleach.clean(self.get_argument("svr_control", False, True))
+            new_svr_console = 'True' == bleach.clean(self.get_argument("svr_console", False, True))
+            new_logs = 'True' == bleach.clean(self.get_argument("logs", False, True))
+            new_backups = 'True' == bleach.clean(self.get_argument("backups", False, True))
+            new_schedules = 'True' == bleach.clean(self.get_argument("schedules", False, True))
+            new_config = 'True' == bleach.clean(self.get_argument("config", False, True))
+            new_files = 'True' == bleach.clean(self.get_argument("files", False, True))
+            new_api_access = 'True' == bleach.clean(self.get_argument("api_access", False, True))
+
+            if rolename:
+                result = Roles.update({
+                    Roles.svr_control: new_svr_control,
+                    Roles.svr_console: new_svr_console,
+                    Roles.logs: new_logs,
+                    Roles.backups: new_backups,
+                    Roles.schedules: new_schedules,
+                    Roles.config: new_config,
+                    Roles.files: new_files,
+                    Roles.api_access: new_api_access,
+                }).where(Roles.name == rolename).execute()
+                    
+                self.write("{} edited".format(rolename))
+
+        elif page == 'del_role':
+            if not user_data['config']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Delete Role"))
+                self.redirect('/admin/unauthorized')
+
+            rolename = bleach.clean(self.get_argument("rolename", None, True))
+
+            if rolename == 'Admin':
+                self.write("Not Allowed")
+            else:
+                if rolename:
+                    Roles.delete().where(Roles.name == rolename).execute()
+                    self.write("{} deleted".format(rolename))
 
         elif page == 'save_file':
             file_data = bleach.clean(self.get_argument('file_contents'))

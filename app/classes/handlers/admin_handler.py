@@ -198,6 +198,7 @@ class AdminHandler(BaseHandler):
             ftp_data = Ftp_Srv.get()
             web_data = Webserver.get()
             users = Users.select()
+            roles = Roles.select()
 
             context['ftp_user'] = ftp_data.user
             context['ftp_pass'] = ftp_data.password
@@ -211,6 +212,8 @@ class AdminHandler(BaseHandler):
 
             context['users'] = users
             context['users_count'] = len(users)
+
+            context['roles'] = roles
 
         elif page == 'server_config':
             if not check_role_permission(user_data['username'], 'config'):
