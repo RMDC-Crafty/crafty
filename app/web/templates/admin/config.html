@@ -279,7 +279,7 @@
                                                         {{ _('Set Password') }}
                                                     </a>
                                                     <a class="btn btn-sm btn-danger"
-                                                       {% if user.username =="Admin" %} disabled {% end %}
+                                                       {% if user.username =="Admin" %} disabled="true" {% end %}
                                                         onclick="del_user('{{ user.username }}')"
                                                     >
 
@@ -588,26 +588,11 @@
             title: "Select the new role for " + user,
             inputType: 'select',
             inputOptions: [
-            {
-                text: 'Admin',
-                value: 'Admin',
-            },
-            {
-                text: 'Staff',
-                value: 'Staff',
-            },
-            {
-                text: 'Backup',
-                value: 'Backup',
-            },
-            {
-                text: 'Mod',
-                value: 'Mod',
-            },
-            {
-                text: 'Testing',
-                value: 'Testing',
-            }
+                {% for role in data['roles'] %} {
+                        text: '{{ role.name }}',
+                        value: '{{ role.name }}',
+                    },
+                {% end %}
             ],
             callback: function (result) {
                 if (result){
