@@ -18,7 +18,7 @@
 
 <section class="content">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col col-md-12 col-lg-12 col-xl-6">
           <!-- Custom Tabs -->
           <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
@@ -334,31 +334,35 @@
                                             <th>{{ _('Config') }}</th>
                                             <th>{{ _('Files') }}</th>
                                             <th>{{ _('API access') }}</th>
+                                            <th>{{ _('Actions') }}</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         {% for role in data['roles'] %}
                                             <tr>
                                                 <td>{{ role.name }}</td>
-                                                <td>{{ role.svr_control }}</td>
-                                                <td>{{ role.svr_console }}</td>
-                                                <td>{{ role.logs }}</td>
-                                                <td>{{ role.backups }}</td>
-                                                <td>{{ role.schedules }}</td>
-                                                <td>{{ role.config }}</td>
-                                                <td>{{ role.files }}</td>
-                                                <td>{{ role.api_access }}</td>
+                                                <td>{% if role.svr_control == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
+                                                <td>{% if role.svr_console == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
+                                                <td>{% if role.logs == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
+                                                <td>{% if role.backups == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
+                                                <td>{% if role.schedules == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
+                                                <td>{% if role.config == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
+                                                <td>{% if role.files == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
+                                                <td>{% if role.api_access == True %} <i class="fa fa-check-circle text-success"></i> {% else %} <i class="fa fa-times-circle text-danger"></i> {% end %}</td>
                                                 <td>
-                                                    <a class="btn btn-sm btn-warning"
+                                                    <a class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Edit {{ role.name }}"
+                                                       {% if not user.role =="Admin" %} {% if role.name =="Admin" %} disabled {% end %} {% end %}
                                                        onclick="edit_role('{{role.name}}')"
                                                     >
-                                                        {{ _('Edit') }}
+                                                        <!--{{ _('Edit') }}-->
+                                                        <i class="fa fa-edit"></i>
                                                     </a>
-                                                    <a class="btn btn-sm btn-danger"
+                                                    <a class="btn btn-sm btn-danger"  data-toggle="tooltip" data-placement="top" title="Delete {{ role.name }}"
                                                        {% if not user.role =="Admin" %} {% if role.name =="Admin" %} disabled {% end %} {% end %}
                                                         onclick="del_role('{{ role.name }}')"
                                                     >
-                                                        {{ _('Delete') }}
+                                                        <!--{{ _('Delete') }}-->
+                                                        <i class="fa fa-trash"></i>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -389,7 +393,7 @@
           <!-- nav-tabs-custom -->
         </div>
 
-        <div class="col-md-6">
+        <div class="col col-md-12 col-lg-12 col-xl-6">
           <div class="box box-solid">
             <div class="box-header with-border">
               <i class="fa fa-cog"></i>
@@ -832,6 +836,10 @@
 
 
         $('#users_table').DataTable({
+            "order": [[ 0, "asc" ]]
+        });
+        
+        $('#roles_table').DataTable({
             "order": [[ 0, "asc" ]]
         });
 
