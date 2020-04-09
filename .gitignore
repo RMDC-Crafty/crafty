@@ -10,7 +10,7 @@ __pycache__/
 
 #ignore logs 
 *.log
-/log/
+/logs/
 
 #ignore backups
 *.zip
