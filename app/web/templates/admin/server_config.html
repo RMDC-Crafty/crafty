@@ -276,7 +276,7 @@
                                 <a class="btn btn-danger disabled">Delete Server</a>
 
                             {% else %}
-                                <a class="btn btn-danger" onclick="delete_server( {{ data['mc_settings']['id'] }} , '{{ data['mc_settings']['server_name'] }}' )">{{ _('Delete Server') }}</a>
+                                <a href="#" class="btn btn-danger" onclick="delete_server( {{ data['mc_settings']['id'] }} , '{{ data['mc_settings']['server_name'] }}' )">{{ _('Delete Server') }}</a>
                             {% end %}
 
 

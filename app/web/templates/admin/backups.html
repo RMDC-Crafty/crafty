@@ -184,7 +184,7 @@
                   </h3>
                 </div>
                 <div class="card-body">
-                    <table class="table table-responsive" id="backup_table">
+                    <table class="table table-responsive dataTable" id="backup_table">
                         <thead>
                         <tr>
                             <th width="10%">{{ _('Download') }}</th>
@@ -298,7 +298,14 @@
 
 
         $('#backup_table').DataTable({
-            "order": [[ 1, "desc" ]]
+            "order": [[ 1, "desc" ]],
+            "paging":true,
+            "lengthChange": false,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
         });
 
         $( ".del_button" ).click(function() {

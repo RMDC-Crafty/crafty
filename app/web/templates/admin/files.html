@@ -36,7 +36,7 @@
                       {{ _('Current Directory:') }} {{ data['pwd'] }}
                   </h3>
                 </div>
-                <div class="card-body table-responsive ">
+                <div class="card-body">
                     <form method="post" id="browser" action="files">
                         {% raw xsrf_form_html() %}
                         <input type="hidden" id="next_dir" name="next_dir" value="" />
@@ -168,7 +168,13 @@
     $('#files_table').DataTable({
             "order": [[ 1, "asc" ]],
             "pageLength": 25,
-            responsive: true
+            "paging":true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
         });
 
     //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security

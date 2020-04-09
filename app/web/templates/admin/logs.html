@@ -87,7 +87,7 @@
                     </h3>
                   </div>
                   <div class="card-body">
-                      <table class="table table-responsive" id="error_logs_table">
+                      <table class="table dataTable" id="error_logs_table">
                           <thead>
                           <tr>
                               <th>{{ _('Line') }}</th>
@@ -114,7 +114,7 @@
                     </h3>
                   </div>
                   <div class="card-body">
-                      <table class="table table-responsive" id="warning_logs_table">
+                      <table class="table table-responsive dataTable" id="warning_logs_table">
                           <thead>
                           <tr>
                               <th>{{ _('Line') }}</th>
@@ -155,11 +155,26 @@
         $('#search_tab').hide()
 
         $('#warning_logs_table').DataTable({
-            "order": [[ 0, "desc" ]]
+            "paging":true,
+            "lengthChange": true,
+            "pageLength": 5,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "order": [[ 0, "desc" ]],
         });
 
         $('#error_logs_table').DataTable({
-            "order": [[ 0, "desc" ]]
+            "paging":true,
+            "lengthChange": true,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "order": [[ 0, "desc" ]],
         });
 
         $('#custom-tabs-crafty').click(function(){

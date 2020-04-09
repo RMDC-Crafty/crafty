@@ -263,7 +263,7 @@
 
                             <div class="card-body">
                                 <div class="form-group">
-                                    <table class="table table-responsive" id="users_table">
+                                    <table class="table dataTable" id="users_table">
                                         <thead>
                                         <tr>
                                             <th>{{ _('Username') }}</th>
@@ -326,7 +326,7 @@
 
                             <div class="card-body">
                                 <div class="form-group">
-                                    <table class="table table-responsive" id="roles_table">
+                                    <table class="table dataTable" id="roles_table">
                                         <thead>
                                         <tr>
                                             <th>{{ _('Role') }}</th>
@@ -810,11 +810,27 @@
         console.log( "ready!" );
 
         $('#users_table').DataTable({
-            "order": [[ 0, "asc" ]]
+            "order": [[ 0, "asc" ]],
+            "paging":true,
+            "lengthChange": true,
+            "pageLength": 10,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
         });
         
         $('#roles_table').DataTable({
-            "order": [[ 0, "asc" ]]
+            "order": [[ 0, "asc" ]],
+            "paging":true,
+            "lengthChange": true,
+            "pageLength": 10,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
         });
 
         //adding quick/dirty padding

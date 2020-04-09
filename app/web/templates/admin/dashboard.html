@@ -74,7 +74,6 @@
         <div class="col-md-3 col-sm-6 col-12">
           <div class="info-box">
             <span class="info-box-icon bg-green"><i class="far fa-hdd" aria-hidden="true"></i></span>
-
             <div id="host_disk" class="info-box-content">
               <span class="info-box-text">{{ _('Host Root Disk') }}</span>
               <span class="info-box-number">
@@ -94,9 +93,10 @@
             <span class="info-box-icon bg-secondary"><i class="fas fa-server" aria-hidden="true"></i></span>
 
             <div id="host_run" class="info-box-content">
-              <span class="info-box-text">{{ _('Server Defined') }}</span>
-              <span class="info-box-number">
-                  {{ len(data['servers_running'] ) }} / {{ len(data['servers_defined']) }} {{ _('Running') }}
+              <span class="info-box-text">{{ _('Minecraft Servers') }}</span>
+              <span class="info-box-number"> {{ len(data['servers_running'] ) }} {{ _('Running') }}</span>
+              <span class="progress-description">
+                 {{ len(data['servers_defined']) }} {{ _('Defined') }}
               </span>
             </div>
             <!-- /.info-box-content -->
