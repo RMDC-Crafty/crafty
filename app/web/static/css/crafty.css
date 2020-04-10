@@ -13,7 +13,8 @@
     --background-wrapper: #212529;
     --color: #fafafa;
     /* login-page */
-    --background-login: #343a40;
+    --background-login: #212529;
+    --color-login: #fafafa;
     /* button */
     --color-btn: #f8f9fa;
     --background-btn: #343a40;
@@ -59,6 +60,7 @@
     --color: #212529;
     /* login-page */
     --background-login: #e9ecef;
+    --color-login: #666;
     /* button */
     --color-btn: #444;
     --background-btn: #f8f9fa;
@@ -106,6 +108,7 @@
     --color: #212529;
     /* login-page */
     --background-login: #e9ecef;
+    --color-login: #666;
     /* button */
     --color-btn: #444;
     --background-btn: #f8f9fa;
@@ -150,7 +153,8 @@
     --background-wrapper: #212529;
     --color: #fafafa;
     /* login-page */
-    --background-login: #343a40;
+    --background-login: #212529;
+    --color-login: #fafafa;
     /* button */
     --color-btn: #f8f9fa;
     --background-btn: #343a40;
@@ -193,6 +197,11 @@
 
 .login-page {
   background: var(--background-login);
+}
+
+.login-card-body {
+  background: var(--background-modal);
+  color: var(--color-login);
 }
 
 body {
