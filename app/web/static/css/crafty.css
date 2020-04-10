@@ -12,14 +12,16 @@
     --background: #343a40;
     --background-wrapper: #212529;
     --color: #fafafa;
+    /* login-page */
+    --background-login: #343a40;
     /* button */
     --color-btn: #f8f9fa;
-    --background-btn: #444;
+    --background-btn: #343a40;
     --background-btn-hover: #6c757d;
     --color-hover: #fafafa;
     /*btn app*/
     --color-btn-app: #f8f9fa;
-    --background-btn-app: #444;
+    --background-btn-app: #343a40;
     --background-btn-app-hover:  #6c757d;
     --color-btn-app-hover: #fafafa;
     /* footer */
@@ -55,6 +57,8 @@
     --background: #ffffff;
     --background-wrapper: #f4f6f9;
     --color: #212529;
+    /* login-page */
+    --background-login: #e9ecef;
     /* button */
     --color-btn: #444;
     --background-btn: #f8f9fa;
@@ -100,6 +104,8 @@
     --background: #ffffff;
     --background-wrapper: #f4f6f9;
     --color: #212529;
+    /* login-page */
+    --background-login: #e9ecef;
     /* button */
     --color-btn: #444;
     --background-btn: #f8f9fa;
@@ -143,14 +149,16 @@
     --background: #343a40;
     --background-wrapper: #212529;
     --color: #fafafa;
+    /* login-page */
+    --background-login: #343a40;
     /* button */
     --color-btn: #f8f9fa;
-    --background-btn: #444;
+    --background-btn: #343a40;
     --background-btn-hover: #6c757d;
     --color-hover: #fafafa;
     /*btn app*/
     --color-btn-app: #f8f9fa;
-    --background-btn-app: #444;
+    --background-btn-app: #343a40;
     --background-btn-app-hover:  #6c757d;
     --color-btn-app-hover: #fafafa;
     /* footer */
@@ -182,93 +190,98 @@
     --color-form-control-focus: #fafafa;
   }
 }
-  body {
-    background-color: var(--background-wrapper);
-    color: var(--color);
-  }
 
-  .content-wrapper {
-    background: var(--background-wrapper);
-  }
+.login-page {
+  background: var(--background-login);
+}
 
-  .info-box {
-    background: var(--background);
-  }
-    
-  .btn-default {
-    background-color: var(--background-btn);
-    color: var(--color-btn);
-  }
+body {
+  background-color: var(--background-wrapper);
+  color: var(--color);
+}
 
-  .btn-default:hover, .btn-default:active, .btn-default.hover {
-    background-color: var(--background-btn-hover);
-    color: var(--color-btn-hover);
-  }
+.content-wrapper {
+  background: var(--background-wrapper);
+}
 
-  .btn-app {
-    background-color: var(--background-btn-app);
-    color: var(--color-btn-app);
-  }
+.info-box {
+  background: var(--background);
+}
+  
+.btn-default {
+  background-color: var(--background-btn);
+  color: var(--color-btn);
+}
 
-  .btn-app:hover {
-    background: var(--background-btn-app-hover);
-    color: var(--color-btn-app-hover);
-  }
+.btn-default:hover, .btn-default:active, .btn-default.hover {
+  background-color: var(--background-btn-hover);
+  color: var(--color-btn-hover);
+}
 
-  .main-footer {
-    background: var(--footer-background);
-    color: var(--footer-color);
-  }
+.btn-app {
+  background-color: var(--background-btn-app);
+  color: var(--color-btn-app);
+}
 
-  .card {
-    background-color: var(--card-background);
-  }
+.btn-app:hover {
+  background: var(--background-btn-app-hover);
+  color: var(--color-btn-app-hover);
+}
 
-  .list-group-item {
-    background-color: var(--background-list-group-item);
-  }
+.main-footer {
+  background: var(--footer-background);
+  color: var(--footer-color);
+}
 
-  .callout {
-    background-color: var(--background-callout);
-  }   
-    
-  .dropdown-menu {
-    color: var(--color-dropdown);
-    background-color: var(--background-dropdown);
-  }
-  .dropdown-header {
-    color: var(--color-dropdown-header);
-  }
+.card {
+  background-color: var(--card-background);
+}
 
-  .dropdown-item {
-    color: var(--color-dropdown);
-  }
+.list-group-item {
+  background-color: var(--background-list-group-item);
+}
 
-  .dropdown-item:hover, .dropdown-item:focus {
-    color: var(--color-dropdown-hover);
-    background-color: var(--background-dropdown-hover);
-  }
+.callout {
+  background-color: var(--background-callout);
+}   
+  
+.dropdown-menu {
+  color: var(--color-dropdown);
+  background-color: var(--background-dropdown);
+}
+.dropdown-header {
+  color: var(--color-dropdown-header);
+}
 
-  .modal-content {
-    background-color: var(--background-modal);
-  }
-    
-  .nav-tabs .nav-link.active,
-  .nav-tabs .nav-item.show .nav-link {
-    color: var(--color-hover);
-    background-color:var(--background-nav-link);
-  }
+.dropdown-item {
+  color: var(--color-dropdown);
+}
 
-  .form-control {
-    color: var(--color-form-control);
-    background-color: var(--background-form-control);
-  }
-    
-  .form-control:disabled, .form-control[readonly] {
-    background-color:  var(--background-form-control-disabled);
-  }
+.dropdown-item:hover, .dropdown-item:focus {
+  color: var(--color-dropdown-hover);
+  background-color: var(--background-dropdown-hover);
+}
 
-  .form-control:focus {
-    color: var(--color-form-control-focus);
-    background-color: var(--background-form-control-focus);
+.modal-content {
+  background-color: var(--background-modal);
+}
+  
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+  color: var(--color-hover);
+  background-color:var(--background-nav-link);
+}
+
+.form-control {
+  color: var(--color-form-control);
+  background-color: var(--background-form-control);
+}
+  
+.form-control:disabled, .form-control[readonly] {
+  background-color:  var(--background-form-control-disabled);
+}
+
+.form-control:focus {
+  color: var(--color-form-control-focus);
+  background-color: var(--background-form-control-focus);
 }
