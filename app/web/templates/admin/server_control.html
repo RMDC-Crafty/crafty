@@ -83,29 +83,29 @@
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div id="server_update">
-                        <a class="btn btn-app" onclick="update()"
-                        {% if (data['mc_settings']['jar_url'] == "") %}
-                            disabled='true'
+                        {% if (data['mc_settings']['jar_url'] == "") %}                            
+                            <a href="" class="btn btn-app disabled" onclick="update()" disabled="true">
+                                <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
+                                {{ _('Update Server Jar') }}
+                            </a>
+                            <a href="" class="btn btn-app disabled" onclick="update()" disabled="true">
+                                <i class="fas fa-undo" aria-hidden="true"></i>
+                                {{ _('Revert Jar Update') }}
+                            </a>
+                        {% else %}                          
+                            <a href="" class="btn btn-app" onclick="update()" >
+                                <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
+                                {{ _('Update Server Jar') }}
+                            </a>
+                            <a href="" class="btn btn-app" onclick="update()">
+                                <i class="fas fa-undo" aria-hidden="true"></i>
+                                {{ _('Revert Jar Update') }}
+                            </a>
                         {% end %}
-                        >
-                            <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
-                            {{ _('Update Server Jar') }}
-                        </a>
-
-                        <a class="btn btn-app" onclick="update()"
-                        {% if (data['mc_settings']['jar_url'] == "") %}
-                            disabled='true'
-                        {% end %}
-                        >
-                            <i class="fas fa-undo" aria-hidden="true"></i>
-                            {{ _('Revert Jar Update') }}
-                        </a>
-
-                        <a class="btn btn-app" onclick="destroy_world()">
+                        <a href="" class="btn btn-app" onclick="destroy_world()">
                             <i class="fas fa-bomb" aria-hidden="true"></i>
                             {{ _('Start New World') }}
                         </a>
-
                     </div>
                 </div>
             </div>

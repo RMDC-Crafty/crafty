@@ -243,19 +243,19 @@
                                                 <td>{{ user.role }}</td>
                                                 <td>
 
-                                                    <a href="#" class="btn btn-sm btn-primary"
+                                                    <a href="#" class="btn btn-sm btn-primary {% if user.username =="Admin" %} disabled {% end %}"
                                                        onclick="change_role('{{user.username}}')"
                                                        {% if user.username =="Admin" %} disabled="true" {% end %}
                                                     >
                                                         {{ _('Change Role') }}
                                                     </a>
 
-                                                    <a href="#" class="btn btn-sm btn-warning"
+                                                    <a href="#" class="btn btn-sm btn-warning {% if user.username =="Admin" %} disabled {% end %}"
                                                        onclick="change_user_password('{{user.username}}')"
                                                     >
                                                         {{ _('Set Password') }}
                                                     </a>
-                                                    <a href="#" class="btn btn-sm btn-danger"
+                                                    <a href="#" class="btn btn-sm btn-danger {% if user.username =="Admin" %} disabled {% end %}"
                                                        {% if user.username =="Admin" %} disabled="true" {% end %}
                                                         onclick="del_user('{{ user.username }}')"
                                                     >
@@ -319,14 +319,14 @@
                                                 <td>{% if role.files == True %} <i class="fas fa-check-circle text-success"></i> {% else %} <i class="fas fa-times-circle text-danger"></i> {% end %}</td>
                                                 <td>{% if role.api_access == True %} <i class="fas fa-check-circle text-success"></i> {% else %} <i class="fas fa-times-circle text-danger"></i> {% end %}</td>
                                                 <td>
-                                                    <a href="#" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="top" title="Edit {{ role.name }}"
-                                                       {% if not user.role =="Admin" %} {% if role.name =="Admin" %} disabled="true" {% end %} {% end %}
+                                                    <a href="#" class="btn btn-sm btn-warning {% if not user.role =="Admin" %} {% if role.name =="Admin" %} disabled {% end %} {% end %}" data-toggle="tooltip" data-placement="top" title="Edit {{ role.name }}"
+                                                       {% if not user.role =="Admin" %} {% if role.name =="Admin" %} disabled {% end %} {% end %}
                                                        onclick="edit_role('{{role.name}}')"
                                                     >
                                                         <!--{{ _('Edit') }}-->
                                                         <i class="fas fa-edit"></i>
                                                     </a>
-                                                    <a href="#" class="btn btn-sm btn-danger"  data-toggle="tooltip" data-placement="top" title="Delete {{ role.name }}"
+                                                    <a href="#" class="btn btn-sm btn-danger {% if not user.role =="Admin" %} {% if role.name =="Admin" %} disabled {% end %} {% end %}"  data-toggle="tooltip" data-placement="top" title="Delete {{ role.name }}"
                                                        {% if not user.role =="Admin" %} {% if role.name =="Admin" %} disabled="true" {% end %} {% end %}
                                                         onclick="del_role('{{ role.name }}')"
                                                     >

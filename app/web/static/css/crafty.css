@@ -7,6 +7,12 @@
   border: 1px solid #ddd;
 }
 
+/* Fixing not-allowed cursor */
+.btn.disabled, .btn:disabled {
+  cursor: not-allowed;
+  pointer-events: all !important;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #343a40;
@@ -49,8 +55,8 @@
     /* Form control */
     --background-form-control: #212529;
     --color-form-control: #fafafa;
-    --background-form-control-disabled: #444;
-    --background-form-control-focus: #6c757d;
+    --background-form-control-disabled: #212529;
+    --background-form-control-focus: #232629;
     --color-form-control-focus: #fafafa;
   }
 
@@ -189,8 +195,8 @@
     /* Form control */
     --background-form-control: #212529;
     --color-form-control: #fafafa;
-    --background-form-control-disabled: #444;
-    --background-form-control-focus: #6c757d;
+    --background-form-control-disabled: #232629;
+    --background-form-control-focus: #232629;
     --color-form-control-focus: #fafafa;
   }
 }
@@ -220,6 +226,7 @@ body {
 .btn-default {
   background-color: var(--background-btn);
   color: var(--color-btn);
+  margin-bottom: 4px;
 }
 
 .btn-default:hover, .btn-default:active, .btn-default.hover {
@@ -286,7 +293,7 @@ body {
   background-color: var(--background-form-control);
 }
   
-.form-control:disabled, .form-control[readonly] {
+.form-control[readonly] {
   background-color:  var(--background-form-control-disabled);
 }
 
