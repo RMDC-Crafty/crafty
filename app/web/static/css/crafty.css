@@ -1,0 +1,105 @@
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--gray-dark);
+    --backgroud-wrapper: #212529;
+    --color: #fafafa;
+    --color-btn: #f8f9fa;
+    --backgroud-btn: #444;
+    --backgroud-hover: #6c757d;
+    --color-hover: #e9ecef;
+    --footer-backgroud:  #343a40;
+    --footer-color: #fafafa;
+    --backgroud-callout: var(--gray-dark);
+    --backgroud-form-group: #262626;
+  }
+    
+  body {
+    background-color: var(--backgroud-wrapper);
+    color: var(--color);
+  }
+  
+  .content-wrapper {
+    background: var(--backgroud-wrapper);
+  }
+  
+  .info-box {
+    background: var(--background);
+    box-shadow: var(--box-shadow);
+  }
+    
+  .btn-default {
+    background-color: var(--background);
+    color: var(--color-btn);
+  }
+
+  .btn-default:hover, .btn-default:active, .btn-default.hover {
+    background-color: var(--backgroud-hover);
+    color: var(--color-hover);
+  }
+
+  .btn-app {
+    background-color: var(--backgroud-btn);
+    color: var(--color-btn);
+  }
+
+  .btn-app:hover {
+    background: var(--backgroud-hover);
+    color: var(--color-hover);
+  }
+
+  .main-footer {
+    background: var(--footer-backgroud);
+    color: var(--footer-color);
+  }
+
+  .card {
+    background-color: var(--background);
+  }
+
+  .list-group-item {
+    background-color: var(--background);
+  }
+
+  .callout {
+    background-color: var(--backgroud-callout);
+  }   
+   
+  .dropdown-menu {
+    color: var(--color);
+    background-color: var(--background);
+  }
+
+  .dropdown-item {
+    color: var(--color);
+  }
+
+  .dropdown-item:hover, .dropdown-item:focus {
+    color: var(--color-hover);
+    background-color: var(--backgroud-hover);
+  }
+
+  .modal-content {
+    background-color: var(--background);
+  }
+    
+  .nav-tabs .nav-link.active,
+  .nav-tabs .nav-item.show .nav-link {
+    color: var(--color);
+    background-color:var(--backgroud-hover);
+  }
+  
+  .form-control {
+    color: var(--color);
+    background-color: var(--backgroud-form-group);
+  }
+    
+  .form-control:disabled, .form-control[readonly] {
+    background-color:  var(--backgroud-form-group);
+  }
+
+  .form-control:focus {
+    color: var(--color-hover);
+    background-color: var(--backgroud-hover);
+  }
+
+}
