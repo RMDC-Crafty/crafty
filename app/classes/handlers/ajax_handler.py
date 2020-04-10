@@ -118,7 +118,8 @@ class AjaxHandler(BaseHandler):
             user_data = get_perms_for_user(name)
 
             context = {
-                'host_stats': multi.get_host_status()
+                'servers_running': multi.list_running_servers(),
+                'servers_defined': multi.list_servers(),
             }                 
                     
             self.render(

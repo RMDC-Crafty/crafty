@@ -36,7 +36,34 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  
+<script>
+  //determines if the user has a set theme
+  function detectColorScheme(){
+      var theme="light";    //default to light
+
+      //local storage is used to override OS theme settings
+      if(localStorage.getItem("theme")){
+          if(localStorage.getItem("theme") == "dark"){
+              var theme = "dark";
+          }
+      } else if(!window.matchMedia) {
+          //matchMedia method not supported
+          return false;
+      } else if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          //OS theme setting detected as dark
+          var theme = "dark";
+      }
+
+      //dark theme preferred, set document with a `data-theme` attribute
+      if (theme=="dark") {
+          document.documentElement.setAttribute("data-theme", "dark");
+      }
+  }
+  detectColorScheme();
+</script>
 </head>
+
 <body class="sidebar-mini layout-fixed layout-navbar-fixed">
 <!-- Site wrapper -->
 <div class="wrapper">
@@ -65,10 +92,16 @@
             <span class="hidden-xs"> {{ data['user_data']['username'] }}</span>
           </a>
           <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            <div class="dropdown-item">
+              <div id="theme-switch" class="custom-control custom-switch">
+                <input id="input-switch" type="checkbox" class="custom-control-input">
+                <label class="custom-control-label" for="input-switch">{{ _('Darkmode') }}</label>
+              </div>
+            </div>
+            <div class="dropdown-divider"></div>
             <!-- User image -->
             <span class="dropdown-header">{{ _('Role:') }} {{ _(data['user_data']['role_name']) }}</span>
             <div class="dropdown-divider"></div>
-
             <!-- Menu Body -->
             <div class="dropdown-item">
               &nbsp;<b>{{ _('Permissions') }}</b><br />
@@ -223,11 +256,19 @@
 
 <script>
   $(document).ready(function () {
-    $('.sidebar-menu').tree()
+    /*$('.sidebar-menu').tree()*/
 
     $('#update_check').click(function(){
       update_check();
     });
+
+    if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        //OS theme setting detected as dark
+        var theme = "dark";
+        document.getElementById("input-switch").disabled = true;
+        document.getElementById("input-switch").checked = true;
+        console.log("OS match Dark side in JS !");
+    }
   })
 
   //used to get cookies from browser - this is part of tornados xsrf protection - it's for extra security
@@ -253,6 +294,30 @@
              },
         });
     }
+
+    //identify the toggle switch HTML element
+  const toggleSwitch = document.querySelector('#theme-switch input[type="checkbox"]');
+
+  //function that changes the theme, and sets a localStorage variable to track the theme between page loads
+  function switchTheme(e) {
+      if (e.target.checked) {
+          localStorage.setItem('theme', 'dark');
+          document.documentElement.setAttribute('data-theme', 'dark');
+          toggleSwitch.checked = true;
+      } else {
+          localStorage.setItem('theme', 'light');
+          document.documentElement.setAttribute('data-theme', 'light');
+          toggleSwitch.checked = false;
+      }    
+  }
+
+  //listener for changing themes
+  toggleSwitch.addEventListener('change', switchTheme, false);
+
+  //pre-check the dark-theme checkbox if dark-theme is set
+  if (document.documentElement.getAttribute("data-theme") == "dark"){
+      toggleSwitch.checked = true;
+  }
 
 </script>
 

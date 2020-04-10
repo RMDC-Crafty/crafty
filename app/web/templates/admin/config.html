@@ -25,8 +25,7 @@
 
 <section class="content">
     <div class="row">
-        <div class="col col-lg-12 col-xl-12">
-                    
+        <div class="col col-lg-12 col-xl-12">                    
           <!-- Custom Tabs -->
             <div class="card card-primary card-outline card-outline-tabs">
                 <div class="card-header p-0 pt-1">
@@ -45,142 +44,176 @@
                 <div class="card-body">
                 <div class="tab-content" id="custom-tabs-one-tabContent">
                     <div class="tab-pane fade show active" id="custom-tabs-one-crafty" role="tabpanel" aria-labelledby="custom-tabs-one-crafty-tab">    
-                        <form role="form" method="post">
-                            {% raw xsrf_form_html() %}
-                            <input type="hidden" name="config_type" value="crafty_settings"/>
+                    <div class="row">
+                            <div class="col-6">
+                                <form role="form" method="post">
+                                    {% raw xsrf_form_html() %}
+                                    <input type="hidden" name="config_type" value="crafty_settings"/>
 
-                            <div class="card card-secondary card-outline">
-                                <div class="card-header">
-                                <h3 class="card-title">
-                                    {{ _('Crafty Config') }}
-                                </h3>
-                                </div>
+                                    <div class="card card-secondary card-outline">
+                                        <div class="card-header">
+                                        <h3 class="card-title">
+                                            {{ _('Crafty Config') }}
+                                        </h3>
+                                        </div>
 
-                                <div class="card-body">
-                                
-                                    <div class="form-group">
-                                        <label>
-                                            {{ _('Historical Data Capture Interval') }} <br />
-                                            <small>{{ _('How many minutes between historical data capture') }}</small>
-                                        </label>
-                                        <input type="number"
-                                            name="historical_interval" id="historical_interval"
-                                            class="form-control" placeholder="90" max="500" min="1" step="1"
-                                            value="{{ data['crafty_settings']['history_interval'] }}"
-                                        />
+                                        <div class="card-body">
+                                        
+                                            <div class="form-group">
+                                                <label>
+                                                    {{ _('Historical Data Capture Interval') }} <br />
+                                                    <small>{{ _('How many minutes between historical data capture') }}</small>
+                                                </label>
+                                                <input type="number"
+                                                    name="historical_interval" id="historical_interval"
+                                                    class="form-control" placeholder="90" max="500" min="1" step="1"
+                                                    value="{{ data['crafty_settings']['history_interval'] }}"
+                                                />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>
+                                                    {{ _('Historical Data Length') }} <br />
+                                                    <small>{{ _('How many days should we keep historical data') }}</small>
+                                                </label>
+                                                <input type="number"
+                                                    name="history_max_age" id="history_max_age"
+                                                    class="form-control" placeholder="2" max="30" min="1" step="1"
+                                                    value="{{ data['crafty_settings']['history_max_age'] }}"
+                                                />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label>
+                                                    {{ _('Webserver Port') }} <br />
+                                                    <small>{{ _('Default of 8000 - 443 and 80 require root on linux') }}</small>
+                                                </label>
+                                                <input type="number"
+                                                    name="port_number" id="port_number"
+                                                    class="form-control" placeholder="8000"
+                                                    max="65535"
+                                                    min="1"
+                                                    step="1"
+                                                    value="{{ data['web_settings']['port_number'] }}"
+                                                />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <b>{{ _('Language') }}</b>
+                                                Currently: {{ data['crafty_settings']['language'] }}
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="form-check">
+                                                        <input type="radio"
+                                                            name="language"
+                                                            value="en_EN"
+                                                                {% if data['crafty_settings']['language'] == "en_EN" %} checked {% end %}
+                                                                />
+                                                    <label>
+                                                        English
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-check">
+                                                        <input type="radio"
+                                                            name="language"
+                                                            value="es_ES"
+                                                                {% if data['crafty_settings']['language'] == "es_ES" %} checked {% end %}
+                                                                />
+                                                    <label>
+                                                        Español
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-check">
+                                                        <input type="radio"
+                                                            name="language"
+                                                            value="fr_FR"
+                                                                {% if data['crafty_settings']['language'] == "fr_FR" %} checked {% end %}
+                                                                />
+                                                    <label>
+                                                        Français
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-check">
+                                                        <input type="radio"
+                                                            name="language"
+                                                            value="it_IT"
+                                                                {% if data['crafty_settings']['language'] == "it_IT" %} checked {% end %}
+                                                                />
+                                                    <label>
+                                                        Italiano
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-check">
+                                                        <input type="radio"
+                                                            name="language"
+                                                            value="nl_NL"
+                                                                {% if data['crafty_settings']['language'] == "nl_NL" %} checked {% end %}
+                                                                />
+                                                    <label>
+                                                        Nederlands
+                                                    </label>
+                                                </div>
+
+                                                <div class="form-check">
+                                                        <input type="radio"
+                                                            name="language"
+                                                            value="ro_MO"
+                                                                {% if data['crafty_settings']['language'] == "ro_MO" %} checked {% end %}
+                                                                />
+                                                    <label>
+                                                        Română
+                                                    </label>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="card-footer">
+                                            <a href="/admin/config" class="btn btn-danger">{{ _('Cancel') }}</a>
+                                            <button type="submit" class="btn btn-success float-right">
+                                                <i class="far fa-save" aria-hidden="true"></i>
+                                                {{ _('Save') }}
+                                            </button>
+                                        </div>
                                     </div>
-
-                                    <div class="form-group">
-                                        <label>
-                                            {{ _('Historical Data Length') }} <br />
-                                            <small>{{ _('How many days should we keep historical data') }}</small>
-                                        </label>
-                                        <input type="number"
-                                            name="history_max_age" id="history_max_age"
-                                            class="form-control" placeholder="2" max="30" min="1" step="1"
-                                            value="{{ data['crafty_settings']['history_max_age'] }}"
-                                        />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>
-                                            {{ _('Webserver Port') }} <br />
-                                            <small>{{ _('Default of 8000 - 443 and 80 require root on linux') }}</small>
-                                        </label>
-                                        <input type="number"
-                                            name="port_number" id="port_number"
-                                            class="form-control" placeholder="8000"
-                                            max="65535"
-                                            min="1"
-                                            step="1"
-                                            value="{{ data['web_settings']['port_number'] }}"
-                                        />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <b>{{ _('Language') }}</b>
-                                        Currently: {{ data['crafty_settings']['language'] }}
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="form-check">
-                                                <input type="radio"
-                                                    name="language"
-                                                    value="en_EN"
-                                                        {% if data['crafty_settings']['language'] == "en_EN" %} checked {% end %}
-                                                        />
-                                            <label>
-                                                English
-                                            </label>
-                                        </div>
-
-                                        <div class="form-check">
-                                                <input type="radio"
-                                                    name="language"
-                                                    value="es_ES"
-                                                        {% if data['crafty_settings']['language'] == "es_ES" %} checked {% end %}
-                                                        />
-                                            <label>
-                                                Español
-                                            </label>
-                                        </div>
-
-                                        <div class="form-check">
-                                                <input type="radio"
-                                                    name="language"
-                                                    value="fr_FR"
-                                                        {% if data['crafty_settings']['language'] == "fr_FR" %} checked {% end %}
-                                                        />
-                                            <label>
-                                                Français
-                                            </label>
-                                        </div>
-
-                                        <div class="form-check">
-                                                <input type="radio"
-                                                    name="language"
-                                                    value="it_IT"
-                                                        {% if data['crafty_settings']['language'] == "it_IT" %} checked {% end %}
-                                                        />
-                                            <label>
-                                                Italiano
-                                            </label>
-                                        </div>
-
-                                        <div class="form-check">
-                                                <input type="radio"
-                                                    name="language"
-                                                    value="nl_NL"
-                                                        {% if data['crafty_settings']['language'] == "nl_NL" %} checked {% end %}
-                                                        />
-                                            <label>
-                                                Nederlands
-                                            </label>
-                                        </div>
-
-                                        <div class="form-check">
-                                                <input type="radio"
-                                                    name="language"
-                                                    value="ro_MO"
-                                                        {% if data['crafty_settings']['language'] == "ro_MO" %} checked {% end %}
-                                                        />
-                                            <label>
-                                                Română
-                                            </label>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="card-footer">
-                                    <a href="/admin/config" class="btn btn-danger">{{ _('Cancel') }}</a>
-                                    <button type="submit" class="btn btn-success float-right">
-                                        <i class="far fa-save" aria-hidden="true"></i>
-                                        {{ _('Save') }}
-                                    </button>
-                                </div>
+                                </form>
                             </div>
-                        </form>
+                            <div class="col-6">
+                                <div class="card card-secondary card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title"><span class="fas fa-cog float-left"></span>  {{ _('Your Current Config') }}</h3>
+                                    <h3 class="card-title float-right">
+                                        <a href="/admin/reload_mc_settings" class="btn btn-sm btn-default">{{ _('Reload MC Settings') }}</a>
+                                        <a href="/admin/reload_web" class="btn btn-sm btn-default">{{ _('Reload Web Server') }}</a>
+                                    </h3>
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body">
+
+                                    {{ _('Historical Data will be captured every') }} <b>{{ data['crafty_settings']['history_interval'] }}</b> {{ _('minutes') }}
+                                    {{ _('and kept for') }} <b>{{ data['crafty_settings']['history_max_age'] }}</b> {{ _('days') }}
+                                    <hr />
+
+                                    {% for u in data['users'] %}
+                                        {% if u.username == data['user_data']['username'] %}
+                                    {{ _('Your API Key:') }} <b>{{ u.api_token }}</b>
+                                        {% end %}
+                                    {% end %}
+                                    <hr />
+
+                                    {{ _('You have') }} <b>{{ data['users_count'] }}</b> {{ _('users defined') }}
+
+                                </div>
+                                <!-- /.card-body -->
+                                </div>
+                                <!-- /.card -->
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="custom-tabs-one-users" role="tabpanel" aria-labelledby="custom-tabs-one-users-tab">
                         <input type="hidden" name="config_type" value="users"/>
@@ -324,38 +357,6 @@
                 <!-- /.card -->
             </div>
           <!-- nav-tabs-custom -->
-        </div>
-
-        <div class="col col-lg-12 col-xl-12">
-          <div class="card card-secondary card-outline">
-            <div class="card-header">
-                <i class="fas fa-cog float-left"></i>
-                <h3 class="card-title">{{ _('Your Current Config') }}</h3>
-                <h3 class="card-title float-right">
-                    <a href="/admin/reload_mc_settings" class="btn btn-sm btn-default">{{ _('Reload MC Settings') }}</a>
-                    <a href="/admin/reload_web" class="btn btn-sm btn-default">{{ _('Reload Web Server') }}</a>
-                </h3>
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body">
-
-                {{ _('Historical Data will be captured every') }} <b>{{ data['crafty_settings']['history_interval'] }}</b> {{ _('minutes') }}
-                {{ _('and kept for') }} <b>{{ data['crafty_settings']['history_max_age'] }}</b> {{ _('days') }}
-                <hr />
-
-                {% for u in data['users'] %}
-                    {% if u.username == data['user_data']['username'] %}
-                {{ _('Your API Key:') }} <b>{{ u.api_token }}</b>
-                    {% end %}
-                {% end %}
-                <hr />
-
-                {{ _('You have') }} <b>{{ data['users_count'] }}</b> {{ _('users defined') }}
-
-            </div>
-            <!-- /.card-body -->
-          </div>
-          <!-- /.card -->
         </div>
     </div>
 
