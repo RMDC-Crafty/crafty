@@ -35,9 +35,6 @@
                     <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-crafty" role="tab" aria-controls="custom-tabs-one-crafty" aria-selected="true">{{ _('Crafty Config') }}</a>
                     </li>
                     <li class="nav-item">
-                    <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill" href="#custom-tabs-one-ftp" role="tab" aria-controls="custom-tabs-one-ftp" aria-selected="false">{{ _('FTPS Config') }}</a>
-                    </li>
-                    <li class="nav-item">
                     <a class="nav-link" id="custom-tabs-one-messages-tab" data-toggle="pill" href="#custom-tabs-one-users" role="tab" aria-controls="custom-tabs-one-users" aria-selected="false">{{ _('Users') }}</a>
                     </li>
                     <li class="nav-item">
@@ -184,71 +181,6 @@
                                 </div>
                             </div>
                         </form>
-                    </div>
-                    <div class="tab-pane fade" id="custom-tabs-one-ftp" role="tabpanel" aria-labelledby="custom-tabs-one-ftp-tab">
-                        <form role="form" method="post">
-                        {% raw xsrf_form_html() %}
-                        <input type="hidden" name="config_type" value="ftp_settings"/>
-
-                        <div class="card card-secondary card-outline">
-                            <div class="card-header">
-                              <h3 class="card-title">
-                                  {{ _('FTP Config') }}
-                              </h3>
-                            </div>
-
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label>
-                                        {{ _('FTP User') }}<br />
-                                        <small>{{ _('This can should be unique to the FTP service') }}</small>
-                                    </label>
-                                    <input type="text"
-                                           name="ftp_user" id="ftp_user"
-                                           class="form-control" placeholder="{{ _('FTP User') }}" maxlength="255"
-                                           value="{{ data['ftp_user'] }}"
-                                    />
-                                </div>
-
-                                <div class="form-group">
-                                    <label>
-                                        {{ _('FTP Password') }} <br />
-                                        <small>{{ _('This should be at least 8 letters long - maybe 15 characters') }}</small>
-                                    </label>
-                                    <input type="text"
-                                           name="ftp_pass" id="ftp_pass"
-                                           class="form-control" placeholder="{{ _('FTP Password') }}" maxlength="512"
-                                           value="{{ data['ftp_pass'] }}"
-                                    />
-                                </div>
-
-                                <div class="form-group">
-                                    <label>
-                                        {{ _('FTP Port') }} <br />
-                                        <small>{{ _('Default of 2121 - 21 and 20 require root on linux') }}</small>
-                                    </label>
-                                    <input type="number"
-                                           name="ftp_port" id="ftp_port"
-                                           class="form-control" placeholder="{{ _('FTP Port') }}"
-                                           max="65535"
-                                           min="1"
-                                           value="{{ data['ftp_port'] }}"
-                                    />
-                                </div>
-
-
-                            </div>
-
-                            <div class="card-footer">
-                                <a href="/admin/config" class="btn btn-danger">{{ _('Cancel') }}</a>
-                                <button type="submit" class="btn btn-success float-right">
-                                    <i class="far fa-save" aria-hidden="true"></i>
-                                    {{ _('Save') }}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-
                     </div>
                     <div class="tab-pane fade" id="custom-tabs-one-users" role="tabpanel" aria-labelledby="custom-tabs-one-users-tab">
                         <input type="hidden" name="config_type" value="users"/>
