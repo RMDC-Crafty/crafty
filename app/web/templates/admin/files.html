@@ -135,10 +135,16 @@
                                 <input type="hidden" name="pwd" value="{{ data['pwd'] }}"/>
                                 <input type="hidden" name="server_id" value="{{ data['server_id'] }}" />
 
+                                <div class="form-group">
                                 <label for="file1">Upload A File Here</label>
-                                <input type="file" name="file1">
+                                <input type="file" name="file1" class="form-control-file">
+                                </div>
                                 <input type="submit" value="Upload File" class="btn btn-success"/>
                                 <p class="form-text">Upload a file to {{ data['pwd'] }}</p>
+                                <!-- <label for="file1">Upload A File Here</label>
+                                <input type="file" name="file1">
+                                <input type="submit" value="Upload File" class="btn btn-success"/>
+                                <p class="form-text">Upload a file to {{ data['pwd'] }}</p>-->
                             </form>
                         </div>
                     </div>
@@ -150,8 +156,6 @@
         </div>
 
     </div>
-
-
 </section>
 
 <!--
