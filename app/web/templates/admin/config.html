@@ -100,7 +100,19 @@
 
                                             <div class="form-group">
                                                 <b>{{ _('Language') }}</b>
-                                                Currently: {{ data['crafty_settings']['language'] }}
+                                                {% if data['crafty_settings']['language'] == "en_EN" %}
+                                                  Currently: English
+                                                {% elif data['crafty_settings']['language'] == "es_ES" %}
+                                                  Currently: Español 
+                                                {% elif data['crafty_settings']['language'] == "fr_FR" %}
+                                                  Currently: Français 
+                                                {% elif data['crafty_settings']['language'] == "it_IT" %}
+                                                  Currently: Italiano 
+                                                {% elif data['crafty_settings']['language'] == "nl_NL" %}
+                                                  Currently: Nederlands 
+                                                {% elif data['crafty_settings']['language'] == "ro_MO" %}
+                                                  Currently: Română
+                                                {% end %}
                                             </div>
                                             <div class="form-group">
                                                 <div class="form-check">
