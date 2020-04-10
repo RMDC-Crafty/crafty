@@ -31,7 +31,7 @@
     /* Callout */
     --background-callout: #343a40;
     /* list group item */
-    --background-list-group-item: #6c757d;
+    --background-list-group-item: #343a40;
     /* Dropdown */
     --color-dropdown-header: #fafafa;
     --background-dropdown: #343a40;
@@ -162,7 +162,7 @@
     /* Callout */
     --background-callout: #343a40;
     /* list group item */
-    --background-list-group-item: #6c757d;
+    --background-list-group-item: #343a40;
     /* Dropdown */
     --color-dropdown-header: #fafafa;
     --background-dropdown: #343a40;
