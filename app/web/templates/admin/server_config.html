@@ -129,6 +129,18 @@
 
                             <div class="form-group">
                                 <label>
+                                    {{ _('Java Path') }} <br />
+                                    <small>{{ _('Java Executable Path? (example: "C:\\path\\to\\jre\\bin\\java.exe" or "java")') }}</small>
+                                </label>
+                                <input type="text"
+                                       name="java_path" id="java_path"
+                                       class="form-control" placeholder="{{ _('Java Path Here') }}"
+                                       value="{{ data['mc_settings']['java_path'] }}"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label>
                                     {{ _('Jar Update URL') }}<br />
                                     <small>{{ _('Server Jar Update URL - This is where you define where to update the jar from.') }}</small>
                                 </label>
@@ -304,7 +316,7 @@
             <div class="card-body">
                 {{ _('The server will be launched using this string:') }}<br />
                 <b>
-                java -Xms{{ data['mc_settings']['memory_min'] }}M
+                {{ data['mc_settings']['java_path'] }} -Xms{{ data['mc_settings']['memory_min'] }}M
                 -Xmx{{ data['mc_settings']['memory_max'] }}M
                 {{ data['mc_settings']['pre_args'] }}
                 -jar {{ data['mc_settings']['server_path'] }}/{{ data['mc_settings']['server_jar'] }} nogui
