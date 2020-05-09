@@ -539,13 +539,20 @@ class AdminHandler(BaseHandler):
                 # Define as variables to eliminate multiple function calls, slowing the processing down
                 server_path = self.get_argument('server_path')
                 server_jar = self.get_argument('server_jar')
+                java_path = self.get_argument('java_path')
 
                 server_path_exists = helper.check_directory_exist(server_path)
 
                 # Use pathlib to join specified server path and server JAR file then check if it exists
                 jar_exists = helper.check_file_exists(os.path.join(server_path, server_jar))
 
-                if server_path_exists and jar_exists:
+                # Check if custom Java path is specified and if it exists
+                if java_path == 'java':
+                    java_path_exists = True
+                else:
+                    java_path_exists = helper.check_file_exists(java_path)
+
+                if server_path_exists and jar_exists and java_path_exists:
                     q = MC_settings.update({
                         MC_settings.server_name: self.get_argument('server_name'),
                         MC_settings.server_path: server_path,
@@ -554,6 +561,7 @@ class AdminHandler(BaseHandler):
                         MC_settings.memory_min: self.get_argument('memory_min'),
                         MC_settings.additional_args: self.get_argument('additional_args'),
                         MC_settings.pre_args: self.get_argument('pre_args'),
+                        MC_settings.java_path: java_path,
                         MC_settings.auto_start_server: int(self.get_argument('auto_start_server')),
                         MC_settings.server_port: self.get_argument('server_port'),
                         MC_settings.server_ip: self.get_argument('server_ip'),
@@ -564,13 +572,18 @@ class AdminHandler(BaseHandler):
                     q.execute()
                     self.mcserver.reload_settings()
 
-                elif server_path_exists:
+                # Restructure things a bit and add Java path check
+                elif not server_path_exists:
                     # Redirect to "config invalid" page and log an event
+                    logger.error('Minecraft server directory does not exist')
+                    self.redirect("/admin/config?invalid=True")
+
+                elif not jar_exists:
                     logger.error('Minecraft server JAR does not exist at {}'.format(server_path))
                     self.redirect("/admin/config?invalid=True")
 
                 else:
-                    logger.error('Minecraft server directory or JAR does not exist')
+                    logger.error('Minecraft server Java path does not exist')
                     self.redirect("/admin/config?invalid=True")
 
             elif config_type == 'ftp_settings':
@@ -612,6 +625,7 @@ class AdminHandler(BaseHandler):
             server_jar = bleach.clean(self.get_argument('server_jar'))
             server_id = bleach.clean(self.get_argument('server_id'))
             server_name = bleach.clean(self.get_argument('server_name'))
+            java_path = bleach.clean(self.get_argument('java_path'))
             errors = bleach.clean(self.get_argument('errors', ''))
 
             context['errors'] = errors
@@ -621,7 +635,13 @@ class AdminHandler(BaseHandler):
             # Use pathlib to join specified server path and server JAR file then check if it exists
             jar_exists = helper.check_file_exists(os.path.join(server_path, server_jar))
 
-            if server_path_exists and jar_exists:
+            # Check if Java executable exists if custom path is specified
+            if java_path == 'java':
+                java_path_exists = True
+            else:
+                java_path_exists = helper.check_file_exists(java_path)
+
+            if server_path_exists and jar_exists and java_path_exists:
                 MC_settings.update({
                     MC_settings.server_name: server_name,
                     MC_settings.server_path: server_path,
@@ -630,6 +650,7 @@ class AdminHandler(BaseHandler):
                     MC_settings.memory_min: bleach.clean(self.get_argument('memory_min')),
                     MC_settings.additional_args: bleach.clean(self.get_argument('additional_args')),
                     MC_settings.pre_args: bleach.clean(self.get_argument('pre_args')),
+                    MC_settings.java_path: java_path,
                     MC_settings.auto_start_server: int(float(self.get_argument('auto_start_server'))),
                     MC_settings.auto_start_delay: int(float(self.get_argument('auto_start_delay'))),
                     MC_settings.auto_start_priority: int(float(self.get_argument('auto_start_priority'))),
@@ -644,14 +665,19 @@ class AdminHandler(BaseHandler):
 
                 self.redirect("/admin/dashboard")
 
-            elif server_path_exists:
+            # Restructure things a bit and add Java path check
+            elif not server_path_exists:
                 # Redirect to "config invalid" page and log an event
+                logger.error('Minecraft server directory not exist')
+                self.redirect("/admin/server_config?id={}&errors={}".format(server_id, "Server Path Does Not Exists"))
+
+            elif not jar_exists:
                 logger.error('Minecraft server JAR does not exist at {}'.format(server_path))
                 self.redirect("/admin/server_config?id={}&errors={}".format(server_id, "Server Jar Does Not Exists"))
 
             else:
-                logger.error('Minecraft server directory or JAR does not exist')
-                self.redirect("/admin/server_config?id={}&errors={}".format(server_id, "Server Path Does Not Exists"))
+                logger.error('Minecraft server Java path does not exist')
+                self.redirect("/admin/server_config?id={}&errors={}".format(server_id, "Java Path Does Not Exist"))
 
         elif page == 'files':
 
@@ -744,6 +770,7 @@ class AdminHandler(BaseHandler):
                     MC_settings.memory_max: max_mem,
                     MC_settings.memory_min: min_mem,
                     MC_settings.additional_args: "",
+                    MC_settings.java_path: "java",
                     MC_settings.auto_start_server: auto_start,
                     MC_settings.auto_start_delay: 10,
                     MC_settings.auto_start_priority: 1,

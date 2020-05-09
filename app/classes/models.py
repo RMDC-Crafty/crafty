@@ -134,6 +134,7 @@ class MC_settings(BaseModel):
     memory_min = CharField()
     additional_args = CharField()
     pre_args = CharField(default='')
+    java_path = CharField()
     auto_start_server = BooleanField()
     auto_start_delay = IntegerField()
     auto_start_priority = IntegerField()

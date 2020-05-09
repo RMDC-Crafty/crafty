@@ -37,6 +37,7 @@ class Minecraft_Server():
         self.settings = None
         self.updating = False
         self.jar_exists = False
+        self.java_path_exists = False
         self.server_id = None
         self.name = None
         self.is_crashed = False
@@ -104,6 +105,7 @@ class Minecraft_Server():
         server_min_mem = self.settings.memory_min
         server_args = self.settings.additional_args
         server_pre_args = self.settings.pre_args
+        java_path = self.settings.java_path
 
         # set up execute path if we have spaces, we put quotes around it for windows
         if " " in server_path:
@@ -111,9 +113,16 @@ class Minecraft_Server():
         else:
             exec_path = server_path
 
+        # Wrap Java path in quotes if it contains spaces
+        if " " in java_path:
+            java_exec = '"{}"'.format(java_path)
+        else:
+            java_exec = java_path
+
         server_exec_path = os.path.join(exec_path, server_jar)
         if int(server_min_mem) >= 0:
-            self.server_command = 'java -Xms{}M -Xmx{}M {} -jar {} nogui {}'.format(
+            self.server_command = '{} -Xms{}M -Xmx{}M {} -jar {} nogui {}'.format(
+                                                                                java_exec,
                                                                                 server_min_mem,
                                                                                 server_max_mem,
                                                                                 server_pre_args,
@@ -121,7 +130,8 @@ class Minecraft_Server():
                                                                                 server_args
                                                                                 )
         else:
-            self.server_command = 'java -Xmx{}M {} -jar {} nogui {}'.format(
+            self.server_command = '{} -Xmx{}M {} -jar {} nogui {}'.format(
+                                                                        java_exec,
                                                                         server_max_mem,
                                                                         server_pre_args,
                                                                         server_exec_path,
@@ -130,6 +140,12 @@ class Minecraft_Server():
 
         self.server_path = server_path
         self.jar_exists = helper.check_file_exists(os.path.join(server_path, server_jar))
+
+        # Check if custom Java path is specified and if it exists
+        if java_path == 'java':
+            self.java_path_exists = True
+        else:
+            self.java_path_exists = helper.check_file_exists(java_path)
 
     def run_threaded_server(self):
         # start the server
@@ -152,6 +168,11 @@ class Minecraft_Server():
         if not self.jar_exists:
             console.warning("Minecraft server JAR does not exist...")
             logger.critical("Minecraft server JAR does not exists...")
+            return False
+
+        if not self.java_path_exists:
+            console.warning("Minecraft server Java path does not exist...")
+            logger.critical("Minecraft server Java path does not exist...")
             return False
 
         if not helper.check_writeable(self.server_path):
