@@ -10,7 +10,7 @@
       <div class="col-md-6">      
         <h1 class="m-0">
             {{ _('Virtual Console for server:') }} {{ data['server_name'] }}
-            <small>{{ _('Sometimes you just need a terminal') }}</small>
+            <small style="font-size:.45em;">{{ _('Sometimes you just need a terminal') }}</small>
         </h1>
       </div>
       <div class="col-md-6">
@@ -40,7 +40,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <textarea id="virt_console" rows="250" readonly class="form-control"></textarea>
+                    <textarea id="virt_console" rows="20" readonly class="form-control"></textarea>
                     <br />
                     <div class="input-group">
                        <input type="text" class="form-control" id="server_command" name="server_command" placeholder="{{ _('Enter your server command') }}">

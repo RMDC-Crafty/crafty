@@ -10,7 +10,7 @@
       <div class="col-md-6">      
         <h1 class="m-0">
           {{ _('Logs for Server:') }} {{ data['server_name'] }}
-          <small>{{ _("I don't know... Have you checked the logs?") }}</small>
+          <small style="font-size:.45em;">{{ _("I don't know... Have you checked the logs?") }}</small>
         </h1>
       </div>
       <div class="col-md-6">
@@ -47,9 +47,7 @@
                           <li class="nav-item">
                             <a class="nav-link" id="custom-tabs-access-tab" data-toggle="pill" href="#custom-tabs-access" role="tab" aria-controls="custom-tabs-access" aria-selected="false">Access.log</a>
                           </li>
-                          <li class="nav-item">
-                            <a class="nav-link" id="custom-tabs-ftp-tab" data-toggle="pill" href="#custom-tabs-ftp" role="tab" aria-controls="custom-tabs-ftp" aria-selected="false">FTP.log</a>
-                          </li>
+
                           <li class="nav-item"><a href="#" class="nav-link" id="search_tab" data-toggle="tab">{{ _('Search Results') }}</a></li>
                           <li class="nav-item"><a class="nav-link">{{ _('Click On The Log Below To Scroll To Bottom') }}</a></li>
                           <li class="nav-item float-right"><a id="search_box" href="#" class="nav-link text-muted float-right"><i class="fas fa-search" aria-hidden="true"></i>  {{ _('Search') }} Latest.log </a></li>
@@ -69,9 +67,7 @@
                           <div class="tab-pane fade" id="custom-tabs-access" role="tabpanel" aria-labelledby="custom-tabs-access-tab">
                             <textarea id="access_logs" rows="25" readonly class="form-control">{% for d in data['access'] %}{{ d }}{% end %}</textarea>
                           </div>
-                          <div class="tab-pane fade" id="custom-tabs-ftp" role="tabpanel" aria-labelledby="custom-tabs-ftp-tab">
-                            <textarea id="ftp_logs" rows="25" readonly class="form-control">{% for d in data['ftp'] %}{{ d }}{% end %}</textarea>
-                          </div>
+
                         </div>
                       </div>
                       <!-- /.card -->
