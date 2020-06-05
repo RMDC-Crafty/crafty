@@ -284,14 +284,14 @@ if __name__ == '__main__':
         console.info("Your Password is: {}".format(admin_pass))
         console.info("Your Admin token is: {}".format(admin_token))
         currentDT = datetime.datetime.now().strftime("%Y-%m-%d %I:%M:%S %p")
-        message = "Would you like us to setup a minecraft server for you? [y/n]: "
-        setupmcsrv = str(input(colored("[+] Crafty: {} - INFO:\t{}".format(currentDT, message), 'white')))
-        setupmcsrv = setupmcsrv.lower()
-        if setupmcsrv == 'y':
-            if os.name == 'nt':
-                os.system("python app\minecraft\mcservcreate.py")
-            else:
-                os.system("python app/minecraft/mcservcreate.py")
+        # message = "Would you like us to setup a minecraft server for you? [y/n]: "
+        # setupmcsrv = str(input(colored("[+] Crafty: {} - INFO:\t{}".format(currentDT, message), 'white')))
+        # setupmcsrv = setupmcsrv.lower()
+        # if setupmcsrv == 'y':
+        #     if os.name == 'nt':
+        #         os.system("python app\minecraft\mcservcreate.py")
+        #     else:
+        #         os.system("python app/minecraft/mcservcreate.py")
 
     # for each server that is defined, we set them up in the multi class, so we have them ready for later.
 
