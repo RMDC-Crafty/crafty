@@ -110,14 +110,15 @@
 
 
     <div class="row">
-      {% for s in data['servers_defined'] %}
 
+      {% for s in data['servers_defined'] %}
         <div class="col-6 col-lg-6 col-xl-4">
-        {% if s['running'] %}
-        <div class="card card-success">
-        {% else %}
-        <div class="card card-danger">
-        {% end %}
+
+          {% if s['running'] %}
+          <div class="card card-success">
+          {% else %}
+          <div class="card card-danger">
+          {% end %}
 
           <div class="card-header">
             <h3 class="card-title" data-toggle="tooltip" title="Server ID {{ s['id'] }} - {{ s['name'] }}">{{ s['name'] }}</h3>
@@ -161,43 +162,48 @@
           <div class="card-body text-center">
 
             {% if data['user_data']['svr_control'] %}
-            <a href="/admin/server_control?id={{ s['id'] }}" class="btn  btn-default">
+            <a href="/admin/server_control?id={{ s['id'] }}" class="btn btn-default btn-sm">
               <i class="far fa-eye" aria-hidden="true"></i> {{ _('Details') }}
             </a>
 
-            <a href="/admin/virtual_console?id={{ s['id'] }}" class="btn  btn-default">
+            <a href="/admin/virtual_console?id={{ s['id'] }}" class="btn btn-default btn-sm">
               <i class="fas fa-terminal" aria-hidden="true"></i> {{ _('Terminal') }}
             </a>
             {% end %}
 
             {% if data['user_data']['logs'] %}
-            <a href="/admin/get_logs?id={{ s['id'] }}" class="btn btn-default">
+            <a href="/admin/get_logs?id={{ s['id'] }}" class="btn btn-default btn-sm">
               <i class="fas fa-list" aria-hidden="true"></i> {{ _('Logs') }}
             </a>
             {% end %}
 
             {% if data['user_data']['backups'] %}
-            <a href="/admin/backups?id={{ s['id'] }}" class="btn btn-default">
+            <a href="/admin/backups?id={{ s['id'] }}" class="btn btn-default btn-sm">
               <i class="far fa-save" aria-hidden="true"></i> {{ _('Backup') }}
             </a>
             {% end %}
 
             {% if data['user_data']['schedules'] %}
-            <a href="/admin/schedules?id={{ s['id'] }}" class="btn btn-default">
+            <a href="/admin/schedules?id={{ s['id'] }}" class="btn btn-default btn-sm">
               <i class="far fa-clock" aria-hidden="true"></i> {{ _('Tasks') }}
             </a>
             {% end %}
 
             {% if data['user_data']['files'] %}
-            <a href="/admin/files?id={{ s['id'] }}" class="btn btn-default">
+            <a href="/admin/files?id={{ s['id'] }}" class="btn btn-default btn-sm">
               <i class="far fa-folder" aria-hidden="true"></i> {{ _('Files') }}
             </a>
+            <br/>
+
+            <div id="info-server-{{ s['id'] }}" class="">
+              <small class="text-muted">Last updated 3 mins ago</small>
+            </div>
+
             {% end %}
+
           </div>
           
-          <div id="info-server-{{ s['id'] }}" class="card-footer">
-            <small class="text-muted">Last updated 3 mins ago</small>
-          </div>
+
 
               
           <!-- /.card-body -->
