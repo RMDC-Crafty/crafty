@@ -3,7 +3,7 @@
     <input type="hidden" name="file_path" value="{{ data ['file_path'] }}"/>
     <input type="hidden" name="server_id" value=" {{ data ['server_id'] }} "/>
     {{ _('Server ID:') }}  {{ data ['server_id'] }}
-    <textarea name="file_contents" rows="20" cols="120">{{ data['file_data'] }}</textarea><br />
+    <textarea name="file_contents" rows="20" cols="90">{{ data['file_data'] }}</textarea><br />
     <div class="row">
         <div class="col-6">
             <a class="btn-danger btn" onclick="bootbox.hideAll()">{{ _('Cancel') }}</a>
