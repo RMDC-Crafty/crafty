@@ -96,7 +96,9 @@ class multi_serve():
         logger.info("Rebuilding Scheduled Tasks")
         schedule.every(10).seconds.do(multi.do_stats_for_servers).tag('server_stats', 'all_tasks')
         schedule.every(10).seconds.do(multi.do_host_status).tag('server_stats', 'all_tasks')
+        self.reload_user_schedules()
         self.reload_history_settings()
+
 
     def reload_user_schedules(self):
         logger.info("Reloading Scheduled Tasks")

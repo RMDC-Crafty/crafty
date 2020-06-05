@@ -303,6 +303,9 @@ if __name__ == '__main__':
     # do our scheduling
     multi.reload_scheduling()
 
+    # let's reload the scheduler every 30 seconds to make sure it doesn't die all the time
+    schedule.every(30).seconds.do(multi.reload_scheduling())
+
     multi.reload_user_schedules()
 
     # start the remote commands watcher thread
