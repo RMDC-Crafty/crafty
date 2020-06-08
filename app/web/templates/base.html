@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-<<<<<<< HEAD
   <meta charset="ISO-8859-1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>{% block title %}{{ _('Default') }}{% end %}</title>
@@ -10,16 +9,6 @@
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 4.4.1 -->
   <!-- <link rel="stylesheet" href="/static/vendors/bootstrap/css/bootstrap.min.css"> -->
-=======
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>{% block title %}Default{% end %}</title>
-  {% block meta %} {% end %}
-  <!-- Tell the browser to be responsive to screen width -->
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <!-- Bootstrap 3.3.7 -->
-  <link rel="stylesheet" href="/static/vendors/bootstrap/css/bootstrap.min.css">
->>>>>>> snapshot
   <!-- Font Awesome -->
   <link rel="stylesheet" href="/static/vendors/font-awesome/css/font-awesome.min.css">
   <!-- Datatables -->
@@ -31,19 +20,14 @@
   <!-- timepicker -->
   <link rel="stylesheet" href="/static/vendors/jonthornton-timepicker/jquery.timepicker.min.css">
   <!-- Theme style -->
-<<<<<<< HEAD
+
   <link rel="stylesheet" href="/static/css/adminlte.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <!-- <link rel="stylesheet" href="/static/css/skins/skin-blue.min.css"> -->
   <!-- Crafty style -->
   <link rel="stylesheet" href="/static/css/crafty.css">
-=======
-  <link rel="stylesheet" href="/static/css/AdminLTE.min.css">
-  <!-- AdminLTE Skins. Choose a skin from the css/skins
-       folder instead of downloading all of them to reduce the load. -->
-  <link rel="stylesheet" href="/static/css/skins/skin-blue.min.css">
->>>>>>> snapshot
+
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -54,8 +38,7 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-<<<<<<< HEAD
-  
+
   <script>
     //determines if the user has a set theme
     function detectColorScheme(){
@@ -183,165 +166,12 @@
         <!-- Control Sidebar Toggle Button -->
       </ul>
     </nav>
-=======
-</head>
-<body class="hold-transition skin-blue sidebar-mini">
-<!-- Site wrapper -->
-<div class="wrapper">
 
-  <header class="main-header">
-    <!-- Logo -->
-    <a href="/" class="logo">
-      <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><b>Crafty</b></span>
-      <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><b>Crafty</b> Controller</span>
-    </a>
-    <!-- Header Navbar: style can be found in header.less -->
-    <nav class="navbar navbar-static-top">
-      <!-- Sidebar toggle button-->
-      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
-
-
-      <div class="navbar-custom-menu">
-
-        <ul class="nav navbar-nav">
-          <!-- Messages: style can be found in dropdown.less-->
-
-          <!-- Tasks: style can be found in dropdown.less -->
-          <li class="">
-            <a href="#" id="update_check" aria-expanded="true">
-              <i class="fa fa-refresh"></i> Check For Updates
-            </a>
-          </li>
-
-          <!-- User Account: style can be found in dropdown.less -->
-          <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-user-circle" aria-hidden="true"></i>
-              <span class="hidden-xs">{{ data['user_data']['username'] }}</span>
-            </a>
-            <ul class="dropdown-menu">
-              <!-- User image -->
-              <li class="user-header">
-                <p>
-                  Role: {{ data['user_data']['role_name'] }}
-                </p>
-              </li>
-              <!-- Menu Body -->
-              <li class="user-body">
-                &nbsp;<b>Permissions</b><br />
-                <div class="row">
-
-                  <div class="col-xs-1">
-                    {% if data['user_data']['svr_control'] %}
-                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                      {% else %}
-                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                      {% end %}
-                  </div>
-                  <div class="col-xs-10">
-                    Server Control
-                  </div>
-
-                  <div class="col-xs-1">
-                    {% if data['user_data']['svr_console'] %}
-                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                      {% else %}
-                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                      {% end %}
-                  </div>
-                  <div class="col-xs-10">
-                    Server Console
-                  </div>
-
-                  <div class="col-xs-1">
-                    {% if data['user_data']['logs'] %}
-                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                      {% else %}
-                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                      {% end %}
-                  </div>
-                  <div class="col-xs-10">
-                    Server Logs
-                  </div>
-
-                  <div class="col-xs-1">
-                    {% if data['user_data']['backups'] %}
-                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                      {% else %}
-                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                      {% end %}
-                  </div>
-                  <div class="col-xs-10">
-                    Server Backups
-                  </div>
-
-                  <div class="col-xs-1">
-                    {% if data['user_data']['schedules'] %}
-                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                      {% else %}
-                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                      {% end %}
-                  </div>
-                  <div class="col-xs-10">
-                    Server Schedule
-                  </div>
-
-                  <div class="col-xs-1">
-                    {% if data['user_data']['config'] %}
-                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                      {% else %}
-                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                      {% end %}
-                  </div>
-                  <div class="col-xs-10">
-                    Server Config
-                  </div>
-
-                  <div class="col-xs-1">
-                    {% if data['user_data']['api_access'] %}
-                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                      {% else %}
-                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                      {% end %}
-                  </div>
-                  <div class="col-xs-10">
-                    API Access
-                  </div>
-
-
-
-                </div>
-
-
-                <!-- /.row -->
-              </li>
-              <!-- Menu Footer-->
-              <li class="user-footer">
-
-                <div class="pull-right">
-                  <a href="/" class="btn btn-default btn-flat">Sign out</a>
-                </div>
-              </li>
-            </ul>
-          </li>
-          <!-- Control Sidebar Toggle Button -->
-        </ul>
-      </div>
-    </nav>
-  </header>
->>>>>>> snapshot
 
   <!-- =============================================== -->
 
   <!-- Left side column. contains the sidebar -->
-<<<<<<< HEAD
+
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Logo -->
     <a href="/" class="brand-link">
@@ -351,17 +181,12 @@
 
     <!-- sidebar: style can be found in sidebar.less -->
     <div class="sidebar">
-=======
-  <aside class="main-sidebar">
-    <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
->>>>>>> snapshot
+
       <!-- Sidebar user panel -->
 
       <!-- search form -->
 
       <!-- sidebar menu: : style can be found in sidebar.less -->
-<<<<<<< HEAD
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
           <li class="nav-item treeview"><a href="/admin/dashboard" class="nav-link"><i class="nav-icon fa fa-tachometer-alt"></i> <p> {{ _('Dashboard') }}</p></a></li>
@@ -378,25 +203,6 @@
         </ul>
       </nav>
     </div>
-=======
-      <ul class="sidebar-menu" data-widget="tree">
-        <li class="header">MAIN NAVIGATION</li>
-
-        <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
-
-        {% if data['user_data']['config'] %}
-        <li><a href="/admin/config"><i class="fa fa-cog" aria-hidden="true"></i> <span> Config</span> </a></li>
-        {% end %}
-
-        <li><a href="/admin/change_password"><i class="fa fa-key" aria-hidden="true"></i><span> Change Password</span></a></li>
-
-        <li><a href="https://gitlab.com/crafty-controller/crafty-web/-/wikis/home" target="_blank"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
-
-        <li><a href="https://discord.gg/XR5x3ZM" target="_blank"><i class="fa fa-comment"></i> <span>Join The Discord</span></a></li>
-
-      </ul>
-    </section>
->>>>>>> snapshot
     <!-- /.sidebar -->
   </aside>
 
@@ -410,13 +216,8 @@
   <!-- /.content-wrapper -->
 
   <footer class="main-footer">
-<<<<<<< HEAD
     <div class="float-right d-none d-sm-inline">
       <b>{{ _('Crafty Controller Version:') }} </b>
-=======
-    <div class="pull-right hidden-xs">
-      <b>Crafty Controller Version: </b>
->>>>>>> snapshot
       {% block version %}
         {{ data['version_data']['major'] }}.
         {{ data['version_data']['minor'] }}.
@@ -424,12 +225,7 @@
 
       {% end %}
     </div>
-<<<<<<< HEAD
     <strong>Copyright &copy; 2019 - 2020 <a href="https://craftycontrol.com">{{ _('Crafty Controller') }}</a>.</strong> {{ _('All rights reserved.') }}
-=======
-    <strong>Copyright &copy; 2019 - 2020 <a href="https://craftycontrol.com">Crafty Controller</a>.</strong> All rights
-    reserved.
->>>>>>> snapshot
   </footer>
 
 </div>
@@ -470,11 +266,7 @@
 
 <script>
   $(document).ready(function () {
-<<<<<<< HEAD
-    /*$('.sidebar-menu').tree()*/
-=======
     $('.sidebar-menu').tree()
->>>>>>> snapshot
 
     $('#update_check').click(function(){
       update_check();
@@ -488,11 +280,7 @@
     }
 
   function update_check(){
-<<<<<<< HEAD
         bootbox.alert("{{ _('Getting Version Data') }}");
-=======
-        bootbox.alert("Getting Version Data");
->>>>>>> snapshot
 
         $.ajax({
             type: 'GET',
@@ -509,7 +297,6 @@
         });
     }
 
-<<<<<<< HEAD
     //identify the toggle switch HTML element
   const toggleSwitch = document.getElementById("input-switch");
 
@@ -534,8 +321,6 @@
       toggleSwitch.checked = true;
   }
 
-=======
->>>>>>> snapshot
 </script>
 
 {% block js-script %}
