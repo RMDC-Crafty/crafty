@@ -74,7 +74,10 @@ class SetupHandler(BaseHandler):
                     MC_settings.memory_max: max_mem,
                     MC_settings.memory_min: min_mem,
                     MC_settings.additional_args: "",
+<<<<<<< HEAD
                     MC_settings.java_path: "java",
+=======
+>>>>>>> snapshot
                     MC_settings.auto_start_server: auto_start,
                     MC_settings.auto_start_delay: 10,
                     MC_settings.auto_start_priority: 1,

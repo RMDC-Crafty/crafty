@@ -153,6 +153,20 @@ class remote_commands():
         elif command == 'revert_server_jar_console':
             srv_obj.revert_updated_server_jar(True)
 
+        elif command == "exit_crafty":
+            logger.info("Sending Stop Command To Crafty")
+
+            # stop the ftp server...
+            if ftp_svr_object.check_running():
+                ftp_svr_object.stop_threaded_ftp_server()
+
+            # kill all mc servers gracefully
+            multi.stop_all_servers()
+
+            logger.info("***** Crafty Stopped ***** \n")
+            webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(200, {}, {"code": "CWEB_STOP"}, {"info": "Crafty is shutting down"}))
+            os._exit(0)
+
         elif command == 'start_ftp':
             settings = MC_settings.get_by_id(server_id)
 

@@ -37,7 +37,10 @@ class Minecraft_Server():
         self.settings = None
         self.updating = False
         self.jar_exists = False
+<<<<<<< HEAD
         self.java_path_exists = False
+=======
+>>>>>>> snapshot
         self.server_id = None
         self.name = None
         self.is_crashed = False
@@ -105,7 +108,10 @@ class Minecraft_Server():
         server_min_mem = self.settings.memory_min
         server_args = self.settings.additional_args
         server_pre_args = self.settings.pre_args
+<<<<<<< HEAD
         java_path = self.settings.java_path
+=======
+>>>>>>> snapshot
 
         # set up execute path if we have spaces, we put quotes around it for windows
         if " " in server_path:
@@ -113,6 +119,7 @@ class Minecraft_Server():
         else:
             exec_path = server_path
 
+<<<<<<< HEAD
         # Wrap Java path in quotes if it contains spaces
         if " " in java_path:
             java_exec = '"{}"'.format(java_path)
@@ -147,6 +154,20 @@ class Minecraft_Server():
         else:
             self.java_path_exists = helper.check_file_exists(java_path)
 
+=======
+        server_exec_path = os.path.join(exec_path, server_jar)
+
+        self.server_command = 'java -Xms{}M -Xmx{}M {} -jar {} nogui {}'.format(
+                                                                            server_min_mem,
+                                                                            server_max_mem,
+                                                                            server_pre_args,
+                                                                            server_exec_path,
+                                                                            server_args
+                                                                            )
+        self.server_path = server_path
+        self.jar_exists = helper.check_file_exists(os.path.join(server_path, server_jar))
+
+>>>>>>> snapshot
     def run_threaded_server(self):
         # start the server
         self.server_thread = threading.Thread(target=self.start_server, daemon=True)
@@ -170,11 +191,14 @@ class Minecraft_Server():
             logger.critical("Minecraft server JAR does not exists...")
             return False
 
+<<<<<<< HEAD
         if not self.java_path_exists:
             console.warning("Minecraft server Java path does not exist...")
             logger.critical("Minecraft server Java path does not exist...")
             return False
 
+=======
+>>>>>>> snapshot
         if not helper.check_writeable(self.server_path):
             console.warning("Unable to write/access {}".format(self.server_path))
             logger.critical("Unable to write/access {}".format(self.server_path))
@@ -512,6 +536,11 @@ class Minecraft_Server():
                 logger.info("Backing up server directory to %s", backup_filename)
                 logger.debug("Full path is %s", backup_full_path)
 
+<<<<<<< HEAD
+=======
+                backup_list = Backups.get()
+                backup_data = model_to_dict(backup_list)
+>>>>>>> snapshot
                 backup_dirs = json.loads(backup_data['directories'])
 
                 helper.zippath(backup_dirs, backup_full_path, ['crafty_backups'])

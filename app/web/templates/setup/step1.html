@@ -3,7 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<<<<<<< HEAD
   <title>{% block title %}{{ _('Crafty Controller - Login') }}{% end %}</title>
+=======
+  <title>{% block title %}Crafty Controller - Login{% end %}</title>
+>>>>>>> snapshot
   {% block meta %} {% end %}
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -14,11 +18,17 @@
   <!-- Ionicons -->
   <link rel="stylesheet" href="/static/vendors/ionicons/css/ionicons.min.css">
   <!-- Theme style -->
+<<<<<<< HEAD
   <link rel="stylesheet" href="/static/css/adminlte.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <!-- Crafty style -->
   <link rel="stylesheet" href="/static/css/crafty.css">
+=======
+  <link rel="stylesheet" href="/static/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+>>>>>>> snapshot
 
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -30,6 +40,7 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+<<<<<<< HEAD
   
   <script>
     //determines if the user has a set theme
@@ -56,16 +67,27 @@
     }
     detectColorScheme();
   </script>
+=======
+>>>>>>> snapshot
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
+<<<<<<< HEAD
     <a ><b>{{ _('Crafty') }} </b>{{ _('Controller') }}</a>
   </div>
   <!-- /.login-logo -->
   <div class="login-card-body">
     <p class="login-box-msg">
       <b>{{ _("5 Questions and a checkbox until you're done") }}</b>
+=======
+    <a ><b>Crafty </b>Controller</a>
+  </div>
+  <!-- /.login-logo -->
+  <div class="login-box-body">
+    <p class="login-box-msg">
+      <b>5 Questions and a checkbox until you're done</b>
+>>>>>>> snapshot
 
     </p>
 
@@ -73,25 +95,43 @@
 
       <div class="form-group has-feedback">
         <label>
+<<<<<<< HEAD
           {{ _('Server Name') }} - <small>{{ _('Example Survival Server') }}</small>
         </label>
         <input type="text" class="form-control" placeholder="{{ _('Server Name') }}" name="server_name" value="{{_('MyFirstServer') }}" maxlength="55">
+=======
+          Server Name - <small>Example Survival Server</small>
+        </label>
+        <input type="text" class="form-control" placeholder="Server Name" name="server_name" value="MyFirstServer" maxlength="55">
+>>>>>>> snapshot
         <span class="glyphicon glyphicon-file form-control-feedback"></span>
       </div>
 
       <div class="form-group has-feedback">
         {% if data['is_windows'] %}
           <label>
+<<<<<<< HEAD
             {{ _('Server Path') }} - <small>{{ _('Example c:\minecraft\server') }}</small>
           </label>
           <input type="text" class="form-control" placeholder="{{ _('Server Path') }}" name="server_path"
+=======
+            Server Path - <small>Example c:\minecraft\server</small>
+          </label>
+          <input type="text" class="form-control" placeholder="Server Path" name="server_path"
+>>>>>>> snapshot
                  value="c:\windows\minecraft" maxlength="255">
           <span class="glyphicon glyphicon-folder-open form-control-feedback"></span>
         {% else %}
         <label>
+<<<<<<< HEAD
             {{ _('Server Path') }} - <small>{{ _("Example: /var/opt/minecraft/server") }}</small>
           </label>
           <input type="text" class="form-control" placeholder="{{ _('Server Path') }}" name="server_path" maxlength="255"
+=======
+            Server Path - <small>Example /var/opt/minecraft/server</small>
+          </label>
+          <input type="text" class="form-control" placeholder="Server Path" name="server_path" maxlength="255"
+>>>>>>> snapshot
                  value="/var/opt/minecraft/server">
           <span class="glyphicon glyphicon-folder-open form-control-feedback"></span>
         {% end %}
@@ -99,29 +139,51 @@
 
       <div class="form-group has-feedback">
         <label>
+<<<<<<< HEAD
           {{ _('Server Jar') }} - <small>{{ _('Example paper.jar') }}</small>
         </label>
         <input type="text" class="form-control" placeholder="{{ _('Server Jar') }}" name="server_jar" value="paperclip.jar" maxlength="255">
+=======
+          Server Jar - <small>Example paper.jar</small>
+        </label>
+        <input type="text" class="form-control" placeholder="Server Jar" name="server_jar" value="paperclip.jar" maxlength="255">
+>>>>>>> snapshot
         <span class="glyphicon glyphicon-file form-control-feedback"></span>
       </div>
 
       <div class="form-group has-feedback">
         <label>
+<<<<<<< HEAD
           {{ _('Server Max Memory in MB') }} <br /><small>{{ _('Example: 2048 - Currently') }} {{ data['mem']}} {{ _('available') }}</small>
         </label>
         <input type="number" class="form-control" placeholder="{{ _('Max Memory') }}" name="max_mem" value="2048">
+=======
+          Server Max Memory in MB <br /><small>Example: 2048 - Currently {{ data['mem']}} available</small>
+        </label>
+        <input type="number" class="form-control" placeholder="Server Jar" name="max_mem" value="2048">
+>>>>>>> snapshot
       </div>
 
       <div class="form-group has-feedback">
         <label>
+<<<<<<< HEAD
           {{ _('Server Min Memory in MB') }} <br /><small>{{ _('Example: 1024 - Currently') }} {{ data['mem']}} {{ _('available') }}</small>
         </label>
         <input type="number" class="form-control" placeholder="{{ _('Min Memory') }}" name="min_mem" value="1024">
+=======
+          Server Min Memory in MB <br /><small>Example: 1024 - Currently {{ data['mem']}} available</small>
+        </label>
+        <input type="number" class="form-control" placeholder="Server Jar" name="min_mem" value="1024">
+>>>>>>> snapshot
       </div>
 
       <div class="form-group has-feedback">
         <label>
+<<<<<<< HEAD
           {{ _('Auto Start Server after 10 Seconds:') }}
+=======
+          Auto Start Server after 10 Seconds:
+>>>>>>> snapshot
           <input type="checkbox"  name="auto_start" id="auto_start" checked="checked">
 
         </label>
@@ -129,12 +191,21 @@
       </div>
 
       <div class="row">
+<<<<<<< HEAD
         <div class="col-6">
 
         </div>
         <!-- /.col -->
         <div class="col-6">
           <button type="submit" onclick="show_warning()" class="btn btn-success btn-block btn-flat"> {{ _('Save and Finish') }}</button>
+=======
+        <div class="col-xs-6">
+
+        </div>
+        <!-- /.col -->
+        <div class="col-xs-6">
+          <button type="submit" onclick="show_warning()" class="btn btn-success btn-block btn-flat"> Save and Finish</button>
+>>>>>>> snapshot
         </div>
         <!-- /.col -->
       </div>
@@ -144,7 +215,11 @@
     <br />
 
   </div>
+<<<<<<< HEAD
   <!-- /.login-card-body -->
+=======
+  <!-- /.login-box-body -->
+>>>>>>> snapshot
 </div>
 <!-- jQuery 3 -->
 <script src="/static/vendors/jquery/jquery.min.js"></script>
@@ -165,7 +240,11 @@ function show_warning(){
   if ($('#auto_start').attr('checked'))
   {
       var dialog = bootbox.dialog({
+<<<<<<< HEAD
         message: '<p class="text-center mb-0"><i class="fas fa-spin fa-cog"></i> Please wait while we start the minecraft server</p>',
+=======
+        message: '<p class="text-center mb-0"><i class="fa fa-spin fa-cog"></i> Please wait while we start the minecraft server</p>',
+>>>>>>> snapshot
         backdrop: true,
         closeButton: true
       });

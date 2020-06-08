@@ -10,8 +10,11 @@ from app.classes.web_sessions import web_session
 from app.classes.multiserv import multi
 from app.classes.ftp import ftp_svr_object
 from app.classes.backupmgr import backupmgr
+<<<<<<< HEAD
 from zipfile import ZipFile
 import shutil
+=======
+>>>>>>> snapshot
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +23,10 @@ class AjaxHandler(BaseHandler):
     def initialize(self, mcserver):
         self.mcserver = mcserver
         self.console = console
+<<<<<<< HEAD
         self.session = web_session(self.current_user)
+=======
+>>>>>>> snapshot
 
     @tornado.web.authenticated
     def get(self, page):
@@ -68,6 +74,7 @@ class AjaxHandler(BaseHandler):
             self.render(
                 'ajax/version.html',
                 data=context
+<<<<<<< HEAD
             )
 
         elif page == 'host_cpu_infos':  
@@ -211,6 +218,29 @@ class AjaxHandler(BaseHandler):
                     data=context
                 )
 
+=======
+
+            )
+
+        elif page == 'get_file':
+            file_path = bleach.clean(self.get_argument('file_name'))
+            server_id = bleach.clean(self.get_argument('server_id'))
+
+            f = open(file_path, "r")
+            file_data = f.read()
+            context = {
+                "file_data": file_data,
+                "file_path": file_path,
+                "server_id": server_id
+            }
+
+            self.render(
+                'ajax/edit_file.html',
+                data=context
+
+            )
+
+>>>>>>> snapshot
     def post(self, page):
 
         name = tornado.escape.json_decode(self.current_user)
@@ -295,7 +325,11 @@ class AjaxHandler(BaseHandler):
 
                 self.write(new_pass)
 
+<<<<<<< HEAD
         elif page == "edit_user_role":
+=======
+        elif page == "edit_role":
+>>>>>>> snapshot
             if not user_data['config']:
                 logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
                     user_data['username'], user_data['role_name'], "Delete User"))
@@ -345,6 +379,7 @@ class AjaxHandler(BaseHandler):
                     Users.delete().where(Users.username == username).execute()
                     self.write("{} deleted".format(username))
 
+<<<<<<< HEAD
         elif page == 'add_role':
             if not user_data['config']:
                 logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
@@ -416,10 +451,13 @@ class AjaxHandler(BaseHandler):
                     Roles.delete().where(Roles.name == rolename).execute()
                     self.write("{} deleted".format(rolename))
 
+=======
+>>>>>>> snapshot
         elif page == 'save_file':
             file_data = bleach.clean(self.get_argument('file_contents'))
             file_path = bleach.clean(self.get_argument("file_path"))
             server_id = bleach.clean(self.get_argument("server_id"))
+<<<<<<< HEAD
 
             mc_data = MC_settings.get_by_id(server_id)
             mc_settings = model_to_dict(mc_data)
@@ -435,15 +473,22 @@ class AjaxHandler(BaseHandler):
             if not helper.check_file_exists(built_path):
                 raise Exception("possible file traversal detected {}".format(file_path))
 
+=======
+>>>>>>> snapshot
             try:
                 file = open(file_path, 'w')
                 file.write(file_data)
                 file.close()
+<<<<<<< HEAD
                 logger.info("File {} saved with new content".format(file_path))
+=======
+                logger.error("File {} saved with new content".format(file_path))
+>>>>>>> snapshot
             except Exception as e:
                 logger.error("Unable to save {} due to {} error".format(file_path, e))
             self.redirect("/admin/files?id={}".format(server_id))
 
+<<<<<<< HEAD
         elif page == "del_server_file":
             file_path = bleach.clean(self.get_argument("file_name"))
             server_id = bleach.clean(self.get_argument("server_id"))
@@ -536,6 +581,8 @@ class AjaxHandler(BaseHandler):
             self.redirect("/admin/files?id={}".format(server_id))
 
 
+=======
+>>>>>>> snapshot
         elif page == "destroy_server":
             server_id = bleach.clean(self.get_body_argument('server_id', default=None, strip=True))
 

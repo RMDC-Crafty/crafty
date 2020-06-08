@@ -1,5 +1,6 @@
 {% extends ../base.html %}
 
+<<<<<<< HEAD
 {% block title %}{{ _('Crafty Controller - Backups') }}{% end %}
 
 {% block content %}
@@ -22,11 +23,28 @@
     </div>
   </div>
 </div>
+=======
+{% block title %}Crafty Controller - Backups{% end %}
+
+{% block content %}
+
+<section class="content-header">
+  <h1>
+    Server Backups
+    <small>Because the NSA won't send their copy</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Server Backup</li>
+  </ol>
+</section>
+>>>>>>> snapshot
 
 
 <section class="content">
 
     <div class="row">
+<<<<<<< HEAD
         <div class="col-12 col-lg-6">
             <div class="card card-secondary card-outline">
                 <div class="card-header">
@@ -35,10 +53,21 @@
                   </h3>
                 </div>
                 <div class="card-body">
+=======
+        <div class="col-xs-6">
+            <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">
+                      Backups for Server ID: {{ data['server_id'] }} - {{ data['server_name'] }}
+                  </h3>
+                </div>
+                <div class="box-body">
+>>>>>>> snapshot
                     <a  id="backup_button"
                         href="/admin/commands?command=backup&id={{ data['server_id'] }}"
                         onclick="backup_started()"
                         class="btn btn-app">
+<<<<<<< HEAD
                         <i class="fas fa-save"></i> {{ _('Backup Server Now') }}
                     </a>
                     <a id="show_config" class="btn btn-app">
@@ -47,15 +76,32 @@
                     </a>
                     <div id="backup_save_note" class="text-danger">
                         {{ _('Please save your changes (or hit cancel) below to enable the backup button again.') }}
+=======
+                        <i class="fa fa-floppy-o"></i> Backup Server Now
+                    </a>
+                    <a id="show_config" class="btn btn-app">
+                        <i class="fa fa-cogs"></i>
+                        Change Backup Config
+                    </a>
+                    <div id="backup_save_note" class="text-danger">
+                        Please save your changes (or hit cancel) below to enable the backup button again.
+>>>>>>> snapshot
                     </div>
 
                     <div id="backup_data">
                         <hr />
 
+<<<<<<< HEAD
                         {{ _('Your backups are stored in:') }} <br /> {{ data['backup_path'] }}<br />
                         <hr>
 
                         {{ _('You are backing up these paths:') }}<br />
+=======
+                        Your backups are stored in: <br /> {{ data['backup_path'] }}<br />
+                        <hr>
+
+                        You are backing up these paths:<br />
+>>>>>>> snapshot
                         <ul>
                             {% for p in data['backup_paths'] %}
                             <li>{{ p }}</li>
@@ -65,6 +111,7 @@
                 </div>
               </div>
 
+<<<<<<< HEAD
             <div class="card card-secondary card-outline" id="backup_config_box" >
                 <div class="card-header">
                   <h3 class="card-title">
@@ -95,11 +142,56 @@
                                     value="{{ data['backup_config']['storage_location'] }}"
                             >
                         </div>
+=======
+            <div class="box" id="backup_config_box" >
+                <div class="box-header with-border">
+                  <h3 class="box-title">
+                      Backup Config for Server ID: {{ data['server_id'] }} - {{ data['server_name'] }}
+                  </h3>
+                </div>
+                <div class="box-body">
+                    <form method="post">
+                    {% raw xsrf_form_html() %}
+                        <input type="hidden" name="server_id" value="{{ data['server_id'] }}"/>
+                    <div class="row">
+                        <div class="form-group">
+                              <label for="max_backups" class="col-xs-3 control-label">Max Age Of Backups In Days</label>
+
+                              <div class="col-xs-2">
+                                    <select class="form-control" name="max_backups">
+                                        <option value="7" {% if data['backup_config']['max_backups'] == 7 %} selected {% end %}>7</option>
+                                        <option value="14" {% if data['backup_config']['max_backups'] == 14 %} selected {% end %}>14</option>
+                                        <option value="30" {% if data['backup_config']['max_backups'] == 30 %} selected {% end %}>30</option>
+                                        <option value="60" {% if data['backup_config']['max_backups'] == 60 %} selected {% end %}>60</option>
+                                        <option value="90" {% if data['backup_config']['max_backups'] == 90 %} selected {% end %}>90</option>
+                                        <option value="182" {% if data['backup_config']['max_backups'] == 182 %} selected {% end %}>182</option>
+                                        <option value="365" {% if data['backup_config']['max_backups'] == 365 %} selected {% end %}>365</option>
+                                    </select>
+                              </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                          <div class="form-group">
+                              <label for="storage_location" class="col-xs-3 control-label">Where to Save Backups</label>
+
+                              <div class="col-sm-9">
+                                    <input type="text"
+                                           class="form-control"
+                                           id="storage_location"
+                                           placeholder="Backup Location"
+                                           name="storage_location"
+                                           value="{{ data['backup_config']['storage_location'] }}"
+                                    >
+                              </div>
+                            </div>
+>>>>>>> snapshot
                     </div>
 
                     <hr />
 
                     <input type="hidden" name="config_type" value="backup_settings"/>
+<<<<<<< HEAD
                     <h4>{{ _('Backup These Files') }}</h4>
                     <label>
                         {{ _('Backup the whole server:') }}<br />
@@ -117,6 +209,25 @@
 
                     <label>
                     <input type="checkbox" id="select_all" disabled="true"/> {{ _('SELECT ALL') }}
+=======
+                    <h4>Backup These Files</h4>
+                    <label>
+                        Backup the whole server:<br />
+                        {% if data['backup_data'][0] == data['server_root'] %}
+                            <input type="checkbox" id="whole_server" name="backup" value="{{ data['server_root'] }}" checked="true"/> Backup Everything
+                        {% else %}
+                            <input type="checkbox" id="whole_server" name="backup" value="{{ data['server_root'] }}"/> Backup Everything
+                        {% end %}
+
+                        <span id="everything_hint"> - Uncheck to select individual folders to backup</span>
+                    </label>
+
+                    <hr />
+                    Individual Folder Backup <br />
+
+                    <label>
+                    <input type="checkbox" id="select_all" disabled="true"/> SELECT ALL
+>>>>>>> snapshot
                     </label>
 
                     <br />
@@ -137,7 +248,11 @@
                                             disabled="true"
                                         {% end%}
                                 />
+<<<<<<< HEAD
                                 <i class="fas fa-folder" aria-hidden="true"></i>
+=======
+                                <i class="fa fa-folder" aria-hidden="true"></i>
+>>>>>>> snapshot
                                 {{ item['name'] }}
                             </label>
                             <br />
@@ -155,19 +270,32 @@
                                             disabled="true"
                                         {% end%}
                                 />
+<<<<<<< HEAD
                                 <i class="fas fa-file" aria-hidden="true"></i>
+=======
+                                <i class="fa fa-file" aria-hidden="true"></i>
+>>>>>>> snapshot
                                 {{ item['name'] }}
                             </label>
                             <br />
                         {% end %}
                     {% end %}
                     <a href="/admin/backups?id={{ data['server_id'] }}" class="btn btn-danger">
+<<<<<<< HEAD
                         {{ _('Cancel') }}
                     </a>
 
                     <button type="submit" class="btn btn-success float-right">
                         <i class="far fa-save" aria-hidden="true"></i>
                         {{ _('Save Backup Settings') }}
+=======
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="btn btn-success pull-right">
+                        <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                        Save Backup Settings
+>>>>>>> snapshot
                     </button>
                     <br class="clear"/>
                     <br class="clear"/>
@@ -176,6 +304,7 @@
             </div>
         </div>
 
+<<<<<<< HEAD
         <div class="col-12 col-lg-6">
             <div class="card card-secondary card-outline">
                 <div class="card-header">
@@ -191,6 +320,23 @@
                             <th>{{ _('Path') }}</th>
                             <th width="20%">{{ _('Size') }}</th>
                             <th width="10%">{{ _('Delete') }}</th>
+=======
+        <div class="col-xs-6">
+            <div class="box">
+                <div class="box-header with-border">
+                  <h3 class="box-title">
+                      Existing Backups
+                  </h3>
+                </div>
+                <div class="box-body">
+                    <table class="table table-responsive" id="backup_table">
+                        <thead>
+                        <tr>
+                            <th width="10%">Download</th>
+                            <th>Path</th>
+                            <th width="20%">Size</th>
+                            <th width="10%">Delete</th>
+>>>>>>> snapshot
                         </tr>
                         </thead>
                         <tbody>
@@ -198,16 +344,26 @@
                             <tr>
                             <td>
                                 <a href="/admin/downloadbackup?file={{ backup['path'] }}&id={{ data['server_id'] }}" class="btn btn-primary">
+<<<<<<< HEAD
                                     <i class="fas fa-download" aria-hidden="true"></i>
                                     {{ _('Download') }}
+=======
+                                    <i class="fa fa-download" aria-hidden="true"></i>
+                                    Download
+>>>>>>> snapshot
                                 </a>
                             </td>
                             <td>{{ backup['path'] }}</td>
                             <td>{{ backup['size'] }}</td>
                             <td>
                                 <button data-file="{{ backup['path'] }}" class="btn btn-danger del_button">
+<<<<<<< HEAD
                                     <i class="fas fa-trash" aria-hidden="true"></i>
                                     {{ _('Delete') }}
+=======
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                    Delete
+>>>>>>> snapshot
                                 </button>
 
                             </td>
@@ -298,6 +454,7 @@
 
 
         $('#backup_table').DataTable({
+<<<<<<< HEAD
             "order": [[ 1, "desc" ]],
             "paging":true,
             "lengthChange": false,
@@ -306,6 +463,9 @@
             "info": true,
             "autoWidth": false,
             "responsive": true,
+=======
+            "order": [[ 1, "desc" ]]
+>>>>>>> snapshot
         });
 
         $( ".del_button" ).click(function() {
@@ -318,10 +478,17 @@
                 message: "Do you want to delete this file? This cannot be undone.",
                 buttons: {
                     cancel: {
+<<<<<<< HEAD
                         label: '<i class="fas fa-times"></i> Cancel'
                     },
                     confirm: {
                         label: '<i class="fas fa-check"></i> Confirm'
+=======
+                        label: '<i class="fa fa-times"></i> Cancel'
+                    },
+                    confirm: {
+                        label: '<i class="fa fa-check"></i> Confirm'
+>>>>>>> snapshot
                     }
                 },
                 callback: function (result) {

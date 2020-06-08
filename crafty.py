@@ -117,7 +117,6 @@ def start_scheduler():
 
 
 def send_kill_command():
-
     # load the remote commands obj
     from app.classes.remote_coms import remote_commands
     from app.classes.http import tornado_srv
@@ -283,6 +282,7 @@ if __name__ == '__main__':
         console.info("Your Username is: Admin")
         console.info("Your Password is: {}".format(admin_pass))
         console.info("Your Admin token is: {}".format(admin_token))
+
         currentDT = datetime.datetime.now().strftime("%Y-%m-%d %I:%M:%S %p")
         message = "Would you like us to setup a minecraft server for you? [y/n]: "
         setupmcsrv = str(input(colored("[+] Crafty: {} - INFO:\t{}".format(currentDT, message), 'white')))
@@ -325,3 +325,4 @@ if __name__ == '__main__':
         while True:
             # fixes a 100% CPU usage issue in daemonized mode - thanks ImMeta for finding this.
             time.sleep(1)
+

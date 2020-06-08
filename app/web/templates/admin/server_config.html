@@ -1,5 +1,6 @@
 {% extends ../base.html %}
 
+<<<<<<< HEAD
 {% block title %}{{ _('Crafty Controller - Server Configuration') }}{% end %}
 
 {% block content %}
@@ -26,11 +27,33 @@
 <section class="content">
     <div class="row">
         <div class="col-lg-6">
+=======
+{% block title %}Crafty Controller - Server Configuration{% end %}
+
+{% block content %}
+
+<section class="content-header">
+  <h1>
+    Server Config
+    <small>Configure Your Server</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Server Configuration</li>
+  </ol>
+</section>
+
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-6">
+>>>>>>> snapshot
             <div class="" id="mcserver">
                 <form role="form" method="post">
                     {% raw xsrf_form_html() %}
                     <input type="hidden" name="server_id" value="{{ data['mc_settings']['id'] }}"/>
 
+<<<<<<< HEAD
                     <div class="card card-secondary card-outline">
                         <div class="card-header">
                           <h3 class="card-title">
@@ -45,6 +68,22 @@
                                     {{ _('Server Name') }} <br />
                                     <small>{{ _('You can not rename servers at this time') }}</small><br />
                                     <small>{{ _('What do you call this server? (example: CraftySurvival)') }}</small>
+=======
+                    <div class="box">
+                        <div class="box-header with-border">
+                          <h3 class="box-title">
+                              Minecraft Server Config
+                          </h3>
+                        </div>
+
+                        <div class="box-body">
+
+                            <div class="form-group">
+                                <label>
+                                    Server Name <br />
+                                    <small>You can not rename servers at this time</small><br />
+                                    <small>What do you call this server? (example: CraftySurvival)</small>
+>>>>>>> snapshot
                                 </label>
                                 <input type="text"
                                        name="server_name" id="server_name" readonly
@@ -55,30 +94,49 @@
 
                             <div class="form-group">
                                 <label>
+<<<<<<< HEAD
                                     {{ _('Server Path') }} <br />
                                     <small>{{ _('What folder is your server in? (example: C:\minecraft\server)') }}</small>
                                 </label>
                                 <input type="text"
                                        name="server_path" id="server_path"
                                        class="form-control" placeholder="{{ _('Server Path Here') }}"
+=======
+                                    Server Path <br />
+                                    <small>What folder is your server in? (example: C:\minecraft\server)</small>
+                                </label>
+                                <input type="text"
+                                       name="server_path" id="server_path"
+                                       class="form-control" placeholder="Server Path Here"
+>>>>>>> snapshot
                                        value="{{ data['mc_settings']['server_path'] }}"
                                 />
                             </div>
 
                             <div class="form-group">
                                 <label>
+<<<<<<< HEAD
                                     {{ _('Server Jar') }} <br />
                                     <small>{{ _('What is your jar filename? (example: paper.jar)') }}</small>
                                 </label>
                                 <input type="text"
                                        name="server_jar" id="server_jar"
                                        class="form-control" placeholder="{{ _('Server Jar Here') }}"
+=======
+                                    Server Jar <br />
+                                    <small>What is your jar filename? (example: paper.jar)</small>
+                                </label>
+                                <input type="text"
+                                       name="server_jar" id="server_jar"
+                                       class="form-control" placeholder="Server Jar Here"
+>>>>>>> snapshot
                                        value="{{ data['mc_settings']['server_jar'] }}"
                                 />
                             </div>
 
                             <div class="form-group">
                                 <label>
+<<<<<<< HEAD
                                     {{ _('Server Max Memory') }} <br />
                                     <small>{{ _('Maximum Memory To Use in MB? (example: 2048)') }} -
                                         {{ _('you have') }} {{ data['max_memory'] }} {{ _('installed') }}</small>
@@ -86,12 +144,22 @@
                                 <input type="number"
                                        name="memory_max" id="memory_max"
                                        class="form-control" placeholder="{{ _('Server Max Memory') }}"
+=======
+                                    Server Max Memory <br />
+                                    <small>Maximum Memory To Use in MB? (example: 2048) -
+                                        you have {{ data['max_memory'] }} installed</small>
+                                </label>
+                                <input type="number"
+                                       name="memory_max" id="memory_max"
+                                       class="form-control" placeholder="Server Max Memory"
+>>>>>>> snapshot
                                        value="{{ data['mc_settings']['memory_max'] }}"
                                 />
                             </div>
 
                             <div class="form-group">
                                 <label>
+<<<<<<< HEAD
                                     {{ _('Server Min Memory') }} <br />
                                     <small>{{ _('Minimum Memory To Use in MB? (example: 1024)') }}-
                                         {{ _('you have') }} {{ data['max_memory'] }} {{ _('installed') }}</small>
@@ -99,36 +167,64 @@
                                 <input type="number"
                                        name="memory_min" id="memory_min"
                                        class="form-control" placeholder="{{ _('Server Min Memory') }}"
+=======
+                                    Server Min Memory <br />
+                                    <small>Minimum Memory To Use in MB? (example: 1024)-
+                                        you have {{ data['max_memory'] }} installed</small>
+                                </label>
+                                <input type="number"
+                                       name="memory_min" id="memory_min"
+                                       class="form-control" placeholder="Server Min Memory"
+>>>>>>> snapshot
                                        value="{{ data['mc_settings']['memory_min'] }}"
                                 />
                             </div>
 
                             <div class="form-group">
                                 <label>
+<<<<<<< HEAD
                                     {{ _('Pre Arguments') }} <br />
                                     <small>{{ _('Additional Args? (arguments to add after the memory arguments of server command)') }}</small>
                                 </label>
                                 <input type="text"
                                        name="pre_args" id="pre_args"
                                        class="form-control" placeholder="{{ _('Arguments after memory arguments') }}"
+=======
+                                    Pre Arguments <br />
+                                    <small>Additional Args? (arguments to add after the memory arguments of server command)</small>
+                                </label>
+                                <input type="text"
+                                       name="pre_args" id="pre_args"
+                                       class="form-control" placeholder="Arguments after memory arguments"
+>>>>>>> snapshot
                                        value="{{ data['mc_settings']['pre_args'] }}"
                                 />
                             </div>
 
                             <div class="form-group">
                                 <label>
+<<<<<<< HEAD
                                     {{ _('After Arguments') }} <br />
                                     <small>{{ _('Additional Args? (arguments to add at the end of server command)') }}</small>
                                 </label>
                                 <input type="text"
                                        name="additional_args" id="additional_args"
                                        class="form-control" placeholder="{{ _('Extra Arguments') }}"
+=======
+                                    After Arguments <br />
+                                    <small>Additional Args? (arguments to add at the end of server command)</small>
+                                </label>
+                                <input type="text"
+                                       name="additional_args" id="additional_args"
+                                       class="form-control" placeholder="Extra Arguments"
+>>>>>>> snapshot
                                        value="{{ data['mc_settings']['additional_args'] }}"
                                 />
                             </div>
 
                             <div class="form-group">
                                 <label>
+<<<<<<< HEAD
                                     {{ _('Java Path') }} <br />
                                     <small>{{ _('Java Executable Path? (example: "C:\\path\\to\\jre\\bin\\java.exe" or "java")') }}</small>
                                 </label>
@@ -147,6 +243,14 @@
                                 <input type="text"
                                        name="jar_url" id="jar_url"
                                        class="form-control" placeholder="{{ _('https://example.com/latest/server.jar') }}"
+=======
+                                    Jar Update URL<br />
+                                    <small>Server Jar Update URL - This is where you define where to update the jar from.</small>
+                                </label>
+                                <input type="text"
+                                       name="jar_url" id="jar_url"
+                                       class="form-control" placeholder="https://example.com/latest/server.jar"
+>>>>>>> snapshot
                                        value="{{ data['mc_settings']['jar_url'] }}"
                                 />
                             </div>
@@ -155,101 +259,169 @@
 
                             <!-- radio -->
                             <div class="form-group">
+<<<<<<< HEAD
                                 <b>{{ _('Auto Start Server On Program Launch?') }}</b>
                                 <div class="form-check">
+=======
+                                <b>Auto Start Server On Program Launch?</b>
+                                <div class="radio">
+>>>>>>> snapshot
                                     <label>
                                         <input type="radio"
                                                name="auto_start_server"
                                                value="1"
                                                 {% if data['mc_settings']['auto_start_server'] %} checked {% end %}
                                                 />
+<<<<<<< HEAD
                                         {{ _('Yes - Start the Minecraft Server on program launch.') }}
                                     </label>
                                 </div>
 
                                 <div class="form-check">
+=======
+                                        Yes - Start the Minecraft Server on program launch.
+                                    </label>
+                                </div>
+
+                                <div class="radio">
+>>>>>>> snapshot
                                     <label>
                                         <input type="radio"
                                                name="auto_start_server"
                                                value="0"
                                                 {% if data['mc_settings']['auto_start_server'] == False %} checked {% end %}
                                                 />
+<<<<<<< HEAD
                                         {{ _('No - I will start the server myself.') }}
+=======
+                                        No - I will start the server myself.
+>>>>>>> snapshot
                                     </label>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label>
+<<<<<<< HEAD
                                     {{ _('Auto Start Delay In Seconds') }}<br />
                                     <small>{{ _('Has no effect if auto start is turned off (Example: 10)') }}</small>
                                 </label>
                                 <input type="number"
                                        name="auto_start_delay" id="auto_start_delay"
                                        class="form-control" placeholder="{{ _('Autostart Delay') }}"
+=======
+                                    Auto Start Delay In Seconds<br />
+                                    <small>Has no effect if auto start is turned off (Example: 10)</small>
+                                </label>
+                                <input type="number"
+                                       name="auto_start_delay" id="auto_start_delay"
+                                       class="form-control" placeholder="Autostart Delay"
+>>>>>>> snapshot
                                        value="{{ data['mc_settings']['auto_start_delay'] }}"
                                 />
                             </div>
 
                             <!-- radio -->
                             <div class="form-group">
+<<<<<<< HEAD
                                 <b>{{ _('Auto Start Priority') }}<br /><small>{{ _('No effect if auto start is not enabled') }}</small></b>
                                 <div class="form-check">
+=======
+                                <b>Auto Start Priority<br /><small>No effect if auto start is not enabled</small></b>
+                                <div class="radio">
+>>>>>>> snapshot
                                     <label>
                                         <input type="radio"
                                                name="auto_start_priority"
                                                value="1"
                                                 {% if data['mc_settings']['auto_start_priority'] == 1 %} checked {% end %}
                                                 />
+<<<<<<< HEAD
                                         {{ _('Highest Priority') }}
                                     </label>
                                 </div>
 
                                 <div class="form-check">
+=======
+                                        Highest Priority
+                                    </label>
+                                </div>
+
+                                <div class="radio">
+>>>>>>> snapshot
                                     <label>
                                         <input type="radio"
                                                name="auto_start_priority"
                                                value="2"
                                                 {% if data['mc_settings']['auto_start_priority'] == 2 %} checked {% end %}
                                                 />
+<<<<<<< HEAD
                                         {{ _('Medium Priority') }}
                                     </label>
                                 </div>
 
                                 <div class="form-check">
+=======
+                                        Medium Priority
+                                    </label>
+                                </div>
+
+                                <div class="radio">
+>>>>>>> snapshot
                                     <label>
                                         <input type="radio"
                                                name="auto_start_priority"
                                                value="3"
                                                 {% if data['mc_settings']['auto_start_priority'] == 3 %} checked {% end %}
                                                 />
+<<<<<<< HEAD
                                         {{ _('Lowest Priority') }}
+=======
+                                        Lowest Priority
+>>>>>>> snapshot
                                     </label>
                                 </div>
                             </div>
 
                             <!-- radio -->
                             <div class="form-group">
+<<<<<<< HEAD
                                 <b>{{ _('Turn On Crash Detection?') }}<br /><small>{{ _('This will detect server crashes and restart them') }}</small></b>
                                 <div class="form-check">
+=======
+                                <b>Turn On Crash Detection?<br /><small>This will detect server crashes and restart them</small></b>
+                                <div class="radio">
+>>>>>>> snapshot
                                     <label>
                                         <input type="radio"
                                                name="crash_detection"
                                                value="1"
                                                 {% if data['mc_settings']['crash_detection'] %} checked {% end %}
                                                 />
+<<<<<<< HEAD
                                         {{ _('Yes - If the server stops') }}, {{ _('I want crafty to automatically restart the server') }}
                                     </label>
                                 </div>
 
                                 <div class="form-check">
+=======
+                                        Yes - If the server stops, I want crafty to automatically restart the server
+                                    </label>
+                                </div>
+
+                                <div class="radio">
+>>>>>>> snapshot
                                     <label>
                                         <input type="radio"
                                                name="crash_detection"
                                                value="0"
                                                 {% if data['mc_settings']['crash_detection'] == False %} checked {% end %}
                                                 />
+<<<<<<< HEAD
                                         {{ _('No - I will start the server myself if it crashes.') }}
+=======
+                                        No - I will start the server myself if it crashes.
+>>>>>>> snapshot
                                     </label>
                                 </div>
                             </div>
@@ -258,8 +430,13 @@
 
                             <div class="form-group">
                                 <label>
+<<<<<<< HEAD
                                     {{ _('Server Port') }} <br />
                                     <small>{{ _('Default is 25565 - this is the port crafty will use to get server stats. This should match your server.properties file') }}</small>
+=======
+                                    Server Port <br />
+                                    <small>Default is 25565 - this is the port crafty will use to get server stats. This should match your server.properties file</small>
+>>>>>>> snapshot
                                 </label>
                                 <input type="number"
                                        name="server_port" id="server_port"
@@ -270,8 +447,13 @@
 
                             <div class="form-group">
                                 <label>
+<<<<<<< HEAD
                                     {{ _('Server IP') }}<br />
                                     <small>{{ _('Default is 127.0.0.1 - this is the ip crafty will use to get server stats. This should match your server.properties file') }}</small>
+=======
+                                    Server IP<br />
+                                    <small>Default is 127.0.0.1 - this is the ip crafty will use to get server stats. This should match your server.properties file</small>
+>>>>>>> snapshot
                                 </label>
                                 <input type="text"
                                        name="server_ip" id="server_ip"
@@ -282,6 +464,7 @@
 
                         </div>
 
+<<<<<<< HEAD
                         <div class="card-footer">
                             {% if data['server_running'] %}
                                 <small>{{ _('Please stop the server before deleting it.') }}</small><br />
@@ -295,6 +478,21 @@
                             <button type="submit" class="btn btn-success float-right">
                                 <i class="far fa-save" aria-hidden="true"></i>
                                 {{ _('Save') }}
+=======
+                        <div class="box-footer">
+                            {% if data['server_running'] %}
+                                <small>Please stop the server before deleting it.</small><br />
+                                <a class="btn btn-danger disabled">Delete Server</a>
+
+                            {% else %}
+                                <a class="btn btn-danger" onclick="delete_server( {{ data['mc_settings']['id'] }} , '{{ data['mc_settings']['server_name'] }}' )">Delete Server</a>
+                            {% end %}
+
+
+                            <button type="submit" class="btn btn-success pull-right">
+                                <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                                Save
+>>>>>>> snapshot
                             </button>
                         </div>
                     </div>
@@ -302,6 +500,7 @@
               </div>
         </div>
 
+<<<<<<< HEAD
         <div class="col-lg-6">
           <div class="card card-secondary card-outline">
             <div class="card-header">
@@ -317,6 +516,25 @@
                 {{ _('The server will be launched using this string:') }}<br />
                 <b>
                 {{ data['mc_settings']['java_path'] }} -Xms{{ data['mc_settings']['memory_min'] }}M
+=======
+        <div class="col-md-6">
+          <div class="box box-solid">
+            <div class="box-header with-border">
+              <i class="fa fa-cog"></i>
+
+                <h3 class="box-title">Your Current Config</h3>
+                <h3 class="box-title pull-right">
+                    <a href="/admin/reload_mc_settings" class="btn btn-sm btn-default">Reload MC Settings</a>
+                    <a href="/admin/reload_web" class="btn btn-sm btn-default">Reload Web Server</a>
+                </h3>
+
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                The server will be launched using this string:<br />
+                <b>
+                java -Xms{{ data['mc_settings']['memory_min'] }}M
+>>>>>>> snapshot
                 -Xmx{{ data['mc_settings']['memory_max'] }}M
                 {{ data['mc_settings']['pre_args'] }}
                 -jar {{ data['mc_settings']['server_path'] }}/{{ data['mc_settings']['server_jar'] }} nogui
@@ -325,19 +543,34 @@
 
                 <hr />
                 {% if data['mc_settings']['auto_start_server'] %}
+<<<<<<< HEAD
                     {{ _('The server is set to autostart after') }}  <b>{{ data['mc_settings']['auto_start_delay'] }}</b> {{ _('seconds') }}
                 {% else %}
                     {{ _('The server is') }} <b>{{ _('NOT') }}</b> {{ _('set to autostart') }}
+=======
+                    The server is set to autostart after  <b>{{ data['mc_settings']['auto_start_delay'] }}</b> seconds
+                {% else %}
+                    The server is <b>NOT</b> set to autostart
+>>>>>>> snapshot
                 {% end %}
 
                 <hr />
 
+<<<<<<< HEAD
                 {{ _('Crafty will try to connect to') }} <b>{{ data['mc_settings']['server_ip'] }}</b>  {{ _('on port') }} <b>{{ data['mc_settings']['server_port'] }}</b> {{ _('to get server status') }}
 
             </div>
             <!-- /.card-body -->
           </div>
           <!-- /.card -->
+=======
+                Crafty will try to connect to <b>{{ data['mc_settings']['server_ip'] }}</b>  on port <b>{{ data['mc_settings']['server_port'] }}</b> to get server status
+
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+>>>>>>> snapshot
         </div>
     </div>
 
@@ -358,6 +591,7 @@
 
     function delete_server(server_id, server_name){
         bootbox.confirm({
+<<<<<<< HEAD
             title: "Destroy Server:" + " " + server_name + "?",
             message: "Do you want to delete the server? This cannot be undone.",
             buttons: {
@@ -366,6 +600,16 @@
                 },
                 confirm: {
                     label: '<i class="fas fa-check"></i> Confirm'
+=======
+            title: "Destroy Server: " + server_name + "?",
+            message: "Do you want to delete the server? This cannot be undone.",
+            buttons: {
+                cancel: {
+                    label: '<i class="fa fa-times"></i> Cancel'
+                },
+                confirm: {
+                    label: '<i class="fa fa-check"></i> Confirm'
+>>>>>>> snapshot
                 }
             },
             callback: function (result) {
@@ -397,7 +641,11 @@
 
     function show_saved(){
         var dialog = bootbox.dialog({
+<<<<<<< HEAD
             message: "{{ _('Settings Saved') }}",
+=======
+            message: "Settings Saved",
+>>>>>>> snapshot
             className: 'modal modal-success fade-in',
             okButton: false
         });

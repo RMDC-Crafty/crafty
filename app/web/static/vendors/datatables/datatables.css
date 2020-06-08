@@ -4,6 +4,7 @@
  *
  * To rebuild or modify this file with the latest versions of the included
  * software please visit:
+<<<<<<< HEAD
  *   https://datatables.net/download/#bs4-4.1.1/dt-1.10.20/fh-3.1.6
  *
  * Included libraries:
@@ -8992,13 +8993,24 @@ a.text-dark:hover, a.text-dark:focus {
 }
 /*# sourceMappingURL=bootstrap.css.map */
 
+=======
+ *   https://datatables.net/download/#bs/dt-1.10.20/fh-3.1.6
+ *
+ * Included libraries:
+ *   DataTables 1.10.20, FixedHeader 3.1.6
+ */
+
+>>>>>>> snapshot
 table.dataTable {
   clear: both;
   margin-top: 6px !important;
   margin-bottom: 6px !important;
   max-width: none !important;
   border-collapse: separate !important;
+<<<<<<< HEAD
   border-spacing: 0;
+=======
+>>>>>>> snapshot
 }
 table.dataTable td,
 table.dataTable th {
@@ -9020,7 +9032,11 @@ div.dataTables_wrapper div.dataTables_length label {
   white-space: nowrap;
 }
 div.dataTables_wrapper div.dataTables_length select {
+<<<<<<< HEAD
   width: auto;
+=======
+  width: 75px;
+>>>>>>> snapshot
   display: inline-block;
 }
 div.dataTables_wrapper div.dataTables_filter {
@@ -9037,7 +9053,11 @@ div.dataTables_wrapper div.dataTables_filter input {
   width: auto;
 }
 div.dataTables_wrapper div.dataTables_info {
+<<<<<<< HEAD
   padding-top: 0.85em;
+=======
+  padding-top: 8px;
+>>>>>>> snapshot
   white-space: nowrap;
 }
 div.dataTables_wrapper div.dataTables_paginate {
@@ -9048,7 +9068,10 @@ div.dataTables_wrapper div.dataTables_paginate {
 div.dataTables_wrapper div.dataTables_paginate ul.pagination {
   margin: 2px 0;
   white-space: nowrap;
+<<<<<<< HEAD
   justify-content: flex-end;
+=======
+>>>>>>> snapshot
 }
 div.dataTables_wrapper div.dataTables_processing {
   position: absolute;
@@ -9079,6 +9102,7 @@ table.dataTable thead .sorting_desc_disabled {
   cursor: pointer;
   position: relative;
 }
+<<<<<<< HEAD
 table.dataTable thead .sorting:before, table.dataTable thead .sorting:after,
 table.dataTable thead .sorting_asc:before,
 table.dataTable thead .sorting_asc:after,
@@ -9116,17 +9140,52 @@ table.dataTable thead .sorting_desc:after {
 table.dataTable thead .sorting_asc_disabled:before,
 table.dataTable thead .sorting_desc_disabled:after {
   opacity: 0;
+=======
+table.dataTable thead .sorting:after,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_asc_disabled:after,
+table.dataTable thead .sorting_desc_disabled:after {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: block;
+  font-family: 'Glyphicons Halflings';
+  opacity: 0.5;
+}
+table.dataTable thead .sorting:after {
+  opacity: 0.2;
+  content: "\e150";
+  /* sort */
+}
+table.dataTable thead .sorting_asc:after {
+  content: "\e155";
+  /* sort-by-attributes */
+}
+table.dataTable thead .sorting_desc:after {
+  content: "\e156";
+  /* sort-by-attributes-alt */
+}
+table.dataTable thead .sorting_asc_disabled:after,
+table.dataTable thead .sorting_desc_disabled:after {
+  color: #eee;
+>>>>>>> snapshot
 }
 
 div.dataTables_scrollHead table.dataTable {
   margin-bottom: 0 !important;
 }
 
+<<<<<<< HEAD
 div.dataTables_scrollBody table {
+=======
+div.dataTables_scrollBody > table {
+>>>>>>> snapshot
   border-top: none;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
 }
+<<<<<<< HEAD
 div.dataTables_scrollBody table thead .sorting:before,
 div.dataTables_scrollBody table thead .sorting_asc:before,
 div.dataTables_scrollBody table thead .sorting_desc:before,
@@ -9137,6 +9196,15 @@ div.dataTables_scrollBody table thead .sorting_desc:after {
 }
 div.dataTables_scrollBody table tbody tr:first-child th,
 div.dataTables_scrollBody table tbody tr:first-child td {
+=======
+div.dataTables_scrollBody > table > thead .sorting:after,
+div.dataTables_scrollBody > table > thead .sorting_asc:after,
+div.dataTables_scrollBody > table > thead .sorting_desc:after {
+  display: none;
+}
+div.dataTables_scrollBody > table > tbody > tr:first-child > th,
+div.dataTables_scrollBody > table > tbody > tr:first-child > td {
+>>>>>>> snapshot
   border-top: none;
 }
 
@@ -9156,6 +9224,7 @@ div.dataTables_scrollFoot > .dataTables_scrollFootInner > table {
     text-align: center;
   }
 }
+<<<<<<< HEAD
 table.dataTable.table-sm > thead > tr > th {
   padding-right: 20px;
 }
@@ -9169,6 +9238,16 @@ table.dataTable.table-sm .sorting:after,
 table.dataTable.table-sm .sorting_asc:after,
 table.dataTable.table-sm .sorting_desc:after {
   top: 5px;
+=======
+table.dataTable.table-condensed > thead > tr > th {
+  padding-right: 20px;
+}
+table.dataTable.table-condensed .sorting:after,
+table.dataTable.table-condensed .sorting_asc:after,
+table.dataTable.table-condensed .sorting_desc:after {
+  top: 6px;
+  right: 6px;
+>>>>>>> snapshot
 }
 
 table.table-bordered.dataTable th,

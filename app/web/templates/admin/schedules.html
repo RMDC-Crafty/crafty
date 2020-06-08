@@ -1,5 +1,6 @@
 {% extends ../base.html %}
 
+<<<<<<< HEAD
 {% block title %}{{ _('Crafty Controller - Server Schedules') }}{% end %}
 
 {% block content %}
@@ -24,10 +25,30 @@
     </div>
   </div>
 </div>
+=======
+{% block title %}Crafty Controller - Server Schedules{% end %}
+
+{% block content %}
+
+<section class="content-header">
+  <h1>
+    Scheduled Tasks
+    <small>
+       It's like a bot, only better
+    </small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Schedules</li>
+  </ol>
+</section>
+
+>>>>>>> snapshot
 
 <section class="content">
 
     <div class="row">
+<<<<<<< HEAD
         <div class="col-6">
             <form role="form" method="post">
                 {% raw xsrf_form_html() %}
@@ -51,18 +72,48 @@
                                     <option value="stop">{{ _('Stop Server') }}</option>
                                     <option value="restart">{{ _('Restart Server') }}</option>
                                     <option value="command">{{ _('Issue Command') }}</option>
+=======
+        <div class="col-xs-6">
+            <form role="form" method="post">
+                {% raw xsrf_form_html() %}
+                <input type="hidden" name="server_id" value="{{ data['server_id'] }}" />
+                <div class="box">
+
+                    <div class="box-header with-border">
+                      <h3 class="box-title">
+                          New Scheduled Action
+                      </h3>
+                    </div>
+
+                    <div class="box-body">
+
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label>Select Your Action</label>
+                                <select class="form-control" name="action" id="action">
+                                    <option value="backup">Backup Worlds</option>
+                                    <option value="start">Start Server</option>
+                                    <option value="stop">Stop Server</option>
+                                    <option value="restart">Restart Server</option>
+                                    <option value="command">Issue Command</option>
+>>>>>>> snapshot
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group">
+<<<<<<< HEAD
                             <label>{{ _('How Often') }} </label>
+=======
+                            <label>How Often </label>
+>>>>>>> snapshot
                             <input type="number" class="form-control" placeholder="10"
                                    name="interval" id="interval" value="1">
                         </div>
 
                         <div class="form-group">
                             <div class="form-group">
+<<<<<<< HEAD
                                 <label>{{ _('Interval Type') }}</label>
                                 <select class="form-control" name="type" id="type">
                                     <option value="m">{{ _('Minutes') }}</option>
@@ -75,38 +126,77 @@
                                     <option value="friday">{{ _('Friday') }}</option>
                                     <option value="saturday">{{ _('Saturday') }}</option>
                                     <option value="sunday">{{ _('Sunday') }}</option>
+=======
+                                <label>Interval Type</label>
+                                <select class="form-control" name="type" id="type">
+                                    <option value="m">Minutes</option>
+                                    <option value="h">Hours</option>
+                                    <option value="d">Days</option>
+                                    <option value="monday">Monday</option>
+                                    <option value="tuesday">Tuesday</option>
+                                    <option value="wednesday">Wednesday</option>
+                                    <option value="thursday">Thursday</option>
+                                    <option value="friday">Friday</option>
+                                    <option value="saturday">Saturday</option>
+                                    <option value="sunday">Sunday</option>
+>>>>>>> snapshot
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group">
+<<<<<<< HEAD
                             <label>{{ _('Time') }} </label><br />
                             <small>{{ _('Time is disabled for minute and hour values') }}</small><br />
                             <small>{{ _('An empty value means "every". For instance: Backup every 1 hour') }}</small><br />
+=======
+                            <label>Time </label><br />
+                            <small>Time is disabled for minute values</small><br />
+                            <small>An empty value means "every". For instance: Backup every 1 hour</small><br />
+>>>>>>> snapshot
                             <input type="text" class="form-control" name="time" disabled="disabled"
                                    id="time" class="time ui-timepicker-input" autocomplete="off">
                         </div>
 
+<<<<<<< HEAD
                         <div class="form-group" id="command_input" hidden="false">
                             <label>{{ _('Command') }} </label>
+=======
+                        <div class="form-group" id="command_input" hidden="true">
+                            <label>Command </label>
+>>>>>>> snapshot
                             <input type="text" class="form-control" placeholder="Enter the command you wish to schedule"
                                    name="command" id="command" value="">
                         </div>
 
                         <div class="form-group">
+<<<<<<< HEAD
                             <label>{{ _('Comment') }} </label>
                             <input type="text" class="form-control" placeholder="10"
                                    name="comment" id="comment" value="{{ _('A scheduled task') }}">
+=======
+                            <label>Comment </label>
+                            <input type="text" class="form-control" placeholder="10"
+                                   name="comment" id="comment" value="A scheduled task">
+>>>>>>> snapshot
                         </div>
 
                     </div>
 
 
+<<<<<<< HEAD
                     <div class="card-footer">
                         <a href="/admin/schedules" class="btn btn-danger">{{ _('Cancel') }}</a>
                         <button type="submit" class="btn btn-success float-right">
                             <i class="far fa-save" aria-hidden="true"></i>
                             {{ _('Save') }}
+=======
+                    <div class="box-footer">
+                        <a href="/admin/schedules" class="btn btn-danger">Cancel</a>
+                        <button type="submit" class="btn btn-success pull-right">
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                            Save
+>>>>>>> snapshot
                         </button>
                     </div>
 
@@ -114,6 +204,7 @@
             </form>
         </div>
 
+<<<<<<< HEAD
         <div class="col-6">
             <form role="form" method="post">
                 {% raw xsrf_form_html() %}
@@ -135,6 +226,29 @@
                                 <th>{{ _('Action') }}</th>
                                 <th>{{ _('Comment') }}</th>
                                 <th>{{ _('Delete') }}</th>
+=======
+        <div class="col-xs-6">
+            <form role="form" method="post">
+                {% raw xsrf_form_html() %}
+                <div class="box">
+
+                    <div class="box-header with-border">
+                      <h3 class="box-title">
+                          Scheduled Actions
+                      </h3>
+                    </div>
+
+                    <div class="box-body">
+                        <table id="tasks" class="table table-responsive">
+                            <thead>
+                                <th>
+                                    Enabled<br />
+                                    <small>Click thumb to toggle</small>
+                                </th>
+                                <th>Action</th>
+                                <th>Comment</th>
+                                <th>Delete</th>
+>>>>>>> snapshot
 
                             </thead>
                             <tbody>
@@ -143,22 +257,35 @@
                                         <td>
                                             {% if task.enabled %}
                                                 <a href="/admin/schedule_disable?id={{ data['server_id'] }}&taskid={{ task.id }}">
+<<<<<<< HEAD
                                                     <i class="fas fa-thumbs-up fa-lg text-green" aria-hidden="true"></i>
                                                 </a>
                                             {% else %}
                                                 <a href="/admin/schedule_enable?id={{ data['server_id'] }}&taskid={{ task.id }}">
                                                     <i class="fas fa-thumbs-down fa-lg  text-red" aria-hidden="true"></i>
+=======
+                                                    <i class="fa fa-thumbs-up fa-lg text-green" aria-hidden="true"></i>
+                                                </a>
+                                            {% else %}
+                                                <a href="/admin/schedule_enable?id={{ data['server_id'] }}&taskid={{ task.id }}">
+                                                    <i class="fa fa-thumbs-down fa-lg  text-red" aria-hidden="true"></i>
+>>>>>>> snapshot
                                                 </a>
                                             {% end %}
                                         </td>
 
                                         <td>
                                             {% if task.action == 'command' %}
+<<<<<<< HEAD
                                                 {{ _('Send Command') }}
+=======
+                                                Send Command
+>>>>>>> snapshot
                                             {% else %}
                                                 {{ task.action.title() }}
                                             {% end %}
 
+<<<<<<< HEAD
                                             {{ _('every') }} {{ task.interval }}
 
                                             {% if task.interval_type == 'd' %}
@@ -167,16 +294,34 @@
                                                 {{ _('minute(s)') }}
                                             {% elif task.interval_type == 'h' %}
                                                 {{ _('hour(s)') }}
+=======
+                                            every {{ task.interval }}
+
+                                            {% if task.interval_type == 'd' %}
+                                                day(s)
+                                            {% elif task.interval_type == 'm' %}
+                                                minute(s)
+                                            {% elif task.interval_type == 'h' %}
+                                                hour(s)
+>>>>>>> snapshot
                                             {% else %}
                                                 {{ task.interval_type.title() }}
                                             {% end %}
 
                                             {% if task.start_time %}
+<<<<<<< HEAD
                                                 {{ _('at') }} {{ task.start_time }}
                                             {% end %}
 
                                             {% if task.command %}
                                                 <br />{{ _('Command:') }} {{ task.command }}
+=======
+                                                at {{ task.start_time }}
+                                            {% end %}
+
+                                            {% if task.command %}
+                                                <br />Command: {{ task.command }}
+>>>>>>> snapshot
                                             {% end %}
                                         </td>
 
@@ -185,7 +330,11 @@
                                         </td>
                                         <td>
                                             <a data-id="{{ task.id }}" class="btn btn-sm btn-danger del_schedule">
+<<<<<<< HEAD
                                                 <i class="fas fa-trash" aria-hidden="true"></i> {{ _('Delete') }}
+=======
+                                                <i class="fa fa-trash" aria-hidden="true"></i> Delete
+>>>>>>> snapshot
                                             </a>
                                         </td>
                                     </tr>
@@ -197,7 +346,11 @@
 
                     </div>
 
+<<<<<<< HEAD
                     <div class="card-footer">
+=======
+                    <div class="box-footer">
+>>>>>>> snapshot
                         &nbsp;
                     </div>
 
@@ -277,10 +430,17 @@
                 message: "Do you want to delete this task? This cannot be undone.",
                 buttons: {
                     cancel: {
+<<<<<<< HEAD
                         label: '<i class="fas fa-times"></i> Cancel'
                     },
                     confirm: {
                         label: '<i class="fas fa-check"></i> Confirm'
+=======
+                        label: '<i class="fa fa-times"></i> Cancel'
+                    },
+                    confirm: {
+                        label: '<i class="fa fa-check"></i> Confirm'
+>>>>>>> snapshot
                     }
                 },
                 callback: function (result) {

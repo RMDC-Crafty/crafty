@@ -4,6 +4,7 @@
  *
  * To rebuild or modify this file with the latest versions of the included
  * software please visit:
+<<<<<<< HEAD
  *   https://datatables.net/download/#bs4-4.1.1/dt-1.10.20/fh-3.1.6
  *
  * Included libraries:
@@ -3939,6 +3940,14 @@
 //# sourceMappingURL=bootstrap.js.map
 
 
+=======
+ *   https://datatables.net/download/#bs/dt-1.10.20/fh-3.1.6
+ *
+ * Included libraries:
+ *   DataTables 1.10.20, FixedHeader 3.1.6
+ */
+
+>>>>>>> snapshot
 /*! DataTables 1.10.20
  * ©2008-2019 SpryMedia Ltd - datatables.net/license
  */
@@ -17850,7 +17859,11 @@
 		 *
 		 *  @type string
 		 */
+<<<<<<< HEAD
 		build:"bs4-4.1.1/dt-1.10.20/fh-3.1.6",
+=======
+		build:"bs/dt-1.10.20/fh-3.1.6",
+>>>>>>> snapshot
 	
 	
 		/**
@@ -19275,12 +19288,21 @@
 }));
 
 
+<<<<<<< HEAD
 /*! DataTables Bootstrap 4 integration
  * ©2011-2017 SpryMedia Ltd - datatables.net/license
  */
 
 /**
  * DataTables integration for Bootstrap 4. This requires Bootstrap 4 and
+=======
+/*! DataTables Bootstrap 3 integration
+ * ©2011-2015 SpryMedia Ltd - datatables.net/license
+ */
+
+/**
+ * DataTables integration for Bootstrap 3. This requires Bootstrap 3 and
+>>>>>>> snapshot
  * DataTables 1.10 or newer.
  *
  * This file sets the defaults and adds options to DataTables to style its
@@ -19323,20 +19345,33 @@ var DataTable = $.fn.dataTable;
 /* Set the defaults for DataTables initialisation */
 $.extend( true, DataTable.defaults, {
 	dom:
+<<<<<<< HEAD
 		"<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
 		"<'row'<'col-sm-12'tr>>" +
 		"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
+=======
+		"<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+		"<'row'<'col-sm-12'tr>>" +
+		"<'row'<'col-sm-5'i><'col-sm-7'p>>",
+>>>>>>> snapshot
 	renderer: 'bootstrap'
 } );
 
 
 /* Default class modification */
 $.extend( DataTable.ext.classes, {
+<<<<<<< HEAD
 	sWrapper:      "dataTables_wrapper dt-bootstrap4",
 	sFilterInput:  "form-control form-control-sm",
 	sLengthSelect: "custom-select custom-select-sm form-control form-control-sm",
 	sProcessing:   "dataTables_processing card",
 	sPageButton:   "paginate_button page-item"
+=======
+	sWrapper:      "dataTables_wrapper form-inline dt-bootstrap",
+	sFilterInput:  "form-control input-sm",
+	sLengthSelect: "form-control input-sm",
+	sProcessing:   "dataTables_processing panel panel-default"
+>>>>>>> snapshot
 } );
 
 
@@ -19416,8 +19451,12 @@ DataTable.ext.renderer.pageButton.bootstrap = function ( settings, host, idx, bu
 								'aria-controls': settings.sTableId,
 								'aria-label': aria[ button ],
 								'data-dt-idx': counter,
+<<<<<<< HEAD
 								'tabindex': settings.iTabIndex,
 								'class': 'page-link'
+=======
+								'tabindex': settings.iTabIndex
+>>>>>>> snapshot
 							} )
 							.html( btnDisplay )
 						)

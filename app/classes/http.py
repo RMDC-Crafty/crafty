@@ -84,6 +84,7 @@ class webserver():
         helper.create_self_signed_cert()
 
         websettings = Webserver.get()
+
         crafty_settings = Crafty_settings.get()
         lang = crafty_settings.language
 
@@ -164,7 +165,6 @@ class webserver():
         tornado.locale.load_translations(os.path.join(web_root, 'translations'))
         self.ioloop = tornado.ioloop.IOLoop.instance()
         self.ioloop.start()
-
 
     def start_web_server(self, silent=False):
         thread = threading.Thread(target=self.run_tornado, args=(silent, ), daemon=True, name='tornado_thread')

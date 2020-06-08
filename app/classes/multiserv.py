@@ -96,6 +96,7 @@ class multi_serve():
         logger.info("Rebuilding Scheduled Tasks")
         schedule.every(10).seconds.do(multi.do_stats_for_servers).tag('server_stats', 'all_tasks')
         schedule.every(10).seconds.do(multi.do_host_status).tag('server_stats', 'all_tasks')
+
         # let's reload the scheduler every 30 seconds to make sure it doesn't die all the time
         self.reload_user_schedules()
         self.reload_history_settings()
@@ -338,6 +339,7 @@ class multi_serve():
                         Server_Stats.server_ip: stats['server_ip'],
                         Server_Stats.server_port: stats['server_port'],
                     }).execute()
+
 
     def get_stats_for_server(self, server_id):
         q = Server_Stats.select().where(Server_Stats.server_id == int(server_id))

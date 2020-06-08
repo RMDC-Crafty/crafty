@@ -81,7 +81,10 @@ class AdminHandler(BaseHandler):
         elif page == 'change_password':
             template = "admin/change_pass.html"
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> snapshot
         elif page == 'virtual_console':
             if not check_role_permission(user_data['username'], 'svr_console'):
                 self.redirect('/admin/unauthorized')
@@ -198,7 +201,10 @@ class AdminHandler(BaseHandler):
             ftp_data = Ftp_Srv.get()
             web_data = Webserver.get()
             users = Users.select()
+<<<<<<< HEAD
             roles = Roles.select()
+=======
+>>>>>>> snapshot
 
             context['ftp_user'] = ftp_data.user
             context['ftp_pass'] = ftp_data.password
@@ -213,8 +219,11 @@ class AdminHandler(BaseHandler):
             context['users'] = users
             context['users_count'] = len(users)
 
+<<<<<<< HEAD
             context['roles'] = roles
 
+=======
+>>>>>>> snapshot
         elif page == 'server_config':
             if not check_role_permission(user_data['username'], 'config'):
                 self.redirect('/admin/unauthorized')
@@ -463,8 +472,17 @@ class AdminHandler(BaseHandler):
             context['listing'] = helper.scan_dirs_in_path(context['pwd'])
             context['parent'] = None
 
+<<<<<<< HEAD
             context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf', 'cfg']
 
+=======
+            context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf']
+
+            ftp_data = Ftp_Srv.get()
+            context['ftp_settings'] = model_to_dict(ftp_data)
+            context['ftp_running'] = ftp_svr_object.check_running()
+            context['ftp_root'] = ftp_svr_object.get_root_dir()
+>>>>>>> snapshot
 
         else:
             # 404
@@ -539,13 +557,17 @@ class AdminHandler(BaseHandler):
                 # Define as variables to eliminate multiple function calls, slowing the processing down
                 server_path = self.get_argument('server_path')
                 server_jar = self.get_argument('server_jar')
+<<<<<<< HEAD
                 java_path = self.get_argument('java_path')
+=======
+>>>>>>> snapshot
 
                 server_path_exists = helper.check_directory_exist(server_path)
 
                 # Use pathlib to join specified server path and server JAR file then check if it exists
                 jar_exists = helper.check_file_exists(os.path.join(server_path, server_jar))
 
+<<<<<<< HEAD
                 # Check if custom Java path is specified and if it exists
                 if java_path == 'java':
                     java_path_exists = True
@@ -553,6 +575,9 @@ class AdminHandler(BaseHandler):
                     java_path_exists = helper.check_file_exists(java_path)
 
                 if server_path_exists and jar_exists and java_path_exists:
+=======
+                if server_path_exists and jar_exists:
+>>>>>>> snapshot
                     q = MC_settings.update({
                         MC_settings.server_name: self.get_argument('server_name'),
                         MC_settings.server_path: server_path,
@@ -561,7 +586,10 @@ class AdminHandler(BaseHandler):
                         MC_settings.memory_min: self.get_argument('memory_min'),
                         MC_settings.additional_args: self.get_argument('additional_args'),
                         MC_settings.pre_args: self.get_argument('pre_args'),
+<<<<<<< HEAD
                         MC_settings.java_path: java_path,
+=======
+>>>>>>> snapshot
                         MC_settings.auto_start_server: int(self.get_argument('auto_start_server')),
                         MC_settings.server_port: self.get_argument('server_port'),
                         MC_settings.server_ip: self.get_argument('server_ip'),
@@ -572,6 +600,7 @@ class AdminHandler(BaseHandler):
                     q.execute()
                     self.mcserver.reload_settings()
 
+<<<<<<< HEAD
                 # Restructure things a bit and add Java path check
                 elif not server_path_exists:
                     # Redirect to "config invalid" page and log an event
@@ -579,11 +608,19 @@ class AdminHandler(BaseHandler):
                     self.redirect("/admin/config?invalid=True")
 
                 elif not jar_exists:
+=======
+                elif server_path_exists:
+                    # Redirect to "config invalid" page and log an event
+>>>>>>> snapshot
                     logger.error('Minecraft server JAR does not exist at {}'.format(server_path))
                     self.redirect("/admin/config?invalid=True")
 
                 else:
+<<<<<<< HEAD
                     logger.error('Minecraft server Java path does not exist')
+=======
+                    logger.error('Minecraft server directory or JAR does not exist')
+>>>>>>> snapshot
                     self.redirect("/admin/config?invalid=True")
 
             elif config_type == 'ftp_settings':
@@ -600,13 +637,19 @@ class AdminHandler(BaseHandler):
             elif config_type == 'crafty_settings':
                 interval = bleach.clean(self.get_argument('historical_interval'))
                 max_age = bleach.clean(self.get_argument('history_max_age'))
+<<<<<<< HEAD
                 lang = bleach.clean(self.get_argument('language'))
+=======
+>>>>>>> snapshot
                 web_port = int(float(self.get_argument('port_number')))
 
                 q = Crafty_settings.update({
                     Crafty_settings.history_interval: interval,
                     Crafty_settings.history_max_age: max_age,
+<<<<<<< HEAD
                     Crafty_settings.language: lang,
+=======
+>>>>>>> snapshot
                 }).where(Crafty_settings.id == 1).execute()
 
                 q = Webserver.update({
@@ -625,7 +668,10 @@ class AdminHandler(BaseHandler):
             server_jar = bleach.clean(self.get_argument('server_jar'))
             server_id = bleach.clean(self.get_argument('server_id'))
             server_name = bleach.clean(self.get_argument('server_name'))
+<<<<<<< HEAD
             java_path = bleach.clean(self.get_argument('java_path'))
+=======
+>>>>>>> snapshot
             errors = bleach.clean(self.get_argument('errors', ''))
 
             context['errors'] = errors
@@ -635,6 +681,7 @@ class AdminHandler(BaseHandler):
             # Use pathlib to join specified server path and server JAR file then check if it exists
             jar_exists = helper.check_file_exists(os.path.join(server_path, server_jar))
 
+<<<<<<< HEAD
             # Check if Java executable exists if custom path is specified
             if java_path == 'java':
                 java_path_exists = True
@@ -642,6 +689,9 @@ class AdminHandler(BaseHandler):
                 java_path_exists = helper.check_file_exists(java_path)
 
             if server_path_exists and jar_exists and java_path_exists:
+=======
+            if server_path_exists and jar_exists:
+>>>>>>> snapshot
                 MC_settings.update({
                     MC_settings.server_name: server_name,
                     MC_settings.server_path: server_path,
@@ -650,7 +700,10 @@ class AdminHandler(BaseHandler):
                     MC_settings.memory_min: bleach.clean(self.get_argument('memory_min')),
                     MC_settings.additional_args: bleach.clean(self.get_argument('additional_args')),
                     MC_settings.pre_args: bleach.clean(self.get_argument('pre_args')),
+<<<<<<< HEAD
                     MC_settings.java_path: java_path,
+=======
+>>>>>>> snapshot
                     MC_settings.auto_start_server: int(float(self.get_argument('auto_start_server'))),
                     MC_settings.auto_start_delay: int(float(self.get_argument('auto_start_delay'))),
                     MC_settings.auto_start_priority: int(float(self.get_argument('auto_start_priority'))),
@@ -665,6 +718,7 @@ class AdminHandler(BaseHandler):
 
                 self.redirect("/admin/dashboard")
 
+<<<<<<< HEAD
             # Restructure things a bit and add Java path check
             elif not server_path_exists:
                 # Redirect to "config invalid" page and log an event
@@ -672,12 +726,21 @@ class AdminHandler(BaseHandler):
                 self.redirect("/admin/server_config?id={}&errors={}".format(server_id, "Server Path Does Not Exists"))
 
             elif not jar_exists:
+=======
+            elif server_path_exists:
+                # Redirect to "config invalid" page and log an event
+>>>>>>> snapshot
                 logger.error('Minecraft server JAR does not exist at {}'.format(server_path))
                 self.redirect("/admin/server_config?id={}&errors={}".format(server_id, "Server Jar Does Not Exists"))
 
             else:
+<<<<<<< HEAD
                 logger.error('Minecraft server Java path does not exist')
                 self.redirect("/admin/server_config?id={}&errors={}".format(server_id, "Java Path Does Not Exist"))
+=======
+                logger.error('Minecraft server directory or JAR does not exist')
+                self.redirect("/admin/server_config?id={}&errors={}".format(server_id, "Server Path Does Not Exists"))
+>>>>>>> snapshot
 
         elif page == 'files':
 
@@ -695,6 +758,7 @@ class AdminHandler(BaseHandler):
             mc_data = MC_settings.get_by_id(server_id)
             mc_settings = model_to_dict(mc_data)
 
+<<<<<<< HEAD
             mc_settings['server_path'] = str(mc_settings['server_path']).replace("\\", '/')
 
             # let's remove the server directory from the path...
@@ -707,13 +771,24 @@ class AdminHandler(BaseHandler):
                 context['listing'] = helper.scan_dirs_in_path(mc_settings['server_path'])
                 next_dir = mc_settings['server_path']
 
+=======
+            ftp_data = Ftp_Srv.get()
+            context['ftp_settings'] = model_to_dict(ftp_data)
+
+            mc_settings['server_path'] = str(mc_settings['server_path']).replace("\\", '/')
+>>>>>>> snapshot
             if next_dir == mc_settings['server_path']:
                 context['parent'] = None
             else:
                 context['parent'] = path.parent
                 context['parent'] = str(context['parent']).replace("\\", '/')
 
+<<<<<<< HEAD
             context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf', '.cfg', '.toml']
+=======
+            context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf', '.cfg']
+            context['ftp_running'] = ftp_svr_object.check_running()
+>>>>>>> snapshot
 
             self.render(
                 template,
@@ -770,7 +845,10 @@ class AdminHandler(BaseHandler):
                     MC_settings.memory_max: max_mem,
                     MC_settings.memory_min: min_mem,
                     MC_settings.additional_args: "",
+<<<<<<< HEAD
                     MC_settings.java_path: "java",
+=======
+>>>>>>> snapshot
                     MC_settings.auto_start_server: auto_start,
                     MC_settings.auto_start_delay: 10,
                     MC_settings.auto_start_priority: 1,
@@ -825,6 +903,7 @@ class AdminHandler(BaseHandler):
 
             self.redirect("/admin/backups?id={}".format(server_id))
 
+<<<<<<< HEAD
         elif page == 'upload':
             server_id = bleach.clean(self.get_argument('server_id', ''))
             file1 = self.request.files['file1'][0]
@@ -873,6 +952,8 @@ class AdminHandler(BaseHandler):
                 data=context
             )
 
+=======
+>>>>>>> snapshot
     def _reload_schedules(self):
         '''
         logger.info("Reloading Scheduled Tasks")
@@ -891,6 +972,7 @@ class AdminHandler(BaseHandler):
             helper.scheduler(task, self.mcserver)
         '''
         multi.reload_user_schedules()
+<<<<<<< HEAD
 
     def _upload_file(self, file_data, file_path, file_name):
 
@@ -909,3 +991,5 @@ class AdminHandler(BaseHandler):
         output_file.write(file_data)
         logger.info('Saving File: {}'.format(file_full_path))
         return True
+=======
+>>>>>>> snapshot
