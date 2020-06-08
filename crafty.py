@@ -303,14 +303,6 @@ if __name__ == '__main__':
     # do our scheduling
     multi.reload_scheduling()
 
-    if not fresh_install:
-        try:
-            schedule.every(10).minutes.do(multi.reload_scheduling)
-        except Exception as e:
-            console.warning("unable to schedule the reloading of the schedules")
-            logger.warning("unable to schedule the reloading of the schedules - {}".format(e))
-            pass
-
     multi.reload_user_schedules()
 
     # start the remote commands watcher thread
