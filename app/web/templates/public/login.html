@@ -3,11 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<<<<<<< HEAD
   <title>{% block title %}{{ _('Crafty Controller - Login') }}{% end %}</title>
-=======
-  <title>{% block title %}Crafty Controller - Login{% end %}</title>
->>>>>>> snapshot
   {% block meta %} {% end %}
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -18,18 +14,11 @@
   <!-- Ionicons -->
   <link rel="stylesheet" href="/static/vendors/ionicons/css/ionicons.min.css">
   <!-- Theme style -->
-<<<<<<< HEAD
   <link rel="stylesheet" href="/static/css/adminlte.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <!-- Crafty style -->
   <link rel="stylesheet" href="/static/css/crafty.css">
-=======
-  <link rel="stylesheet" href="/static/css/AdminLTE.min.css">
-  <!-- AdminLTE Skins. Choose a skin from the css/skins
-       folder instead of downloading all of them to reduce the load. -->
->>>>>>> snapshot
-
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -40,8 +29,6 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-<<<<<<< HEAD
-
   <script>
     //determines if the user has a set theme
     function detectColorScheme(){
@@ -80,18 +67,6 @@
   <div class="float-center">
     <div class="col-xs-4">
     <p class="login-box-msg"> {{ _('Sign in to manage your server') }}</p>
-=======
-</head>
-<body class="hold-transition login-page">
-<div class="login-box">
-  <div class="login-logo">
-    <a ><b>Crafty </b>Controller Login</a>
-  </div>
-  <!-- /.login-logo -->
-  <div class="login-box-body">
-    <p class="login-box-msg"> {{ _('Sign in to manage your server') }}</p>
-
->>>>>>> snapshot
     <form action="/" method="post">
       <div class="form-group has-feedback">
         <input type="text" class="form-control" placeholder="{{ _('Username') }}" name="username" maxlength="55">
@@ -102,16 +77,8 @@
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="row">
-<<<<<<< HEAD
         <!-- /.col -->
         <div class="col-12 float-center">
-=======
-        <div class="col-xs-8">
-
-        </div>
-        <!-- /.col -->
-        <div class="col-xs-4">
->>>>>>> snapshot
           <button type="submit" class="btn btn-primary btn-block btn-flat"> {{ _('Sign In') }}</button>
         </div>
         <!-- /.col -->
@@ -119,8 +86,7 @@
         {% raw xsrf_form_html() %}
     </form>
     <br />
-<<<<<<< HEAD
-       
+
       <div class="row float-center">
         <div class="col-12 float-center">
            <h3>{{ _('Server Status') }}</h3>
@@ -159,48 +125,7 @@
   <!-- /.login-card-body -->
 </div>
 <!-- /.login-card -->
-=======
-      <h3> {{ _('Server Status') }}</h3>
-      <div class="row">
-          <div class="col-xs-12 text-left">
 
-
-              <table class="table">
-                  <thead>
-                  <tr>
-                      <th>Server</th>
-                      <th>Running</th>
-                      <th>CPU</th>
-                      <th>Memory</th>
-                      <th>Players</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  {% if data['server_data'] %}
-                  {% for s in data['server_data'] %}
-                    <tr>
-                        <td>{{s['name']}}</td>
-                        <td>{{s['server_running']}}</td>
-                        <td>{{s['cpu_usage']}}</td>
-                        <td>{{s['memory_usage']}}</td>
-                        <td>{{s['online_players']}} / {{s['max_players']}}</td>
-                    </tr>
-
-                  {% end %}
-                  {% end %}
-
-                  </tbody>
-
-              </table>
-
-          </div>
-      </div>
-
-  </div>
-  <!-- /.login-box-body -->
-</div>
-<!-- /.login-box -->
->>>>>>> snapshot
 <!-- jQuery 3 -->
 <script src="/static/vendors/jquery/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->

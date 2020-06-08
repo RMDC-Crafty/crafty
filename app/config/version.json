@@ -1,10 +1,5 @@
 {
-<<<<<<< HEAD
   "major": 3.1,
   "minor": "Dev",
-=======
-  "major": 3.0,
-  "minor": "F",
->>>>>>> snapshot
   "sub": 1
 }

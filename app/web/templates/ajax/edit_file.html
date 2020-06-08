@@ -2,7 +2,6 @@
     {% raw xsrf_form_html() %}
     <input type="hidden" name="file_path" value="{{ data ['file_path'] }}"/>
     <input type="hidden" name="server_id" value=" {{ data ['server_id'] }} "/>
-<<<<<<< HEAD
     {{ _('Server ID:') }}  {{ data ['server_id'] }}
     <textarea name="file_contents" rows="20" cols="90">{{ data['file_data'] }}</textarea><br />
     <div class="row">
@@ -12,17 +11,6 @@
         <div class="col-6 float-right text-right">
             <button type="submit" class="btn btn-success">
         <i class="far fa-save" aria-hidden="true"></i> {{ _('Save File') }}
-=======
-    Server ID:  {{ data ['server_id'] }}
-    <textarea name="file_contents" rows="20" cols="120">{{ data['file_data'] }}</textarea><br />
-    <div class="row">
-        <div class="col-xs-6">
-            <a class="btn-danger btn" onclick="bootbox.hideAll()">Cancel</a>
-        </div>
-        <div class="col-xs-6 pull-right text-right">
-            <button type="submit" class="btn btn-success">
-        <i class="fa fa-floppy-o" aria-hidden="true"></i> Save File
->>>>>>> snapshot
     </button>
         </div>
     </div>

@@ -1,6 +1,5 @@
 {% extends ../base.html %}
 
-<<<<<<< HEAD
 {% block title %}{{ _('Crafty Controller - Server Control') }}{% end %}
 
 {% block content %}
@@ -63,63 +62,6 @@
                                     {% if (data['mc_settings']['jar_url'] == "") %}
                                         {{ _('No update jar URL specified.') }} <br />
                                         {{ _('Please add in') }} <a href="server_config?id={{ data['mc_settings']['id'] }}">{{ _('server config') }}</a>
-=======
-{% block title %}Crafty Controller - Server Control{% end %}
-
-{% block content %}
-
-<section class="content-header">
-  <h1>
-    Server Details
-    <small>I demand to see the things!</small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li class="active">Server Control</li>
-  </ol>
-</section>
-
-
-<section class="content">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="box box-info">
-                <div class="box-header with-border">
-                  <h3 class="box-title"><i class="fa fa-id-card-o" aria-hidden="true"></i>
-                      Server Data</h3>
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                    <div id="" style="">
-                        <table class="table table-striped">
-                            <tr>
-                                <td width="20%">Server</td>
-                                <td>ID: {{ data['mc_settings']['id'] }} - {{ data['mc_settings']['server_name'] }}</td>
-                            </tr>
-
-                            <tr>
-                                <td>Auto Start Details</td>
-                                <td>
-                                    Auto Start On: {{ data['mc_settings']['auto_start_server'] }}<br />
-                                    Auto Start Delay: {{ data['mc_settings']['auto_start_delay'] }}<br />
-                                    Auto Start Priority: {{ data['mc_settings']['auto_start_priority'] }}<br />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>World Name</td>
-                                <td>{{ data['world_info']['world_name'] }} </td>
-                            </tr>
-                            <tr>
-                                <td>World Size</td>
-                                <td>{{ data['world_info']['world_size'] }}</td>
-                            </tr>
-                            <tr>
-                                <td>Update Jar</td>
-                                <td>
-                                    {% if (data['mc_settings']['jar_url'] == "") %}
-                                        No update jar URL specified. <br />
-                                        Please add in <a href="server_config?id={{ data['mc_settings']['id'] }}">server config</a>
->>>>>>> snapshot
                                     {% else %}
                                         {{ data['mc_settings']['jar_url'] }}
                                     {% end %}
@@ -132,7 +74,6 @@
             </div>
         </div>
 
-<<<<<<< HEAD
         <div class="col-lg-6">
             <div class="card card-info card-outline">
                 <div class="card-header">
@@ -165,40 +106,6 @@
                             <i class="fas fa-bomb" aria-hidden="true"></i>
                             {{ _('Start New World') }}
                         </a>
-=======
-        <div class="col-md-6">
-            <div class="box box-info">
-                <div class="box-header with-border">
-                  <h3 class="box-title"><i class="fa fa-bolt" aria-hidden="true"></i>
-                      Server Actions</h3>
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
-                    <div id="server_update">
-                        <a class="btn btn-app" onclick="update()"
-                        {% if (data['mc_settings']['jar_url'] == "") %}
-                            disabled='true'
-                        {% end %}
-                        >
-                            <i class="fa fa-cloud-download" aria-hidden="true"></i>
-                            Update Server Jar
-                        </a>
-
-                        <a class="btn btn-app" onclick="update()"
-                        {% if (data['mc_settings']['jar_url'] == "") %}
-                            disabled='true'
-                        {% end %}
-                        >
-                            <i class="fa fa-undo" aria-hidden="true"></i>
-                            Revert Jar Update
-                        </a>
-
-                        <a class="btn btn-app" onclick="destroy_world()">
-                            <i class="fa fa-bomb" aria-hidden="true"></i>
-                            Start New World
-                        </a>
-
->>>>>>> snapshot
                     </div>
                 </div>
             </div>
@@ -207,7 +114,6 @@
 
 
     <div class="row">
-<<<<<<< HEAD
         <div class="col-lg-6">
             <div class="card card-info card-outline">
                 <div class="card-header">
@@ -219,26 +125,12 @@
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
-=======
-        <div class="col-md-6">
-            <div class="box box-info">
-                <div class="box-header with-border">
-                  <h3 class="box-title"><i class="fa fa-clock-o" aria-hidden="true"></i>
-                      Historical Data
-                  </h3>
-                    <br />
-                    <small>Missing Data below? <a href="config">Check your history interval config</a> </small>
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body">
->>>>>>> snapshot
                     <div id="cpu_history" style="height: 250px;"></div>
                 </div>
             </div>
         </div>
 
 
-<<<<<<< HEAD
         <div class="col-lg-6">
             <div class="card card-info card-outline">
             <div class="card-header">
@@ -247,16 +139,6 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-=======
-        <div class="col-md-6">
-            <div class="box box-info">
-            <div class="box-header with-border">
-              <h3 class="box-title"><i class="fa fa-users" aria-hidden="true"></i>
-                  Current Players</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
->>>>>>> snapshot
               <div class="table-responsive">
                 <ul>
                     {% if data['players_online'] > 0 %}
@@ -264,21 +146,13 @@
                             <li>{{ p }}</li>
                         {% end %}
                     {% else %}
-<<<<<<< HEAD
                         {{ _('No Players Online') }}
-=======
-                        No Players Online
->>>>>>> snapshot
                     {% end %}
                 </ul>
               </div>
               <!-- /.table-responsive -->
             </div>
-<<<<<<< HEAD
             <!-- /.card-body -->
-=======
-            <!-- /.box-body -->
->>>>>>> snapshot
 
           </div>
         </div>

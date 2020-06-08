@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 Autostart, Autoinicio
 Auto Start Server after 10 Seconds:, Auto Iniciar el servior despues de 10 segundos:
 Additional Args? (arguments to add after the memory arguments of server command), Argumentos Adicionales? (argumentos a añadir despues de los argumentos de memoria en el comando del servidor)
@@ -294,11 +293,3 @@ You are backing up these paths:, Estás haciendo copia de seguridad de estas rut
 You are here, Tu estás aquí
 Yes, Si
 5 Questions and a checkbox until you're done, 5 Preguntas y una casilla de confirmación y estará todo listo
-=======
-Sign In, registrarse
-Sign in to manage your server, Inicie sesión para administrar su servidor
-Username, Nombre de usuario
-Password, Contraseña
-Server Status, El estado del servidor
-Server Down, Servidor caido
->>>>>>> snapshot

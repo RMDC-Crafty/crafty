@@ -2,7 +2,6 @@
 
 {% block title %}Crafty Controller - Dashboard{% end %}
 
-<<<<<<< HEAD
 <!-- {% block meta %} <meta http-equiv="Refresh" content="60">  {% end %} -->
 
 {% block content %}
@@ -301,347 +300,6 @@
 
   </div>
 
-=======
-{% block meta %} <meta http-equiv="Refresh" content="60">  {% end %}
-
-{% block content %}
-
-<section class="content-header">
-  <h1>
-    Dashboard
-    <small>Server Status</small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li class="active">Dashboard</li>
-  </ol>
-</section>
-
-<section class="content">
-<!-- Info boxes -->
-  <div class="row">
-      <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box">
-        <span class="info-box-icon bg-aqua"><i class="fa fa-heartbeat" aria-hidden="true"></i></span>
-
-        <div class="info-box-content">
-          <span class="info-box-text">Host CPU</span>
-          <span class="info-box-number"> {{ round( data['host_stats']['cpu_usage'], 2) }} % </span>
-
-          <span class="progress-description">
-            {{ round( data['host_stats']['cpu_cur_freq'] / 1000, 2) }} Ghz / {{ round( data['host_stats']['cpu_max_freq'] / 1000, 1) }} Ghz<br />
-            <small>{{ data['host_stats']['cpu_cores'] }} threads</small>
-          </span>
-        </div>
-        <!-- /.info-box-content -->
-      </div>
-      <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-    <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box">
-        <span class="info-box-icon bg-red">
-          <i class="fa fa-microchip" aria-hidden="true"></i>
-        </span>
-
-        <div class="info-box-content">
-          <span class="info-box-text">Host RAM</span>
-          <span class="info-box-number"> {{ data['host_stats']['mem_percent'] }}%</span>
-
-
-          <span class="progress-description">
-            {{ data['host_stats']['mem_usage'] }} / {{ data['host_stats']['mem_total'] }}
-          </span>
-        </div>
-        <!-- /.info-box-content -->
-      </div>
-      <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-
-    <!-- fix for small devices only -->
-    <div class="clearfix visible-sm-block"></div>
-
-    <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box">
-        <span class="info-box-icon bg-green"><i class="fa fa-hdd-o" aria-hidden="true"></i></span>
-
-        <div class="info-box-content">
-          <span class="info-box-text">Host Root Disk</span>
-          <span class="info-box-number">
-             {{ data['host_stats']['disk_percent'] }} %
-          </span>
-          <span class="progress-description">
-            {{ data['host_stats']['disk_usage'] }} / {{ data['host_stats']['disk_total'] }}
-          </span>
-        </div>
-        <!-- /.info-box-content -->
-      </div>
-      <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-    <div class="col-md-3 col-sm-6 col-xs-12">
-      <div class="info-box">
-        <span class="info-box-icon bg-default"><i class="fa fa-server" aria-hidden="true"></i></span>
-
-        <div class="info-box-content">
-          <span class="info-box-text">Server Defined</span>
-          <span class="info-box-number">
-              {{ len(data['servers_running'] ) }} / {{ len(data['servers_defined']) }} Running
-          </span>
-        </div>
-        <!-- /.info-box-content -->
-      </div>
-      <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-  </div>
-  <!-- /.row -->
-
-
-
-<div class="row">
-  {% for s in data['servers_defined'] %}
-
-    <div class="col-xs-6 col-md-6 col-lg-4">
-    {% if s['running'] %}
-    <div class="box box-success box-solid">
-    {% else %}
-    <div class="box box-danger box-solid">
-    {% end %}
-
-      <div class="box-header with-border">
-        <h3 class="box-title" data-toggle="tooltip" title="Server ID {{ s['id'] }} - {{ s['name'] }}">{{ s['name'] }}</h3>
-
-        <div class="box-tools pull-right text-right">
-
-          {% if data['user_data']['svr_control'] %}
-          <a class="btn btn-box-tool {% if s['running'] %} disabled {% end %}" href="/admin/commands?command=server_start&id={{ s['id'] }}" >
-            <i class="fa fa-play"></i>
-          </a>
-
-          <a class="btn btn-box-tool {% if not s['running'] %} disabled {% end %} " href="/admin/commands?command=server_stop&id={{ s['id'] }}">
-            <i class="fa fa-stop"></i>
-          </a>
-
-          <a class="btn btn-box-tool" href="/admin/commands?command=server_restart&id={{ s['id'] }}">
-            <i class="fa fa-refresh" aria-hidden="true"></i>
-          </a>
-
-          {% end %}
-
-          {% if data['user_data']['config'] %}
-          <a class="btn btn-box-tool" href="/admin/server_config?id={{ s['id'] }}">
-            <i class="fa fa-cogs"></i> Edit
-          </a>
-          {% end %}
-
-          <button type="button" class="btn btn-box-tool" data-widget="collapse">
-            <i class="fa fa-minus"></i>
-          </button>
-
-          <br />
-
-          <b>Players:</b>
-            {{ data['mc_servers_data'][s['id']]['online_players'] }}
-            /
-            {{ data['mc_servers_data'][s['id']]['max_players'] }} |
-          <b>CPU:</b> {{ data['mc_servers_data'][s['id']]['cpu_usage'] }} % |
-          <b>Mem:</b> {{ data['mc_servers_data'][s['id']]['memory_usage'] }}
-
-        </div>
-
-
-      </div>
-      <!-- /.box-header -->
-
-      <div class="box-body text-center">
-
-        {% if data['user_data']['svr_control'] %}
-        <a href="/admin/server_control?id={{ s['id'] }}" class="btn  btn-default">
-          <i class="fa fa-eye" aria-hidden="true"></i> Details
-        </a>
-
-        <a href="/admin/virtual_console?id={{ s['id'] }}" class="btn  btn-default">
-          <i class="fa fa-terminal" aria-hidden="true"></i> Terminal
-        </a>
-        {% end %}
-
-        {% if data['user_data']['logs'] %}
-        <a href="/admin/get_logs?id={{ s['id'] }}" class="btn btn-default">
-          <i class="fa fa-list" aria-hidden="true"></i> Logs
-        </a>
-        {% end %}
-
-        {% if data['user_data']['backups'] %}
-        <a href="/admin/backups?id={{ s['id'] }}" class="btn btn-default">
-          <i class="fa fa-save" aria-hidden="true"></i> Backup
-        </a>
-        {% end %}
-
-        {% if data['user_data']['schedules'] %}
-        <a href="/admin/schedules?id={{ s['id'] }}" class="btn btn-default">
-          <i class="fa fa-clock-o" aria-hidden="true"></i> Tasks
-        </a>
-        {% end %}
-
-        {% if data['user_data']['files'] %}
-        <a href="/admin/files?id={{ s['id'] }}" class="btn btn-default">
-          <i class="fa fa-folder-o" aria-hidden="true"></i> Files
-        </a>
-        {% end %}
-
-
-
-      </div>
-
-      <div class="box-footer no-padding">
-          <ul class="nav nav-stacked">
-            <li>
-              <a href="#">Status
-                {% if s['crashed'] %}
-                  <span class="pull-right badge bg-red">Crashed - Auto Restart Disabled</span>
-                {% else %}
-                  {% if s['running'] %}
-                    <span class="pull-right badge bg-green">Running</span>
-                  {% else %}
-                    <span class="pull-right badge bg-orange">Stopped</span>
-                  {% end %}
-                {% end %}
-              </a>
-            </li>
-            <li>
-              <a href="#">Autostart
-                {% if s['auto_start'] %}
-                  <span class="pull-right badge bg-green">Enabled</span>
-                {% else %}
-                  <span class="pull-right badge bg-red">Disabled</span>
-                {% end %}
-              </a>
-            </li>
-
-            <li><a href="#">Server Start Time <span class="pull-right">
-              {{ data['mc_servers_data'][s['id']]['server_start_time'] }}
-            </span></a></li>
-
-            <li><a href="#">Server Type <span class="pull-right">
-              {{ data['mc_servers_data'][s['id']]['server_version'] }}
-            </span></a></li>
-
-            <li><a href="#">Server Description <span class="pull-right">
-            {{ data['mc_servers_data'][s['id']]['motd'] }}
-            </span></a></li>
-
-            <li><a href="#">Server IP : Server Port<span class="pull-right">
-            {{ data['mc_servers_data'][s['id']]['server_ip'] }}
-              : {{ data['mc_servers_data'][s['id']]['server_port'] }}
-            </span></a></li>
-
-
-
-          </ul>
-        </div>
-      <!-- /.box-body -->
-    </div>
-    <!-- /.box -->
-
-  </div>
-  <!-- /.block -->
-
-
-  {% end %}
-
-
-  <div class="col-xs-3">
-    <div class="box box-info collapsed-box box-solid">
-            <div class="box-header with-border">
-              <h3 class="box-title">Create New Server</h3>
-
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i>
-                </button>
-              </div>
-              <!-- /.box-tools -->
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-              <form action="/admin/add_server" method="post">
-
-                <div class="form-group has-feedback">
-                  <label>
-                    Server Name - <small>Example Survival Server</small>
-                  </label>
-                  <input type="text" class="form-control" placeholder="Server Name" name="server_name" value="My New Server" maxlength="55">
-                  <span class="glyphicon glyphicon-file form-control-feedback"></span>
-                </div>
-
-                <div class="form-group has-feedback">
-                  <label>
-                      Server Path - <small>Example /var/opt/minecraft/server</small>
-                    </label>
-                    <input type="text" class="form-control" placeholder="Server Path" name="server_path" maxlength="255"
-                           value="/var/opt/minecraft/server">
-                    <span class="glyphicon glyphicon-folder-open form-control-feedback"></span>
-                </div>
-
-                <div class="form-group has-feedback">
-                  <label>
-                    Server Jar - <small>Example paper.jar</small>
-                  </label>
-                  <input type="text" class="form-control" placeholder="Server Jar" name="server_jar" value="paperclip.jar" maxlength="255">
-                  <span class="glyphicon glyphicon-file form-control-feedback"></span>
-                </div>
-
-                <div class="form-group has-feedback">
-                  <label>
-                    Server Max Memory in MB <br /><small>Example: 2048 </small>
-                  </label>
-                  <input type="number" class="form-control" placeholder="Server Jar" name="max_mem" value="2048">
-                </div>
-
-                <div class="form-group has-feedback">
-                  <label>
-                    Server Min Memory in MB <br /><small>Example: 1024 </small>
-                  </label>
-                  <input type="number" class="form-control" placeholder="Server Jar" name="min_mem" value="1024">
-                </div>
-
-                <div class="form-group has-feedback">
-                  <label>
-                    Auto Start Server after 10 Seconds:
-                    <input type="checkbox"  name="auto_start" id="auto_start" >
-
-                  </label>
-
-                </div>
-
-                <div class="row">
-                  <div class="col-xs-6">
-
-                  </div>
-                  <!-- /.col -->
-                  <div class="col-xs-6">
-                    <button type="submit" onclick="delay()" class="btn btn-success btn-block btn-flat"> Create New Server</button>
-                  </div>
-                  <!-- /.col -->
-                </div>
-                  {% raw xsrf_form_html() %}
-
-              </form>
-            </div>
-            <!-- /.box-body -->
-          </div>
-
-
-  </div>
-
-
-
-</div>
-
-
-
->>>>>>> snapshot
 </section>
 
 
@@ -650,7 +308,6 @@
 {% block js-script %}
 
 <script>
-<<<<<<< HEAD
   $(document).ready(function () {
     refreshServerInfos();
     ServerStatusRefresh();
@@ -678,8 +335,7 @@
       loadServerInfos({{ s['id'] }});
     {% end %}
   }
-=======
->>>>>>> snapshot
+
 
   function delay(time='5-10'){
         bootbox.alert({
@@ -698,8 +354,7 @@
 
   function hide_modal(){
         bootbox.hideAll()
-<<<<<<< HEAD
-    }  
+    }
 
     function refreshCpuInfos() {
       $("#host_cpu").load("/ajax/host_cpu_infos", function(responseTxt, statusTxt, xhr){
@@ -742,9 +397,6 @@
           console.log("Infos Error : "+statusTxt+" -> "+responseTxt);
       });
   }
-=======
-    }
->>>>>>> snapshot
 
    {% if data['errors'] %}
       show_invalid()
