@@ -3,13 +3,12 @@ import os
 
 class ServerProps:
 
-    #Initialises the Class Variables
     def __init__(self, filepath):
         self.filepath = filepath
         self.props = self._parse()
 
-    #Parses the file on self.filepath
     def _parse(self):
+        """Loads and parses the file speified in self.filepath"""
         with open(self.filepath) as fp:
             line = fp.readline()
             d = {}
@@ -30,23 +29,24 @@ class ServerProps:
                 line = fp.readline()
         return d
 
-    #Prints the properties dictionary
     def print(self):
+        """Prints the properties dictionary (using pprint)"""
         pprint.pprint(self.props)
         
-    #Returns the properties dictionary
     def get(self):
+        """Returns the properties dictionary"""
         return self.props
 
-    #Updates property in the properties dictionary [ update("pvp", "true") ]
-    def update(self, prop, val):
-        if prop in self.props.keys():
-            self.props[prop] = val
+    def update(self, key, val):
+        """Updates property in the properties dictionary [ update("pvp", "true") ] and returns boolean condition"""
+        if key in self.props.keys():
+            self.props[key] = val
+            return True
         else:
-            print("Property not found.\n")
+            return False
 
-    #Writes the new file
     def save(self):
+        """Writes to the new file"""
         with open(self.filepath, "a+") as f:
             f.truncate(0)
             with open(".header") as header:
