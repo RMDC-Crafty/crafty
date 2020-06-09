@@ -464,7 +464,7 @@ class AjaxHandler(BaseHandler):
                 except Exception as e:
                     logger.error("Unable to delete {} due to {} error".format(file_path, e))
 
-            elif helper.check_file_exists(built_path):
+            if helper.check_file_exists(built_path):
                 try:
                     os.remove(file_path)
                     logger.info("File {} deleted".format(file_path))
