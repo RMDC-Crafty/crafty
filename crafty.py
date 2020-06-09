@@ -113,7 +113,7 @@ def show_help():
 def start_scheduler():
     while True:
         schedule.run_pending()
-        time.sleep(.5)
+        time.sleep(1)
 
 
 def send_kill_command():
@@ -302,6 +302,10 @@ if __name__ == '__main__':
 
     # do our scheduling
     multi.reload_scheduling()
+
+    # schedule our stats
+    schedule.every(10).seconds.do(multi.do_stats_for_servers).tag('server_stats')
+    schedule.every(10).seconds.do(multi.do_host_status).tag('server_stats')
 
     multi.reload_user_schedules()
 
