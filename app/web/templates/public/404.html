@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>{% block title %}Crafty Controller - Login{% end %}</title>
+  <title>{% block title %}{{ _('Crafty Controller - Login') }}{% end %}</title>
   {% block meta %} {% end %}
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -14,9 +14,11 @@
   <!-- Ionicons -->
   <link rel="stylesheet" href="/static/vendors/ionicons/css/ionicons.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="/static/css/AdminLTE.min.css">
+  <link rel="stylesheet" href="/static/css/adminlte.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
+  <!-- Crafty style -->
+  <link rel="stylesheet" href="/static/css/crafty.css">
 
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -28,24 +30,50 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+  <script>
+    //determines if the user has a set theme
+    function detectColorScheme(){
+        var theme="light";    //default to light
+
+        //local storage is used to override OS theme settings
+        if(localStorage.getItem("theme")){
+            if(localStorage.getItem("theme") == "dark"){
+                var theme = "dark";
+            }
+        } else if(!window.matchMedia) {
+            //matchMedia method not supported
+            return false;
+        } else if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            //OS theme setting detected as dark
+            var theme = "dark";
+        }
+
+        //dark theme preferred, set document with a `data-theme` attribute
+        if (theme=="dark") {
+            document.documentElement.setAttribute("data-theme", "dark");
+        }
+    }
+    detectColorScheme();
+  </script>
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    <a><b>Crafty </b>Controller</a>
+    <a><b>{{ _('Crafty') }} </b>{{ _('Controller') }}</a>
   </div>
   <!-- /.login-logo -->
-  <div class="login-box-body">
+  <div class="login-card-body">
       <div class="row">
-          <div class="col-xs-12 text-center">
-              <h3>404 - Page Cannot Be Displayed</h3>
+          <div class="col-12 text-center">
+              <h3>404 - {{ _('Page Cannot Be Displayed') }}</h3>
           </div>
       </div>
 
   </div>
-  <!-- /.login-box-body -->
+  <!-- /.login-card-body -->
 </div>
-<!-- /.login-box -->
+<!-- /.login-card -->
 <!-- jQuery 3 -->
 <script src="/static/vendors/jquery/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->

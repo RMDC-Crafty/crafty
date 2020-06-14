@@ -1,35 +1,35 @@
-<h3>Version Update Checker</h3>
+<h3>{{ _('Version Update Checker') }}</h3>
 <hr>
 <table class="table">
     <thead>
         <tr>
-            <th>Branch</th>
-            <th>Version</th>
+            <th>{{ _('Branch') }}</th>
+            <th>{{ _('Version') }}</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>Master</td>
+            <td>{{ _('Master') }}</td>
             <td>{{ data['master']['major'] }}.{{ data['master']['minor'] }}.{{ data['master']['sub'] }}</td>
         </tr>
         <tr>
-            <td>Beta</td>
+            <td>{{ _('Beta') }}</td>
             <td>{{ data['beta']['major'] }}.{{ data['beta']['minor'] }}.{{ data['beta']['sub'] }}</td>
         </tr>
         <tr>
-            <td>Snaps</td>
+            <td>{{ _('Snaps') }}</td>
             <td>{{ data['snaps']['major'] }}.{{ data['snaps']['minor'] }}.{{ data['snaps']['sub'] }}</td>
         </tr>
         <tr>
             <td>
-                Current
-                <span class="text-danger">* You are here</span>
+                {{ _('Current') }}
+                <span class="text-danger">* {{ _('You are here') }}</span>
             </td>
             <td>{{ data['current']['major'] }}.{{ data['current']['minor'] }}.{{ data['current']['sub'] }}</td>
         </tr>
         <tr>
             <td colspan="2">
-                <a href="https://craftycontrol.com/crafty-releases/" target="_blank"> Click here to download the latest update</a>
+                <a href="https://craftycontrol.com" target="_blank"> {{ _('Click here to download the latest update') }}</a>
             </td>
         </tr>
     </tbody>

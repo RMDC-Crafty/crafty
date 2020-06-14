@@ -1,0 +1,294 @@
+Autostart, Automatisch Starten
+Auto Start Server after 10 Seconds:, Start Server Automatisch na 10 Seconden:
+Additional Args? (arguments to add after the memory arguments of server command), Bijkomende Argumenten? (argumenten toe te voegen na de  geheugenargumenten van de server)
+Arguments after memory arguments, Argumenten na geheugenargumenten
+After Arguments, Na Argumenten
+Additional Args? (arguments to add at the end of server command), Argumenten Toe Te Voegen? (argumenten toe te voegen aan het einde van de serveropdracht)
+Auto Start Server On Program Launch?, Server Automatisch Starten Bij Starten Van Programma?
+Auto Start Delay In Seconds, Vertraging Automatisch Starten In Seconden
+Auto Start Priority, Prioriteit Automatisch Starten 
+Add User, Gebruiker Toevoegen
+A secure password is actually a phrase, Een veilig wachtwoord is eigenlijk een zin
+All rights reserved., Alle rechten voorbehouden.
+Auto Start Details, Details Automatisch Starten
+Auto Start On:, Automatisch Starten Aan:
+Auto Start Delay:, Vertraging Automatisch Starten:
+Auto Start Priority:, Prioriteit Automatisch Starten
+Auto Start Server after 10 Seconds, Start Server Automatisch na 10 seconden
+"An empty value means ""every"". For instance: Backup every 1 hour, Een lege waarde betekent ""ieder"". Bijvoorbeeld: Neem ieder 1 uur een back-up"
+A scheduled task, Een geplande taak
+Action, Actie
+Autostart Delay, Vertraging Automatisch Starten
+Actions, Acties
+available, beschikbaar
+and kept for, en bewaard voor
+API Access, API toegang
+Are you sure you wish to delete user:, Ben je zeker dat je deze gebruiker wilt verwijderen:
+Backup, Back-up
+Branch, Afdeling
+Because the NSA won't send their copy, Omdat de NSA hun kopie niet zal sturen
+Backups for Server ID:, Back-ups voor Server ID:
+Backup Server Now, Back-up Server Nu
+Backup Worlds, Back-up Werelden
+Backup every, Back-up ieder
+Be careful here., Wees hier voorzichtig
+Crafty Controller - Login, Crafty Controller - Login
+Controller Login, Controller Login
+Change Password, Wijzig Wachtwoord
+Check For Updates, Controleer Op Updates
+Create New Server, Maak Nieuwe Server
+Crafty Controller Version:, Crafty Controller Versie:
+Configure Your Server, Configureer Uw Server
+Change Role, Wijzig Functie
+Change is good, Verandering is goed
+Click here to download the latest update, Klik hier om te laatste update te installeren
+Current, Huidige
+Change Your Password, Wijzig Uw Wachtwoord
+Change Password For:, Wijzig Wachtwoord Voor:
+Creepers hate me so much, Creepers haten mij zo erg
+Crafty will try to connect to, Crafty zal proberen verbinding te maken met
+Check your history interval config, Controleer uw geschiedenis interval configuratie
+Current Players, Huidige Spelers
+Change Backup Config, Wijzig Back-up Configuratie
+Click On The Log Below To Scroll To Bottom, Klik Op Het Onderstaande Logboek Om Naar Beneden Te Scrollen
+Cancel, Annuleer
+Comment, Reageer
+Click thumb to toggle, Klik op de duim om te wisselen
+Current Directory:, Huidige Map:
+Dashboard, Dashboard
+Documentation, Documentatie
+Details, Details
+Disabled, Uitgeschakeld
+Default is 25565 - this is the port crafty will use to get server stats. This should match your server.properties file, Standaard 25565 - dit is de poort die crafty zal gebruiken om serverstatistieken op te halen. Dit moet overeenkomen met uw server.properties-bestand
+Default is 127.0.0.1 - this is the ip crafty will use to get server stats. This should match your server.properties file, Standaard 127.0.0.1 - dit is het ip dat crafty zal gebruiken om serverstatistieken op te halen. Dit moet overeenkomen met uw server.properties-bestand
+Delete Server, Verwijder Server
+Default of 8000 - 443 and 80 require root on linux, Standaard 8000 - 443 en 80 vereisen root op linux
+Default of 2121 - 21 and 20 require root on linux, Standaard 2121 - 21 en 20 vereisen root op linux
+Delete, Verwijder
+Days, Dagen
+days, dagen
+Download, Installatie
+Down, Uitgeschakeld
+Extra Arguments, Extra Argumenten
+Example: , Voorbeeld:
+Enabled, Ingeschakeld
+entries, onderdelen
+Example: 2048, Voorbeeld:2048
+Example: 1014, Voorbeeld: 1014
+Example /var/opt/minecraft/server, Voorbeeld  /var/opt/minecraft/server
+Example paper.jar, Voorbeeld paper.jar
+Example Survival Server, Voorbeeld Survival Server
+Enter your server command, Voer uw serveropdracht in
+Existing Backups, Bestaande Back-ups
+Enter Your Search String, Voer Uw Zoekreeks In
+Enter your server command, Voer uw serveropdracht in
+Example: 2048 - Currently, Voorbeeld: 2048 - Momenteel
+Example: 1024 - Currently, Voorbeeld: 1048 - Momenteel
+Example c:\minecraft\server, Voorbeeld C:\minecraft\server
+Enter the New Users Username, Voer de gebruikersnaam voor nieuwe gebruikers in
+Enter the New Password for, Voer Het Nieuw Wactwoord In Voor
+Files, Bestanden
+FTP User, FTP Gebruiker
+FTP Password, FTP Wachtwoord
+FTP Port, FTP Poort
+False, Niet Waar
+Friday, Vrijdag
+File Management, Bestandsbeheer
+File, Bestand
+FTP Server Control: Server is currently, FTP-serverbeheer: Server is momenteel
+Getting Version Data, Versiegegevens ophalen
+Host CPU, Host CPU
+Host RAM, Host RAM
+Host Root Disk, Host  Root-schijf
+HOST TOTAL CPU USAGE, HOST TOTAAL CPU-GEBRUIK
+HOST TOTAL RAM USAGE, HOST TOTAAL RAM-GEBRUIK
+HOST TOTAL DISK USAGE, HOST TOTAAL SCHIJF-GEBRUIK
+Home, Startscherm
+Has no effect if auto start is turned off (Example: 10), Heeft geen effect als automatisch starten uitgeschakeld is (Voorbeeld: 10)
+https://example.com/latest/server.jar, https://Voorbeeld.com/latest/server.jar
+Highest Priority, Hoogste Prioriteit
+Historical Data Capture Interval, Interval Historische Gegevensvastlegging
+How many minutes between historical data capture, Aantal minuten tussen vastleggen van historische gegevens
+Historical Data Length, Historische gegevenslengte
+How many days should we keep historical data, Hoeveel dagen moeten we historische gegevens bewaren
+Historical Data will be captured every, Historische Gegevens worden opgeslagen elke
+Historical Data, Historische Gegevens
+How Often, Hoe Vaak
+Hours, Uren
+installed, Geïnstalleerd
+I want crafty to automatically restart the server, Ik wil dat Crafty de server automatisch herstart
+I demand to see the things!, Ik verlang om dingen te zien!
+Invalid Settings Detected: Server Path Does Not Exists, Ongeldige Instellingen Gedetecteerd: Serverpad Bestaat Niet
+Invalid Settings Detected:, Ongeldige Instellingen Gedetecteerd:
+I don't know... Have you checked the logs?, Ik weet het niet… Heb je de logboeken gecontroleerd?
+Issue Command, Commando-invoer
+Interval Type, Intervaltype
+It's like a bot, Het is als een bot
+Join The Discord, Doe Mee Op Discord
+Jar Update URL, Jar Update URL
+Keys to a good password, Eigenschappen van een sterk wachtwoord
+Lowest Priority, Laagste Prioriteit
+Logs for Server:, Logboeken voor Server:
+Logs, Logboeken
+Latest Errors, Laatste Foutmeldingen
+Latest Warnings, Laatste Waarschuwingen
+Line, Regel
+Memory, Geheugen
+MAIN NAVIGATION, HOOFDNAVIGATIE
+Medium Priority, Gemiddelde Prioriteit
+minutes, minuten
+Minecraft Server Config, Minecraft Server Config
+Maximum Memory To Use in MB? (example: 2048), Maximaal Te Gebruiken Geheugen in MB? (voorbeeld: 2048)
+Minimum Memory To Use in MB? (example: 1024), Minimaal Te Gebruiken Geheugen in MB? (voorbeeld: 1024)
+My New Server, Mijn Nieuwe Server
+Missing Data below?, Ontbrekende Gegevens Hieronder?
+Minutes, Minuten
+Monday, Maandag
+Max Memory, Max. Geheugen
+Min Memory, Min. Geheugen
+MyFirstServer, MijnEersteServer
+Mod, Mod
+No - I will start the server myself., Nee - Ik zal de server zelf starten.
+No effect if auto start is not enabled, Geen effect als automatisch starten is uitgeschakeld
+No - I will start the server myself if it crashes., Nee - Ik zal de server zelf starten als deze crasht.
+Note the Admin can not be deleted or changed, Merk op dat de Admin niet kan worden verwijderd of gewijzigd
+Next, Volgende
+Not Started, Niet Gestart
+NOT, NIET
+No update jar URL specified., Geen update-jar-URL opgegeven
+No Players Online, Geen Spelers Online
+Note: this page doesn't auto-refresh, Opmerking: deze pagina wordt niet automatisch vernieuwd
+No data available in table, Geen data beschikbaar in de tabel
+Next,
+New Scheduled Action, Nieuwe Geplande Actie
+on port, op poort
+only better, alleen beter
+Password, Wachtwoord
+Players, Spelers
+Players:, Spelers:
+Pre Arguments, Pre-argumenten
+Previous, Vorige
+Please add in, Gelieve toe te voegen
+Path, Pad
+Password:, Wachtwoord:
+Port:, Poort:
+Permissions, Rechten
+Page Cannot Be Displayed, Pagina Kan Niet Worden Weergegeven
+Running, Werkend
+Reload MC Settings, Herlaad MC Instellingen
+Reload Web Server, Herlaad Web Server
+Revert Jar Update, Jar-update Terugzetten
+Restart Server, Herstart Server
+Role, Functie
+Role:, Functie:
+Sign In, Aanmelden
+Sign in to manage your server, Meld aan om uw server te beheren
+Server Status, Server Status
+Server Down, Server Offline
+Server, Server
+Server Defined, Server Gedefinieerd
+Status, Status
+Stopped, Gestopt
+Server Start Time, Server Starttijd
+Server Type, Type Server
+Server Description, Server Beschrijving
+Server IP : Server Port, Server IP: Server Poort
+Server IP, Server IP
+Server Port, Server Port
+Server Configuration, Server Configuratie
+Server Config, Server Config
+server config, server config
+Server Name, Server Naam
+Server Path, Server Pad
+Server Jar, Server Jar
+Server Max Memory, Max. Geheugen Server
+Server Max Memory in MB,  Max. Geheugen Server in MB
+Server Min Memory, Min. Geheugen Server
+Server Min Memory in MB, Min. Geheugen Server in MB
+Server Jar Update URL - This is where you define where to update the jar from., Server Jar Update URL - Hier definieert u waar de jar van moet worden bijgewerkt.
+Save, Opslaan
+Show, Toon
+Set Password, Stel Wachtwoord In
+Search:, Zoek:
+set to autostart, Ingesteld op automatisch starten
+Server Data, Server Gegevens
+Server Actions, Serveracties
+Start New World, Start Nieuwe Wereld
+Server Details, Server Details
+Server Control, Serverbeheer
+Sometimes you just need a terminal, Soms heb je gewoon een console nodig
+Stop Auto-Scrolling, Stop Automatisch Scrollen
+Send Command, Stuur Opdracht
+Server Backups, Server Back-ups
+Server Backup, Server Back-up
+Show, Toon
+Size, Grootte
+Search Latest.log, Zoek Laatste Logboek
+Scheduled Tasks, Geplande Taken
+Select Your Action, Selecteer Uw Actie
+Start Server, Start Server
+Stop Server, Stop Server
+Saturday, Zaterdag
+Sunday, Zondag
+Scheduled Actions, Geplande Acties
+Start FTP Server, Start FTP Server
+Stop FTP Server, Stop FTP Server
+Server Jar Here,  Hier Server Jar
+Server Path Here, Hier Server Pad
+Save and Finish, Opslaan en Voltooien
+Server Console, Server Console
+Server Logs, Server Logboeken
+Server Schedule, Serverschema
+Sign out, Afmelden
+Select the new role for, Selecteer de nieuwe functie voor
+Staff, Medewerker
+Tasks, Taken
+Turn On Crash Detection?, Schakel Crashdetectie In?
+This will detect server crashes and restart them, Hiermee worden servercrashes gedetecteerd en opnieuw opgestart
+The server will be launched using this string:, De server wordt gestart met deze tekenreeks:
+The server is, De server is
+This can should be unique to the FTP service, Dit deel zou uniek moeten zijn voor de FTP-service
+This should be at least 8 letters long - maybe 15 characters, Dit moet minimaal 8 letters lang zijn - misschien 15 karakters
+Type your new password, Typ je nieuwe wachtwoord
+that is at least 10 char long and contains uncommon words:, dat is minstens 10 tekens lang en bevat niet-alledaagse woorden:
+to get server status, om de serverstatus te krijgen
+threads, threads
+Tuesday, Dinsdag
+Thursday, Donderdag
+Time, Tijd
+Time is disabled for minute and hour values, Tijd is uitgeschakeld voor minuut- en uurwaarden
+The credentials are:, De referenties zijn:
+The users new password is:, Het nieuwe wachtwoord van de gebruiker is:
+Testing, Testen
+Username, Gebruikersnaam
+Unable to connect, Niet in staat om verbinding te maken
+Users, Gebruikers
+users defined, gedefinieerde gebruikers
+Update Jar, Update Jar
+Update Server Jar, Update Server Jar
+Up, In Werking
+Username:, Gebruikersnaam:
+Version Update Checker, Versie-update checker
+Version, Versie
+Virtual Console for server:, Virtuele Console voor server:
+Virtual Console, Virtuele Console
+What do you call this server? (example: CraftySurvival), Hoe noem je deze server? (voorbeeld: CraftySurvival)
+What folder is your server in? (example: C:\minecraft\server), In welke map zit uw server? (voorbeeld: C:\minecraft\server)
+What is your jar filename? (example: paper.jar), Wat is de bestandsnaam van je jar? (voorbeeld: paper.jar)
+Webserver Port, Webserver Poort
+World Name, Naam Wereld
+World Size, Grootte Wereld
+Warning, Waarschuwing
+Wednesday, Woensdag
+You can not rename servers at this time, U kunt de naam van de servers op dit moment niet wijzigen
+Yes - Start the Minecraft Server on program launch., Ja - Start de Minecraft Server bij het opstarten van het programma.
+Yes - If the server stops, Ja - Als de server stopt
+Your Current Config, Uw Huidige Config
+Your API Key:, Uw API Sleutel:
+You have, U hebt
+you have, u hebt
+Your backups are stored in:, Uw back-ups worden opgeslagen in
+You are backing up these paths:, U maakt een back-up van deze paden:
+You are here, U bent hier
+Yes, Ja
+5 Questions and a checkbox until you're done, 5 Vragen en een checkbox tot je klaar bent

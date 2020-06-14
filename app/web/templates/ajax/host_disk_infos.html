@@ -1,0 +1,7 @@
+<span class="info-box-text">{{ _('Host Root Disk') }}</span>
+<span class="info-box-number">
+    {{ data['host_stats']['disk_percent'] }} %
+</span>
+<span class="progress-description">
+{{ data['host_stats']['disk_usage'] }} / {{ data['host_stats']['disk_total'] }}
+</span>

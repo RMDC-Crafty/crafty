@@ -1,0 +1,10 @@
+ <b>{{ _('Players:') }}</b>
+{% try %}
+  {{ data['mc_servers_data'][data['srv']['id']]['online_players'] }}
+  /
+  {{ data['mc_servers_data'][data['srv']['id']]['max_players'] }} |
+{% except %}
+?/?
+{% end %}
+<b>{{ _('CPU') }}:</b> {{ data['mc_servers_data'][data['srv']['id']]['cpu_usage'] }} % |
+<b>{{ _('Mem') }}:</b> {{ data['mc_servers_data'][data['srv']['id']]['memory_usage'] }}

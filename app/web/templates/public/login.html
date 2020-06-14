@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>{% block title %}Crafty Controller - Login{% end %}</title>
+  <title>{% block title %}{{ _('Crafty Controller - Login') }}{% end %}</title>
   {% block meta %} {% end %}
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -14,10 +14,11 @@
   <!-- Ionicons -->
   <link rel="stylesheet" href="/static/vendors/ionicons/css/ionicons.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="/static/css/AdminLTE.min.css">
+  <link rel="stylesheet" href="/static/css/adminlte.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
-
+  <!-- Crafty style -->
+  <link rel="stylesheet" href="/static/css/crafty.css">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -28,16 +29,44 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <script>
+    //determines if the user has a set theme
+    function detectColorScheme(){
+        var theme="light";    //default to light
+
+        //local storage is used to override OS theme settings
+        if(localStorage.getItem("theme")){
+            if(localStorage.getItem("theme") == "dark"){
+                var theme = "dark";
+            }
+        } else if(!window.matchMedia) {
+            //matchMedia method not supported
+            return false;
+        } else if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            //OS theme setting detected as dark
+            var theme = "dark";
+        }
+
+        //dark theme preferred, set document with a `data-theme` attribute
+        if (theme=="dark") {
+            document.documentElement.setAttribute("data-theme", "dark");
+        }
+    }
+    detectColorScheme();
+  </script>
 </head>
 <body class="hold-transition login-page">
-<div class="login-box">
-  <div class="login-logo">
-    <a ><b>Crafty </b>Controller Login</a>
+<div class="login-box float-center"  align="center">
+  <div class="login-logo float-center"  align="center">
+    <a><img src="https://assets.gitlab-static.net/uploads/-/system/project/avatar/14984440/Crafty_Logo.png?width=64" width="150px" height="150px"></a>
+    <br />
+        <a><span style="font: 28px Source Sans Pro">{{ _('Crafty Controller Login') }}</span></a>
+
   </div>
   <!-- /.login-logo -->
-  <div class="login-box-body">
+  <div class="float-center">
+    <div class="col-xs-4">
     <p class="login-box-msg"> {{ _('Sign in to manage your server') }}</p>
-
     <form action="/" method="post">
       <div class="form-group has-feedback">
         <input type="text" class="form-control" placeholder="{{ _('Username') }}" name="username" maxlength="55">
@@ -48,11 +77,8 @@
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
       <div class="row">
-        <div class="col-xs-8">
-
-        </div>
         <!-- /.col -->
-        <div class="col-xs-4">
+        <div class="col-12 float-center">
           <button type="submit" class="btn btn-primary btn-block btn-flat"> {{ _('Sign In') }}</button>
         </div>
         <!-- /.col -->
@@ -60,46 +86,46 @@
         {% raw xsrf_form_html() %}
     </form>
     <br />
-      <h3> {{ _('Server Status') }}</h3>
-      <div class="row">
-          <div class="col-xs-12 text-left">
 
-
-              <table class="table">
-                  <thead>
+      <div class="row float-center">
+        <div class="col-12 float-center">
+           <h3>{{ _('Server Status') }}</h3>
+        </div>
+        <div class="col-sm-12 float-center">
+            <table class="table table-sm ">
+                <thead>
+                <tr>
+                    <th>{{ _('Server') }}</th>
+                    <th>{{ _('Running') }}</th>
+                    <th>{{ _('CPU') }}</th>
+                    <th>{{ _('Memory') }}</th>
+                    <th>{{ _('Players') }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% if data['server_data'] %}
+                {% for s in data['server_data'] %}
                   <tr>
-                      <th>Server</th>
-                      <th>Running</th>
-                      <th>CPU</th>
-                      <th>Memory</th>
-                      <th>Players</th>
+                      <td>{{s['name']}}</td>
+                      <td>{{s['server_running']}}</td>
+                      <td>{{s['cpu_usage']}}</td>
+                      <td>{{s['memory_usage']}}</td>
+                      <td>{{s['online_players']}} / {{s['max_players']}}</td>
                   </tr>
-                  </thead>
-                  <tbody>
-                  {% if data['server_data'] %}
-                  {% for s in data['server_data'] %}
-                    <tr>
-                        <td>{{s['name']}}</td>
-                        <td>{{s['server_running']}}</td>
-                        <td>{{s['cpu_usage']}}</td>
-                        <td>{{s['memory_usage']}}</td>
-                        <td>{{s['online_players']}} / {{s['max_players']}}</td>
-                    </tr>
+                {% end %}
+                {% end %}
 
-                  {% end %}
-                  {% end %}
+                </tbody>
 
-                  </tbody>
-
-              </table>
-
-          </div>
+            </table>
+        </div>
       </div>
-
   </div>
-  <!-- /.login-box-body -->
+  </div>
+  <!-- /.login-card-body -->
 </div>
-<!-- /.login-box -->
+<!-- /.login-card -->
+
 <!-- jQuery 3 -->
 <script src="/static/vendors/jquery/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->

@@ -10,6 +10,8 @@ from app.classes.web_sessions import web_session
 from app.classes.multiserv import multi
 from app.classes.ftp import ftp_svr_object
 from app.classes.backupmgr import backupmgr
+from zipfile import ZipFile
+import shutil
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +20,7 @@ class AjaxHandler(BaseHandler):
     def initialize(self, mcserver):
         self.mcserver = mcserver
         self.console = console
+        self.session = web_session(self.current_user)
 
     @tornado.web.authenticated
     def get(self, page):
@@ -65,26 +68,148 @@ class AjaxHandler(BaseHandler):
             self.render(
                 'ajax/version.html',
                 data=context
+            )
 
+        elif page == 'host_cpu_infos':  
+
+            name = tornado.escape.json_decode(self.current_user)
+            user_data = get_perms_for_user(name)
+
+            context = {
+                'host_stats': multi.get_host_status()
+            }                 
+                    
+            self.render(
+                'ajax/host_cpu_infos.html',
+                data=context
+            )
+
+        elif page == 'host_ram_infos':  
+
+            name = tornado.escape.json_decode(self.current_user)
+            user_data = get_perms_for_user(name)
+
+            context = {
+                'host_stats': multi.get_host_status()
+            }                 
+                    
+            self.render(
+                'ajax/host_ram_infos.html',
+                data=context
+            )
+
+        elif page == 'host_disk_infos':  
+
+            name = tornado.escape.json_decode(self.current_user)
+            user_data = get_perms_for_user(name)
+
+            context = {
+                'host_stats': multi.get_host_status()
+            }                 
+                    
+            self.render(
+                'ajax/host_disk_infos.html',
+                data=context
+            )
+
+        elif page == 'host_running_servers':  
+
+            name = tornado.escape.json_decode(self.current_user)
+            user_data = get_perms_for_user(name)
+
+            context = {
+                'servers_running': multi.list_running_servers(),
+                'servers_defined': multi.list_servers(),
+            }                 
+                    
+            self.render(
+                'ajax/host_running_servers.html',
+                data=context
+            )
+
+        elif page == 'server_status':  
+
+            name = tornado.escape.json_decode(self.current_user)
+            user_data = get_perms_for_user(name)
+
+            context = {
+                'user_data': user_data,
+                'mc_servers_data': multi.get_stats_for_servers()
+            }     
+
+            server_id = bleach.clean(self.get_argument('id'))
+            srv_obj = multi.get_server_obj(server_id)
+            
+            context['srv'] = {
+                        'id': srv_obj.server_id,
+                        'name': srv_obj.get_mc_server_name(),
+                        'running': srv_obj.check_running(),
+                        'crashed': srv_obj.check_crashed(),
+                        'auto_start': srv_obj.settings.auto_start_server
+                    }
+                    
+            self.render(
+                'ajax/server_status.html',
+                data=context
+            )
+
+        elif page == 'server_infos':  
+
+            name = tornado.escape.json_decode(self.current_user)
+            user_data = get_perms_for_user(name)
+
+            context = {
+                'user_data': user_data,
+                'mc_servers_data': multi.get_stats_for_servers()
+            }     
+
+            server_id = bleach.clean(self.get_argument('id', 1))
+            srv_obj = multi.get_server_obj(server_id)
+            
+            context['srv'] = {
+                        'id': srv_obj.server_id,
+                        'name': srv_obj.get_mc_server_name(),
+                        'running': srv_obj.check_running(),
+                        'crashed': srv_obj.check_crashed(),
+                        'auto_start': srv_obj.settings.auto_start_server
+                    }
+                    
+            self.render(
+                'ajax/server_infos.html',
+                data=context
             )
 
         elif page == 'get_file':
             file_path = bleach.clean(self.get_argument('file_name'))
             server_id = bleach.clean(self.get_argument('server_id'))
 
-            f = open(file_path, "r")
-            file_data = f.read()
-            context = {
-                "file_data": file_data,
-                "file_path": file_path,
-                "server_id": server_id
-            }
+            mc_data = MC_settings.get_by_id(server_id)
+            mc_settings = model_to_dict(mc_data)
 
-            self.render(
-                'ajax/edit_file.html',
-                data=context
+            mc_settings['server_path'] = str(mc_settings['server_path']).replace("\\", '/')
 
-            )
+            # let's remove the server directory from the path...
+            asked_for_path = file_path.replace(mc_settings['server_path'], '')
+            built_path = mc_settings['server_path'] + asked_for_path
+
+            # if the server directory plus the path asked for doesn't exits...
+            # this must be an attempt to do path traversal...so we bomb out.
+            if not helper.check_file_exists(built_path):
+                raise Exception("possible file traversal detected {}".format(file_path))
+
+            else:
+                f = open(file_path, "r")
+                file_data = f.read()
+                context = {
+                    "file_data": file_data,
+                    "file_path": file_path,
+                    "server_id": server_id
+                }
+
+                self.render(
+                    'ajax/edit_file.html',
+                    data=context
+                )
 
     def post(self, page):
 
@@ -170,7 +295,7 @@ class AjaxHandler(BaseHandler):
 
                 self.write(new_pass)
 
-        elif page == "edit_role":
+        elif page == "edit_user_role":
             if not user_data['config']:
                 logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
                     user_data['username'], user_data['role_name'], "Delete User"))
@@ -220,18 +345,196 @@ class AjaxHandler(BaseHandler):
                     Users.delete().where(Users.username == username).execute()
                     self.write("{} deleted".format(username))
 
+        elif page == 'add_role':
+            if not user_data['config']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Add Role"))
+                self.redirect('/admin/unauthorized')
+
+            new_rolename = bleach.clean(self.get_argument("rolename", None, True))
+
+            if new_rolename:
+
+                result = Roles.insert({
+                    Roles.name: new_rolename,
+                    Roles.svr_control: False,
+                    Roles.svr_console: False,
+                    Roles.logs: False,
+                    Roles.backups: False,
+                    Roles.schedules: False,
+                    Roles.config: False,
+                    Roles.files: False,
+                    Roles.api_access: False,
+                }).execute()
+
+                self.write("{}".format(new_rolename))
+
+                        
+        elif page == 'edit_role':
+            if not user_data['config']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Add Role"))
+                self.redirect('/admin/unauthorized')
+
+            rolename = bleach.clean(self.get_argument("rolename", None, True))
+            
+            new_svr_control = 'True' == bleach.clean(self.get_argument("svr_control", False, True))
+            new_svr_console = 'True' == bleach.clean(self.get_argument("svr_console", False, True))
+            new_logs = 'True' == bleach.clean(self.get_argument("logs", False, True))
+            new_backups = 'True' == bleach.clean(self.get_argument("backups", False, True))
+            new_schedules = 'True' == bleach.clean(self.get_argument("schedules", False, True))
+            new_config = 'True' == bleach.clean(self.get_argument("config", False, True))
+            new_files = 'True' == bleach.clean(self.get_argument("files", False, True))
+            new_api_access = 'True' == bleach.clean(self.get_argument("api_access", False, True))
+
+            if rolename:
+                result = Roles.update({
+                    Roles.svr_control: new_svr_control,
+                    Roles.svr_console: new_svr_console,
+                    Roles.logs: new_logs,
+                    Roles.backups: new_backups,
+                    Roles.schedules: new_schedules,
+                    Roles.config: new_config,
+                    Roles.files: new_files,
+                    Roles.api_access: new_api_access,
+                }).where(Roles.name == rolename).execute()
+                    
+                self.write("{} edited".format(rolename))
+
+        elif page == 'del_role':
+            if not user_data['config']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Delete Role"))
+                self.redirect('/admin/unauthorized')
+
+            rolename = bleach.clean(self.get_argument("rolename", None, True))
+
+            if rolename == 'Admin':
+                self.write("Not Allowed")
+            else:
+                if rolename:
+                    Roles.delete().where(Roles.name == rolename).execute()
+                    self.write("{} deleted".format(rolename))
+
         elif page == 'save_file':
             file_data = bleach.clean(self.get_argument('file_contents'))
             file_path = bleach.clean(self.get_argument("file_path"))
             server_id = bleach.clean(self.get_argument("server_id"))
+
+            mc_data = MC_settings.get_by_id(server_id)
+            mc_settings = model_to_dict(mc_data)
+
+            mc_settings['server_path'] = str(mc_settings['server_path']).replace("\\", '/')
+
+            # let's remove the server directory from the path...
+            asked_for_path = file_path.replace(mc_settings['server_path'], '')
+            built_path = mc_settings['server_path'] + asked_for_path
+
+            # if the server directory plus the path asked for doesn't exits...
+            # this must be an attempt to do path traversal...so we bomb out.
+            if not helper.check_file_exists(built_path):
+                raise Exception("possible file traversal detected {}".format(file_path))
+
             try:
                 file = open(file_path, 'w')
                 file.write(file_data)
                 file.close()
-                logger.error("File {} saved with new content".format(file_path))
+                logger.info("File {} saved with new content".format(file_path))
             except Exception as e:
                 logger.error("Unable to save {} due to {} error".format(file_path, e))
             self.redirect("/admin/files?id={}".format(server_id))
+
+        elif page == "del_server_file":
+            file_path = bleach.clean(self.get_argument("file_name"))
+            server_id = bleach.clean(self.get_argument("server_id"))
+
+            mc_data = MC_settings.get_by_id(server_id)
+            mc_settings = model_to_dict(mc_data)
+
+            mc_settings['server_path'] = str(mc_settings['server_path']).replace("\\", '/')
+
+            # let's remove the server directory from the path...
+            asked_for_path = file_path.replace(mc_settings['server_path'], '')
+            built_path = mc_settings['server_path'] + asked_for_path
+
+            if helper.check_directory_exist(built_path):
+                try:
+                    shutil.rmtree(built_path)
+                    logger.info("Deleting {}".format(built_path))
+                except Exception as e:
+                    logger.error("Unable to delete {} due to {} error".format(file_path, e))
+
+            if helper.check_file_exists(built_path):
+                try:
+                    os.remove(file_path)
+                    logger.info("File {} deleted".format(file_path))
+                except Exception as e:
+                    logger.error("Unable to delete {} due to {} error".format(file_path, e))
+
+            self.redirect("/admin/files?id={}".format(server_id))
+
+        elif page == "new_file_folder":
+            type = bleach.clean(self.get_argument("type"))
+            server_id = bleach.clean(self.get_argument("server_id"))
+            pwd = bleach.clean(self.get_argument("pwd"))
+            name = bleach.clean(self.get_argument("name"))
+
+            mc_data = MC_settings.get_by_id(server_id)
+            mc_settings = model_to_dict(mc_data)
+
+            mc_settings['server_path'] = str(mc_settings['server_path']).replace("\\", '/')
+
+            # let's remove the server directory from the path...
+            asked_for_path = pwd.replace(mc_settings['server_path'], '')
+            built_path = mc_settings['server_path'] + asked_for_path
+
+            path = os.path.join(pwd, name)
+
+            if type == "folder":
+                logger.info("Creating folder at {}".format(path))
+                try:
+                    os.mkdir(path)
+                except Exception as e:
+                    logger.error("Unable to create folder at {} due to {}".format(path, e))
+            else:
+                logger.info("Creating File at {}".format(path))
+
+                try:
+                    with open(path, "w") as fobject:
+                        fobject.close()
+                except Exception as e:
+                    logger.error("Unable to create file at {} due to {}".format(path, e))
+
+
+        elif page == "unzip_server_file":
+            file_path = bleach.clean(self.get_argument("file_name"))
+            server_id = bleach.clean(self.get_argument("server_id"))
+            pwd = bleach.clean(self.get_argument("pwd"))
+
+            mc_data = MC_settings.get_by_id(server_id)
+            mc_settings = model_to_dict(mc_data)
+
+            mc_settings['server_path'] = str(mc_settings['server_path']).replace("\\", '/')
+
+            # let's remove the server directory from the path...
+            asked_for_path = file_path.replace(mc_settings['server_path'], '')
+            built_path = mc_settings['server_path'] + asked_for_path
+
+            # if the server directory plus the path asked for doesn't exits...
+            # this must be an attempt to do path traversal...so we bomb out.
+            if not helper.check_file_exists(built_path):
+                raise Exception("possible file traversal detected {}".format(file_path))
+
+            try:
+                with ZipFile(file_path, "r") as zipObj:
+                    logger.info("Exctracting file: {} to dir {}".format(file_path,pwd))
+                    zipObj.extractall(pwd)
+
+            except Exception as e:
+                logger.error("Unable to extract: {} due to error: {}".format(file_path, e))
+
+            self.redirect("/admin/files?id={}".format(server_id))
+
 
         elif page == "destroy_server":
             server_id = bleach.clean(self.get_body_argument('server_id', default=None, strip=True))

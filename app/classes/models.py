@@ -3,7 +3,7 @@ import json
 import datetime
 from peewee import DateTimeField, CharField, FloatField, Model, IntegerField, BooleanField, SqliteDatabase, AutoField
 from playhouse.shortcuts import model_to_dict, dict_to_model
-from playhouse.migrate import SqliteMigrator
+from playhouse.migrate import *
 from app.classes.helpers import helper
 import logging
 
@@ -134,6 +134,7 @@ class MC_settings(BaseModel):
     memory_min = CharField()
     additional_args = CharField()
     pre_args = CharField(default='')
+    java_path = CharField()
     auto_start_server = BooleanField()
     auto_start_delay = IntegerField()
     auto_start_priority = IntegerField()
@@ -149,6 +150,7 @@ class MC_settings(BaseModel):
 class Crafty_settings(BaseModel):
     history_interval = IntegerField()
     history_max_age = IntegerField()
+    language = CharField(default='en_EN')
 
     class Meta:
         table_name = 'crafty_settings'
@@ -224,6 +226,7 @@ class sqlhelper():
         q = Crafty_settings.insert({
             Crafty_settings.history_interval: 60,
             Crafty_settings.history_max_age: 2,
+            Crafty_settings.language: "en_EN"
         })
 
         q.execute()
@@ -291,8 +294,28 @@ class sqlhelper():
 
     def do_database_migrations(self):
         migrator = SqliteMigrator(database)
+        language = CharField(default='en_EN')
 
+        # grab all the columns in the crafty settings table
+        crafty_settings = database.get_columns("crafty_settings")
 
+        has_lang = False
+
+        # loop through columns and see if we have a language column
+        for setting in crafty_settings:
+            if setting.name == "language":
+                has_lang = True
+
+        # if we don't have a lang column, let's add one
+        if not has_lang:
+            migrate(
+                migrator.add_column('crafty_settings', 'language', language)
+            )
+
+            # let's update the row with our default lang
+            Crafty_settings.update({
+                Crafty_settings.language: "en_EN"
+            }).where(Crafty_settings.id == 1).execute()
 
 def get_perms_for_user(user):
     user_data = {}

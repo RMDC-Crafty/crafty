@@ -62,6 +62,25 @@ class remote_commands():
         return commands
 
     def handle_command(self, command, server_id):
+
+        if command == "exit_crafty":
+            logger.info("Sending Stop Command To Crafty")
+
+            # stop the ftp server...
+            if ftp_svr_object.check_running():
+                ftp_svr_object.stop_threaded_ftp_server()
+
+            # kill all mc servers gracefully
+            try:
+                multi.stop_all_servers()
+            except:
+                pass
+
+            logger.info("***** Crafty Stopped ***** \n")
+            webhookmgr.run_command_webhooks(command, webhookmgr.payload_formatter(200, {}, {"code": "CWEB_STOP"},
+                                                                                  {"info": "Crafty is shutting down"}))
+            os._exit(0)
+
         srv_obj = multi.get_server_obj(server_id)
         running = srv_obj.check_running()
         server_name = srv_obj.get_mc_server_name()

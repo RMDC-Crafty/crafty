@@ -6,9 +6,8 @@ import logging
 import argparse
 import threading
 import logging.config
+import datetime
 import subprocess
-
-# This Is A Test
 
 def is_venv():
     return hasattr(sys, 'real_prefix') or sys.base_prefix != sys.prefix
@@ -34,6 +33,7 @@ except Exception as e:
         pipinstall = pipinstall.lower()
         print(pipinstall)
         if pipinstall == str("yes"):
+            import subprocess
             file = open("requirements.txt" , "r")
 
             for line in file:
@@ -53,6 +53,7 @@ except Exception as e:
         pipinstall = pipinstall.lower()
         print(pipinstall)
         if pipinstall == str("yes"):
+            import subprocess
             file = open("requirements.txt" , "r")
 
             for line in file:
@@ -65,7 +66,6 @@ except Exception as e:
         else:
             print("Not reinstalling modules, join the discord for further assistance!")
             sys.exit(1)
-
 
 def setup_logging(debug=False):
     logging_config_file = os.path.join(os.path.curdir,
@@ -89,17 +89,17 @@ def setup_logging(debug=False):
 
 def do_intro():
     version_data = helper.get_version()
+    version = "{}.{}.{}".format(version_data['major'], version_data['minor'], version_data['sub'])
 
-    intro = "/" * 75 + "\n"
-    intro += '#\t\tWelcome to Crafty Controller - v.{}.{}.{}\t\t #'.format(
-        version_data['major'],
-        version_data['minor'],
-        version_data['sub']
-        ) + "\n"
-    intro += "/" * 75 + "\n"
-    intro += '#   \tServer Manager / Web Portal for your Minecraft server\t\t #' + "\n"
-    intro += '#   \t\tHomepage: www.craftycontrol.com\t\t\t\t #' + "\n"
-    intro += '/' * 75 + "\n"
+    intro = """
+    {lines}
+    #\t\tWelcome to Crafty Controller - v.{version}\t\t      #
+    {lines}
+    #   \tServer Manager / Web Portal for your Minecraft server\t      #
+    #   \t\tHomepage: www.craftycontrol.com\t\t\t      #
+    {lines}
+    """.format(lines="/" * 75, version=version)
+
     print(intro)
 
 
@@ -113,13 +113,26 @@ def show_help():
 def start_scheduler():
     while True:
         schedule.run_pending()
-        time.sleep(.5)
+        time.sleep(1)
 
 
 def send_kill_command():
+    # load the remote commands obj
+    from app.classes.remote_coms import remote_commands
+    from app.classes.http import tornado_srv
+    from app.classes.models import peewee, Remote
+
+    # start the remote commands watcher thread
+    remote_coms = remote_commands(tornado_srv)
+    remote_coms_thread = threading.Thread(target=remote_coms.start_watcher, daemon=True, name="Remote_Coms")
+    remote_coms_thread.start()
+
     Remote.insert({
-        Remote.command: 'exit_crafty'
+        Remote.command: 'exit_crafty',
+        Remote.server_id: 1,
+        Remote.command_source: 'local'
     }).execute()
+
     time.sleep(2)
     sys.exit(0)
 
@@ -168,7 +181,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # sets up our logger
-    setup_logging(args.verbose)
+    setup_logging(debug=args.verbose)
 
     # setting up the logger object
     logger = logging.getLogger(__name__)
@@ -208,6 +221,9 @@ if __name__ == '__main__':
         logger.warning("No config specified")
 
     # prioritize command line flags
+    if args.kill_all:
+        send_kill_command()
+
     if args.daemonize:
         daemon_mode = args.daemonize
 
@@ -254,7 +270,7 @@ if __name__ == '__main__':
     scheduler = threading.Thread(name='Scheduler', target=start_scheduler, daemon=True)
     scheduler.start()
 
-    # startup Tornado
+    # startup Tornado if we aren't killing all craftys
     tornado_srv.start_web_server(True)
     websettings = Webserver.get()
     port_number = websettings.port_number
@@ -267,6 +283,16 @@ if __name__ == '__main__':
         console.info("Your Password is: {}".format(admin_pass))
         console.info("Your Admin token is: {}".format(admin_token))
 
+        currentDT = datetime.datetime.now().strftime("%Y-%m-%d %I:%M:%S %p")
+        message = "Would you like us to setup a minecraft server for you? [y/n]: "
+        setupmcsrv = str(input(colored("[+] Crafty: {} - INFO:\t{}".format(currentDT, message), 'white')))
+        setupmcsrv = setupmcsrv.lower()
+        if setupmcsrv == 'y':
+            if os.name == 'nt':
+                os.system("python app\minecraft\mcservcreate.py")
+            else:
+                os.system("python app/minecraft/mcservcreate.py")
+
     # for each server that is defined, we set them up in the multi class, so we have them ready for later.
 
     multi.init_all_servers()
@@ -276,6 +302,10 @@ if __name__ == '__main__':
 
     # do our scheduling
     multi.reload_scheduling()
+
+    # schedule our stats
+    schedule.every(10).seconds.do(multi.do_stats_for_servers).tag('server_stats')
+    schedule.every(10).seconds.do(multi.do_host_status).tag('server_stats')
 
     multi.reload_user_schedules()
 

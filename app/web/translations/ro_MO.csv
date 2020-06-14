@@ -1,0 +1,294 @@
+Autostart, Autopornire
+Auto Start Server after 10 Seconds:, Porneste automat serverul dupa 10 secunde:
+Additional Args? (arguments to add after the memory arguments of server command), Argumente speciale? (argumente care sa fie adaugate in comanda de pornire a serverului dupa cele de memorie)
+Arguments after memory arguments, Argumente care sa fie adaugate dupa cele de memorie
+After Arguments, Dupa Argumente
+Additional Args? (arguments to add at the end of server command), Argumente speciale? (argumente care sa fie adaugate la finalul comenzii de pornire)
+Auto Start Server On Program Launch?, Porneste automat serverul odata cu programul?
+Auto Start Delay In Seconds, Delay pentru autopornire (in secunde)
+Auto Start Priority, Prioritate Autopornire
+Add User, Adauga Utilizator
+A secure password is actually a phrase, O parola buna poate fi chiar o propozitie
+All rights reserved., Toate drepturile rezervate.
+Auto Start Details, Detalii Autopornire
+Auto Start On:, Autopornire Pe:
+Auto Start Delay:, Delay Autopornire:
+Auto Start Priority:, Prioritate Autopornire:
+Auto Start Server after 10 Seconds, Porneste automat serverul dupa 10 secunde
+"An empty value means ""every"". For instance: Backup every 1 hour", "O valoare goala poate fi ""fiecare"". De exemplu: Backup fiecare 1 ora."
+A scheduled task, O actiune programata
+Action, Actiune
+Autostart Delay, Delay Autopornire
+Actions, Actiuni
+available, disponibil
+and kept for, sunt tinute pentru
+API Access, Acces API
+Are you sure you wish to delete user:, Esti sigur ca vrei sa stergi utilizatorul:
+Backup, Backup
+Branch, Ramura
+Because the NSA won't send their copy, Pentru ca NSA nu-si vor trimite copia lor
+Backups for Server ID:, Backupuri pentru Serverul cu ID:
+Backup Server Now, Fa backup la server acum
+Backup Worlds, Fa backup la lumi
+Backup every, Fa backup la fiecare
+Be careful here., Ai grija aici.
+Crafty Controller - Login, Crafty Controller - Login
+Controller Login, Login Controller
+Change Password, Schimba Parola
+Check For Updates, Cauta Update-uri
+Create New Server, Creeaza un server nou
+Crafty Controller Version:, Crafty Controller Versiunea: 
+Configure Your Server, Configureaza-ti Serverul
+Change Role, Schimba Rolul
+Change is good, Schimbarea este buna
+Click here to download the latest update, Da click aici pentru a descarca cel mai nou update
+Current, Curent
+Change Your Password, Schimba-ti Parola
+Change Password For:, Schimba Parola Pentru:
+Creepers hate me so much, Creeperii ma urasc asa de mult
+Crafty will try to connect to, Crafty va incerca sa se conecteze la
+Check your history interval config, Verifica istoricul intervalului configului
+Current Players, Jucatori Conectati
+Change Backup Config, Schimba configul de backup
+Click On The Log Below To Scroll To Bottom, Click pe log pentru a da scroll pana jos
+Cancel, Anuleaza
+Comment, Comentariu
+Click thumb to toggle, Click pentru a porni sau opri
+Current Directory:, Folderul Curent:
+Dashboard, Panou
+Documentation, Documentatie
+Details, Detalii
+Disabled, Dezactivat
+Default is 25565 - this is the port crafty will use to get server stats. This should match your server.properties file, Defaultul este 25565 - acesta este portul pe care Crafty il va folosi pentru a lua statisticile serverului. Trebuie sa fie acelasi ca cel din fisierul server.properties
+Default is 127.0.0.1 - this is the ip crafty will use to get server stats. This should match your server.properties file, Defaultul este 127.0.0.1 - acesta este IP-ul pe care crafty il va folosi pentru a lua statisticile serverului. Trebuie sa fie acelasi ca cel din fisierul server.properties
+Delete Server, Sterge Serverul
+Default of 8000 - 443 and 80 require root on linux, Defaultul este 8000 - 443 si 80 au nevoie de root pe Linux
+Default of 2121 - 21 and 20 require root on linux, Defaultul este 2121 - 21 si 20 au nevoie de root pe Linux
+Delete, Sterge
+Days, Zile
+days, zile
+Download, Descarca
+Down, Jos
+Extra Arguments, Argumente Extra
+Example: , Exemplu: 
+Enabled, Activat
+entries, intrari
+Example: 2048, Exemplu: 2048
+Example: 1014, Exemplu: 1014
+Example /var/opt/minecraft/server, Exemplu: /var/opt/minecraft/server
+Example paper.jar, Exemplu paper.jar
+Example Survival Server, Exemplu Server Survival
+Enter you server command, Scrie comanda pentru server
+Existing Backups, Backupuri Existente
+Enter Your Search String, Scrie ce vrei sa cauti
+Enter your server command, Scrie comanda de server
+Example: 2048 - Currently, Exemplu: 2048 - Momentan
+Example: 1024 - Currently, Exemplu: 1024 - Momentan
+Example c:\minecraft\server, Exemplu: C:\minecraft\server
+Enter the New Users Username, Scrie numele noului utilizator
+Enter the New Password for, Scrie noua parola pentru
+Files, Fisiere
+FTP User, Utilizator FTP
+FTP Password, Parola FTP
+FTP Port, Port FTP
+False, Fals
+Friday, Vineri
+File Management, Management Fisiere
+File, Fisier
+FTP Server Control: Server is currently, Control Server FTP: Serverul este momentan
+Getting Version Data, Primim Datele Versiunii
+Host CPU, CPU Host
+Host RAM, RAM Host
+Host Root Disk, Discul Root Host
+HOST TOTAL CPU USAGE, UTILIZARE TOTALA CPU
+HOST TOTAL RAM USAGE, UTILIZARE TOTALA RAM
+HOST TOTAL DISK USAGE, UTILIZARE TOTALA DISC
+Home, Acasa
+Has no effect if auto start is turned off (Example: 10), Nu are niciun efect daca auto start este oprit (Exemplu: 10)
+https://example.com/latest/server.jar, https://exemplu.com/latest/server.jar
+Highest Priority, Cea mai mare prioritate
+Historical Data Capture Interval, Interval inregistrare date istorice
+How many minutes between historical data capture, Cate minute intre fiecare inregistrare de date istorice
+Historical Data Length, Lungime Date Istorice
+How many days should we keep historical data, Cate zile sa stocam datele istorice
+Historical Data will be captured every, Datele istorice for fi inregistrate fiecare
+Historical Data, Date Istorice
+How Often, Cat de des
+Hours, Ore
+installed, instalat
+I want crafty to automatically restart the server, Crafty, vreau sa imi restartezi automat serverul
+I demand to see the things!, Cer sa vad lucrurile!
+Invalid Settings Detected: Server Path Does Not Exists, Setari invalide detectate: Folderul serverului nu exista
+Invalid Settings Detected:, Setari invalide detectate:
+I don't know... Have you checked the logs?, Nu stiu... Ai verificat logurile?
+Issue Command, Executa Comanda
+Interval Type, Tip Interval
+It's like a bot, E ca un bot
+Join The Discord, Intra pe Discord
+Jar Update URL, URL Update JAR
+Keys to a good password, Cheia unei parole bune
+Lowest Priority, Cea mai mica prioritate
+Logs for Server:, Loguri pentru server
+Logs, Loguri
+Latest Errors, Ultimele Erori
+Latest Warnings, Ultimele Warninguri
+Line, Linie
+Memory, Memorie
+MAIN NAVIGATION, NAVIGATIE PRINCIPALA
+Medium Priority, Prioritate Medie
+minutes, minute
+Minecraft Server Config, Configuratie Server Minecraft
+Maximum Memory To Use in MB? (example: 2048), Memorie Maxima Alocata in MB? (exemplu: 2048)
+Minimum Memory To Use in MB? (example: 1024), Memorie Maxima Alocata in MB? (exemplu: 1024)
+My New Server, Serverul Meu Nou
+Missing Data below?, Datele de mai jos lipsesc?
+Minutes, Minute
+Monday, Luni
+Max Memory, Memorie Maxima
+Min Memory, Memorie Minima
+MyFirstServer, PrimulMeuServer
+Mod, Mod
+No - I will start the server myself., Nu - Imi voi porni singur serverul.
+No effect if auto start is not enabled, Nu are niciun efect daca autopornirea este oprita
+No - I will start the server myself if it crashes., Nu - Imi voi porni singur serverul daca da crash.
+Note the Admin can not be deleted or changed, Tine minte ca adminul nu poate fii sters sau schimbat
+Next, Urmatorul
+Not Started, Oprit
+NOT, NE
+No update jar URL specified., Niciun URL pentru update JAR nu a fost specificat.
+No Players Online, Niciun Jucator Online
+Note: this page doesn't auto-refresh, Atentie: aceasta pagina nu se reincarca automat
+No data available in table, Nu sunt date disponibile in acest tabel
+Next, Urmatorul
+New Scheduled Action, Actiune Programata Noua
+on port, pe portul
+only better, doar mai bun
+Password, Parola
+Players, Jucatori
+Players:, Jucatori:
+Pre Arguments, Pre Argumente
+Previous, Inapoi
+Please add in, Te rog adauga
+Path, Cale
+Password:, Parola:
+Port:, Port:
+Permissions, Permisiuni:
+Page Cannot Be Displayed, Pagina nu poate fi afisata
+Running, Functioneaza
+Reload MC Settings, Reincarca Setarile MC
+Reload Web Server, Reincarca Webserverul
+Revert Jar Update, Pune versiunea de JAR anterioara
+Restart Server, Restartaza Serverul
+Role, Rol
+Role:, Rol:
+Sign In, Logheaza-te
+Sign in to manage your server, Logheaza-te pentru a-ti controla serverul
+Server Status, Status Server
+Server Down, Server Oprit
+Server, Server
+Server Defined, Server Definit
+Status, Status
+Stopped, Oprit
+Server Start Time, Timp Pornire Server
+Server Type, Tip Server
+Server Description, Descriere Server
+Server IP : Server Port, IP Server : Port Server
+Server IP, IP Server
+Server Port, Port Server
+Server Configuration, Configuratie Server
+Server Config, Config Server
+server config, config server
+Server Name, Nume Server
+Server Path, Cale Server
+Server Jar, JAR Server
+Server Max Memory, Memorie Maxima Server
+Server Max Memory in MB, Memorie Maxima Server in MB
+Server Min Memory, Memorie Minima Server
+Server Min Memory in MB, Memorie Minima Server in MB
+Server Jar Update URL - This is where you define where to update the jar from., URL Update JAR Server - Aici ii spui sistemului de unde sa updateze JAR-ul serverului.
+Save, Salveaza
+Show, Arata
+Set Password, Seteaza Parola
+Search:, Cauta:
+set to autostart, seteaza sa autoporneasca
+Server Data, Date Server
+Server Actions, Actiuni Server
+Start New World, Incepe o lume noua
+Server Details, Detalii Server
+Server Control, Control Server
+Sometimes you just need a terminal, Uneori pur si simplu iti trebuie un terminal
+Stop Auto-Scrolling, Opreste Auto-Scrollarea
+Send Command, Trimite Comanda
+Server Backups, Backupuri Server
+Server Backup, Backup Server
+Show, Arata
+Size, Marime
+Search Latest.log, Cauta Latest.log
+Scheduled Tasks, Actiuni Programate
+Select Your Action, Selecteaza Actiunea
+Start Server, Porneste Serverul
+Stop Server, Opreste Serverul
+Saturday, Sambata
+Sunday, Duminica
+Scheduled Actions, Actiuni Programate
+Start FTP Server, Porneste Serverul FTP
+Stop FTP Server, Opreste Serverul FTP
+Server Jar Here, Jar Server Aici
+Server Path Here, Calea Serverului Aici
+Save and Finish, Salveaza si termina
+Server Console, Consola Server
+Server Logs, Loguri Server
+Server Schedule, Programare Actiune Server
+Sign out, Delogare
+Select the new role for, Selecteaza noul rol al lui
+Staff, Staff
+Tasks, Actiuni
+Turn On Crash Detection?, Porneste detectarea de crashuri?
+This will detect server crashes and restart them, Asta va detecta cand serverul da crash si-l va restarta
+The server will be launched using this string:, Serverul va fi pornit folosind aceasta comanda:
+The server is, Serverul este
+This can should be unique to the FTP service, Asta trebuie sa fie unica pentru serviciul FTP
+This should be at least 8 letters long - maybe 15 characters, Asta trebuie sa fie cel putin 8 caractere - poate 15
+Type your new password, Scrie noua parola
+that is at least 10 char long and contains uncommon words:, care este de cel putin 10 caractere si contine cuvinte mai putin cunoscute
+to get server status, pentru a lua statusul serverului
+threads, threaduri
+Tuesday, Marti
+Thursday, Joi
+Time, Timp
+Time is disabled for minute and hour values, Timpul este dezactivat pentru valori de minute si ore
+The credentials are:, Datele de logare sunt:
+The users new password is:, Parola noua a utilizatorului este:
+Testing, Test
+Username, Nume
+Unable to connect, Nu se poate conecta
+Users, Utilizatori
+users defined, utilizatori definiti
+Update Jar, Updateaza JAR
+Update Server Jar, Updateaza JAR-ul Serverului
+Up, Pornit
+Username:, Nume:
+Version Update Checker, Verificator Update-uri
+Version, Versiunea
+Virtual Console for server:, Consola Virtuala pentru server
+Virtual Console, Consola Virtuala
+What do you call this server? (example: CraftySurvival), Cum se numeste acest server? (exemplu: CraftySurvival)
+What folder is your server in? (example: C:\minecraft\server), In ce folder este serverul? (exemplu: C:\minecraft\server)
+What is your jar filename? (example: paper.jar), Care este numele JAR-ului? (exemplu: paper.jar)
+Webserver Port, Port Webserver
+World Name, Nume Lume
+World Size, Marime Lume
+Warning, Atentie
+Wednesday, Miercuri
+You can not rename servers at this time, Nu mai poti redenumi acum servere
+Yes - Start the Minecraft Server on program launch., Da - Porneste serverul de Minecraft odata cu Crafty.
+Yes - If the server stops, Da - Daca serverul se opreste
+Your Current Config, Configul Tau Curent
+Your API Key:, Cheia ta API
+You have, Ai
+you have, ai
+Your backups are stored in:, Backupurile sunt stocate in:
+You are backing up these paths:, Faci backup la aceste locatii
+You are here, Esti aici
+Yes, Da
+5 Questions and a checkbox until you're done, 5 Intrebari si un checkbox pana esti gata

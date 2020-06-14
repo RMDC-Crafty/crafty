@@ -90,13 +90,9 @@ class multi_serve():
             logger.info("Loading settings for server %s", s['name'])
 
     def reload_scheduling(self):
-        logger.info("Clearing Scheduled Tasks")
-        schedule.clear('all_tasks')
-
-        logger.info("Rebuilding Scheduled Tasks")
-        schedule.every(10).seconds.do(multi.do_stats_for_servers).tag('server_stats', 'all_tasks')
-        schedule.every(10).seconds.do(multi.do_host_status).tag('server_stats', 'all_tasks')
+        self.reload_user_schedules()
         self.reload_history_settings()
+
 
     def reload_user_schedules(self):
         logger.info("Reloading Scheduled Tasks")
@@ -106,7 +102,7 @@ class multi_serve():
         # clear all user jobs
         schedule.clear('user')
 
-        logger.info("Deleting all old tasks")
+        logger.info("Deleting all old users tasks")
 
         logger.info("There are {} scheduled jobs to parse:".format(len(db_data)))
 
@@ -297,24 +293,44 @@ class multi_serve():
                 stats = srv_obj.get_mc_process_stats()
 
                 # delete the old history stats for this server
-                Server_Stats.delete().where(Server_Stats.server_id == int(s[1]['server_id'])).execute()
+                # Server_Stats.delete().where(Server_Stats.server_id == int(s[1]['server_id'])).execute()
 
-                Server_Stats.insert({
-                    Server_Stats.server_id: s[1]['server_id'],
-                    Server_Stats.server_start_time: stats['server_start_time'],
-                    Server_Stats.server_running: stats['server_running'],
-                    Server_Stats.cpu_usage: stats['cpu_usage'],
-                    Server_Stats.memory_usage: stats['memory_usage'],
-                    Server_Stats.world_name: stats['world_name'],
-                    Server_Stats.world_size: stats['world_size'],
-                    Server_Stats.online_players: stats['online'],
-                    Server_Stats.max_players: stats['max'],
-                    Server_Stats.players: stats['players'],
-                    Server_Stats.motd: stats['server_description'],
-                    Server_Stats.server_version: stats['server_version'],
-                    Server_Stats.server_ip: stats['server_ip'],
-                    Server_Stats.server_port: stats['server_port'],
-                }).execute()
+                exists = Server_Stats.select().where(Server_Stats.server_id == int(s[1]['server_id'])).exists()
+
+                if exists:
+                    Server_Stats.update({
+                        Server_Stats.server_id: s[1]['server_id'],
+                        Server_Stats.server_start_time: stats['server_start_time'],
+                        Server_Stats.server_running: stats['server_running'],
+                        Server_Stats.cpu_usage: stats['cpu_usage'],
+                        Server_Stats.memory_usage: stats['memory_usage'],
+                        Server_Stats.world_name: stats['world_name'],
+                        Server_Stats.world_size: stats['world_size'],
+                        Server_Stats.online_players: stats['online'],
+                        Server_Stats.max_players: stats['max'],
+                        Server_Stats.players: stats['players'],
+                        Server_Stats.motd: stats['server_description'],
+                        Server_Stats.server_version: stats['server_version'],
+                        Server_Stats.server_ip: stats['server_ip'],
+                        Server_Stats.server_port: stats['server_port'],
+                    }).where(Server_Stats.server_id == int(s[1]['server_id'])).execute()
+                else:
+                    Server_Stats.insert({
+                        Server_Stats.server_id: s[1]['server_id'],
+                        Server_Stats.server_start_time: stats['server_start_time'],
+                        Server_Stats.server_running: stats['server_running'],
+                        Server_Stats.cpu_usage: stats['cpu_usage'],
+                        Server_Stats.memory_usage: stats['memory_usage'],
+                        Server_Stats.world_name: stats['world_name'],
+                        Server_Stats.world_size: stats['world_size'],
+                        Server_Stats.online_players: stats['online'],
+                        Server_Stats.max_players: stats['max'],
+                        Server_Stats.players: stats['players'],
+                        Server_Stats.motd: stats['server_description'],
+                        Server_Stats.server_version: stats['server_version'],
+                        Server_Stats.server_ip: stats['server_ip'],
+                        Server_Stats.server_port: stats['server_port'],
+                    }).execute()
 
     def get_stats_for_server(self, server_id):
         q = Server_Stats.select().where(Server_Stats.server_id == int(server_id))
