@@ -90,13 +90,6 @@ class multi_serve():
             logger.info("Loading settings for server %s", s['name'])
 
     def reload_scheduling(self):
-        # logger.info("Clearing Scheduled Tasks")
-        # schedule.clear('all_tasks')
-
-        # logger.info("Rebuilding Scheduled Tasks")
-        # schedule.every(10).seconds.do(multi.do_stats_for_servers).tag('server_stats', 'all_tasks')
-        # schedule.every(10).seconds.do(multi.do_host_status).tag('server_stats', 'all_tasks')
-
         self.reload_user_schedules()
         self.reload_history_settings()
 
@@ -109,7 +102,7 @@ class multi_serve():
         # clear all user jobs
         schedule.clear('user')
 
-        logger.info("Deleting all old tasks")
+        logger.info("Deleting all old users tasks")
 
         logger.info("There are {} scheduled jobs to parse:".format(len(db_data)))
 
