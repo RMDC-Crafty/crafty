@@ -85,6 +85,9 @@ class webserver():
 
         websettings = Webserver.get()
 
+        crafty_settings = Crafty_settings.get()
+        lang = crafty_settings.language
+
         port_number = websettings.port_number
         web_root = helper.get_web_root_path()
 
@@ -97,6 +100,8 @@ class webserver():
         asyncio.set_event_loop(asyncio.new_event_loop())
 
         tornado.template.Loader('.')
+
+        tornado.locale.set_default_locale(lang)
 
         ip = helper.get_public_ip()
 

@@ -45,6 +45,9 @@ class PublicHandler(BaseHandler):
         entered_user = bleach.clean(self.get_argument('username'))
         entered_password = bleach.clean(self.get_argument('password'))
 
+        remote_ip = self.request.headers.get("X-Real-IP") or \
+                    self.request.headers.get("X-Forwarded-For") or \
+                    self.request.remote_ip
 
         try:
             user_data = Users.get(Users.username == entered_user)
@@ -54,6 +57,8 @@ class PublicHandler(BaseHandler):
                 login_result = helper.verify_pass(entered_password, user_data.password)
                 if login_result:
                     self.set_current_user(entered_user)
+
+                    logger.info("User: {} Logged in from IP: {}".format(entered_user, remote_ip))
 
                     if helper.check_file_exists(helper.new_install_file):
                         next_page = "/setup/step1"

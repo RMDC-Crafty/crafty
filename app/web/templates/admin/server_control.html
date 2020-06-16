@@ -1,60 +1,67 @@
 {% extends ../base.html %}
 
-{% block title %}Crafty Controller - Server Control{% end %}
+{% block title %}{{ _('Crafty Controller - Server Control') }}{% end %}
 
 {% block content %}
 
-<section class="content-header">
-  <h1>
-    Server Details
-    <small>I demand to see the things!</small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li class="active">Server Control</li>
-  </ol>
-</section>
-
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-md-6">      
+        <h1 class="m-0">
+            {{ _('Server Details') }}
+            <small style="font-size:.45em;">{ _('I demand to see the things!') }}</small>
+        </h1>
+      </div>
+      <div class="col-md-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
+          <li class="active breadcrumb-item">{{ _('Server Control') }}</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
 
 <section class="content">
     <div class="row">
-        <div class="col-md-6">
-            <div class="box box-info">
-                <div class="box-header with-border">
-                  <h3 class="box-title"><i class="fa fa-id-card-o" aria-hidden="true"></i>
-                      Server Data</h3>
+        <div class="col-lg-6">
+            <div class="card card-info card-outline">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="far fa-id-card" aria-hidden="true"></i>
+                      {{ _('Server Data') }}</h3>
                 </div>
-                <!-- /.box-header -->
-                <div class="box-body">
+                <!-- /.card-header -->
+                <div class="card-body">
                     <div id="" style="">
                         <table class="table table-striped">
                             <tr>
-                                <td width="20%">Server</td>
-                                <td>ID: {{ data['mc_settings']['id'] }} - {{ data['mc_settings']['server_name'] }}</td>
+                                <td width="20%">{{ _('Server') }}</td>
+                                <td>{{ _('ID:') }} {{ data['mc_settings']['id'] }} - {{ data['mc_settings']['server_name'] }}</td>
                             </tr>
 
                             <tr>
-                                <td>Auto Start Details</td>
+                                <td>{{ _('Auto Start Details') }}</td>
                                 <td>
-                                    Auto Start On: {{ data['mc_settings']['auto_start_server'] }}<br />
-                                    Auto Start Delay: {{ data['mc_settings']['auto_start_delay'] }}<br />
-                                    Auto Start Priority: {{ data['mc_settings']['auto_start_priority'] }}<br />
+                                    {{ _('Auto Start On:') }} {{ data['mc_settings']['auto_start_server'] }}<br />
+                                    {{ _('Auto Start Delay:') }} {{ data['mc_settings']['auto_start_delay'] }}<br />
+                                    {{ _('Auto Start Priority:') }} {{ data['mc_settings']['auto_start_priority'] }}<br />
                                 </td>
                             </tr>
                             <tr>
-                                <td>World Name</td>
+                                <td>{{ _('World Name') }}</td>
                                 <td>{{ data['world_info']['world_name'] }} </td>
                             </tr>
                             <tr>
-                                <td>World Size</td>
+                                <td>{{ _('World Size') }}</td>
                                 <td>{{ data['world_info']['world_size'] }}</td>
                             </tr>
                             <tr>
-                                <td>Update Jar</td>
+                                <td>{{ _('Update Jar') }}</td>
                                 <td>
                                     {% if (data['mc_settings']['jar_url'] == "") %}
-                                        No update jar URL specified. <br />
-                                        Please add in <a href="server_config?id={{ data['mc_settings']['id'] }}">server config</a>
+                                        {{ _('No update jar URL specified.') }} <br />
+                                        {{ _('Please add in') }} <a href="server_config?id={{ data['mc_settings']['id'] }}">{{ _('server config') }}</a>
                                     {% else %}
                                         {{ data['mc_settings']['jar_url'] }}
                                     {% end %}
@@ -67,38 +74,38 @@
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div class="box box-info">
-                <div class="box-header with-border">
-                  <h3 class="box-title"><i class="fa fa-bolt" aria-hidden="true"></i>
-                      Server Actions</h3>
+        <div class="col-lg-6">
+            <div class="card card-info card-outline">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="fas fa-bolt" aria-hidden="true"></i>
+                      {{ _('Server Actions') }}</h3>
                 </div>
-                <!-- /.box-header -->
-                <div class="box-body">
+                <!-- /.card-header -->
+                <div class="card-body">
                     <div id="server_update">
-                        <a class="btn btn-app" onclick="update()"
-                        {% if (data['mc_settings']['jar_url'] == "") %}
-                            disabled='true'
+                        {% if (data['mc_settings']['jar_url'] == "") %}                            
+                            <a href="" class="btn btn-app disabled" onclick="update()" disabled="true">
+                                <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
+                                {{ _('Update Server Jar') }}
+                            </a>
+                            <a href="" class="btn btn-app disabled" onclick="update()" disabled="true">
+                                <i class="fas fa-undo" aria-hidden="true"></i>
+                                {{ _('Revert Jar Update') }}
+                            </a>
+                        {% else %}                          
+                            <a href="" class="btn btn-app" onclick="update()" >
+                                <i class="fas fa-cloud-download-alt" aria-hidden="true"></i>
+                                {{ _('Update Server Jar') }}
+                            </a>
+                            <a href="" class="btn btn-app" onclick="update()">
+                                <i class="fas fa-undo" aria-hidden="true"></i>
+                                {{ _('Revert Jar Update') }}
+                            </a>
                         {% end %}
-                        >
-                            <i class="fa fa-cloud-download" aria-hidden="true"></i>
-                            Update Server Jar
+                        <a href="" class="btn btn-app" onclick="destroy_world()">
+                            <i class="fas fa-bomb" aria-hidden="true"></i>
+                            {{ _('Start New World') }}
                         </a>
-
-                        <a class="btn btn-app" onclick="update()"
-                        {% if (data['mc_settings']['jar_url'] == "") %}
-                            disabled='true'
-                        {% end %}
-                        >
-                            <i class="fa fa-undo" aria-hidden="true"></i>
-                            Revert Jar Update
-                        </a>
-
-                        <a class="btn btn-app" onclick="destroy_world()">
-                            <i class="fa fa-bomb" aria-hidden="true"></i>
-                            Start New World
-                        </a>
-
                     </div>
                 </div>
             </div>
@@ -107,31 +114,31 @@
 
 
     <div class="row">
-        <div class="col-md-6">
-            <div class="box box-info">
-                <div class="box-header with-border">
-                  <h3 class="box-title"><i class="fa fa-clock-o" aria-hidden="true"></i>
-                      Historical Data
+        <div class="col-lg-6">
+            <div class="card card-info card-outline">
+                <div class="card-header">
+                  <h3 class="card-title"><i class="fas fa-history" aria-hidden="true"></i>
+                      {{ _('Historical Data') }}
                   </h3>
                     <br />
-                    <small>Missing Data below? <a href="config">Check your history interval config</a> </small>
+                    <small>{{ _('Missing Data below?') }} <a href="config">{{ _('Check your history interval config') }}</a> </small>
                 </div>
-                <!-- /.box-header -->
-                <div class="box-body">
+                <!-- /.card-header -->
+                <div class="card-body">
                     <div id="cpu_history" style="height: 250px;"></div>
                 </div>
             </div>
         </div>
 
 
-        <div class="col-md-6">
-            <div class="box box-info">
-            <div class="box-header with-border">
-              <h3 class="box-title"><i class="fa fa-users" aria-hidden="true"></i>
-                  Current Players</h3>
+        <div class="col-lg-6">
+            <div class="card card-info card-outline">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-users" aria-hidden="true"></i>
+                  {{ _('Current Players') }}</h3>
             </div>
-            <!-- /.box-header -->
-            <div class="box-body">
+            <!-- /.card-header -->
+            <div class="card-body">
               <div class="table-responsive">
                 <ul>
                     {% if data['players_online'] > 0 %}
@@ -139,13 +146,13 @@
                             <li>{{ p }}</li>
                         {% end %}
                     {% else %}
-                        No Players Online
+                        {{ _('No Players Online') }}
                     {% end %}
                 </ul>
               </div>
               <!-- /.table-responsive -->
             </div>
-            <!-- /.box-body -->
+            <!-- /.card-body -->
 
           </div>
         </div>

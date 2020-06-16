@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
+  <meta charset="ISO-8859-1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>{% block title %}Default{% end %}</title>
+  <title>{% block title %}{{ _('Default') }}{% end %}</title>
   {% block meta %} {% end %}
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <!-- Bootstrap 3.3.7 -->
-  <link rel="stylesheet" href="/static/vendors/bootstrap/css/bootstrap.min.css">
+  <!-- Bootstrap 4.4.1 -->
+  <!-- <link rel="stylesheet" href="/static/vendors/bootstrap/css/bootstrap.min.css"> -->
   <!-- Font Awesome -->
   <link rel="stylesheet" href="/static/vendors/font-awesome/css/font-awesome.min.css">
   <!-- Datatables -->
@@ -20,10 +20,14 @@
   <!-- timepicker -->
   <link rel="stylesheet" href="/static/vendors/jonthornton-timepicker/jquery.timepicker.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="/static/css/AdminLTE.min.css">
+
+  <link rel="stylesheet" href="/static/css/adminlte.min.css">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
-  <link rel="stylesheet" href="/static/css/skins/skin-blue.min.css">
+  <!-- <link rel="stylesheet" href="/static/css/skins/skin-blue.min.css"> -->
+  <!-- Crafty style -->
+  <link rel="stylesheet" href="/static/css/crafty.css">
+
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -34,187 +38,171 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+  <script>
+    //determines if the user has a set theme
+    function detectColorScheme(){
+        var theme="light";    //default to light
+
+        //local storage is used to override OS theme settings
+        if(localStorage.getItem("theme")){
+            if(localStorage.getItem("theme") == "dark"){
+                var theme = "dark";
+            }
+        } else if(!window.matchMedia) {
+            //matchMedia method not supported
+            return false;
+        } else if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            //OS theme setting detected as dark
+            var theme = "dark";
+        }
+
+        //dark theme preferred, set document with a `data-theme` attribute
+        if (theme=="dark") {
+            document.documentElement.setAttribute("data-theme", "dark");
+        }
+    }
+    detectColorScheme();
+  </script>
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
+
+<body class="sidebar-mini layout-fixed layout-navbar-fixed">
 <!-- Site wrapper -->
 <div class="wrapper">
 
-  <header class="main-header">
-    <!-- Logo -->
-    <a href="/" class="logo">
-      <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><b>Crafty</b></span>
-      <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><b>Crafty</b> Controller</span>
-    </a>
     <!-- Header Navbar: style can be found in header.less -->
-    <nav class="navbar navbar-static-top">
+    <nav class="main-header navbar navbar-expand navbar-dark">
       <!-- Sidebar toggle button-->
-      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </a>
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a></li>
+      </ul>
 
+      <ul class="navbar-nav ml-auto">
+        <!-- Messages: style can be found in dropdown.less-->
 
-      <div class="navbar-custom-menu">
+        <!-- Tasks: style can be found in dropdown.less -->
+        <li class="nav-item">
+          <a href="#" id="update_check" class="nav-link" aria-expanded="true" onclick=update_check()>
+            <i class="nav-icon fa fa-sync-alt"></i> {{ _('Check For Updates') }}
+          </a>
+        </li>
 
-        <ul class="nav navbar-nav">
-          <!-- Messages: style can be found in dropdown.less-->
-
-          <!-- Tasks: style can be found in dropdown.less -->
-          <li class="">
-            <a href="#" id="update_check" aria-expanded="true">
-              <i class="fa fa-refresh"></i> Check For Updates
-            </a>
-          </li>
-
-          <!-- User Account: style can be found in dropdown.less -->
-          <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-user-circle" aria-hidden="true"></i>
-              <span class="hidden-xs">{{ data['user_data']['username'] }}</span>
-            </a>
-            <ul class="dropdown-menu">
-              <!-- User image -->
-              <li class="user-header">
-                <p>
-                  Role: {{ data['user_data']['role_name'] }}
-                </p>
-              </li>
-              <!-- Menu Body -->
-              <li class="user-body">
-                &nbsp;<b>Permissions</b><br />
-                <div class="row">
-
-                  <div class="col-xs-1">
-                    {% if data['user_data']['svr_control'] %}
-                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                      {% else %}
-                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                      {% end %}
-                  </div>
-                  <div class="col-xs-10">
-                    Server Control
-                  </div>
-
-                  <div class="col-xs-1">
-                    {% if data['user_data']['svr_console'] %}
-                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                      {% else %}
-                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                      {% end %}
-                  </div>
-                  <div class="col-xs-10">
-                    Server Console
-                  </div>
-
-                  <div class="col-xs-1">
-                    {% if data['user_data']['logs'] %}
-                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                      {% else %}
-                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                      {% end %}
-                  </div>
-                  <div class="col-xs-10">
-                    Server Logs
-                  </div>
-
-                  <div class="col-xs-1">
-                    {% if data['user_data']['backups'] %}
-                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                      {% else %}
-                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                      {% end %}
-                  </div>
-                  <div class="col-xs-10">
-                    Server Backups
-                  </div>
-
-                  <div class="col-xs-1">
-                    {% if data['user_data']['schedules'] %}
-                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                      {% else %}
-                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                      {% end %}
-                  </div>
-                  <div class="col-xs-10">
-                    Server Schedule
-                  </div>
-
-                  <div class="col-xs-1">
-                    {% if data['user_data']['config'] %}
-                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                      {% else %}
-                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                      {% end %}
-                  </div>
-                  <div class="col-xs-10">
-                    Server Config
-                  </div>
-
-                  <div class="col-xs-1">
-                    {% if data['user_data']['api_access'] %}
-                      <span class="text-green"><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
-                      {% else %}
-                      <span class="text-red"><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
-                      {% end %}
-                  </div>
-                  <div class="col-xs-10">
-                    API Access
-                  </div>
-
-
-
-                </div>
-
-
-                <!-- /.row -->
-              </li>
-              <!-- Menu Footer-->
-              <li class="user-footer">
-
-                <div class="pull-right">
-                  <a href="/" class="btn btn-default btn-flat">Sign out</a>
-                </div>
-              </li>
-            </ul>
-          </li>
-          <!-- Control Sidebar Toggle Button -->
-        </ul>
-      </div>
+        <!-- User Account: style can be found in dropdown.less -->
+        <li class="nav-item dropdown user user-menu">
+          <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+            <i class="nav-icon fa fa-user-circle" aria-hidden="true"></i> 
+            <span class="hidden-xs"> {{ data['user_data']['username'] }}</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+            <div class="dropdown-item">
+              <div id="theme-switch" class="custom-control custom-switch">
+                <input id="input-switch" type="checkbox" class="custom-control-input">
+                <label class="custom-control-label" for="input-switch">{{ _("Crafty's Darkside") }} <span class="far fa-moon"></span></label>
+              </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <!-- User image -->
+            <span class="dropdown-header">{{ _('Role:') }} {{ _(data['user_data']['role_name']) }}</span>
+            <div class="dropdown-divider"></div>
+            <!-- Menu Body -->
+            <div class="dropdown-item">
+              &nbsp;<b>{{ _('Permissions') }}</b><br />
+              <div>
+                  {% if data['user_data']['svr_control'] %}
+                  <span class="text-green"><i class="fas fa-thumbs-up" aria-hidden="true"></i></span> {{ _('Server Control') }}
+                  {% else %}
+                  <span class="text-red"><i class="fas fa-thumbs-down" aria-hidden="true"></i></span>
+                  {% end %}                  
+              </div>
+              <div>
+                  {% if data['user_data']['svr_console'] %}
+                  <span class="text-green"> <i class="fas fa-thumbs-up" aria-hidden="true"></i></span> {{ _('Server Console') }}
+                  {% else %}
+                  <span class="text-red"> <i class="fas fa-thumbs-down" aria-hidden="true"></i></span> {{ _('Server Console') }}
+                  {% end %}
+              </div>
+              <div>
+                  {% if data['user_data']['logs'] %}
+                  <span class="text-green"> <i class="fas fa-thumbs-up" aria-hidden="true"></i></span> {{ _('Server Logs') }}
+                  {% else %}
+                  <span class="text-red"> <i class="fas fa-thumbs-down" aria-hidden="true"></i></span> {{ _('Server Logs') }}
+                  {% end %}
+              </div>
+              <div>
+                  {% if data['user_data']['backups'] %}
+                  <span class="text-green"> <i class="fas fa-thumbs-up" aria-hidden="true"></i></span> {{ _('Server Backups') }}
+                  {% else %}
+                  <span class="text-red"> <i class="fas fa-thumbs-down" aria-hidden="true"></i></span> {{ _('Server Backups') }}
+                  {% end %}
+              </div>
+              <div>
+                  {% if data['user_data']['schedules'] %}
+                  <span class="text-green"> <i class="fas fa-thumbs-up" aria-hidden="true"></i></span> {{ _('Server Schedule') }}
+                  {% else %}
+                  <span class="text-red"> <i class="fas fa-thumbs-down" aria-hidden="true"></i></span> {{ _('Server Schedule') }}
+                  {% end %}
+              </div>
+              <div>
+                  {% if data['user_data']['config'] %}
+                    <span class="text-green"> <i class="fas fa-thumbs-up" aria-hidden="true"></i></span> {{ _('Server Config') }}
+                    {% else %}
+                    <span class="text-red"> <i class="fas fa-thumbs-down" aria-hidden="true"></i></span> {{ _('Server Config') }}
+                    {% end %}
+              </div>
+              <div>
+                  {% if data['user_data']['api_access'] %}
+                  <span class="text-green"> <i class="fas fa-thumbs-up" aria-hidden="true"></i></span> {{ _('API Access') }}
+                  {% else %}
+                  <span class="text-red"> <i class="fas fa-thumbs-down" aria-hidden="true"></i></span> {{ _('API Access') }}
+                  {% end %}
+              </div>
+              <!-- /.row -->
+            </div>
+            <!-- Menu Footer-->
+            <div class="dropdown-divider"></div>
+            <a href="/" class="dropdown-item dropdown-footer">{{ _('Sign out') }}</a>
+          </div>
+        </li>
+        <!-- Control Sidebar Toggle Button -->
+      </ul>
     </nav>
-  </header>
+
 
   <!-- =============================================== -->
 
   <!-- Left side column. contains the sidebar -->
-  <aside class="main-sidebar">
+
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Logo -->
+    <a href="/" class="brand-link">
+      <img src="https://assets.gitlab-static.net/uploads/-/system/project/avatar/14984440/Crafty_Logo.png?width=64" alt="Crafty Controller Logo" class="brand-image">
+      <span class="brand-text font-weght-light"><b>Crafty</b> Controller</span>
+    </a>
+
     <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
+    <div class="sidebar">
+
       <!-- Sidebar user panel -->
 
       <!-- search form -->
 
       <!-- sidebar menu: : style can be found in sidebar.less -->
-      <ul class="sidebar-menu" data-widget="tree">
-        <li class="header">MAIN NAVIGATION</li>
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+          <li class="nav-item treeview"><a href="/admin/dashboard" class="nav-link"><i class="nav-icon fa fa-tachometer-alt"></i> <p> {{ _('Dashboard') }}</p></a></li>
 
-        <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
+          {% if data['user_data']['config'] %}
+          <li class="nav-item  treeview"><a href="/admin/config" class="nav-link"><i class="nav-icon fa fa-cog" aria-hidden="true"></i> <p> {{ _('Config') }}</p> </a></li>
+          {% end %}
 
-        {% if data['user_data']['config'] %}
-        <li><a href="/admin/config"><i class="fa fa-cog" aria-hidden="true"></i> <span> Config</span> </a></li>
-        {% end %}
+          <li class="nav-item  treeview"><a href="/admin/change_password" class="nav-link"><i class="nav-icon fa fa-key" aria-hidden="true"></i> <p> {{ _('Change Password') }}</p></a></li>
 
-        <li><a href="/admin/change_password"><i class="fa fa-key" aria-hidden="true"></i><span> Change Password</span></a></li>
+          <li class="nav-item  treeview"><a href="https://gitlab.com/crafty-controller/crafty-web/-/wikis/home" class="nav-link" target="_blank"><i class="nav-icon fa fa-book"></i> <p> {{ _('Documentation') }}</p></a></li>
 
-        <li><a href="https://gitlab.com/crafty-controller/crafty-web/-/wikis/home" target="_blank"><i class="fa fa-book"></i> <span>Documentation</span></a></li>
-
-        <li><a href="https://discord.gg/XR5x3ZM" target="_blank"><i class="fa fa-comment"></i> <span>Join The Discord</span></a></li>
-
-      </ul>
-    </section>
+          <li class="nav-item  treeview"><a href="https://discord.gg/XR5x3ZM" class="nav-link" target="_blank"><i class="nav-icon fa fa-comment"></i> <p> {{ _('Join The Discord') }}</p></a></li>
+        </ul>
+      </nav>
+    </div>
     <!-- /.sidebar -->
   </aside>
 
@@ -228,8 +216,8 @@
   <!-- /.content-wrapper -->
 
   <footer class="main-footer">
-    <div class="pull-right hidden-xs">
-      <b>Crafty Controller Version: </b>
+    <div class="float-right d-none d-sm-inline">
+      <b>{{ _('Crafty Controller Version:') }} </b>
       {% block version %}
         {{ data['version_data']['major'] }}.
         {{ data['version_data']['minor'] }}.
@@ -237,8 +225,7 @@
 
       {% end %}
     </div>
-    <strong>Copyright &copy; 2019 - 2020 <a href="https://craftycontrol.com">Crafty Controller</a>.</strong> All rights
-    reserved.
+    <strong>Copyright &copy; 2019 - 2020 <a href="https://craftycontrol.com">{{ _('Crafty Controller') }}</a>.</strong> {{ _('All rights reserved.') }}
   </footer>
 
 </div>
@@ -246,8 +233,10 @@
 
 <!-- jQuery 3 -->
 <script src="/static/vendors/jquery/jquery.min.js"></script>
-<!-- Bootstrap 3.3.7 -->
+<!-- Bootstrap 4.4.1 -->
 <script src="/static/vendors/bootstrap/js/bootstrap.min.js"></script>
+<!-- Popper 4.4.1 -->
+<script src="/static/vendors/popperjs/popper.min.js"></script>
 <!-- SlimScroll -->
 <script src="/static/vendors/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->
@@ -272,7 +261,6 @@
 
 <script>
   $(document).ready(function () {
-    $('.sidebar-menu').tree()
 
     $('#update_check').click(function(){
       update_check();
@@ -286,7 +274,7 @@
     }
 
   function update_check(){
-        bootbox.alert("Getting Version Data");
+        bootbox.alert("{{ _('Getting Version Data') }}");
 
         $.ajax({
             type: 'GET',
@@ -302,6 +290,30 @@
              },
         });
     }
+
+    //identify the toggle switch HTML element
+  const toggleSwitch = document.getElementById("input-switch");
+
+  //function that changes the theme, and sets a localStorage variable to track the theme between page loads
+  function switchTheme(e) {
+      if (e.target.checked) {
+          localStorage.setItem('theme', 'dark');
+          document.documentElement.setAttribute('data-theme', 'dark');
+          toggleSwitch.checked = true;
+      } else {
+          localStorage.setItem('theme', 'light');
+          document.documentElement.setAttribute('data-theme', 'light');
+          toggleSwitch.checked = false;
+      }    
+  }
+
+  //listener for changing themes
+  toggleSwitch.addEventListener('change', switchTheme, false);
+
+  //pre-check the dark-theme checkbox if dark-theme is set
+  if (document.documentElement.getAttribute("data-theme") == "dark"){
+      toggleSwitch.checked = true;
+  }
 
 </script>
 

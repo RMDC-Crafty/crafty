@@ -1,63 +1,71 @@
 {% extends ../base.html %}
 
-{% block title %}Crafty Controller - Change Password{% end %}
+{% block title %}{{ _('Crafty Controller - Change Password') }}{% end %}
 
 {% block content %}
 
-<section class="content-header">
-  <h1>
-    Change Your Password
-    <small>
-       Change is good
-    </small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li class="active">Change Password</li>
-  </ol>
-</section>
-
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-md-6">      
+        <h1 class="m-0">
+          {{ _('Change Your Password') }}
+          <small style="font-size:.45em;">
+            {{ _('Change is good') }}
+          </small>
+        </h1>
+      </div>
+      <div class="col-md-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
+          <li class="active breadcrumb-item">{{ _('Change Password') }}</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
 
 <section class="content">
 
     <div class="row">
-        <div class="col-xs-6">
-            <div class="box">
-                <div class="box-header with-border">
-                  <h3 class="box-title">
-                      Change Password For: {{ data['user_data']['username'] }}
+        <div class="col-6">
+            <div class="card card-secondary card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">
+                      {{ _('Change Password For:') }} {{ data['user_data']['username'] }}
                   </h3>
                 </div>
-                <div class="box-body">
+                <div class="card-body">
                   <form method="post">
-                      <input class="input-lg form-control" type="text" name="password" placeholder="Type your new password" autocomplete="off" minlength="8" maxlength="512"/>
+                      <input class="form-control-lg form-control" type="text" name="password" placeholder="{{ _('Type your new password') }}" autocomplete="off" minlength="8" maxlength="512"/>
                       <br />
-                      <input type="submit" class="col-xs-12 btn btn-primary btn-load btn-lg" value="Change Password">
+                      <input type="submit" class="col-12 btn btn-primary btn-load btn-lg" value="{{ _('Change Password') }}">
+
                       {% raw xsrf_form_html() %}
                   </form>
                 </div>
 
               </div>
         </div>
-        <div class="col-md-6">
-          <div class="box box-solid">
-            <div class="box-header with-border">
-              <i class="fa fa-key"></i>
-
-              <h3 class="box-title">Keys to a good password</h3>
+        <div class="col-6">
+          <div class="card card-secondary card-outline">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="fas fa-key"></i>{{ _('Keys to a good password') }}
+              </h3>
             </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-              <blockquote>
-                <p>
-                    A secure password is actually a phrase, that is at least 10 char long and contains uncommon words:<br /><br />
-                    Example: 'Bilbo, Creepers hate me so much'
-                </p>
-              </blockquote>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <div class="callout callout-info">
+                  <p>
+                    {{ _('A secure password is actually a phrase') }}, {{ _('that is at least 10 char long and contains uncommon words:') }}<br /><br />
+                    {{ _('Example:') }}" Bilbo, {{ _('Creepers hate me so much') }}"
+                  </p>
+                </div>
             </div>
-            <!-- /.box-body -->
+            <!-- /.card-body -->
           </div>
-          <!-- /.box -->
+          <!-- /.card -->
         </div>
     </div>
 

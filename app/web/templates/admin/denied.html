@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>{% block title %}Crafty Controller - Login{% end %}</title>
+  <title>{% block title %}{{ _('Crafty Controller - Login') }}{% end %}</title>
   {% block meta %} {% end %}
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -32,21 +32,22 @@
 <body class="hold-transition login-page">
 <div class="login-box">
   <div class="login-logo">
-    <a><b>Crafty </b>Controller</a>
+    <a><b>{{ _('Crafty') }} </b>{{ _('Controller') }}</a>
   </div>
   <!-- /.login-logo -->
-  <div class="login-box-body">
+  <div class="login-card-body">
       <div class="row">
-          <div class="col-xs-12 text-center">
-              <h3 class="text-red">Access Denied</h3>
-              <button class="btn btn-sm btn-primary" onclick="goBack()">Go Back</button>
+          <div class="col-12 text-center">
+              <h3 class="text-red">{{ _('Access Denied') }}</h3>
+              <button class="btn btn-sm btn-primary" onclick="goBack()">{{ _('Go Back') }}</button>
           </div>
       </div>
 
   </div>
-  <!-- /.login-box-body -->
+  <!-- /.login-card-body -->
 </div>
-<!-- /.login-box -->
+<!-- /.login-card -->
+
 <!-- jQuery 3 -->
 <script src="/static/vendors/jquery/jquery.min.js"></script>
 <!-- Bootstrap 3.3.7 -->

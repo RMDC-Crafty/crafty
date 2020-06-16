@@ -1,44 +1,51 @@
 {% extends ../base.html %}
 
-{% block title %}Crafty Controller - Virtual Console{% end %}
+{% block title %}{{ _('Crafty Controller - Virtual Console') }}{% end %}
 
 {% block content %}
 
-<section class="content-header">
-  <h1>
-    Virtual Console for server: {{ data['server_name'] }}
-    <small>Sometimes you just need a terminal</small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li class="active">Virtual Console</li>
-  </ol>
-</section>
-
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-md-6">      
+        <h1 class="m-0">
+            {{ _('Virtual Console for server:') }} {{ data['server_name'] }}
+            <small style="font-size:.45em;">{{ _('Sometimes you just need a terminal') }}</small>
+        </h1>
+      </div>
+      <div class="col-md-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
+          <li class="active breadcrumb-item">{{ _('Virtual Console') }}</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
 
 <section class="content">
     <input type="hidden" value="" id="last_command"/>
     <div class="row">
-        <div class="col-xs-12">
-            <div class="box">
-                <div class="box-header with-border">
-                  <h3 class="box-title">
-                      Virtual Console for server: {{ data['server_name'] }}
+        <div class="col-12">
+            <div class="card card-secondary card-outline">
+                <div class="card-header">
+                  <h3 class="card-title">
+                      {{ _('Virtual Console for server:') }} {{ data['server_name'] }}
                   </h3>
-                    <div class="pull-right">
+                    <div class="float-right">
                         <label>
                             <input type="checkbox" name="stop_scroll" id="stop_scroll" />
-                            Stop Auto-Scrolling
+                            {{ _('Stop Auto-Scrolling') }}
                         </label>
                     </div>
                 </div>
-                <div class="box-body">
-                    <textarea id="virt_console" rows="25" readonly class="form-control"></textarea>
+                <div class="card-body">
+                    <textarea id="virt_console" rows="20" readonly class="form-control"></textarea>
                     <br />
                     <div class="input-group">
-                       <input type="text" class="form-control" id="server_command" name="server_command" placeholder="Enter your server command">
+                       <input type="text" class="form-control" id="server_command" name="server_command" placeholder="{{ _('Enter your server command') }}">
                        <span class="input-group-btn">
-                            <button id="submit" class="btn btn-default" type="button">Send Command</button>
+                            <button id="submit" class="btn btn-default" type="button">{{ _('Send Command') }}</button>
                        </span>
                     </div>
                 </div>

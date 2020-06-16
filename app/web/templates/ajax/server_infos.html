@@ -1,0 +1,49 @@
+<ul class="list-group">
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    {{ _('Status') }}
+      {% if data['srv']['crashed'] %}
+        <span class="float-right badge badge-pill badge-danger float-right">{{ _('Crashed - Auto Restart Disabled') }}</span>
+      {% else %}
+        {% if data['srv']['running'] %}
+          <span class="float-right badge badge-pill badge-success float-right">{{ _('Running') }}</span>
+        {% else %}
+          <span class="float-right badge badge-pill badge-warning float-right">{{ _('Stopped') }}</span>
+        {% end %}
+      {% end %}
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    {{ _('Autostart') }}
+      {% if data['srv']['auto_start'] %}
+        <span class="float-right badge badge-pill badge-success float-right">{{ _('Enabled') }}</span>
+      {% else %}
+        <span class="float-right badge badge-pill badge-danger float-right">{{ _('Disabled') }}</span>
+      {% end %}
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    {{ _('Server Start Time') }}
+    <span class="float-right">
+      {{ data['mc_servers_data'][data['srv']['id']]['server_start_time'] }}
+    </span>
+  </li>
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    {{ _('Server Type') }}
+    <span class="float-right">
+      {{ data['mc_servers_data'][data['srv']['id']]['server_version'] }}
+    </span>
+  </li>
+
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    {{ _('Server Description') }}
+    <span class="float-right">
+    {{ data['mc_servers_data'][data['srv']['id']]['motd'] }}
+    </span>
+  </li>
+
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    {{ _('Server IP : Server Port') }}
+    <span class="float-right">
+    {{ data['mc_servers_data'][data['srv']['id']]['server_ip'] }}
+    : {{ data['mc_servers_data'][data['srv']['id']]['server_port'] }}
+    </span>
+  </li>
+</ul>

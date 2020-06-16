@@ -1,134 +1,136 @@
 {% extends ../base.html %}
 
-{% block title %}Crafty Controller - Virtual Console{% end %}
+{% block title %}{{ _('Crafty Controller - Virtual Console') }}{% end %}
 
 {% block content %}
 
-<section class="content-header">
-  <h1>
-    Logs for Server: {{ data['server_name'] }}
-    <small>I don't know, have you checked the logs?</small>
-  </h1>
-  <ol class="breadcrumb">
-    <li><a href="/admin/dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li class="active">Logs</li>
-  </ol>
-</section>
-
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-md-6">      
+        <h1 class="m-0">
+          {{ _('Logs for Server:') }} {{ data['server_name'] }}
+          <small style="font-size:.45em;">{{ _("I don't know... Have you checked the logs?") }}</small>
+        </h1>
+      </div>
+      <div class="col-md-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> {{ _('Home') }}</a></li>
+          <li class="active breadcrumb-item">{{ _('Logs') }}</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
 
 <section class="content">
-
     <div class="row">
-        <div class="col-xs-12">
-            <div class="box">
-                <div class="box-header with-border">
-                    <h3 class="box-title">
-                        {{ data['server_name'] }} Logs <small>Note, this page doesn't auto-refresh</small>
-                    </h3>
+        <div class="col-12">
+        
+            <div class="card card-secondary card-outline">
+                <div class="card-header">
+                  <h3>{{ data['server_name'] }} {{ _('Logs') }} <small>{{ _("Note: this page doesn't auto-refresh") }}</small></h3>
                 </div>
+                <div class="card-body">
+                  <div class="card card-primary card-outline card-outline-tabs">
+                      <div class="card-header p-0 border-bottom-0">
+                        <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
+                          <li class="nav-item">
+                            <a class="nav-link active" id="custom-tabs-latest-tab" data-toggle="pill" href="#custom-tabs-latest" role="tab" aria-controls="custom-tabs-latest" aria-selected="false">{{ data['server_name'] }} Latest.log</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" id="custom-tabs-crafty-tab" data-toggle="pill" href="#custom-tabs-crafty" role="tab" aria-controls="custom-tabs-crafty" aria-selected="true">Crafty.log</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" id="custom-tabs-schedule-tab" data-toggle="pill" href="#custom-tabs-schedule" role="tab" aria-controls="custom-tabs-schedule" aria-selected="false">Schedule.log</a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link" id="custom-tabs-access-tab" data-toggle="pill" href="#custom-tabs-access" role="tab" aria-controls="custom-tabs-access" aria-selected="false">Access.log</a>
+                          </li>
 
-                <div id="#rowTab" class="nav-tabs-custom">
-                    <ul class="nav nav-tabs">
-                        <li class="active"><a href="#tab_1" data-toggle="tab">{{ data['server_name'] }} Latest.log</a></li>
-                        <li><a href="#tab_2" data-toggle="tab">Crafty.log</a></li>
-                        <li><a href="#tab_3" data-toggle="tab">Schedule.log</a></li>
-                        <li><a href="#tab_4" data-toggle="tab">Access.log</a></li>
-                        <li><a href="#tab_5" data-toggle="tab">FTP.log</a></li>
-                        <li><a href="#tab_6" id="search_tab" data-toggle="tab">Search Results</a></li>
-                        <li><a> Click Box Below To Scroll To Bottom</a></li>
-                        <li class="pull-right"><a id="search_box" href="#" class="text-muted"><i class="fa fa-search" aria-hidden="true"></i>  Search Latest.log </a></li>
-                    </ul>
-                    <div class="tab-content">
-                      <div class="tab-pane active" id="tab_1">
-                        <textarea id="logs" rows="25" readonly class="form-control">{% for d in data['log_data'] %}{{ d }}{% end %}</textarea>
+                          <li class="nav-item"><a href="#" class="nav-link" id="search_tab" data-toggle="tab">{{ _('Search Results') }}</a></li>
+                          <li class="nav-item"><a class="nav-link">{{ _('Click On The Log Below To Scroll To Bottom') }}</a></li>
+                          <li class="nav-item float-right"><a id="search_box" href="#" class="nav-link text-muted float-right"><i class="fas fa-search" aria-hidden="true"></i>  {{ _('Search') }} Latest.log </a></li>
+                        </ul>
                       </div>
-                      <!-- /.tab-pane -->
-                      <div class="tab-pane" id="tab_2">
-                        <textarea id="crafty_logs" rows="25" readonly class="form-control">{% for d in data['crafty_log'] %}{{ d }}{% end %}</textarea>
-                      </div>
-                        <!-- /.tab-pane -->
-                        <div class="tab-pane" id="tab_3">
-                        <textarea id="schedule_logs" rows="25" readonly class="form-control">{% for d in data['scheduler'] %}{{ d }}{% end %}</textarea>
-                      </div>
-                      <!-- /.tab-pane -->
-                      <!-- /.tab-pane -->
-                        <div class="tab-pane" id="tab_4">
-                        <textarea id="access_logs" rows="25" readonly class="form-control">{% for d in data['access'] %}{{ d }}{% end %}</textarea>
-                      </div>
+                      <div class="card-body">
+                        <div class="tab-content" id="custom-tabs-four-tabContent">
+                          <div class="tab-pane fade show active" id="custom-tabs-latest" role="tabpanel" aria-labelledby="custom-tabs-latest-tab">
+                            <textarea id="logs" rows="25" readonly class="form-control">{% for d in data['log_data'] %}{{ d }}{% end %}</textarea>
+                          </div>
+                          <div class="tab-pane fade" id="custom-tabs-crafty" role="tabpanel" aria-labelledby="custom-tabs-crafty-tab">
+                            <textarea id="crafty_logs" rows="25" readonly class="form-control">{% for d in data['crafty_log'] %}{{ d }}{% end %}</textarea>
+                          </div>
+                          <div class="tab-pane fade" id="custom-tabs-schedule" role="tabpanel" aria-labelledby="custom-tabs-schedule-tab">
+                            <textarea id="schedule_logs" rows="25" readonly class="form-control">{% for d in data['scheduler'] %}{{ d }}{% end %}</textarea>
+                          </div>
+                          <div class="tab-pane fade" id="custom-tabs-access" role="tabpanel" aria-labelledby="custom-tabs-access-tab">
+                            <textarea id="access_logs" rows="25" readonly class="form-control">{% for d in data['access'] %}{{ d }}{% end %}</textarea>
+                          </div>
 
-                        <div class="tab-pane" id="tab_5">
-                        <textarea id="ftp_logs" rows="25" readonly class="form-control">{% for d in data['ftp'] %}{{ d }}{% end %}</textarea>
+                        </div>
                       </div>
-
-                      <!-- /.tab-pane -->
-                        <div class="tab-pane" id="tab_6">
-                        <textarea id="search_results" rows="25" readonly class="form-control"></textarea>
-                      </div>
-                      <!-- /.tab-pane -->
+                      <!-- /.card -->
                     </div>
-                    <!-- /.tab-content -->
-                  </div>
-
-                </div>
-
             </div>
-        <div class="col-xs-12 col-md-6">
-            <div class="box">
-                <div class="box-header with-border">
-                  <h3 class="box-title">
-                      Latest Errors
-                  </h3>
-                </div>
-                <div class="box-body">
-                    <table class="table table-responsive" id="error_logs_table">
-                        <thead>
-                        <tr>
-                            <th>Line</th>
-                            <th>Error</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {% for e in data['errors']['errors'] %}
-                            <tr>
-                                <td>{{ e[0] }}</td>
-                                <td>{{ e[1] }}</td>
-                            </tr>
-                            {% end %}
-                        </tbody>
-                    </table>
-                </div>
-              </div>
         </div>
-        <div class="col-xs-12 col-md-6">
-            <div class="box">
-                <div class="box-header with-border">
-                  <h3 class="box-title">
-                      Latest Warnings
-                  </h3>
+        <div class="row">
+          <div class="col-12 col-lg-6">
+              <div class="card card-secondary card-outline">
+                  <div class="card-header">
+                    <h3 class="card-title">
+                        {{ _('Latest Errors') }}
+                    </h3>
+                  </div>
+                  <div class="card-body">
+                      <table class="table dataTable" id="error_logs_table">
+                          <thead>
+                          <tr>
+                              <th>{{ _('Line') }}</th>
+                              <th>{{ _('Error') }}</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                              {% for e in data['errors']['errors'] %}
+                              <tr>
+                                  <td>{{ e[0] }}</td>
+                                  <td>{{ e[1] }}</td>
+                              </tr>
+                              {% end %}
+                          </tbody>
+                      </table>
+                  </div>
                 </div>
-                <div class="box-body">
-                    <table class="table table-responsive" id="warning_logs_table">
-                        <thead>
-                        <tr>
-                            <th>Line</th>
-                            <th>Warning</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {% for w in data['errors']['warnings'] %}
-                            <tr>
-                                <td>{{ w[0] }}</td>
-                                <td>{{ w[1] }}</td>
-                            </tr>
-                            {% end %}
-                        </tbody>
-                    </table>
+          </div>
+          <div class="col-12 col-lg-6">
+              <div class="card card-secondary card-outline">
+                  <div class="card-header">
+                    <h3 class="card-title">
+                        {{ _('Latest Warnings') }}
+                    </h3>
+                  </div>
+                  <div class="card-body">
+                      <table class="table table-responsive dataTable" id="warning_logs_table">
+                          <thead>
+                          <tr>
+                              <th>{{ _('Line') }}</th>
+                              <th>{{ _('Warning') }}</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                              {% for w in data['errors']['warnings'] %}
+                              <tr>
+                                  <td>{{ w[0] }}</td>
+                                  <td>{{ w[1] }}</td>
+                              </tr>
+                              {% end %}
+                          </tbody>
+                      </table>
+                  </div>
                 </div>
-              </div>
+          </div>
         </div>
-
     </div>
-
 
 </section>
 
@@ -150,22 +152,38 @@
         $('#search_tab').hide()
 
         $('#warning_logs_table').DataTable({
-            "order": [[ 0, "desc" ]]
+            "paging":true,
+            "lengthChange": true,
+            "pageLength": 5,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "order": [[ 0, "desc" ]],
         });
 
         $('#error_logs_table').DataTable({
-            "order": [[ 0, "desc" ]]
+            "paging":true,
+            "lengthChange": true,
+            "searching": false,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "order": [[ 0, "desc" ]],
         });
 
-        $('#tab_2').click(function(){
+        $('#custom-tabs-crafty').click(function(){
           scroll('crafty_logs')
         });
 
-        $('#tab_3').click(function(){
+        $('#custom-tabs-schedule').click(function(){
           scroll('schedule_logs')
         });
 
-        $('#tab_4').click(function(){
+        $('#custom-tabs-access').click(function(){
+
           scroll('access_logs')
         });
 
