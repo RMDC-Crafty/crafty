@@ -40,5 +40,3 @@ Discord Channel - [Here](https://discord.gg/S8Q3AKb)
 Trello Board - [Here](https://trello.com/b/wJjAw2s3/crafty)
 
 [GIT Repo](https://gitlab.com/Ptarrant1/crafty-web)
-
-Distributed under the MIT license. See LICENSE.txt for more information.
