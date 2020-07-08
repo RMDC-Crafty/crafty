@@ -711,6 +711,7 @@ class AdminHandler(BaseHandler):
 
             context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf', '.cfg', '.toml']
 
+
             self.render(
                 template,
                 data=context

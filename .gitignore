@@ -12,11 +12,17 @@ __pycache__/
 *.log
 /logs/
 
+# ignore db
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# ignore generated files
+/app/web/certs
+/app/web/temp
+
 #ignore backups
 *.zip
-
-#ignore certs
-app/web/certs/
 
 #ignore temp folders
 app/web/temp/

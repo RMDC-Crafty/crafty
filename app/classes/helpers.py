@@ -972,6 +972,7 @@ class helpers:
                     # if no "at" time
                     else:
                         schedule.every(task.interval).monday.do(mc_server_obj.stop_threaded_server).tag('user')
+
                         logger.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -1137,6 +1138,7 @@ class helpers:
                     # if no "at" time
                     else:
                         schedule.every(task.interval).monday.do(mc_server_obj.run_threaded_server).tag('user')
+
                         logger.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 
@@ -1302,6 +1304,7 @@ class helpers:
                     # if no "at" time
                     else:
                         schedule.every(task.interval).monday.do(mc_server_obj.backup_server).tag('user')
+
                         logger.info('Added scheduled {} every {} {} '.format(
                             task.action, task.interval, task.interval_type))
 

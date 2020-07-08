@@ -27,10 +27,10 @@ Logins are secure and use the most advanced web security models available.
 
 
 ## Installation
-Install documentation is on the main website [Here](https://www.craftycontrol.com)
+Install documentation is available here on GitLab via the [wiki](https://gitlab.com/Ptarrant1/crafty-web/wikis/Install-Guides).
 
 ## Documentation
-Documentation is on the main website [Here](https://www.craftycontrol.com/docs)
+Check out our shiny new documentation [right on GitLab](https://gitlab.com/Ptarrant1/crafty-web/wikis/home).
 
 ## Meta
 Phillip Tarrant - [Project Homepage](https://craftycontrol.com/)
@@ -40,5 +40,3 @@ Discord Channel - [Here](https://discord.gg/S8Q3AKb)
 Trello Board - [Here](https://trello.com/b/wJjAw2s3/crafty)
 
 [GIT Repo](https://gitlab.com/Ptarrant1/crafty-web)
-
-Distributed under the MIT license. See LICENSE.txt for more information.
