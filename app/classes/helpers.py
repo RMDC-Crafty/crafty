@@ -222,7 +222,7 @@ class helpers:
             try:
                 lines = f.readlines()
             except Exception as e:
-                logger.warning('Unable to read a line in the logfile - due to error: {}'.format(e))
+                logger.warning('Unable to read a line in the file:{} - due to error: {}'.format(file_name, e))
                 pass
 
         # now we are done getting the lines, let's return it
