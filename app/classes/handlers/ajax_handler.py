@@ -417,7 +417,7 @@ class AjaxHandler(BaseHandler):
                     self.write("{} deleted".format(rolename))
 
         elif page == 'save_file':
-            file_data = bleach.clean(self.get_argument('file_contents'))
+            file_data = self.get_argument('file_contents')
             file_path = bleach.clean(self.get_argument("file_path"))
             server_id = bleach.clean(self.get_argument("server_id"))
 
