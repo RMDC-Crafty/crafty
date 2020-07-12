@@ -1,6 +1,9 @@
 # Crafty Controller
 > Python based Server Manager / Web Portal for your Minecraft Server
 
+# Important: Latest Changes
+The project is now hosted on both GitLab and GitHub. GitLab has been setup to push changes to the GitHub project, signalling that we would like to move away from GitLab in the near future.
+
 ## What is Crafty?
 Crafty is a Minecraft Server Wrapper / Controller / Launcher. The purpose 
 of Crafty is to launch a Minecraft server in the background and present 
@@ -24,7 +27,6 @@ Logins are secure and use the most advanced web security models available.
 ## Supported OS?
 - Linux - specifically Ubuntu 18.04 / 19.04 and others if they run python
 - Windows (7,8,10) via a compiled Executable, no need for python installation
-
 
 ## Installation
 Install documentation is available here on GitLab via the [wiki](https://gitlab.com/Ptarrant1/crafty-web/wikis/Install-Guides).

@@ -219,7 +219,11 @@ class helpers:
             f.seek(max(fsize-line_buffer, 0), 0)
 
             # read file til the end
-            lines = f.readlines()
+            try:
+                lines = f.readlines()
+            except Exception as e:
+                logger.warning('Unable to read a line in the file:{} - due to error: {}'.format(file_name, e))
+                pass
 
         # now we are done getting the lines, let's return it
         return lines
