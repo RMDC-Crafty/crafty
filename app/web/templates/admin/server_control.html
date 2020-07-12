@@ -10,7 +10,7 @@
       <div class="col-md-6">      
         <h1 class="m-0">
             {{ _('Server Details') }}
-            <small style="font-size:.45em;">{ _('I demand to see the things!') }}</small>
+            <small style="font-size:.45em;">{{ _('I demand to see the things!') }}</small>
         </h1>
       </div>
       <div class="col-md-6">
@@ -102,7 +102,7 @@
                                 {{ _('Revert Jar Update') }}
                             </a>
                         {% end %}
-                        <a href="" class="btn btn-app" onclick="destroy_world()">
+                        <a class="btn btn-app" onclick="destroy_world()">
                             <i class="fas fa-bomb" aria-hidden="true"></i>
                             {{ _('Start New World') }}
                         </a>

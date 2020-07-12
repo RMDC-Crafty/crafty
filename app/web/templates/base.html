@@ -26,7 +26,8 @@
        folder instead of downloading all of them to reduce the load. -->
   <!-- <link rel="stylesheet" href="/static/css/skins/skin-blue.min.css"> -->
   <!-- Crafty style -->
-  <link rel="stylesheet" href="/static/css/crafty.css">
+  <link rel="stylesheet"
+        href="/static/css/crafty.css?v={{ data['version_data']['major'] }}.{{ data['version_data']['minor'] }}.{{ data['version_data']['sub'] }}">
 
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -82,7 +83,7 @@
 
         <!-- Tasks: style can be found in dropdown.less -->
         <li class="nav-item">
-          <a href="#" id="update_check" class="nav-link" aria-expanded="true" onclick=update_check()>
+          <a href="#" id="update_check" class="nav-link" aria-expanded="true" >
             <i class="nav-icon fa fa-sync-alt"></i> {{ _('Check For Updates') }}
           </a>
         </li>
@@ -175,7 +176,8 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Logo -->
     <a href="/" class="brand-link">
-      <img src="https://assets.gitlab-static.net/uploads/-/system/project/avatar/14984440/Crafty_Logo.png?width=64" alt="Crafty Controller Logo" class="brand-image">
+      <img src="/static/images/crafty.png"
+           alt="Crafty Controller Logo" class="brand-image" width="32px" style="width:32px;">
       <span class="brand-text font-weght-light"><b>Crafty</b> Controller</span>
     </a>
 

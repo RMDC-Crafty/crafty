@@ -301,3 +301,6 @@ body {
   color: var(--color-form-control-focus);
   background-color: var(--background-form-control-focus);
 }
+
+.zoom-in{cursor: zoom-in;}
+.no-drop {cursor: no-drop;}
