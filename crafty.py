@@ -293,7 +293,7 @@ if __name__ == '__main__':
                 else:
                     os.system("python app/minecraft/mcservcreate.py")
         else:
-            console.warn("Not prompting for first server due to daemonize mode")
+            console.warning("Not prompting for first server due to daemonize mode")
 
     # for each server that is defined, we set them up in the multi class, so we have them ready for later.
 
