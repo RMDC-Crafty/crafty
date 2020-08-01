@@ -281,7 +281,8 @@ if __name__ == '__main__':
         console.info("Your Username is: Admin")
         console.info("Your Password is: {}".format(admin_pass))
         console.info("Your Admin token is: {}".format(admin_token))
-    
+
+        ''' moving this to 3.2
         if not daemon_mode:
             currentDT = datetime.datetime.now().strftime("%Y-%m-%d %I:%M:%S %p")
             message = "Would you like us to setup a minecraft server for you? [y/n]: "
@@ -293,7 +294,8 @@ if __name__ == '__main__':
                 else:
                     os.system("python app/minecraft/mcservcreate.py")
         else:
-            console.warn("Not prompting for first server due to daemonize mode")
+            console.warning("Not prompting for first server due to daemonize mode")
+        '''
 
     # for each server that is defined, we set them up in the multi class, so we have them ready for later.
 
