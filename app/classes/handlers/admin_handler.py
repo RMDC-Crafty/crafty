@@ -824,6 +824,13 @@ class AdminHandler(BaseHandler):
 
         elif page == 'upload':
             server_id = bleach.clean(self.get_argument('server_id', ''))
+
+            # did we get a file?
+            if len(self.request.files['file1']) < 1:
+                self.write("No File Selected... Please go back and try again")
+                logger.error("No file found in upload handler - data: {}".format(self.request.files['file1']))
+                return False
+
             file1 = self.request.files['file1'][0]
             pwd = bleach.clean(self.get_argument('pwd'))
 

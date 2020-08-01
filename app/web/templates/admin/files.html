@@ -139,9 +139,9 @@
 
                                 <div class="form-group">
                                 <label for="file1">Upload A File Here</label>
-                                <input type="file" name="file1" class="form-control-file">
+                                <input id="file1" type="file" name="file1" class="form-control-file">
                                 </div>
-                                <input type="submit" value="Upload File" class="btn btn-success"/>
+                                <input id="upload_file" type="submit" value="Upload File" class="btn btn-success hidden"/>
                                 <p class="form-text">Upload a file to {{ data['pwd'] }}</p>
 
                             </form>
@@ -339,8 +339,17 @@
     $( document ).ready(function() {
         console.log( "ready!" );
 
+        $('#upload_file').hide();
+
         //adding quick/dirty padding
         $('input').css("margin-bottom",'10px')
+
+        $('#file1').on("change", function()
+            {
+                 $('#upload_file').show();
+            }
+        );
+
 
         {% try %}
             {% if data['upload_success'] %}
