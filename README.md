@@ -37,7 +37,7 @@ Check out our shiny new documentation [right on GitLab](https://gitlab.com/Ptarr
 ## Meta
 Phillip Tarrant - [Project Homepage](https://craftycontrol.com/)
 
-Discord Channel - [Here](https://discord.gg/S8Q3AKb)
+Discord Channel - [Here](https://discord.gg/XR5x3ZM)
 
 Trello Board - [Here](https://trello.com/b/wJjAw2s3/crafty)
 
