@@ -29,6 +29,7 @@ from app.classes.handlers.public_handler import PublicHandler
 from app.classes.handlers.admin_handler import AdminHandler
 from app.classes.handlers.ajax_handler import AjaxHandler
 from app.classes.handlers.setup_handler import SetupHandler
+from app.classes.handlers.download_handler import DownloadHandler
 
 import app.classes.api as api_routes
 
@@ -115,6 +116,7 @@ class webserver():
         handlers = [
             (r'/', PublicHandler),
             (r'/([a-zA-Z]+)', PublicHandler),
+            (r'/admin/downloadbackup', DownloadHandler),
             (r'/admin/(.*)', AdminHandler, dict(mcserver=self.mc_server)),
             (r'/ajax/(.*)', AjaxHandler, dict(mcserver=self.mc_server)),
             (r'/setup/(.*)', SetupHandler, dict(mcserver=self.mc_server)),
