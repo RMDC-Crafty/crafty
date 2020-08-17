@@ -244,50 +244,6 @@ class AdminHandler(BaseHandler):
             host_data = Host_Stats.get()
             context['max_memory'] = host_data.mem_total
 
-        elif page == 'downloadbackup':
-            if not check_role_permission(user_data['username'], 'backups'):
-                self.redirect('/admin/unauthorized')
-
-            path = bleach.clean(self.get_argument("file", None, True))
-            server_id = bleach.clean(self.get_argument("id", None, True))
-
-            # only allow zip files
-            if path[-3:] != "zip":
-                self.redirect("/admin/backups?id={}".format(server_id))
-
-            backup_folder = backupmgr.get_backup_folder_for_server(server_id)
-
-            # Grab our backup path from the DB
-            backup_list = Backups.get(Backups.server_id == int(server_id))
-            base_folder = backup_list.storage_location
-
-            # get full path of our backups
-            server_backup_folder = os.path.join(base_folder, backup_folder)
-            server_backup_file = os.path.join(server_backup_folder, path)
-
-            # get list of zip files in the backup directory
-            files = [f for f in glob.glob(server_backup_folder + "**/*.zip")]
-
-            # for each file, see if it matches the file we are trying to download
-            for f in files:
-
-                # if we find a match
-                if f == server_backup_file and helper.check_file_exists(server_backup_file):
-
-                    file_name = os.path.basename(server_backup_file)
-                    self.set_header('Content-Type', 'application/octet-stream')
-                    self.set_header('Content-Disposition', 'attachment; filename=' + file_name)
-
-                    with open(server_backup_file, 'rb') as f:
-                        while 1:
-                            data = f.read(16384)  # or some other nice-sized chunk
-                            if not data:
-                                break
-                            self.write(data)
-                    self.finish()
-
-            self.redirect("/admin/backups?id={}".format(server_id))
-
         elif page == "server_control":
             if not check_role_permission(user_data['username'], 'svr_control'):
                 self.redirect('/admin/unauthorized')
