@@ -274,10 +274,9 @@ class Minecraft_Server():
             # now the server is dead, we set process to none
             else:
                 logger.debug("Minecraft server %s has stopped", self.name)
-                self.process = None
-                self.PID = None
-                self.start_time = None
-                self.name = None
+
+                self.cleanup_server_object()
+
                 # return true as the server is down
                 webhookmgr.run_event_webhooks("mc_stop", webhookmgr.payload_formatter(200, {}, {"server": {"name": self.get_mc_server_name(), "id": self.server_id, "running": not self.PID is None, "PID": self.PID, "restart_count": self.restart_count}}, {"info": "Minecraft Server has stopped"}))
                 return True
@@ -349,15 +348,22 @@ class Minecraft_Server():
 
                 return False
 
-            self.process = None
-            self.PID = None
-            self.name = None
+            self.cleanup_server_object()
+
             return False
 
         else:
             self.is_crashed = False
             return True
-    
+
+    def cleanup_server_object(self):
+        self.PID = None
+        self.start_time = None
+        self.restart_count = 0
+        self.is_crashed = False
+        self.updating = False
+        self.process = None
+
     def check_crashed(self):
         if not self.check_running():
             return self.is_crashed
