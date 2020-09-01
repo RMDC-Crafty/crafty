@@ -1,5 +1,6 @@
 #ignore virtual environment
 /venv/
+.venv
 
 #ignore .idea from pycharm
 /.idea/
