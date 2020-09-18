@@ -417,7 +417,7 @@ class AdminHandler(BaseHandler):
             context['listing'] = helper.scan_dirs_in_path(context['pwd'])
             context['parent'] = None
 
-            context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf', 'cfg']
+            context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf', '.cfg', '.toml']
 
         else:
             # 404
@@ -826,7 +826,7 @@ class AdminHandler(BaseHandler):
                 context['parent'] = path.parent
                 context['parent'] = str(context['parent']).replace("\\", '/')
 
-            context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf', '.cfg']
+            context['ext_list'] = [".txt", ".yml", "ties", "json", '.conf', '.cfg', '.toml']
 
             self.render(
                 template,
