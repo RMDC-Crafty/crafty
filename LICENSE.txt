@@ -14,7 +14,6 @@ Software: Crafty Controller
 
 License: Apache 2.0 - http://www.apache.org/licenses/LICENSE-2.0
 
-Licensor: Rent My Data Center Inc.
+Licensor: Phillip Tarrant
 
-Copyright (c) 2020 Rent My Data Center Inc.
-https://www.rentmydatacenter.com
+Copyright (c) 2020 Phillip Tarrant
