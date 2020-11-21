@@ -1,0 +1,295 @@
+Autostart, Автозапуск
+Auto Start Server after 10 Seconds:, Автозапуск сервера через 10 секунд:
+Additional Args? (arguments to add after the memory arguments of server command), Дополнительные аргументы? (аргументы для добавления после аргументов памяти в команде сервера)
+Arguments after memory arguments, Аргументы после аргументов памяти
+After Arguments, После аргументов
+Additional Args? (arguments to add at the end of server command), Дополнительные аргументы? (аргументы для добавления в конце команд сервера)
+Auto Start Server On Program Launch?, Запускать сервер автоматически после запуска программы?
+Auto Start Delay In Seconds, Задержка автозапуска в секундах
+Auto Start Priority, Приоритет автозапуска
+Add User, Добавить пользователя
+A secure password is actually a phrase, Надёжный пароль - это на самом деле фраза
+All rights reserved., Все права защищены.
+Auto Start Details, Детали автозапуска
+Auto Start On:, Автозапуск включен:
+Auto Start Delay:, Задержка автозапуска:
+Auto Start Priority:, Приоритет автозапуска:
+Auto Start Server after 10 Seconds, Автозапуск сервера через 10 секунд
+An empty value means "every". For instance: Backup every 1 hour, Пустое значение означает «каждый». Например: резервное копирование каждый час.
+A scheduled task, Запланированная задача
+Action, Действие
+Autostart Delay, Задержка автозапуска
+Actions, Действия
+available, доступно
+and kept for, и сохранен для
+API Access, API доступ
+Are you sure you wish to delete user:, Вы уверены что хотите удалить пользователя:
+Admin, Админ
+Backup, Резервное копирование
+Branch, Ветка
+Because the NSA won't send their copy, Потому что NSA не пошлёт свою копию
+Backups for Server ID:, Резервные копии для ID сервера:
+Backup Server Now, Сделать резервную копию сервера
+Backup Worlds, Сделать резервную копию Worlds
+Backup every, Сделать резервную копию всего
+Be careful here., Будьте осторожны здесь.
+Crafty Controller - Login, Контроллер Crafty - Вход
+Crafty Controller Login, Вход в Контроллер Crafty
+Change Password, Сменить пароль
+Check For Updates, Проверить наличие обновлений
+Create New Server, Создать новый сервер
+Crafty Controller Version:, Версия Контроллера Crafty:
+Configure Your Server, Настройте свой сервер
+Change Role, Изменить роль
+Change is good, Перемены это хорошо
+Click here to download the latest update, Нажмите здесь чтобы скачать последнее обновление
+Current, Текущая
+Change Your Password, Изменить пароль
+Change Password For:, Изменить пароль для:
+Creepers hate me so much, Криперы меня так ненавидят
+Crafty will try to connect to, Crafty попытается подключиться к
+Check your history interval config, Проверьте конфигурацию интервала истории
+Current Players, Текущие игроки
+Change Backup Config, Изменить конфигурацию резервного копирования
+Click On The Log Below To Scroll To Bottom, Нажмите на лог ниже чтобы прокрутить вниз
+Cancel, Отмена
+Comment, Комментарий
+Click thumb to toggle, Нажмите чтобы изменить
+Current Directory:, Текущая директория:
+Dashboard, Панель управления
+Documentation, Документация
+Details, Подробности
+Disabled, Отключено
+Default is 25565 - this is the port crafty will use to get server stats. This should match your server.properties file, По умолчанию используется 25565 - это порт который Crafty будет использовать для получения статистики сервера. Это должно соответствовать вашему файлу server.properties
+Default is 127.0.0.1 - this is the ip crafty will use to get server stats. This should match your server.properties file, По умолчанию используется 127.0.0.1 - это ip-адрес который Crafty будет использовать для получения статистики сервера. Это должно соответствовать вашему файлу server.properties
+Delete Server, Удалить сервер
+Default of 8000 - 443 and 80 require root on linux, По умолчанию 8000 - 443 и 80 требуют root в linux
+Default of 2121 - 21 and 20 require root on linux, По умолчанию 2121 - 21 и 20 требуют root в linux
+Delete, Удалить
+Days, Дн.
+days, дн.
+Download, Скачать
+Down, Выключен
+Extra Arguments, Дополнительные аргументы
+Example: , Пример: 
+Enabled, Включен
+entries, записи
+Example: 2048, Пример: 2048
+Example: 1014, Пример: 1024
+Example /var/opt/minecraft/server, Пример: /var/opt/minecraft/server
+Example paper.jar, Пример: paper.jar
+Example Survival Server, Пример: Сервер выживания
+Enter you server command, Введите команду сервера
+Existing Backups, Существующие резервные копии
+Enter Your Search String, Введите текст который ищете
+Enter your server command, Введите команду сервера
+Example: 2048 - Currently, Пример: 2048 - Текущая
+Example: 1024 - Currently, Пример: 1024 - Текущая
+Example c:\minecraft\server, Пример: c:\minecraft\server
+Enter the New Users Username, Введите имя пользователя нового пользователя
+Enter the New Password for, Введите новый пароль для
+Files, Файлы
+FTP User, Пользователь FTP
+FTP Password, Пароль FTP
+FTP Port, Порт FTP
+False, False
+Friday, Пятница
+File Management, Управление файлами
+File, Файл
+FTP Server Control: Server is currently, Управление сервером FTP: сервер в настоящее время
+Getting Version Data, Получение данных о версии
+Host CPU, ЦП используется
+Host RAM, ОЗУ используется
+Host Root Disk, Корневой диск хоста
+HOST TOTAL CPU USAGE, ОБЩЕЕ ИСПОЛЬЗОВАНИЕ ЦП
+HOST TOTAL RAM USAGE, ОБЩЕЕ ИСПОЛЬЗОВАНИЕ ОЗУ
+HOST TOTAL DISK USAGE, ОБЩЕЕ ИСПОЛЬЗОВАНИЕ ДИСКА
+Home, Главная
+Has no effect if auto start is turned off (Example: 10), Не имеет никакого эффекта если автозапуск выключен (пример: 10)
+https://example.com/latest/server.jar, https://пример.com/latest/server.jar
+Highest Priority, Высокий приоритет
+Historical Data Capture Interval, Интервал сбора исторических данных
+How many minutes between historical data capture, Минут между сбором исторических данных
+Historical Data Length, Длина исторических данных
+How many days should we keep historical data, Сколько дней хранить исторические данные
+Historical Data will be captured every, Исторические данные будут собираться каждые
+Historical Data, Исторические данные
+How Often, Как часто?
+Hours, Ч
+installed, установлено
+I want crafty to automatically restart the server, Я хочу чтобы Crafty автоматически перезапустил сервер
+I demand to see the things!, Я хочу видеть вещи!
+Invalid Settings Detected: Server Path Does Not Exists, Обнаружены недопустимые настройки: пути к серверу не существует
+Invalid Settings Detected:, Обнаружены недопустимые настройки:
+I don't know... Have you checked the logs?, Я не знаю... Ты проверил логи?
+Issue Command, Команда Issue
+Interval Type, Временной интервал
+It's like a bot, Это как бот
+Join The Discord, Присоединяйтесь к Discord
+Jar Update URL, Ссылка обновления Jar
+Keys to a good password, Ключи для хорошего пароля
+Lowest Priority, Низкий приоритет
+Logs for Server:, Логи сервера:
+Logs, Логи
+Latest Errors, Последние ошибки
+Latest Warnings, Последние предупреждения
+Line, Строка
+Memory, Память
+MAIN NAVIGATION, ГЛАВНОЕ МЕНЮ
+Medium Priority, Средний приоритет
+minutes, мин.
+Minecraft Server Config, Конфиг сервера Minecraft
+Maximum Memory To Use in MB? (example: 2048), Максимальный объём используемой памяти в МБ? (пример: 2048)
+Minimum Memory To Use in MB? (example: 1024), Минимальный объём используемой памяти в МБ? (пример: 1024)
+My New Server, Мой новый сервер
+Missing Data below?, Вы пропустили данные ниже?
+Minutes, Мин.
+Monday, Понедельник
+Max Memory, Максимальный объём памяти
+Min Memory, Минимальный объём памяти
+MyFirstServer, МойПервыйСервер
+Mod, Мод
+No - I will start the server myself., Нет - я сам запущу сервер.
+No effect if auto start is not enabled, Не имеет эффекта если автозапуск не включен
+No - I will start the server myself if it crashes., Нет - я сам запущу сервер если он выйдет из строя.
+Note the Admin can not be deleted or changed, Обратите внимание что Админ не может быть удалён или изменён
+Next, Далее
+Not Started, Не запущен
+NOT, НЕТ
+No update jar URL specified., Ссылка на обновление jar не указан.
+No Players Online, Нет игроков онлайн
+Note: this page doesn't auto-refresh, Примечание: эта страница не обновляется автоматически
+No data available in table, Данные отсутствуют в таблице
+Next, Далее
+New Scheduled Action, Новое запланированное действие
+on port, на порт
+only better, только лучшее
+Password, Пароль
+Players, Игроки
+Players:, Игроки:
+Pre Arguments, Предыдущие аргументы
+Previous, Назад
+Please add in, Добавьте это в
+Path, Путь
+Password:, Пароль:
+Port:, Порт:
+Permissions, Разрешения
+Page Cannot Be Displayed, Не удается отобразить страницу
+Running, Запущен
+Reload MC Settings, Перезагрузить настройки MC
+Reload Web Server, Перезагрузить веб-сервер
+Revert Jar Update, Отменить обновление Jar
+Restart Server, Перезапустить сервер
+Role, Роль
+Role:, Роль:
+Sign In,Войти
+Sign in to manage your server,Войдите чтобы управлять своим сервером
+Server Status, Состояние сервера
+Server Down, Сервер не работает
+Server, Сервер
+Server Defined, Рабочие серверы
+Status, Состояние
+Stopped, Остановлен
+Server Start Time, Время запуска сервера
+Server Type, Тип сервера
+Server Description, Описание сервера
+Server IP : Server Port, IP-адрес сервера : Порт сервера
+Server IP, IP-адрес сервера
+Server Port, Порт сервера
+Server Configuration, Конфигурация сервера
+Server Config, Конфиг сервера
+server config, конфиг сервера
+Server Name, Название сервера
+Server Path, Путь к серверу
+Server Jar, Jar сервера
+Server Max Memory, Максимальный объём памяти сервера
+Server Max Memory in MB, Максимальный объём памяти сервера в МБ
+Server Min Memory, Минимальный объём памяти сервера
+Server Min Memory in MB, Минимальный объём памяти сервера в МБ
+Server Jar Update URL - This is where you define where to update the jar from., URL-адрес обновления Jar сервера - здесь вы определяете откуда обновлять jar.
+Save, Сохранить
+Show, Показать
+Set Password, Установить пароль
+Search:, Поиск:
+set to autostart, установлен автозапуск
+Server Data, Данные сервера
+Server Actions, Действия сервера
+Start New World, Запустить новый мир
+Server Details, Подробности сервера
+Server Control, Управление сервером
+Sometimes you just need a terminal, Иногда вам просто нужен терминал
+Stop Auto-Scrolling, Остановить автопрокрутку
+Send Command, Отправить команду
+Server Backups, Резервные копии сервера
+Server Backup, Резервная копия сервера
+Show, Показать
+Size, Размер
+Search Latest.log, Искать в Latest.log
+Scheduled Tasks, Запланированные задачи
+Select Your Action, Выберите своё действие
+Start Server, Запустить сервер
+Stop Server, Остановить сервер
+Saturday, Суббота
+Sunday, Воскресенье
+Scheduled Actions, Запланированные действия
+Start FTP Server, Запустить FTP сервер
+Stop FTP Server, Остановить FTP сервер
+Server Jar Here, Jar сервера здесь
+Server Path Here, Путь к серверу здесь
+Save and Finish, Сохранить и завершить
+Server Console, Консоль сервера
+Server Logs, Логи сервера
+Server Schedule, Расписание сервера
+Sign out, Выйти
+Select the new role for, Выберите новую роль для
+Staff, Личный
+Tasks, Задачи
+Turn On Crash Detection?, Включить обнаружение неисправностей?
+This will detect server crashes and restart them, При обнаружении сбоя сервера перезапустить его
+The server will be launched using this string:, Сервер будет запущен с использованием этой строки:
+The server is, Сервер
+This can should be unique to the FTP service, Это должно быть уникальным для FTP-сервера.
+This should be at least 8 letters long - maybe 15 characters, Это должно быть не менее 8 символов - возможно 15 символов.
+Type your new password, Введите новый пароль
+that is at least 10 char long and contains uncommon words:, длиной не менее 10 символов и содержащий необычные слова:
+to get server status, чтобы получить статус сервера
+threads, потоки
+Tuesday, Вторник
+Thursday, Четверг
+Time, Время
+Time is disabled for minute and hour values, Время отключено для значений минут и часов
+The credentials are:, Учётные данные:
+The users new password is:, Новый пароль пользователя:
+Testing, Тестирование
+Username, Имя пользователя
+Unable to connect, Невозможно подключиться
+Users, Пользователи
+users defined, определённые пользователи
+Update Jar, Обновить Jar
+Update Server Jar, Обновить Jar сервера
+Up, Включено
+Username:, Имя пользователя:
+Version Update Checker, Проверка обновлений версии
+Version, Версия
+Virtual Console for server:, Виртуальная консоль для сервера:
+Virtual Console, Виртуальная консоль
+What do you call this server? (example: CraftySurvival), Как вы называете этот сервер? (пример: CraftySurvival)
+What folder is your server in? (example: C:\minecraft\server), В какой папке находится ваш сервер? (пример: C\minecraft\server)
+What is your jar filename? (example: paper.jar), Как называется файл jar? (пример: paper.jar)
+Webserver Port, Порт веб-сервера
+World Name, Название мира
+World Size, Размер мира
+Warning, Предупреждение
+Wednesday, Среда
+You can not rename servers at this time, В настоящее время вы не можете переименовать серверы
+Yes - Start the Minecraft Server on program launch., Да - запускать сервер Minecraft при запуске программы.
+Yes - If the server stops, Да - если сервер остановится
+Your Current Config, Ваша текущая конфигурация
+Your API Key:, Ваш ключ API:
+You have, У тебя есть
+you have, у тебя есть
+Your backups are stored in:, Ваши резервные копии хранятся в:
+You are backing up these paths:, Вы создаёте резервные копии этих путей:
+You are here, Ты здесь
+Yes, Да
+5 Questions and a checkbox until you're done, 5 вопросов и окно подтверждения и все будет готово
