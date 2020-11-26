@@ -29,10 +29,10 @@ Logins are secure and use the most advanced web security models available.
 - Windows (7,8,10) via a compiled Executable, no need for python installation
 
 ## Installation
-Install documentation is available here on GitLab via the [wiki](https://gitlab.com/Ptarrant1/crafty-web/wikis/Install-Guides).
+Install documentation is available here on GitLab via the [wiki](https://gitlab.com/crafty-controller/crafty-web/-/wikis/Install-Guides).
 
 ## Documentation
-Check out our shiny new documentation [right on GitLab](https://gitlab.com/Ptarrant1/crafty-web/wikis/home).
+Check out our shiny new documentation [right on GitLab](https://gitlab.com/crafty-controller/crafty-web/-/wikis/home).
 
 ## Meta
 Phillip Tarrant - [Project Homepage](https://craftycontrol.com/)
@@ -41,4 +41,4 @@ Discord Channel - [Here](https://discord.gg/9VJPhCE)
 
 Trello Board - [Here](https://trello.com/b/wJjAw2s3/crafty)
 
-[GIT Repo](https://gitlab.com/Ptarrant1/crafty-web)
+[GIT Repo](https://gitlab.com/crafty-controller/crafty-web)
