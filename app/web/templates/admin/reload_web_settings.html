@@ -69,7 +69,7 @@ makeProgress();
 setTimeout("do_redirect()", 10000);
 
 function do_redirect(){
-    window.location.href = "https://127.0.0.1:{{ data['web_settings']['port_number'] }}";
+    window.location.href = window.location.protocol + "://" + window.location.hostname + ":{{ data['web_settings']['port_number'] }}";
 }
 
 
