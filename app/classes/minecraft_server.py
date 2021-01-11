@@ -211,12 +211,8 @@ class Minecraft_Server():
         self.start_time = str(datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'))
 
         if psutil.pid_exists(self.process.pid):
-            parent = psutil.Process(self.process.pid)
-            time.sleep(.5)
-            children = parent.children(recursive=True)
-            for c in children:
-                self.PID = c.pid
-                logger.info("Minecraft server %s running with PID %s", self.name, self.PID)
+            self.PID = self.process.pid
+            logger.info("Minecraft server %s running with PID %s", self.name, self.PID)
                 webhookmgr.run_event_webhooks("mc_start", webhookmgr.payload_formatter(200, {}, {"server": {"name": self.get_mc_server_name(), "id": self.server_id, "running": not self.PID is None , "PID": self.PID, "restart_count": self.restart_count}}, {"info": "Minecraft Server has started"}))
                 self.is_crashed = False
         else:
