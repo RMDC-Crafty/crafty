@@ -213,7 +213,7 @@ class Minecraft_Server():
         if psutil.pid_exists(self.process.pid):
             self.PID = self.process.pid
             logger.info("Minecraft server %s running with PID %s", self.name, self.PID)
-                webhookmgr.run_event_webhooks("mc_start", webhookmgr.payload_formatter(200, {}, {"server": {"name": self.get_mc_server_name(), "id": self.server_id, "running": not self.PID is None , "PID": self.PID, "restart_count": self.restart_count}}, {"info": "Minecraft Server has started"}))
+            webhookmgr.run_event_webhooks("mc_start", webhookmgr.payload_formatter(200, {}, {"server": {"name": self.get_mc_server_name(), "id": self.server_id, "running": not self.PID is None , "PID": self.PID, "restart_count": self.restart_count}}, {"info": "Minecraft Server has started"}))
                 self.is_crashed = False
         else:
             webhookmgr.run_event_webhooks("mc_start", webhookmgr.payload_formatter(500, {"error": "SER_DIED"}, {"server": {"name": self.get_mc_server_name(), "id": self.server_id, "running": not self.PID is None , "PID": self.PID, "restart_count": self.restart_count}}, {"info": "Minecraft Server died right after startup! Config issue?"}))
