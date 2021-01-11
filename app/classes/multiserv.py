@@ -367,12 +367,19 @@ class multi_serve():
     def do_host_status(self):
         boot_time = datetime.datetime.fromtimestamp(psutil.boot_time())
 
+        try:
+            cpu_freq = psutil.cpu_freq()
+        except NotImplementedError:
+            cpu_freq = psutil._common.scpufreq(current=0, min=0, max=0)
+        if cpu_freq is None:
+            cpu_freq = psutil._common.scpufreq(current=0, min=0, max=0)
+
         insert_id = Host_Stats.insert({
             Host_Stats.boot_time: str(boot_time),
             Host_Stats.cpu_usage: round(psutil.cpu_percent(interval=0.5) / psutil.cpu_count(), 2),
             Host_Stats.cpu_cores: psutil.cpu_count(),
-            Host_Stats.cpu_cur_freq: round(psutil.cpu_freq()[0], 2),
-            Host_Stats.cpu_max_freq: psutil.cpu_freq()[2],
+            Host_Stats.cpu_cur_freq: round(cpu_freq[0], 2),
+            Host_Stats.cpu_max_freq: cpu_freq[2],
             Host_Stats.mem_percent: psutil.virtual_memory()[2],
             Host_Stats.mem_usage: helper.human_readable_file_size(psutil.virtual_memory()[3]),
             Host_Stats.mem_total: helper.human_readable_file_size(psutil.virtual_memory()[0]),
