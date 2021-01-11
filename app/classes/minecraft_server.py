@@ -202,14 +202,9 @@ class Minecraft_Server():
 
             self.is_crashed = False
         else:
-            logger.info("Linux Detected - launching Bash")
-            self.process = pexpect.popen_spawn.PopenSpawn('/bin/bash \n', timeout=None, encoding=None)
-
-            logger.info("Changing directory to %s", self.server_path)
-            self.process.send('cd {} \n'.format(self.server_path))
-
-            logger.info("Sending server start command: {} to shell".format(self.server_command))
-            self.process.send(self.server_command + '\n')
+            logger.info("Linux Detected")
+            logger.info("Starting server in {p} with command: {c}".format(p=self.server_path, c=self.server_command))
+            self.process = pexpect.popen_spawn.PopenSpawn(self.server_command, cwd=self.server_path, timeout=None, encoding=None)
             self.is_crashed = False
 
         ts = time.time()
