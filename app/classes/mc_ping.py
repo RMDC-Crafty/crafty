@@ -39,7 +39,10 @@ class Server:
                 self.description = self.description['text']
 
         self.icon = base64.b64decode(data.get('favicon', '')[22:])
-        self.players = Players(data['players']).report()
+
+        # if players key doesn't exists, we send a blank list object
+        self.players = Players(data.get('players', [])).report()
+
         self.version = data['version']['name']
         self.protocol = data['version']['protocol']
 
