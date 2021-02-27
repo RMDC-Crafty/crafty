@@ -5,6 +5,7 @@ logger = logging.getLogger(__name__)
 
 class BaseHandler(tornado.web.RequestHandler):
     def set_default_headers(self):
+        self.set_header("Referrer-Policy", "strict-origin")
         self.set_header("Permissions-Policy", "")
         self.set_header("Content-Security-Policy", "default-src 'self' https:; script-src 'self' https: 'unsafe-inline'; style-src 'self' https: 'unsafe-inline'")
         self.set_header("Strict-Transport-Security", "max-age=31536000")
