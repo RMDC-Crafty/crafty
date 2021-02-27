@@ -456,6 +456,10 @@ class AdminHandler(BaseHandler):
             self.redirect("/")
 
         elif page == 'schedules':
+            if not user_data['schedules']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Edit Schedules"))
+                self.redirect('/admin/unauthorized')
             action = bleach.clean(self.get_argument('action', ''))
             interval = bleach.clean(self.get_argument('interval', ''))
             interval_type = bleach.clean(self.get_argument('type', ''))
@@ -484,7 +488,10 @@ class AdminHandler(BaseHandler):
             self.redirect("/admin/schedules?id={}".format(server_id))
 
         elif page == 'config':
-
+            if not user_data['config']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Update Config"))
+                self.redirect('/admin/unauthorized')
             config_type = bleach.clean(self.get_argument('config_type'))
 
             if config_type == 'mc_settings':
@@ -580,6 +587,11 @@ class AdminHandler(BaseHandler):
             java_path = bleach.clean(self.get_argument('java_path'))
             errors = bleach.clean(self.get_argument('errors', ''))
 
+            if not user_data['svr_control']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Edit Server (ID:{})".format(server_id)))
+                self.redirect('/admin/unauthorized')
+
             context['errors'] = errors
 
             server_path_exists = helper.check_directory_exist(server_path)
@@ -632,9 +644,14 @@ class AdminHandler(BaseHandler):
                 self.redirect("/admin/server_config?id={}&errors={}".format(server_id, "Java Path Does Not Exist"))
 
         elif page == 'files':
-
             next_dir = bleach.clean(self.get_argument('next_dir'))
             server_id = bleach.clean(self.get_argument('server_id'))
+
+            if not user_data['files']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Post files".format(server_id)))
+                self.redirect('/admin/unauthorized')
+
             path = Path(next_dir)
 
             template = "admin/files.html"
@@ -680,6 +697,11 @@ class AdminHandler(BaseHandler):
             max_mem = bleach.clean(self.get_argument('max_mem', ''))
             min_mem = bleach.clean(self.get_argument('min_mem', ''))
             auto_start = bleach.clean(self.get_argument('auto_start', ''))
+
+            if not user_data['config']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Add Server"))
+                self.redirect('/admin/unauthorized')
 
             samename = MC_settings.select().where(MC_settings.server_name == server_name)
             if samename.exists():
@@ -758,6 +780,11 @@ class AdminHandler(BaseHandler):
             backup_storage = bleach.clean(self.get_argument('storage_location', ''))
             server_id = bleach.clean(self.get_argument('server_id', ''))
 
+            if not user_data['backups']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Backups (ID:{})".format(server_id)))
+                self.redirect('/admin/unauthorized')
+
             if len(checked) == 0 or len(backup_storage) == 0:
                 logger.error('Backup settings Invalid: Checked: {}, max_backups: {}, backup_storage: {}'
                              .format(checked, max_backups, backup_storage))
@@ -780,6 +807,11 @@ class AdminHandler(BaseHandler):
 
         elif page == 'upload':
             server_id = bleach.clean(self.get_argument('server_id', ''))
+
+            if not user_data['files']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Upload (ID:{})".format(server_id)))
+                self.redirect('/admin/unauthorized')
 
             # did we get a file?
             if len(self.request.files['file1']) < 1:

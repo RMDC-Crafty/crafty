@@ -25,8 +25,15 @@ class AjaxHandler(BaseHandler):
     @tornado.web.authenticated
     def get(self, page):
 
+        name = tornado.escape.json_decode(self.current_user)
+        user_data = get_perms_for_user(name)
+
         if page == 'server_log':
             server_id = bleach.clean(self.get_argument('id'))
+            if not user_data['logs']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Server log (ID {})".format(server_id)))
+                self.redirect('/admin/unauthorized')
 
             if server_id is None:
                 logger.warning("Server ID not found in server_log ajax call")
@@ -42,6 +49,10 @@ class AjaxHandler(BaseHandler):
 
         elif page == 'history':
             server_id = bleach.clean(self.get_argument("server_id",''))
+            if not user_data['svr_control']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Server history (ID {})".format(server_id)))
+                self.redirect('/admin/unauthorized')
 
             db_data = History.select().where(History.server_id == server_id)
             return_data = []
@@ -57,7 +68,10 @@ class AjaxHandler(BaseHandler):
             self.write(json.dumps(return_data))
 
         elif page == 'update_check':
-
+            if not user_data['config']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Update Check"))
+                self.redirect('/admin/unauthorized')
             context = {
                 'master': helper.check_version('master'),
                 'beta': helper.check_version('beta'),
@@ -153,7 +167,12 @@ class AjaxHandler(BaseHandler):
                 data=context
             )
 
-        elif page == 'server_infos':  
+        elif page == 'server_infos':
+            server_id = bleach.clean(self.get_argument('id', 1))
+            if not user_data['svr_control']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Server Info (ID:{})".format(server_id)))
+                self.redirect('/admin/unauthorized')
 
             name = tornado.escape.json_decode(self.current_user)
             user_data = get_perms_for_user(name)
@@ -163,7 +182,6 @@ class AjaxHandler(BaseHandler):
                 'mc_servers_data': multi.get_stats_for_servers()
             }     
 
-            server_id = bleach.clean(self.get_argument('id', 1))
             srv_obj = multi.get_server_obj(server_id)
             
             context['srv'] = {
@@ -182,6 +200,11 @@ class AjaxHandler(BaseHandler):
         elif page == 'get_file':
             file_path = bleach.clean(self.get_argument('file_name'))
             server_id = bleach.clean(self.get_argument('server_id'))
+
+            if not user_data['files']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Get file (ID:{}, path:{})".format(server_id, file_path)))
+                self.redirect('/admin/unauthorized')
 
             mc_data = MC_settings.get_by_id(server_id)
             mc_settings = model_to_dict(mc_data)
@@ -211,12 +234,17 @@ class AjaxHandler(BaseHandler):
                     data=context
                 )
 
+    @tornado.web.authenticated
     def post(self, page):
 
         name = tornado.escape.json_decode(self.current_user)
         user_data = get_perms_for_user(name)
 
         if page == "send_command":
+            if not user_data['svr_console']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Send Command"))
+                self.redirect('/admin/unauthorized')
             command = bleach.clean(self.get_body_argument('command', default=None, strip=True))
             server_id = bleach.clean(self.get_argument('id'))
 
@@ -230,6 +258,10 @@ class AjaxHandler(BaseHandler):
                     srv_obj.send_command(command)
 
         elif page == 'del_file':
+            if not user_data['files']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Delete File"))
+                self.redirect('/admin/unauthorized')
             file_to_del = bleach.clean(self.get_body_argument('file_name', default=None, strip=True))
             server_id = bleach.clean(self.get_argument('server_id', default=None, strip=True))
 
@@ -247,6 +279,10 @@ class AjaxHandler(BaseHandler):
                 helper.del_file(server_backup_file)
 
         elif page == 'del_schedule':
+            if not user_data['schedule']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Delete Schedule"))
+                self.redirect('/admin/unauthorized')
             id_to_del = bleach.clean(self.get_body_argument('id', default=None, strip=True))
 
             if id_to_del:
@@ -257,6 +293,10 @@ class AjaxHandler(BaseHandler):
             multi.reload_user_schedules()
 
         elif page == 'search_logs':
+            if not user_data['logs']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Search Logs"))
+                self.redirect('/admin/unauthorized')
             search_string = bleach.clean(self.get_body_argument('search', default=None, strip=True))
             server_id = bleach.clean(self.get_body_argument('id', default=None, strip=True))
 
@@ -298,7 +338,7 @@ class AjaxHandler(BaseHandler):
         elif page == "edit_user_role":
             if not user_data['config']:
                 logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Delete User"))
+                    user_data['username'], user_data['role_name'], "Edit User Role"))
                 self.redirect('/admin/unauthorized')
 
             username = bleach.clean(self.get_argument("username", None, True))
@@ -317,7 +357,7 @@ class AjaxHandler(BaseHandler):
         elif page == "change_password":
             if not user_data['config']:
                 logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Delete User"))
+                    user_data['username'], user_data['role_name'], "Change other user's password"))
                 self.redirect('/admin/unauthorized')
 
             username = bleach.clean(self.get_argument("username", None, True))
@@ -373,7 +413,7 @@ class AjaxHandler(BaseHandler):
         elif page == 'edit_role':
             if not user_data['config']:
                 logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
-                    user_data['username'], user_data['role_name'], "Add Role"))
+                    user_data['username'], user_data['role_name'], "Edit Role"))
                 self.redirect('/admin/unauthorized')
 
             rolename = bleach.clean(self.get_argument("rolename", None, True))
@@ -417,6 +457,10 @@ class AjaxHandler(BaseHandler):
                     self.write("{} deleted".format(rolename))
 
         elif page == 'save_file':
+            if not user_data['files']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Save File"))
+                self.redirect('/admin/unauthorized')
             file_data = self.get_argument('file_contents')
             file_path = bleach.clean(self.get_argument("file_path"))
             server_id = bleach.clean(self.get_argument("server_id"))
@@ -445,6 +489,10 @@ class AjaxHandler(BaseHandler):
             self.redirect("/admin/files?id={}".format(server_id))
 
         elif page == "del_server_file":
+            if not user_data['files']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Delete File"))
+                self.redirect('/admin/unauthorized')
             file_path = bleach.clean(self.get_argument("file_name"))
             server_id = bleach.clean(self.get_argument("server_id"))
 
@@ -474,6 +522,10 @@ class AjaxHandler(BaseHandler):
             self.redirect("/admin/files?id={}".format(server_id))
 
         elif page == "new_file_folder":
+            if not user_data['files']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "New Folder"))
+                self.redirect('/admin/unauthorized')
             type = bleach.clean(self.get_argument("type"))
             server_id = bleach.clean(self.get_argument("server_id"))
             pwd = bleach.clean(self.get_argument("pwd"))
@@ -507,6 +559,10 @@ class AjaxHandler(BaseHandler):
 
 
         elif page == "unzip_server_file":
+            if not user_data['files']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Unzip File"))
+                self.redirect('/admin/unauthorized')
             file_path = bleach.clean(self.get_argument("file_name"))
             server_id = bleach.clean(self.get_argument("server_id"))
             pwd = bleach.clean(self.get_argument("pwd"))
@@ -537,6 +593,10 @@ class AjaxHandler(BaseHandler):
 
 
         elif page == "destroy_server":
+            if not user_data['config']:
+                logger.warning("User: {} with Role: {} Attempted Access to: {} and was denied".format(
+                    user_data['username'], user_data['role_name'], "Destroy Server"))
+                self.redirect('/admin/unauthorized')
             server_id = bleach.clean(self.get_body_argument('server_id', default=None, strip=True))
 
             if server_id is not None:
