@@ -1,12 +1,12 @@
 import datetime
-from colorama import init
+import colorama
 from termcolor import colored
 
 
 class Console:
 
     def __init__(self):
-        init()
+        colorama.init()
 
     @staticmethod
     def debug(message):

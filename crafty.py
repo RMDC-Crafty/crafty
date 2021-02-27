@@ -13,10 +13,12 @@ def is_venv():
     return hasattr(sys, 'real_prefix') or sys.base_prefix != sys.prefix
 
 try:
+    import argon2
     import yaml
     import secrets
     import schedule
     from termcolor import colored
+    from OpenSSL import crypto, SSL
     from app.classes.console import console
 
 except Exception as e:
@@ -28,6 +30,7 @@ except Exception as e:
     print("\t * Modules didn't install: Did pip install -r requirements.txt run correctly?")
     print("\t * You haven't activated your virtual environment, maybe try activating it?")
     print("\n Need Help? We are here to help! - https://discord.gg/XR5x3ZM \n")
+    print("Exception caught: {}".format(e))
     if is_venv:
         pipinstall = str(input("A virtual environment has been detected, would you like to try reinstalling the modules? [yes/no]: "))
         pipinstall = pipinstall.lower()
