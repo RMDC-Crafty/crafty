@@ -649,8 +649,9 @@ class Minecraft_Server():
                 # for each directory we find
                 for name in dirs:
 
-                    # if the directory name is "region"
-                    if name == "region":
+                    # if the directory name is "region" or for servers with Cubic Chunks "region2d" or "region3d"
+                    if name in ("region", "region2d", "region3d"):
+
                         # log it!
                         logger.debug("Path %s is called region. Getting directory size", os.path.join(root, name))
 

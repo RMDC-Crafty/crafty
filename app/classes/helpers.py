@@ -473,7 +473,7 @@ class helpers:
         return "%.1f%s%s" % (num, 'Y', suffix)
 
     def check_version(self, branch):
-        url = "https://gitlab.com/Ptarrant1/crafty-web/raw/{}/app/config/version.json".format(branch)
+        url = "https://gitlab.com/crafty-controller/crafty-web/raw/{}/app/config/version.json".format(branch)
         try:
             r = requests.get(url, timeout=2)
             if r.status_code == 200:

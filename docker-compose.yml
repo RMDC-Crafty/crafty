@@ -3,6 +3,8 @@ version: '3'
 services:
   web:
     build: .
+    # Optional (Linux Only): Automatically allows passthrough of required ports. Remove 'ports' section if enabled.
+    # network_mode: host
     ports:
       - "8000:8000"
       - "25500-25600"
