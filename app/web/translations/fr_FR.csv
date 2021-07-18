@@ -1,0 +1,295 @@
+Autostart, Autodémarrage
+Auto Start Server after 10 Seconds:, Autodémarrage du serveur dans 10 secondes :
+Additional Args? (arguments to add after the memory arguments of server command), Arguments Supplémentaires ? (Arguments à ajouter après les arguments de mémoire de lancement du serveur)
+Arguments after memory arguments, Arguments après les arguments mémoire
+After Arguments, Arguments Suivants
+Additional Args? (arguments to add at the end of server command), Arguments Supplémentaires ? (Arguments à ajouter après la commande de lancement du serveur)
+Auto Start Server On Program Launch?, Démarrer automatiquement le server au démarrage ?
+Auto Start Delay In Seconds, Délai en secondes avant le démarrage automatique
+Auto Start Priority, Priorité à l'Autodémarrage
+Add User, Ajouter un utilisateur
+A secure password is actually a phrase, Un mot de passe sécurisé est en fait une phrase
+All rights reserved., Tous droits réservés.
+Auto Start Details, Détails de l'autodémarrage
+Auto Start On:, Autodémarrage activé :
+Auto Start Delay:, Délai avant l'autodémarrage :
+Auto Start Priority:, Priorité à l'autodémarrage :
+Auto Start Server after 10 Seconds, Autodémarrage du serveur dans 10 secondes
+An empty value means "every". For instance: Backup every 1 hour, Une valeur vide signifie "tous". Par exemple: Une copie de sauvegarde toutes les heures
+A scheduled task, Une tâche programmée
+Action, Action
+Autostart Delay, Délai avant autodémarrage
+Actions, Actions
+available, disponibles
+and kept for, et conserver pendant
+API Access, Accès API
+Are you sure you wish to delete user:, Etes vous sur de vouloir supprimer l'utilisateur :
+Admin, Administrateur
+Backup, Copie de sauvegarde
+Branch, Branche
+Because the NSA won't send their copy, Parce que la NSA n'enverront pas la leur
+Backups for Server ID:, Copie de sauvegarde pour le serveur avec l'ID :
+Backup Server Now, Sauvegarder le serveur maintenant
+Backup Worlds, Sauvegarder les mondes
+Backup every, Sauvegarder tous les 
+Be careful here., Fais attention ici.
+Crafty Controller - Login, Crafty Controller - Login
+Crafty Controller Login, Crafty Controller Login
+Change Password, Changer le mot de passe
+Check For Updates, Vérifier les mises à jour
+Create New Server, Créer un nouveau serveur
+Crafty Controller Version:, Version de Crafty Controller:
+Configure Your Server, Configurer ton serveur
+Change Role, Changer le rôle
+Change is good, Le changement c'est bien
+Click here to download the latest update, Cliquer ici pour télécharger la dernière mise à jour
+Current, Actuel
+Change Your Password, Change ton mot de passe
+Change Password For:, Changer le mot de passe pour :
+Creepers hate me so much, Les Creepers me détestent trop
+Crafty will try to connect to, Crafty va tenter de se connecter à
+Check your history interval config, Vérifie la configuration de l'intervale de l'historique
+Current Players, Joueurs actuels
+Change Backup Config, Changer la configuration de sauvegarde
+Click On The Log Below To Scroll To Bottom, Clicke dans la fenêtre ci dessous pour aller en bas de la console
+Cancel, Annuler
+Comment, Commentaire
+Click thumb to toggle, Clicker sur le pouce pour basculer
+Current Directory:, Dossier actuel :
+Dashboard, Tableau de Bord
+Documentation, Documentation
+Details, Détails
+Disabled, Désactivé
+Default is 25565 - this is the port crafty will use to get server stats. This should match your server.properties file, Par défaut 25565 - C'est le port que Crafty utilisera pour obtenir les infotrmations du serveur. Il doit correspondre à celui dans le fichier server.properties
+Default is 127.0.0.1 - this is the ip crafty will use to get server stats. This should match your server.properties file, Par défaut 127.0.0.1 - C'est l'adresse IP que Crafty utilisera pour obtenir les infotrmations du serveur. Elle doit correspondre à celle dans le fichier server.properties
+Delete Server, Supprimer le serveur
+Default of 8000 - 443 and 80 require root on linux, Par défaut 8000 - 443 et 80 nécessitent les droit root sous linux
+Default of 2121 - 21 and 20 require root on linux, Par défaut 2121 - 21 et 20 nécessitent les droits root sous linux
+Delete, Supprimer
+Days, Jours
+days, jours
+Download, Télécharger
+Down, Bas
+Extra Arguments, Arguments supplémentaires
+Example: , Exemple : 
+Enabled, Activé
+entries, entrées
+Example: 2048, Exemple : 2048
+Example: 1014, Exemple : 1024
+Example /var/opt/minecraft/server, Exemple /var/opt/minecraft/server
+Example paper.jar, Exemple paper.jar
+Example Survival Server, Exemple Serveur Survie
+Enter you server command, Entrer la commande du serveur
+Existing Backups, Copies de sauvegarde existantes
+Enter Your Search String, Entrer la recherche ici
+Enter your server command, Entrer la commande du serveur
+Example: 2048 - Currently, Exemple : 2048 - Actuellement
+Example: 1024 - Currently, Exemple : 1024 - Actuellement
+Example c:\minecraft\server, Exemple c:\minecraft\server
+Enter the New Users Username, Entrer le nom d'utilisateur du nouvel utilisateur
+Enter the New Password for, Entrer le nouveau mot de passe pour
+Files, Fichiers
+FTP User, Utilisateur FTP
+FTP Password, Mot de passe FTP
+FTP Port, Port FTP
+False, Faux
+Friday, Vendredi
+File Management, Gestion des fichiers
+File, Fichier
+FTP Server Control: Server is currently, Contrôle FTP du serveur : Le serveur est actuellement
+Getting Version Data, Obtenir les données de version
+Host CPU, CPU Machine
+Host RAM, RAM Machine
+Host Root Disk, Utilisation Disque Machine
+HOST TOTAL CPU USAGE, UTILISATION TOTALE CPU MACHINE
+HOST TOTAL RAM USAGE, UTILISATION TOTALE RAM MACHINE
+HOST TOTAL DISK USAGE, UTILISATION TOTALE DISQUE MACHINE
+Home, Accueil
+Has no effect if auto start is turned off (Example: 10), Aucun effet si l'autodémarrage est désactivé
+https://example.com/latest/server.jar, https://exemple.com/latest/server.jar
+Highest Priority, Priorité la plus haute
+Historical Data Capture Interval, Interval de capture des données de l'historique
+How many minutes between historical data capture, Combien de minutes entre deux captures des données de l'historique
+Historical Data Length, Délai de conservation des données de l'historique
+How many days should we keep historical data, Combien de jours doit on conserver les données de l'historique
+Historical Data will be captured every, Les données pour l'historique seront récupérées tous les
+Historical Data, Données de l'historique
+How Often, Combien de fois
+Hours, Heures
+installed, installé
+I want crafty to automatically restart the server, Je veux que Crafty redémarre le serveur automatiquement
+I demand to see the things!, Je veux voir ça !
+Invalid Settings Detected: Server Path Does Not Exists, Paramètres invalides détectés : Le chemin vers le fichier n'existe pas
+Invalid Settings Detected:, Paramètres invalides détectés :
+I don't know... Have you checked the logs?, Je ne sais pas... As tu vérifié les logs?
+Issue Command, Erreur de commande
+Interval Type, Type d'intervale
+It's like a bot, C'est comme un bot
+Join The Discord, Rejoins notre Discord
+Jar Update URL, URL de mise à jour de Java
+Keys to a good password, Les cléfs pour un bon mot de passe
+Lowest Priority, Priorité minimale
+Logs for Server:, Les logs du serveur:
+Logs, Logs
+Latest Errors, Dernières Erreurs
+Latest Warnings, Derniers Dangers
+Line, Ligne
+Memory, Mémoire
+MAIN NAVIGATION, MENU PRINCIPAL
+Medium Priority, Priorité intermédiaire
+minutes, minutes
+Minecraft Server Config, Configuration du serveur Minecraft
+Maximum Memory To Use in MB? (example: 2048), Mémoire maximale à utiliser en MB? (exemple: 2048)
+Minimum Memory To Use in MB? (example: 1024), Mémoire minimale à utiliser en MB? (exemple: 1024)
+My New Server, Mon nouveau serveur
+Missing Data below?, Il manque des données ci dessous ?
+Minutes, Minutes
+Monday, Lundi
+Max Memory, Mémoire max
+Min Memory, Mémoire min
+MyFirstServer, MonPremierServeur
+Mod, Modérateur
+No - I will start the server myself., Non - Je démarrerai le serveur moi même.
+No effect if auto start is not enabled, Aucun effet si le démarrage automatique est désactivé
+No - I will start the server myself if it crashes., Non - Je redémarrerai le serveur moi même si il plante
+Note the Admin can not be deleted or changed, Noter que l'Administrateur ne peut être ni modifié ni supprimé
+Next, Suivant
+Not Started, Non démarré
+NOT, NON
+No update jar URL specified., URL de mise à jour de Java spécifiée.
+No Players Online, Aucun Joueur Connecté
+Note: this page doesn't auto-refresh, Note : Cette page ne s'actualise pas automatiquement
+No data available in table, Aucun donnée disponible
+Next, Suivant
+New Scheduled Action, Nouvelle Action Programmée
+on port, sur le port
+only better, seulement meilleur
+Password, Mot de passe
+Players, Joueurs
+Players:, Joueurs :
+Pre Arguments, Arguments Précédent
+Previous, Précédent
+Please add in, S'il te plaît ajoute le dans
+Path, Chemin
+Password:, Mot de passe :
+Port:, Port :
+Permissions, Permissions
+Page Cannot Be Displayed, La page ne peut être affichée
+Running, En route
+Reload MC Settings, Rechercher les paramètres MC
+Reload Web Server, Relancer le serveur web
+Revert Jar Update, Annuler la mise à jour du Jar
+Restart Server, Redémarrer le Srveur
+Role, Rôle
+Role:, Rôle :
+Sign In, Se Connecter
+Sign in to manage your server, Se Connecter pour gérer ton serveur
+Server Status, Statut du Serveur
+Server Down, Serveur éteint
+Server, Serveur
+Server Defined, Serveur défini
+Status, Statut
+Stopped, Arrêté
+Server Start Time, Heure de Démarrage du Serveur
+Server Type, Type de Serveur
+Server Description, Description du Serveur
+Server IP : Server Port, IP du Serveur : Port du Serveur
+Server IP, IP du Serveur
+Server Port, Port du Serveur
+Server Configuration, Configuration du Serveur
+Server Config, Config Serveur
+server config, config serveur
+Server Name, Nom du Serveur
+Server Path, Chemin du Serveur
+Server Jar, Jar du Serveur
+Server Max Memory, Mémoire Max du Serveur
+Server Max Memory in MB, Mémoire Max du Serveur en MB
+Server Min Memory, Mémoire Min du Serveur
+Server Min Memory in MB, Mémoire Min du Serveur en MB
+Server Jar Update URL - This is where you define where to update the jar from., URL de mise à jour du Jar du serveur - C'est là où est défini où obtenir la mise à jour du Jar.
+Save, Sauvegarder
+Show, Montrer
+Set Password, Changer le Mot de Passe
+Search:, Rechercher :
+set to autostart, changer pour l'autodémarrage
+Server Data, Données du Serveur
+Server Actions, Actions du Serveur
+Start New World, Commencer un Nouveau Monde
+Server Details, Détails du Serveur
+Server Control, Contrôle du Serveur
+Sometimes you just need a terminal, Parfois on a juste besoin d'un terminal
+Stop Auto-Scrolling, Arrêter l'auto défilement
+Send Command, Envoier Commande
+Server Backups, Copies de sauvegarde du serveur
+Server Backup, Copie de sauvegarde du serveur
+Show, Montrer
+Size, Taille
+Search Latest.log, Rechercher dans Latest.log
+Scheduled Tasks, Tâches Programmées
+Select Your Action, Sélectionner une Action
+Start Server, Démarrer le Serveur
+Stop Server, Arrêter le Serveur
+Saturday, Samedi
+Sunday, Dimanche
+Scheduled Actions, Actions Programmées
+Start FTP Server, Démarrer le Serveur FTP
+Stop FTP Server, Arrêter le Serveur FTP
+Server Jar Here, Jar du Serveur Ici
+Server Path Here, Chemin du Serveur Ici
+Save and Finish, Sauvegarder et Terminer
+Server Console, Console Serveur
+Server Logs, Logs Serveur
+Server Schedule, Programmation Serveur
+Sign out, Se Déconnecter
+Select the new role for, Sélectionner le nouveau rôle pour
+Staff, Staff
+Tasks, Tâches
+Turn On Crash Detection?, Activer la détection des plantages ?
+This will detect server crashes and restart them, Cela va détecter les plantages du serveur et le redémarrer
+The server will be launched using this string:, Le serveur sera démarré avec cette commande :
+The server is, Le serveur est
+This can should be unique to the FTP service, Cela devrait être réservé pour le service FTP
+This should be at least 8 letters long - maybe 15 characters, Il devrait faire au moins 8 lettres de long - peut être 15 caractères
+Type your new password, Entre ton nouveau mot de passe
+that is at least 10 char long and contains uncommon words:, Il devrait contenir au moins 10 caractères de long et contenir des mots peu communs
+to get server status, pour obtenir le statut du serveur
+threads, fils
+Tuesday, Mardi
+Thursday, Jeudi
+Time, Horaires
+Time is disabled for minute and hour values, Les horaires sont désactivées pour les minutes et les heures
+The credentials are:, Les identifiants sont :
+The users new password is:, Le nouveau mot de passe de l'utilisateur est :
+Testing, En test
+Username, Nom d'utilisateur
+Unable to connect, Impossible de se connecter
+Users, Utilisateurs
+users defined, utilisateurs définis
+Update Jar, Mettre à jour le Jar
+Update Server Jar, Mettre à jour le Jar du Serveur
+Up, Haut
+Username:, Nom d'utilisateur :
+Version Update Checker, Vérification de la version
+Version, Version
+Virtual Console for server:, Console Virtuel du Serveur
+Virtual Console, Console Virtuelle
+What do you call this server? (example: CraftySurvival), Comment appeler ce serveur ? (exemple: SurvieCrafty)
+What folder is your server in? (example: C:\minecraft\server), Dans quel dossier est le serveur ? (exemple: C:\minecraft\server)
+What is your jar filename? (example: paper.jar), Quel est le nom du fichier jar ? (exemple: paper.jar)
+Webserver Port, Port du Serveur Web
+World Name, Nom du Monde
+World Size, Taille du Monde
+Warning, Attention
+Wednesday, Mercredi
+You can not rename servers at this time, On ne peut pas renommer le serveur pour le moment
+Yes - Start the Minecraft Server on program launch., Oui - Démarrer le Serveur Minecraft au démarrage.
+Yes - If the server stops, Oui - Si le serveur s'arrête
+Your Current Config, Configuration Actuelle
+Your API Key:, Ta Cléf API
+You have, Tu as
+you have, tu as
+Your backups are stored in:, Tes copies de sauvegarde sont conservées dans :
+You are backing up these paths:, Tu sauvegarde ces éléments :
+You are here, Tu es ici
+Yes, Oui
+5 Questions and a checkbox until you're done, 5 Questions et 1 case à cocher avant d'être prêt
