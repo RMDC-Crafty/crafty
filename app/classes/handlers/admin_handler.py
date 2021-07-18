@@ -676,7 +676,9 @@ class AdminHandler(BaseHandler):
         elif page == 'add_server':
             server_name = bleach.clean(self.get_argument('server_name', ''))
             server_path = bleach.clean(self.get_argument('server_path', ''))
+            create_server_path = bleach.clean(self.get_argument('create_server_path', ''))
             server_jar = bleach.clean(self.get_argument('server_jar', ''))
+            server_jar_url = bleach.clean(self.get_argument('server_jar_url', ''))
             max_mem = bleach.clean(self.get_argument('max_mem', ''))
             min_mem = bleach.clean(self.get_argument('min_mem', ''))
             auto_start = bleach.clean(self.get_argument('auto_start', ''))
@@ -693,6 +695,9 @@ class AdminHandler(BaseHandler):
 
             error = None
 
+            if create_server_path == 'on':
+                helper.ensure_dir_exists(server_path)
+
             # does this server path / jar exist?
             server_path_exists = helper.check_directory_exist(server_path)
 
@@ -701,12 +706,19 @@ class AdminHandler(BaseHandler):
                 error = "Server Path Does Not Exists"
 
             # Use pathlib to join specified server path and server JAR file then check if it exists
-            jar_exists = helper.check_file_exists(os.path.join(server_path, server_jar))
+            server_jar_path = os.path.join(server_path, server_jar)
+            jar_exists = helper.check_file_exists(server_jar_path)
+
+            if not jar_exists and server_jar_url:
+                download_complete = helper.download_file(server_jar_url, server_jar_path)
+                if not download_complete:
+                    logger.error("Unable to download server jar from {}".format(server_jar_url))
+                    error = "Unable to Download Server Jar"
+
+            jar_exists = helper.check_file_exists(server_jar_path)
 
             if not jar_exists and error is None:
-                logger.error("Server jar {} doesn't exist - Can't add server".format(
-                    os.path.join(server_path, server_jar))
-                )
+                logger.error("Server jar {} doesn't exist - Can't add server".format(server_jar_path))
                 error = "Server Jar Does Not Exists"
 
             # does a server with this name already exists?

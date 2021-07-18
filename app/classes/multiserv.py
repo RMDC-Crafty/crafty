@@ -166,6 +166,7 @@ class multi_serve():
             Backups.delete().where(Backups.server_id == int(server_id)).execute()
             History.delete().where(History.server_id == int(server_id)).execute()
             Server_Stats.delete().where(Server_Stats.server_id == int(server_id)).execute()
+            Schedules.delete().where(Schedules.server_id == int(server_id)).execute()
 
 
             logger.info('Deleted Server ID %s', server_id)
