@@ -7,7 +7,7 @@ cffi==1.13.1
 chardet==3.0.4
 colorama==0.4.1
 cryptography==3.3.2
-idna==2.8
+idna==3.7
 paramiko==2.6.0
 peewee==3.11.2
 pexpect==4.7.0
